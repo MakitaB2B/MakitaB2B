@@ -1,0 +1,314 @@
+body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    color: #777;
+}
+
+h3,
+h4 {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    margin: 10px 0 30px 0;
+    letter-spacing: 5px;
+    font-size: 20px;
+    color: #111;
+}
+
+.container {
+    padding: 80px 50px;
+}
+
+.bg-1 h3 {
+    color: #fff;
+}
+
+.bg-1 p {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+.list-group-item:first-child {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.list-group-item:last-child {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.btn {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #f1f1f1;
+    border-radius: 0;
+    transition: .2s;
+}
+
+.btn:hover,
+.btn:focus {
+    border: 1px solid #333;
+    background-color: #fff;
+    color: #000;
+}
+
+.nav-tabs li a {
+    color: #777;
+}
+
+.navbar {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    margin-bottom: 0;
+    background-color: #008497;
+    border: 0;
+    font-size: 11px !important;
+    letter-spacing: 1px;
+    opacity: 0.9;
+}
+
+.navbar li a,
+.navbar .navbar-brand {
+    color: #ffffff !important;
+}
+
+.navbar-nav li a:hover {
+    color: #ffb5b5 !important;
+}
+
+.navbar-nav li.active a {
+    color: #fff !important;
+    background-color: #ED1B24 !important;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+}
+
+.open .dropdown-toggle {
+    color: #fff;
+    background-color: #555 !important;
+}
+
+.dropdown-menu li a {
+    color: #000 !important;
+}
+
+.dropdown-menu li a:hover {
+    background-color: red !important;
+}
+
+footer {
+    background-color: #008497;
+    color: #f5f5f5;
+    padding: 32px;
+}
+
+footer a {
+    color: #f5f5f5;
+}
+
+footer a:hover {
+    color: #ef3139;
+    text-decoration: none;
+}
+
+.form-control {
+    border-radius: 0;
+    font-size: 10px !important;
+}
+
+label {
+    font-weight: 100 !important;
+    font-size: 13px;
+    color: #000000;
+}
+
+.glyphicon {
+    padding-right: 10px;
+}
+
+.f12 {
+    font-size: 12px;
+}
+
+.required {
+    color: crimson;
+    font-size: 15px;
+
+}
+
+[type="radio"]:checked,
+[type="radio"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+}
+
+[type="radio"]:checked+label,
+[type="radio"]:not(:checked)+label {
+    position: relative;
+    padding-left: 21px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+    color: #666;
+}
+
+[type="radio"]:checked+label:before,
+[type="radio"]:not(:checked)+label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    background: #fff;
+}
+
+[type="radio"]:checked+label:after,
+[type="radio"]:not(:checked)+label:after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: #008497;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    border-radius: 100%;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+[type="radio"]:not(:checked)+label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+}
+
+[type="radio"]:checked+label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+.mr20 {
+    margin-right: 20px;
+}
+
+/* === Contact form ===*/
+.box input {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    padding: 10px 0;
+    margin-bottom: 30px;
+}
+
+.box input,
+.box textarea {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: none;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #999;
+}
+
+.box input[type="submit"] {
+    border-bottom: none;
+    cursor: pointer;
+    background: #008497;
+    color: #FFF;
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+
+.box form div {
+    position: relative;
+}
+
+.box form div label {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    position: absolute;
+    top: 10px;
+    left: 0;
+    color: #999;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.box input:focus~label,
+.box textarea:focus~label,
+.box input:valid~label,
+.box textarea:valid~label {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    top: -12px;
+    left: 0;
+    color: #008497;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.box input:valid,
+.box textarea:valid {
+    border-bottom: 1.5px solid #ED1B24;
+}
+
+/* OTP CSS */
+
+.otp-field {
+    display: flex;
+}
+
+.otp-field input {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    width: 54px;
+    font-size: 32px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    margin: 2px;
+    border: 2px solid #1dcee8;
+    background: #008497;
+    font-weight: bold;
+    color: #fff;
+    outline: none;
+    transition: all 0.1s;
+}
+
+.otp-field input:focus {
+    border: 2px solid #a527ff;
+    box-shadow: 0 0 2px 2px #a527ff6a;
+}
+
+.disabled {
+    opacity: 0.5;
+}
+
+.space {
+    margin-right: 1rem !important;
+}
+
+.pencil {
+    margin-left: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: olive;
+}
+
+.resendotp {
+    width: 85px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #00cbe9;
+    cursor: pointer;
+}
+
+.otptimer {
+    color: #00cbe9;
+}
+
+#timer {
+    color: #ED1B24;
+}
+p{
+    font-family: Helvetica, Arial, sans-serif;
+}

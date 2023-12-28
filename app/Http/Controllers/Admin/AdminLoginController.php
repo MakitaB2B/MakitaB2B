@@ -1,0 +1,109 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use Illuminate\Support\Facades\Crypt;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use App\Services\AdminService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Auth;
+
+class AdminLoginController extends Controller
+{
+    protected $adminService;
+    public function __construct(AdminService $adminService){
+        $this->adminService=$adminService;
+    }
+    public function index(){
+        if(Auth::guard('admin')->check()){
+            $status=Auth::guard('admin')->user()->status;
+            if($status==0){
+                    return view('Admin.login');
+            }else{
+                return redirect()->route('admin.dashboard')->with('msg','You are alredy Logged IN');
+            }
+        }else{
+            return view('Admin.login');
+        }
+    }
+    public function auth(Request $request){
+        $userId = $request->post('userid');
+        $password =$request->post('password');
+        if(Auth::guard('admin')->attempt(['access_id'=>$userId, 'password'=>$password])){
+            $status=Auth::guard('admin')->user()->status;
+            if($status==0){
+                return back()->with('error','Access has been revoked!');
+            }else{
+                return redirect()->route('admin.dashboard')->with('msg','You are successfully logged in');
+            }
+        }else{
+            return back()->with('error','Invalid Email or Password');
+        }
+    }
+    public function dashboard(Request $request){
+        return view('Admin/dashboard');
+    }
+    public function adminList(){
+        $adminList=$this->adminService->getAllAdminWithEmpDtls();
+        return view('Admin.admins',compact('adminList'));
+    }
+    public function manageAdmin($adminSlug = '')
+    {
+        if ($adminSlug > 0) {
+            $decripedAdminSlug = Crypt::decrypt($adminSlug);
+            $arr = $this->adminService->findAdminBySlug($decripedAdminSlug);
+            $result['employee_slug'] = $arr[0]->employee_slug;
+            $result['access_id'] = $arr[0]->access_id;
+            $result['status'] = $arr[0]->status;
+            $result['admin_login_slug'] = Crypt::encrypt($arr[0]->admin_login_slug);
+            $result['admin_login_id'] = Crypt::encrypt($arr[0]->id);
+        } else {
+            $result['employee_slug'] = '';
+            $result['access_id'] = '';
+            $result['status'] = '';
+            $result['admin_login_slug'] = Crypt::encrypt(0);
+            $result['admin_login_id'] = Crypt::encrypt(0);
+        }
+        $result['allemp']=$this->adminService->findActiveEmployee();
+        return view('Admin.manage_admin', $result);
+    }
+    public function manageAdminProcess(Request $request){
+        $decripedSlug = Crypt::decrypt($request->admin_login_slug);
+        $id=Crypt::decrypt($request->admin_login_id);
+        if($decripedSlug>0){
+            $rowData=$this->adminService->findAdminBySlug($decripedSlug);
+            $id=$rowData[0]->id;
+            $adminSlug=$rowData[0]->admin_login_slug;
+        }else{
+            $id=0;
+            $adminSlug=Str::slug($decripedSlug.rand());
+        }
+        $data = $request->validate([
+            'employee_slug' => 'required|unique:admin_logins,employee_slug,'.$id,
+            'access_id' => 'required|unique:admin_logins,access_id,'.$id,
+            'status' => 'required|numeric',
+        ]);
+        if($data){
+            $dataOparateEmpSlug=Auth::guard('admin')->user()->employee_slug ;
+            $password=Hash::make($request->access_id);
+            $empSlug=Crypt::decrypt($request->employee_slug);
+            $createUpdateAction=$this->adminService->createOrUpdateAdmin($id,$password,$request,$adminSlug,$dataOparateEmpSlug,$empSlug);
+            if($createUpdateAction){
+                if($decripedSlug>0){
+                    $msg='Admin sucessfully updated';
+                 }
+                 else{
+                    $msg='Admin sucessfully inserted';
+                 }
+                $request->session()->flash('message',$msg);
+                return redirect('admin/admins');
+            }
+         }
+    }
+    public function logout(){
+        Auth::guard('admin')->logout();
+        return redirect()->route('adminlogin')->with('error','You are logged out');
+    }
+}
