@@ -316,7 +316,22 @@
                                 </p>
                             </a>
                         </li>
-
+                        <li class="nav-item">
+                            <a href="{{ url('admin/holidays') }}" class="nav-link @yield('holiday_select')">
+                                <i class="nav-icon fas fa-calendar"></i>
+                                <p>
+                                    Holidays
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link">
+                                <i class="nav-icon fa fa-calendar-minus"></i>
+                                <p>
+                                    Apply Leave
+                                </p>
+                            </a>
+                        </li>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
