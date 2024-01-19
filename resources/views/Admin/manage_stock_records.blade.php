@@ -72,15 +72,14 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title"><strong>{{ $mvDetails[0]->item }}</strong>, <small>Total:
-                                        {{ $mvDetails[0]->total_stock }}</small></h3>
+                                <h3 class="card-title"><strong>{{$stockDetails[0]['item']}}</strong>, <small>Total:
+                                    {{$stockDetails[0]['grandtotal']}}</small></h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
                                             <th class="mainstock bstockheader">Main Stock</th>
                                             <th class="demoin bstockheader">Demo In</th>
                                             <th class="demoout bstockheader">Demo Out</th>
@@ -89,28 +88,431 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($stockDetails as $list)
                                             <tr>
-                                                <td class="getSlug"><span
-                                                    style="display: none">{{ $list->fscbs_slug }}-</span> {{$loop->iteration}}</td>
-                                                <td contenteditable="true"><span
-                                                        style="display: none">main-</span>{{ $list->place_short_code }}:
-                                                    <b>{{ $list->main }}</b></td>
-                                                <td contenteditable="true"><span
-                                                    style="display: none">demo_in-</span>{{ $list->place_short_code }}: <b>{{ $list->demo_in }}</b></td>
-                                                <td contenteditable="true"><span
-                                                    style="display: none">demo_out-</span>{{ $list->place_short_code }}: <b>{{ $list->demo_out }}</b></td>
-                                                <td contenteditable="true"><span
-                                                    style="display: none">service_room-</span>{{ $list->place_short_code }}: <b>{{ $list->service_room }}</b></td>
-                                                <td contenteditable="true"><span
-                                                    style="display: none">show_room-</span>{{ $list->place_short_code }}: <b>{{ $list->show_room }}</b></td>
-
+                                                @php
+                                                if($stockDetails[0]['cb01']==''){
+                                                    $cbMainStock=0;
+                                                }elseif($stockDetails[0]['cb01']!=''){
+                                                    $cbMainStock=$stockDetails[0]['cb01'];
+                                                }
+                                                if($stockDetails[0]['cb02']==''){
+                                                    $cbDemoINStock=0;
+                                                }elseif($stockDetails[0]['cb02']!=''){
+                                                    $cbDemoINStock=$stockDetails[0]['cb02'];
+                                                }
+                                                if($stockDetails[0]['cb05']==''){
+                                                    $cbShowRoomStock=0;
+                                                }elseif($stockDetails[0]['cb05']!=''){
+                                                    $cbShowRoomStock=$stockDetails[0]['cb05'];
+                                                }
+                                                @endphp
+                                                <td>Coimbatore: {{$cbMainStock}}</td>
+                                                <td>Coimbatore: {{$cbDemoINStock}}</td>
+                                                <td>NA</td>
+                                                <td>NA</td>
+                                                <td>Coimbatore: {{$cbShowRoomStock}}</td>
                                             </tr>
-                                        @endforeach
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['dl01']==''){
+                                                    $dlMainStock=0;
+                                                }elseif($stockDetails[0]['dl01']!=''){
+                                                    $dlMainStock=$stockDetails[0]['dl01'];
+                                                }
+                                                if($stockDetails[0]['dl02']==''){
+                                                    $dlDemoInStock=0;
+                                                }elseif($stockDetails[0]['dl02']!=''){
+                                                    $dlDemoInStock=$stockDetails[0]['dl02'];
+                                                }
+                                                if($stockDetails[0]['dl03']==''){
+                                                    $dlDemoOutStock=0;
+                                                }elseif($stockDetails[0]['dl03']!=''){
+                                                    $dlDemoOutStock=$stockDetails[0]['dl03'];
+                                                }
+                                                if($stockDetails[0]['dl04']==''){
+                                                    $dlServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['dl04']!=''){
+                                                    $dlServiceRoomStock=$stockDetails[0]['dl04'];
+                                                }
+                                                if($stockDetails[0]['dl04']==''){
+                                                    $dlShowRoomStock=0;
+                                                }elseif($stockDetails[0]['dl04']!=''){
+                                                    $dlShowRoomStock=$stockDetails[0]['dl04'];
+                                                }
+                                                @endphp
+                                                <td>DELHI: {{$dlMainStock}}</td>
+                                                <td>DELHI: {{$dlDemoInStock}}</td>
+                                                <td>DELHI: {{$dlDemoOutStock}}</td>
+                                                <td>DELHI: {{$dlServiceRoomStock}}</td>
+                                                <td>DELHI: {{$dlShowRoomStock}}</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['gh01']==''){
+                                                    $dlMainStock=0;
+                                                }elseif($stockDetails[0]['gh01']!=''){
+                                                    $dlMainStock=$stockDetails[0]['gh01'];
+                                                }
+                                                @endphp
+                                                <td>Guwahati: {{$dlMainStock}}</td>
+                                                <td>NA</td>
+                                                <td>NA</td>
+                                                <td>NA</td>
+                                                <td>NA</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['gj01']==''){
+                                                    $gjMainStock=0;
+                                                }elseif($stockDetails[0]['gj01']!=''){
+                                                    $gjMainStock=$stockDetails[0]['gj01'];
+                                                }
+                                                if($stockDetails[0]['gj02']==''){
+                                                    $gjDemoInStock=0;
+                                                }elseif($stockDetails[0]['gj02']!=''){
+                                                    $gjDemoInStock=$stockDetails[0]['gj02'];
+                                                }
+                                                if($stockDetails[0]['gj03']==''){
+                                                    $gjDemoOutStock=0;
+                                                }elseif($stockDetails[0]['gj03']!=''){
+                                                    $gjDemoOutStock=$stockDetails[0]['gj03'];
+                                                }
+                                                if($stockDetails[0]['gj04']==''){
+                                                    $gjServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['gj04']!=''){
+                                                    $gjServiceRoomStock=$stockDetails[0]['gj04'];
+                                                }
+                                                if($stockDetails[0]['gj05']==''){
+                                                    $gjShowRoomStock=0;
+                                                }elseif($stockDetails[0]['gj05']!=''){
+                                                    $gjShowRoomStock=$stockDetails[0]['gj05'];
+                                                }
+                                                @endphp
+                                                <td>Gujarat: {{$gjMainStock}}</td>
+                                                <td>Gujarat: {{$gjDemoInStock}}</td>
+                                                <td>Gujarat: {{$gjDemoOutStock}}</td>
+                                                <td>Gujarat: {{$gjServiceRoomStock}}</td>
+                                                <td>Gujarat: {{$gjShowRoomStock}}</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['id01']==''){
+                                                    $idMainStock=0;
+                                                }elseif($stockDetails[0]['id01']!=''){
+                                                    $idMainStock=$stockDetails[0]['id01'];
+                                                }
+                                                if($stockDetails[0]['id02']==''){
+                                                    $idDemoInStock=0;
+                                                }elseif($stockDetails[0]['id02']!=''){
+                                                    $idDemoInStock=$stockDetails[0]['id02'];
+                                                }
+                                                if($stockDetails[0]['id04']==''){
+                                                    $idServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['id04']!=''){
+                                                    $idServiceRoomStock=$stockDetails[0]['id04'];
+                                                }
+                                                @endphp
+                                                <td>Indore: {{$idMainStock}}</td>
+                                                <td>Indore: {{$idDemoInStock}}</td>
+                                                <td>NA</td>
+                                                <td>Indore: {{$idServiceRoomStock}}</td>
+                                                <td>NA</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['jm01']==''){
+                                                    $jmMainStock=0;
+                                                }elseif($stockDetails[0]['jm01']!=''){
+                                                    $jmMainStock=$stockDetails[0]['jm01'];
+                                                }
+                                                if($stockDetails[0]['jm02']==''){
+                                                    $jmDemoInStock=0;
+                                                }elseif($stockDetails[0]['jm02']!=''){
+                                                    $jmDemoInStock=$stockDetails[0]['jm02'];
+                                                }
+                                                if($stockDetails[0]['jm04']==''){
+                                                    $jmServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['jm04']!=''){
+                                                    $jmServiceRoomStock=$stockDetails[0]['jm04'];
+                                                }
+                                                @endphp
+                                                <td>Jamshedpur: {{$jmMainStock}}</td>
+                                                <td>Jamshedpur: {{$jmDemoInStock}}</td>
+                                                <td>NA</td>
+                                                <td>Jamshedpur: {{$jmServiceRoomStock}}</td>
+                                                <td>NA</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['ka01']==''){
+                                                    $kaMainStock=0;
+                                                }elseif($stockDetails[0]['ka01']!=''){
+                                                    $kaMainStock=$stockDetails[0]['ka01'];
+                                                }
+                                                if($stockDetails[0]['ka02']==''){
+                                                    $kaDemoInStock=0;
+                                                }elseif($stockDetails[0]['ka02']!=''){
+                                                    $kaDemoInStock=$stockDetails[0]['ka02'];
+                                                }
+                                                if($stockDetails[0]['ka03']==''){
+                                                    $kaDemoOutStock=0;
+                                                }elseif($stockDetails[0]['ka03']!=''){
+                                                    $kaDemoOutStock=$stockDetails[0]['ka03'];
+                                                }
+                                                if($stockDetails[0]['ka04']==''){
+                                                    $kaServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['ka04']!=''){
+                                                    $kaServiceRoomStock=$stockDetails[0]['ka04'];
+                                                }
+                                                if($stockDetails[0]['ka05']==''){
+                                                    $kaShowRoomStock=0;
+                                                }elseif($stockDetails[0]['ka05']!=''){
+                                                    $kaShowRoomStock=$stockDetails[0]['ka05'];
+                                                }
+                                                @endphp
+                                                <td>Karnataka: {{$kaMainStock}}</td>
+                                                <td>Karnataka: {{$kaDemoInStock}}</td>
+                                                <td>Karnataka: {{$kaDemoOutStock}}</td>
+                                                <td>Karnataka: {{$kaServiceRoomStock}}</td>
+                                                <td>Karnataka: {{$kaShowRoomStock}}</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['kl01']==''){
+                                                    $klMainStock=0;
+                                                }elseif($stockDetails[0]['kl01']!=''){
+                                                    $klMainStock=$stockDetails[0]['kl01'];
+                                                }
+                                                if($stockDetails[0]['kl02']==''){
+                                                    $klDemoInStock=0;
+                                                }elseif($stockDetails[0]['kl02']!=''){
+                                                    $klDemoInStock=$stockDetails[0]['kl02'];
+                                                }
+                                                if($stockDetails[0]['kl03']==''){
+                                                    $klDemoOutStock=0;
+                                                }elseif($stockDetails[0]['kl03']!=''){
+                                                    $klDemoOutStock=$stockDetails[0]['kl03'];
+                                                }
+                                                if($stockDetails[0]['kl04']==''){
+                                                    $klServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['kl04']!=''){
+                                                    $klServiceRoomStock=$stockDetails[0]['kl04'];
+                                                }
+                                                if($stockDetails[0]['kl05']==''){
+                                                    $klShowRoomStock=0;
+                                                }elseif($stockDetails[0]['kl05']!=''){
+                                                    $klShowRoomStock=$stockDetails[0]['kl05'];
+                                                }
+                                                @endphp
+                                                <td>Kerala: {{$klMainStock}}</td>
+                                                <td>Kerala: {{$klDemoInStock}}</td>
+                                                <td>Kerala: {{$klDemoOutStock}}</td>
+                                                <td>Kerala: {{$klServiceRoomStock}}</td>
+                                                <td>Kerala: {{$klShowRoomStock}}</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['mh01']==''){
+                                                    $mhMainStock=0;
+                                                }elseif($stockDetails[0]['mh01']!=''){
+                                                    $mhMainStock=$stockDetails[0]['mh01'];
+                                                }
+                                                if($stockDetails[0]['mh02']==''){
+                                                    $mhDemoInStock=0;
+                                                }elseif($stockDetails[0]['mh02']!=''){
+                                                    $mhDemoInStock=$stockDetails[0]['mh02'];
+                                                }
+                                                if($stockDetails[0]['mh03']==''){
+                                                    $mhDemoOutStock=0;
+                                                }elseif($stockDetails[0]['mh03']!=''){
+                                                    $mhDemoOutStock=$stockDetails[0]['mh03'];
+                                                }
+                                                if($stockDetails[0]['mh05']==''){
+                                                    $mhShowRoomStock=0;
+                                                }elseif($stockDetails[0]['mh05']!=''){
+                                                    $mhShowRoomStock=$stockDetails[0]['mh05'];
+                                                }
+                                                @endphp
+                                                <td>Maharashtra: {{$mhMainStock}}</td>
+                                                <td>Maharashtra: {{$mhDemoInStock}}</td>
+                                                <td>Maharashtra: {{$mhDemoOutStock}}</td>
+                                                <td>NA</td>
+                                                <td>Maharashtra: {{$mhShowRoomStock}}</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['pn01']==''){
+                                                    $pnMainStock=0;
+                                                }elseif($stockDetails[0]['pn01']!=''){
+                                                    $pnMainStock=$stockDetails[0]['pn01'];
+                                                }
+                                                if($stockDetails[0]['pn02']==''){
+                                                    $pnDemoInStock=0;
+                                                }elseif($stockDetails[0]['pn02']!=''){
+                                                    $pnDemoInStock=$stockDetails[0]['pn02'];
+                                                }
+                                                if($stockDetails[0]['pn03']==''){
+                                                    $pnDemoOutStock=0;
+                                                }elseif($stockDetails[0]['pn03']!=''){
+                                                    $pnDemoOutStock=$stockDetails[0]['pn03'];
+                                                }
+                                                if($stockDetails[0]['pn04']==''){
+                                                    $pnServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['pn04']!=''){
+                                                    $pnServiceRoomStock=$stockDetails[0]['pn04'];
+                                                }
+                                                @endphp
+                                                <td>Pune: {{$pnMainStock}}</td>
+                                                <td>Pune: {{$pnDemoInStock}}</td>
+                                                <td>Pune: {{$pnDemoOutStock}}</td>
+                                                <td>Pune: {{$pnServiceRoomStock}}</td>
+                                                <td>NA</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['py01']==''){
+                                                    $pyMainStock=0;
+                                                }elseif($stockDetails[0]['py01']!=''){
+                                                    $pyMainStock=$stockDetails[0]['py01'];
+                                                }
+                                                if($stockDetails[0]['py02']==''){
+                                                    $pyDemoInStock=0;
+                                                }elseif($stockDetails[0]['py02']!=''){
+                                                    $pyDemoInStock=$stockDetails[0]['py02'];
+                                                }
+                                                if($stockDetails[0]['py03']==''){
+                                                    $pyDemoOutStock=0;
+                                                }elseif($stockDetails[0]['py03']!=''){
+                                                    $pyDemoOutStock=$stockDetails[0]['py03'];
+                                                }
+                                                if($stockDetails[0]['py04']==''){
+                                                    $pyServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['py04']!=''){
+                                                    $pyServiceRoomStock=$stockDetails[0]['py04'];
+                                                }
+                                                @endphp
+                                                <td>Peenya: {{$pyMainStock}}</td>
+                                                <td>Peenya: {{$pyDemoInStock}}</td>
+                                                <td>Peenya: {{$pyDemoOutStock}}</td>
+                                                <td>Peenya: {{$pyServiceRoomStock}}</td>
+                                                <td>NA</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['rd01']==''){
+                                                    $rdMainStock=0;
+                                                }elseif($stockDetails[0]['rd01']!=''){
+                                                    $rdMainStock=$stockDetails[0]['rd01'];
+                                                }
+                                                if($stockDetails[0]['rd02']==''){
+                                                    $rdDemoInStock=0;
+                                                }elseif($stockDetails[0]['rd02']!=''){
+                                                    $rdDemoInStock=$stockDetails[0]['rd02'];
+                                                }
+                                                if($stockDetails[0]['rd04']==''){
+                                                    $rdServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['rd04']!=''){
+                                                    $rdServiceRoomStock=$stockDetails[0]['rd04'];
+                                                }
+                                                @endphp
+                                                <td>Rudrapur: {{$rdMainStock}}</td>
+                                                <td>Rudrapur: {{$rdDemoInStock}}</td>
+                                                <td>NA</td>
+                                                <td>Rudrapur: {{$rdServiceRoomStock}}</td>
+                                                <td>NA</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['tn01']==''){
+                                                    $tnMainStock=0;
+                                                }elseif($stockDetails[0]['tn01']!=''){
+                                                    $tnMainStock=$stockDetails[0]['tn01'];
+                                                }
+                                                if($stockDetails[0]['tn02']==''){
+                                                    $tnDemoInStock=0;
+                                                }elseif($stockDetails[0]['tn02']!=''){
+                                                    $tnDemoInStock=$stockDetails[0]['tn02'];
+                                                }
+                                                if($stockDetails[0]['tn03']==''){
+                                                    $tnDemoOutStock=0;
+                                                }elseif($stockDetails[0]['tn03']!=''){
+                                                    $tnDemoOutStock=$stockDetails[0]['tn03'];
+                                                }
+                                                if($stockDetails[0]['tn04']==''){
+                                                    $tnServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['tn04']!=''){
+                                                    $tnServiceRoomStock=$stockDetails[0]['tn04'];
+                                                }
+                                                if($stockDetails[0]['tn05']==''){
+                                                    $tnShowRoomStock=0;
+                                                }elseif($stockDetails[0]['tn05']!=''){
+                                                    $tnShowRoomStock=$stockDetails[0]['tn05'];
+                                                }
+                                                @endphp
+                                                <td>Chennai: {{$tnMainStock}}</td>
+                                                <td>Chennai: {{$tnDemoInStock}}</td>
+                                                <td>Chennai: {{$tnDemoOutStock}}</td>
+                                                <td>Chennai: {{$tnServiceRoomStock}}</td>
+                                                <td>Chennai: {{$tnShowRoomStock}}</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['vd01']==''){
+                                                    $vdMainStock=0;
+                                                }elseif($stockDetails[0]['vd01']!=''){
+                                                    $vdMainStock=$stockDetails[0]['vd01'];
+                                                }
+                                                if($stockDetails[0]['vd04']==''){
+                                                    $vdServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['vd04']!=''){
+                                                    $vdServiceRoomStock=$stockDetails[0]['vd04'];
+                                                }
+                                                @endphp
+                                                <td>Vadora: {{$vdMainStock}}</td>
+                                                <td>NA</td>
+                                                <td>NA</td>
+                                                <td>Vadora: {{$vdServiceRoomStock}}</td>
+                                                <td>NA</td>
+                                            </tr>
+                                            <tr>
+                                                @php
+                                                if($stockDetails[0]['wb01']==''){
+                                                    $wbMainStock=0;
+                                                }elseif($stockDetails[0]['wb01']!=''){
+                                                    $wbMainStock=$stockDetails[0]['wb01'];
+                                                }
+                                                if($stockDetails[0]['wb02']==''){
+                                                    $wbDemoInStock=0;
+                                                }elseif($stockDetails[0]['wb02']!=''){
+                                                    $wbDemoInStock=$stockDetails[0]['wb02'];
+                                                }
+                                                if($stockDetails[0]['wb03']==''){
+                                                    $wbDemoOutStock=0;
+                                                }elseif($stockDetails[0]['wb03']!=''){
+                                                    $wbDemoOutStock=$stockDetails[0]['wb03'];
+                                                }
+                                                if($stockDetails[0]['wb04']==''){
+                                                    $wbServiceRoomStock=0;
+                                                }elseif($stockDetails[0]['wb04']!=''){
+                                                    $wbServiceRoomStock=$stockDetails[0]['wb04'];
+                                                }
+                                                if($stockDetails[0]['wb05']==''){
+                                                    $wbShowRoomStock=0;
+                                                }elseif($stockDetails[0]['wb05']!=''){
+                                                    $wbShowRoomStock=$stockDetails[0]['wb05'];
+                                                }
+                                                @endphp
+                                                <td>kolkata: {{$wbMainStock}}</td>
+                                                <td>kolkata: {{$wbDemoInStock}}</td>
+                                                <td>kolkata: {{$wbDemoOutStock}}</td>
+                                                <td>kolkata: {{$wbServiceRoomStock}}</td>
+                                                <td>kolkata: {{$wbShowRoomStock}}</td>
+                                            </tr>
+
+
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th>#</th>
                                             <th class="mainstock bstockheader">Main Stock</th>
                                             <th class="demoin bstockheader">Demo In</th>
                                             <th class="demoout bstockheader">Demo Out</th>

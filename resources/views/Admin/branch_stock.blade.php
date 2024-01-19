@@ -6,15 +6,30 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <div class="container-fluid">
+                @if (session()->has('message'))
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ session('message') }}</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i
+                                        class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         <h1>Branch Stock</h1>
                     </div>
                     <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Branch Stock</li>
-                        </ol>
+                        <b style="display: none; color:green" id="hm">File is large, it may take a while, please wait while processing.....</b>
+                        <form action="{{ route('upload-daily-stock') }}" method="post" enctype="multipart/form-data" id="suf">
+                            @csrf
+                            <input type="submit" value="Upload" class="btn float-right" id="submitstock">
+                            <label for="inputField" class="btn btn-info float-right">Stocks File</label>
+                            <input type="file" name="mycsv" id="inputField" style="display:none" required>
+                        </form>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -51,6 +66,7 @@
                                             <th>Description</th>
                                             <th>Total</th>
                                             <th>Action</th>
+                                            <th>Last Updated</th>
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
@@ -59,9 +75,10 @@
                                                         <td>{{$key+1}}</td>
                                                         <td>{{ $modelVariantData->item }}</td>
                                                         <td>{{ $modelVariantData->description }}</td>
-                                                        <td>{{ $modelVariantData->total_stock }}</td>
-                                                        <td><a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->pmv_slug) }}"
+                                                        <td>{{ $modelVariantData->grandtotal }}</td>
+                                                        <td><a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->id) }}"
                                                             title="View Stock Details"> <i class="nav-icon fas fa-eye"></i></a></td>
+                                                        <td>{{ Carbon\Carbon::parse($modelVariantData->updated_at)->format('d M Y H:i:s' ) }}</td>
                                                     </tr>
                                         @endforeach
                                     </tbody>
@@ -99,6 +116,12 @@
                 }if(searchtxt.length<3){
                     $("#searchresultmsg").text('Should input more than 3 character').css({"color": "red", "font-weight": "600","font-size":"10px"});
                 }
+            });
+
+            $('#submitstock').on('click', function() {
+                $("#suf").hide();
+                $("#hm").show();
+
             });
         });
     </script>

@@ -116,6 +116,8 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/holidays/manage-holiday/{id?}',[HolidayController::class,'manageHoliday'])->name('holidays.manage-holiday');
     Route::post('/holidays/manage-holiday-process',[HolidayController::class,'createOrUpdateHolidayController'])->name('holidays.manage-holiday-process');
 
+    Route::post('/upload-daily-stock',[BranchStockController::class,'uploadDailyStocks'])->name('upload-daily-stock');
+
 });
 
 /*-----End Admin Route-----*/
