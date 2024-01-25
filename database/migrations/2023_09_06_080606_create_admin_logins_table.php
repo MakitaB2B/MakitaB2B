@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('employee_slug')->unique();
             $table->string('access_id')->unique();
             $table->string('password');
+            $table->timestamp('last_activity')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->string('admin_login_slug');
             $table->string('created_by');

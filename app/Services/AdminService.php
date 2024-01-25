@@ -27,5 +27,8 @@ class AdminService{
             return true;
          }
     }
+    public function getAllLoginActivities(){
+        return AdminLogin::with('employee:employee_no,full_name,phone_number,employee_slug')->whereNotNull('last_activity')->orderBy('last_activity','desc')->get();
+    }
 }
 ?>

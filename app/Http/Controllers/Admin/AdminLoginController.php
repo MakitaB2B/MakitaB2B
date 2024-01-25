@@ -43,7 +43,8 @@ class AdminLoginController extends Controller
         }
     }
     public function dashboard(Request $request){
-        return view('Admin/dashboard');
+        $dashboardData['empLoginActivity']=$this->adminService->getAllLoginActivities();
+        return view('Admin/dashboard',$dashboardData);
     }
     public function adminList(){
         $adminList=$this->adminService->getAllAdminWithEmpDtls();

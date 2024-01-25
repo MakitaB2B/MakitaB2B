@@ -22,6 +22,7 @@ class AdminLogin extends Authenticatable
         'employee_slug',
         'access_id',
         'password',
+        'last_activity',
         'slug',
         'status',
         'admin_login_slug',

@@ -5,7 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Admin\AdminLogin;
 use Auth;
+use Cache;
 
 class Admin
 {
@@ -20,6 +22,11 @@ class Admin
             $status=Auth::guard('admin')->user()->status;
             if($status==0){
                 return redirect()->route('adminlogin')->with('error','Access has been revoked!');
+            }elseif($status==1){
+                $adminId=Auth::guard('admin')->user()->id;
+                $expireAt= now()->addMinutes(1);
+                Cache::put('emp-login-activity'.$adminId,true,$expireAt);
+                AdminLogin::where('id',$adminId)->update(['last_activity'=>now()]);
             }
         }elseif(!Auth::guard('admin')->check()){
             return redirect()->route('adminlogin')->with('error','Access Denied!');
