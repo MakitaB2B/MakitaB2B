@@ -43,16 +43,23 @@ class BranchStockController extends Controller
     }
     public function searchStock(Request $request){
         $searchValue=$request->searchtxt;
-        $searchResult=BranchStocks::where('item','LIKE','%'.$searchValue."%")->get();
+        $searchFrom=$request->searchFrom;
+        $searchResult=BranchStocks::where('item','LIKE','%'.$searchValue."%")
+        ->orWhere('description', 'like', "%{$searchValue}%")->get(['id','item','description','grandtotal','updated_at']);
         if(($searchResult->count())>0 ){
             $output="";
+            if($searchFrom=='stockpg'){
+                $routeTo="branch-stock-details/";
+            }elseif($searchFrom=='mngStockRecord'){
+                $routeTo="";
+            }
             foreach ($searchResult as $key => $data) {
                 $output.='<tr>'.
                 '<td>'.($key+1).'</td>'.
                 '<td>'.$data->item.'</td>'.
                 '<td>'.$data->description.'</td>'.
                 '<td>'.$data->grandtotal.'</td>'.
-                '<td>'.'<a href= "branch-stock-details/'.Crypt::encrypt($data->id).'"> <i class="nav-icon fas fa-eye"></i> </a>'.'</td>'.
+                '<td>'.'<a href= "'.$routeTo.Crypt::encrypt($data->id).'"> <i class="nav-icon fas fa-eye"></i> </a>'.'</td>'.
                 '<td>'.\Carbon\Carbon::parse($data->updated_at)->format('d M Y H:i:s' ).'</td>'.
                 '</tr>';
                 }

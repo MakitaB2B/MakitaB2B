@@ -67,7 +67,7 @@
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>{{ $list->full_name  }}</td>
-                                                <td>{{ $list->employee_no }}</td>
+                                                <td>MIN-{{ $list->employee_no }}</td>
                                                 <td>{{ $list->phone_number }}</td>
                                                 <td>{{ $list->alt_phone_number }}</td>
                                                 <td>

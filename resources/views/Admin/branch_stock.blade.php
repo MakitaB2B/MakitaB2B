@@ -23,8 +23,10 @@
                         <h1>Branch Stock</h1>
                     </div>
                     <div class="col-sm-6">
-                        <b style="display: none; color:green" id="hm">File is large, it may take a while, please wait while processing.....</b>
-                        <form action="{{ route('upload-daily-stock') }}" method="post" enctype="multipart/form-data" id="suf">
+                        <b style="display: none; color:green" id="hm">File is large, it may take a while, please wait
+                            while processing.....</b>
+                        <form action="{{ route('upload-daily-stock') }}" method="post" enctype="multipart/form-data"
+                            id="suf">
                             @csrf
                             <input type="submit" value="Upload" class="btn float-right" id="submitstock">
                             <label for="inputField" class="btn btn-info float-right">Stocks File</label>
@@ -70,16 +72,18 @@
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
-                                        @foreach ($result as $key=>$modelVariantData)
-                                                    <tr>
-                                                        <td>{{$key+1}}</td>
-                                                        <td>{{ $modelVariantData->item }}</td>
-                                                        <td>{{ $modelVariantData->description }}</td>
-                                                        <td>{{ $modelVariantData->grandtotal }}</td>
-                                                        <td><a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->id) }}"
-                                                            title="View Stock Details"> <i class="nav-icon fas fa-eye"></i></a></td>
-                                                        <td>{{ Carbon\Carbon::parse($modelVariantData->updated_at)->format('d M Y H:i:s' ) }}</td>
-                                                    </tr>
+                                        @foreach ($result as $key => $modelVariantData)
+                                            <tr>
+                                                <td>{{ $key + 1 }}</td>
+                                                <td>{{ $modelVariantData->item }}</td>
+                                                <td>{{ $modelVariantData->description }}</td>
+                                                <td>{{ $modelVariantData->grandtotal }}</td>
+                                                <td><a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->id) }}"
+                                                        title="View Stock Details"> <i class="nav-icon fas fa-eye"></i></a>
+                                                </td>
+                                                <td>{{ Carbon\Carbon::parse($modelVariantData->updated_at)->format('d M Y H:i:s') }}
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -98,32 +102,43 @@
         <!-- /.content -->
     </div>
     @push('scripts')
-    <script>
-        $(document).ready(function() {
-            $('.smi').on('click', function() {
-                let searchtxt = $.trim($("#searchtxt").val());
-                if(searchtxt!='' && searchtxt.length>3){
-                    $("#searchresultmsg").text('Please Wait while processing....').css({"color": "green", "font-weight": "600","font-size":"11px"});
-                    $.ajax({
-                    url: '/admin/stock-search',
-                    type: 'post',
-                    data: 'searchtxt=' + searchtxt + '&_token={{ csrf_token() }}',
-                    success: function(result) {
-                        $('#searchresult').html(result);
-                        $("#searchresultmsg").text('');
+        <script>
+            $(document).ready(function() {
+                $('.smi').on('click', function() {
+                    let searchtxt = $.trim($("#searchtxt").val());
+                    let searchFrom = "stockpg";
+                    if (searchtxt != '' && searchtxt.length > 3) {
+                        $("#searchresultmsg").text('Please Wait while processing....').css({
+                            "color": "green",
+                            "font-weight": "600",
+                            "font-size": "11px"
+                        });
+                        $.ajax({
+                            url: '/admin/stock-search',
+                            type: 'post',
+                            data: 'searchtxt=' + searchtxt + '&searchFrom=' + searchFrom +
+                                '&_token={{ csrf_token() }}',
+                            success: function(result) {
+                                $('#searchresult').html(result);
+                                $("#searchresultmsg").text('');
+                            }
+                        });
                     }
-                    });
-                }if(searchtxt.length<3){
-                    $("#searchresultmsg").text('Should input more than 3 character').css({"color": "red", "font-weight": "600","font-size":"10px"});
-                }
-            });
+                    if (searchtxt.length < 3) {
+                        $("#searchresultmsg").text('Should input more than 3 character').css({
+                            "color": "red",
+                            "font-weight": "600",
+                            "font-size": "10px"
+                        });
+                    }
+                });
 
-            $('#submitstock').on('click', function() {
-                $("#suf").hide();
-                $("#hm").show();
+                $('#submitstock').on('click', function() {
+                    $("#suf").hide();
+                    $("#hm").show();
 
+                });
             });
-        });
-    </script>
+        </script>
     @endpush
 @endsection
