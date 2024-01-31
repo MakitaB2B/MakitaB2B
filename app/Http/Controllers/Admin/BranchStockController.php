@@ -15,28 +15,10 @@ use Illuminate\Pagination\Paginator;
 class BranchStockController extends Controller
 {
     public function index(){
-        // $result =  DB::table('fsc_branch_stock')
-        //         ->leftJoin('product_model_variant', 'fsc_branch_stock.model_variant_id', '=', 'product_model_variant.id')
-        //         ->leftJoin('fsc_branch', 'fsc_branch_stock.fsc_branch_id', '=', 'fsc_branch.id')
-        //         ->get()
-        //         ->groupBy('model_variant_id')
-        //         ->sortByDesc(function ($scores, $key) {
-        //             return $scores->count();
-        //         });
-        // $result=DB::table('product_model_variant')->offset(0)->limit(10)->get(['item','description','total_stock','pmv_slug']);
-
-        // $result=ProductModelVariant::paginate(20,['item','description','total_stock','pmv_slug']);
-        $result=BranchStocks::paginate(20,['item','description','grandtotal','id','updated_at']);
+        $result=BranchStocks::with('reservedStock:id,item,reserved')->paginate(20,['item','description','grandtotal','id','updated_at']);
         return view('Admin.branch_stock',compact('result'));
     }
     public function getBranchStockDetails($pmvSlug){
-        // $decodedPmvSlug=Crypt::decrypt($pmvSlug);
-        // $result['mvDetails']=DB::table('product_model_variant')->where('pmv_slug',$decodedPmvSlug)->get(['id','item','total_stock']);
-        // $modelVariId=$result['mvDetails'][0]->id;
-        // $result['stockDetails']=DB::table('fsc_branch_stock')->where('model_variant_id',$modelVariId)
-        // ->leftJoin('fsc_branch', 'fsc_branch_stock.fsc_branch_id', '=', 'fsc_branch.id')
-        // ->select('fsc_branch_stock.id','fsc_branch_stock.fscbs_slug','fsc_branch_stock.main','fsc_branch_stock.demo_in','fsc_branch_stock.demo_out','fsc_branch_stock.service_room','fsc_branch_stock.show_room','fsc_branch.place_short_code')
-        // ->get();
         $decodedID=Crypt::decrypt($pmvSlug);
         $result['stockDetails']=BranchStocks::where('id','=',$decodedID)->get();
         return view('Admin.manage_stock_records',$result);
@@ -44,8 +26,7 @@ class BranchStockController extends Controller
     public function searchStock(Request $request){
         $searchValue=$request->searchtxt;
         $searchFrom=$request->searchFrom;
-        $searchResult=BranchStocks::where('item','LIKE','%'.$searchValue."%")
-        ->orWhere('description', 'like', "%{$searchValue}%")->get(['id','item','description','grandtotal','updated_at']);
+        $searchResult=BranchStocks::where('item','LIKE','%'.$searchValue."%")->with('reservedStock:id,item,reserved')->get(['id','item','description','grandtotal','updated_at']);
         if(($searchResult->count())>0 ){
             $output="";
             if($searchFrom=='stockpg'){
@@ -54,11 +35,18 @@ class BranchStockController extends Controller
                 $routeTo="";
             }
             foreach ($searchResult as $key => $data) {
+                $totalReservedQty = 0;
+                $reserveQtyStr = $data->reservedStock->pluck('reserved')->implode('+');
+                $explodeRQ = explode('+', $reserveQtyStr);
+                foreach ($explodeRQ as $rq) {
+                    $totalReservedQty += (int) $rq;
+                }
                 $output.='<tr>'.
                 '<td>'.($key+1).'</td>'.
                 '<td>'.$data->item.'</td>'.
                 '<td>'.$data->description.'</td>'.
                 '<td>'.$data->grandtotal.'</td>'.
+                '<td>'.$totalReservedQty.'</td>'.
                 '<td>'.'<a href= "'.$routeTo.Crypt::encrypt($data->id).'"> <i class="nav-icon fas fa-eye"></i> </a>'.'</td>'.
                 '<td>'.\Carbon\Carbon::parse($data->updated_at)->format('d M Y H:i:s' ).'</td>'.
                 '</tr>';
@@ -89,27 +77,17 @@ class BranchStockController extends Controller
             $count=count($data);
             $lastRow=$count-1;
             $header=$data[0];
-            // unset($data[0],$data[1],$data[2],$data[$lastRow]);
             unset($data[0],$data[$lastRow]);
-
             BranchStocks::truncate();
-
             foreach ($data as $value) {
                 set_time_limit(0);
                 // dd(array_combine($header,$value));
                 $stockData=array_combine($header,$value);
                 BranchStocks::create($stockData);
             }
-            // return redirect('admin/branch-stock');
-            // return 'Done';
-
-            // $msg='Stock Sucessfully updated';
-            // $request->session()->flash('message',$msg);
-
-
+            return redirect('admin/branch-stock');
         }else{
             return 'No File not there';
         }
-
     }
 }

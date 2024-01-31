@@ -1,5 +1,7 @@
 @extends('Admin/layout')
 @section('page_title', 'Stock List | MAKITA')
+@section('stock-expandable','menu-open')
+@section('stock_select','active')
 @section('branch_stock_select', 'active')
 @section('container')
     <style>

@@ -308,13 +308,28 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ url('admin/branch-stock') }}" class="nav-link @yield('branch_stock_select')">
-                                <i class="nav-icon fa fa-cubes"></i>
+                        <li class="nav-item @yield('stock-expandable')">
+                            <a href="#" class="nav-link @yield('stock_select')">
+                                <i class="nav-icon fa fa-microchip"></i>
                                 <p>
-                                    Branch Stocks
+                                    Stocks
+                                    <i class="fas fa-angle-left right"></i>
                                 </p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/branch-stock') }}" class="nav-link @yield('branch_stock_select')">
+                                        <i class="nav-icon fa fa-cubes"></i>
+                                        <p>Branch Stocks</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/reserved-stock') }}" class="nav-link @yield('reserved_stocks')">
+                                        <i class="nav-icon fa fa-braille"></i>
+                                        <p>Reserved Stocks</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <a href="{{ url('admin/holidays') }}" class="nav-link @yield('holiday_select')">

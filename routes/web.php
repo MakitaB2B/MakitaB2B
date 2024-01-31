@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ProductModelController;
 use App\Http\Controllers\Admin\BranchStockController;
 use App\Http\Controllers\Admin\HolidayController;
+use App\Http\Controllers\Admin\ReservedStockController;
 
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
@@ -112,12 +113,15 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/branch-stock-details/{mvid}',[BranchStockController::class,'getBranchStockDetails'])->name('branch-stock-details');
     Route::post('/stock-search',[BranchStockController::class,'searchStock'])->name('stock-search');
     Route::post('/update-stock',[BranchStockController::class,'updateBranchStock'])->name('update-stock');
+    Route::post('/upload-daily-stock',[BranchStockController::class,'uploadDailyStocks'])->name('upload-daily-stock');
     Route::get('/holidays',[HolidayController::class,'index']);
     Route::get('/holidays/manage-holiday/{id?}',[HolidayController::class,'manageHoliday'])->name('holidays.manage-holiday');
     Route::post('/holidays/manage-holiday-process',[HolidayController::class,'createOrUpdateHolidayController'])->name('holidays.manage-holiday-process');
-
-    Route::post('/upload-daily-stock',[BranchStockController::class,'uploadDailyStocks'])->name('upload-daily-stock');
-
+    Route::get('/reserved-stock',[ReservedStockController::class,'index'])->name('reserved-stock');
+    Route::post('/upload-reserved-stock',[ReservedStockController::class,'uploadReservedStocks'])->name('upload-reserved-stock');
+    Route::post('/reserve-stock-search',[ReservedStockController::class,'searchReservedStock'])->name('reserve-stock-search');
+    Route::post('/reserve-stock-filterguardian',[ReservedStockController::class,'reservedStockFilterGuardian'])->name('reserve-stock-filterguardian');
+    Route::post('/reserve-stock-filerresult',[ReservedStockController::class,'filterReservedStock'])->name('reserve-stock-filerresult');
 });
 
 /*-----End Admin Route-----*/

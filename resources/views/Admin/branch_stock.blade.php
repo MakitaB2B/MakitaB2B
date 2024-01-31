@@ -1,5 +1,7 @@
 @extends('Admin/layout')
 @section('page_title', 'Branch Stock | MAKITA')
+@section('stock-expandable', 'menu-open')
+@section('stock_select', 'active')
 @section('branch_stock_select', 'active')
 @section('container')
     <div class="content-wrapper">
@@ -67,6 +69,7 @@
                                             <th>Item</th>
                                             <th>Description</th>
                                             <th>Total</th>
+                                            <th>Reserved</th>
                                             <th>Action</th>
                                             <th>Last Updated</th>
                                         </tr>
@@ -78,6 +81,15 @@
                                                 <td>{{ $modelVariantData->item }}</td>
                                                 <td>{{ $modelVariantData->description }}</td>
                                                 <td>{{ $modelVariantData->grandtotal }}</td>
+                                                @php
+                                                    $totalReservedQty = 0;
+                                                    $reserveQtyStr = $modelVariantData->reservedStock->pluck('reserved')->implode('+');
+                                                    $explodeRQ = explode('+', $reserveQtyStr);
+                                                    foreach ($explodeRQ as $rq) {
+                                                        $totalReservedQty += (int) $rq;
+                                                    }
+                                                @endphp
+                                                <td>{{ $totalReservedQty }}</td>
                                                 <td><a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->id) }}"
                                                         title="View Stock Details"> <i class="nav-icon fas fa-eye"></i></a>
                                                 </td>
@@ -124,7 +136,7 @@
                             }
                         });
                     }
-                    if (searchtxt.length < 3) {
+                    if (searchtxt.length <= 3) {
                         $("#searchresultmsg").text('Should input more than 3 character').css({
                             "color": "red",
                             "font-weight": "600",
