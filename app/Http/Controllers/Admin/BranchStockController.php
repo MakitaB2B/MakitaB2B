@@ -10,6 +10,7 @@ use App\Models\Admin\ProductModelVariant;
 use App\Models\Admin\FscBranchStock;
 use App\Models\Admin\BranchStocks;
 use Illuminate\Pagination\Paginator;
+use App\Models\Admin\ReplacedParts;
 
 
 class BranchStockController extends Controller
@@ -21,6 +22,12 @@ class BranchStockController extends Controller
     public function getBranchStockDetails($pmvSlug){
         $decodedID=Crypt::decrypt($pmvSlug);
         $result['stockDetails']=BranchStocks::where('id','=',$decodedID)->get();
+
+        $item=$result['stockDetails'][0]->item;
+        $result['replacedParts']=ReplacedParts::where('oldno', '=', $item)->orWhere('replace1', '=', $item)
+        ->orWhere('replace2', '=', $item)->orWhere('replaced3', '=', $item)
+        ->get(['oldno','replace1','replace2','replaced3']);
+
         return view('Admin.manage_stock_records',$result);
     }
     public function searchStock(Request $request){
@@ -46,7 +53,7 @@ class BranchStockController extends Controller
                 '<td>'.$data->item.'</td>'.
                 '<td>'.$data->description.'</td>'.
                 '<td>'.$data->grandtotal.'</td>'.
-                '<td>'.$totalReservedQty.'</td>'.
+                '<td>'.'<a href= "'.'reserve-stock-fetchby-item/'.Crypt::encrypt($data->item).'" target="_blank">'.$totalReservedQty.'</a>'.'</td>'.
                 '<td>'.'<a href= "'.$routeTo.Crypt::encrypt($data->id).'"> <i class="nav-icon fas fa-eye"></i> </a>'.'</td>'.
                 '<td>'.\Carbon\Carbon::parse($data->updated_at)->format('d M Y H:i:s' ).'</td>'.
                 '</tr>';

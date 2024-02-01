@@ -100,6 +100,15 @@
                                 <div class="float-left">
                                     <h3 class="card-title"><strong>{{ $stockDetails[0]['item'] }}</strong>, <small>Total:
                                             {{ $stockDetails[0]['grandtotal'] }}</small></h3>
+                                    <select class="card-title" id="stype" style="margin-left: 20px;">
+                                        <option>Replaced Parts</option>
+                                        @if(count($replacedParts)>0)
+                                        <option>Old No: {{$replacedParts[0]->oldno}}</option>
+                                        <option>Replace-1: {{$replacedParts[0]->replace1}}</option>
+                                        <option>Replace-2: {{$replacedParts[0]->replace2}}</option>
+                                        <option>Replace-3: {{$replacedParts[0]->replaced3}}</option>
+                                        @endif
+                                    </select>
                                 </div>
                                 <div class="float-right">
                                     <input type="text" class="searchbox" placeholder="Search by Item" id="searchtxt">

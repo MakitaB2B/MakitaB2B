@@ -329,6 +329,12 @@
                                         <p>Reserved Stocks</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/replaced-parts') }}" class="nav-link @yield('replaced_parts')">
+                                        <i class="nav-icon fa fa-compress"></i>
+                                        <p>Replaced  Parts</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         <li class="nav-item">

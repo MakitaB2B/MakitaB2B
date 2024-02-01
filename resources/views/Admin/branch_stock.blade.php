@@ -89,7 +89,12 @@
                                                         $totalReservedQty += (int) $rq;
                                                     }
                                                 @endphp
-                                                <td>{{ $totalReservedQty }}</td>
+                                                <td>
+                                                    <a href="{{ url('admin/reserve-stock-fetchby-item/') }}/{{ Crypt::encrypt($modelVariantData->item) }}"
+                                                        title="View Reserved Details" target="_blank">
+                                                    {{ $totalReservedQty }}
+                                                    </a>
+                                                </td>
                                                 <td><a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->id) }}"
                                                         title="View Stock Details"> <i class="nav-icon fas fa-eye"></i></a>
                                                 </td>

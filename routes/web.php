@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ProductModelController;
 use App\Http\Controllers\Admin\BranchStockController;
 use App\Http\Controllers\Admin\HolidayController;
 use App\Http\Controllers\Admin\ReservedStockController;
+use App\Http\Controllers\Admin\ReplacedPartsController;
 
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
@@ -122,6 +123,12 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/reserve-stock-search',[ReservedStockController::class,'searchReservedStock'])->name('reserve-stock-search');
     Route::post('/reserve-stock-filterguardian',[ReservedStockController::class,'reservedStockFilterGuardian'])->name('reserve-stock-filterguardian');
     Route::post('/reserve-stock-filerresult',[ReservedStockController::class,'filterReservedStock'])->name('reserve-stock-filerresult');
+    Route::get('/reserve-stock-fetchby-item/{item}',[ReservedStockController::class,'fetchReserveStockByItem'])->name('reserve-stock-fetchby-item');
+    Route::get('/replaced-parts',[ReplacedPartsController::class,'index'])->name('replaced-parts');
+    Route::post('/upload-replaced-parts',[ReplacedPartsController::class,'uploadReplacedParts'])->name('upload-replaced-parts');
+    Route::post('/replaced-parts-search',[ReplacedPartsController::class,'searchReplacedParts'])->name('replaced-parts-search');
+    Route::post('/replaced-parts-filterguardian',[ReplacedPartsController::class,'replacedPartsFilterGuardian'])->name('replaced-parts-filterguardian');
+    Route::post('/replaced-parts-filerresult',[ReplacedPartsController::class,'filterReplacedParts'])->name('replaced-parts-filerresult');
 });
 
 /*-----End Admin Route-----*/

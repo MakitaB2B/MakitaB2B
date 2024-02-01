@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin\ReservedStocks;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Crypt;
 
 class ReservedStockController extends Controller
 {
@@ -112,5 +113,12 @@ class ReservedStockController extends Controller
         }else{
             echo "No Record Found";
         }
+    }
+    public function fetchReserveStockByItem($item){
+        $decripedItemID = Crypt::decrypt($item);
+        $reserveStockDetails=ReservedStocks::where('item', '=', $decripedItemID)
+        ->get(['item','itemdescription','category','reftype','order','customer','customername','reserved','updated_at']);
+        return view('Admin.reserved_stock_by_item',compact('reserveStockDetails'));
+
     }
 }
