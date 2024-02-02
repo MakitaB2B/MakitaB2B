@@ -48,7 +48,12 @@
                             <div class="card-header">
                                 <h3 class="card-title">Branch Stock</h3>
                                 <div class="card-tools">
-                                    <div class="input-group input-group-sm" style="width: 150px;">
+                                    <div class="input-group input-group-sm">
+                                        <select class="custom-select" id="stype">
+                                            <option value="">Select Option</option>
+                                            <option value="item">Item</option>
+                                            <option value="description">Description</option>
+                                        </select>
                                         <input type="text" name="table_search" class="form-control float-right"
                                             placeholder="Search by Item" id="searchtxt">
                                         <div class="input-group-append">
@@ -91,11 +96,11 @@
                                                 @endphp
                                                 <td>
                                                     <a href="{{ url('admin/reserve-stock-fetchby-item/') }}/{{ Crypt::encrypt($modelVariantData->item) }}"
-                                                        title="View Reserved Details" target="_blank">
-                                                    {{ $totalReservedQty }}
+                                                        title="View Reserved Details" target="_blank" style="color:#a12704">
+                                                        {{ $totalReservedQty }}
                                                     </a>
                                                 </td>
-                                                <td><a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->id) }}"
+                                                <td><a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->item) }}"
                                                         title="View Stock Details"> <i class="nav-icon fas fa-eye"></i></a>
                                                 </td>
                                                 <td>{{ Carbon\Carbon::parse($modelVariantData->updated_at)->format('d M Y H:i:s') }}
@@ -122,31 +127,40 @@
         <script>
             $(document).ready(function() {
                 $('.smi').on('click', function() {
-                    let searchtxt = $.trim($("#searchtxt").val());
-                    let searchFrom = "stockpg";
-                    if (searchtxt != '' && searchtxt.length > 3) {
-                        $("#searchresultmsg").text('Please Wait while processing....').css({
-                            "color": "green",
-                            "font-weight": "600",
-                            "font-size": "11px"
+                    let searchType = $.trim($("#stype").val());
+                    if (searchType == '') {
+                        $("#stype").css({
+                            "border": "2px solid red",
+                            "color": "red"
                         });
-                        $.ajax({
-                            url: '/admin/stock-search',
-                            type: 'post',
-                            data: 'searchtxt=' + searchtxt + '&searchFrom=' + searchFrom +
-                                '&_token={{ csrf_token() }}',
-                            success: function(result) {
-                                $('#searchresult').html(result);
-                                $("#searchresultmsg").text('');
-                            }
-                        });
-                    }
-                    if (searchtxt.length <= 3) {
-                        $("#searchresultmsg").text('Should input more than 3 character').css({
-                            "color": "red",
-                            "font-weight": "600",
-                            "font-size": "10px"
-                        });
+                    } else {
+                        let searchtxt = $.trim($("#searchtxt").val());
+                        let searchFrom = "stockpg";
+                        if (searchtxt != '' && searchtxt.length > 3) {
+                            $("#searchresultmsg").text('Please Wait while processing....').css({
+                                "color": "green",
+                                "font-weight": "600",
+                                "font-size": "11px"
+                            });
+                            $.ajax({
+                                url: '/admin/stock-search',
+                                type: 'post',
+                                data: 'searchtxt=' + searchtxt + '&searchtype=' + searchType +
+                                    '&searchFrom=' + searchFrom +
+                                    '&_token={{ csrf_token() }}',
+                                success: function(result) {
+                                    $('#searchresult').html(result);
+                                    $("#searchresultmsg").text('');
+                                }
+                            });
+                        }
+                        if (searchtxt.length <= 3) {
+                            $("#searchresultmsg").text('Should input more than 3 character').css({
+                                "color": "red",
+                                "font-weight": "600",
+                                "font-size": "10px"
+                            });
+                        }
                     }
                 });
 

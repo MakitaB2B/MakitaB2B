@@ -79,10 +79,10 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Old No.</th>
-                                            <th>Replace 1</th>
-                                            <th>Replace 2</th>
-                                            <th>Replaced 3</th>
-                                            <th>Description System</th>
+                                            <th>Replace1</th>
+                                            <th>Replace2</th>
+                                            <th>Replaced3</th>
+                                            <th>Description Sys.</th>
                                             <th>Category</th>
                                             <th>Updated</th>
                                         </tr>
