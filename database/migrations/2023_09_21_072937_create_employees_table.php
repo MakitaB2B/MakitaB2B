@@ -40,6 +40,8 @@ return new class extends Migration
             $table->string('employee_slug');
             $table->tinyInteger('status')->default(1)->nullable()->unsigned();
             $table->integer('crated_by');
+            $table->string('otp')->nullable();
+            $table->timestamp('otp_created_at')->nullable();
             $table->timestamps();
         });
     }

@@ -18,7 +18,6 @@
                     <input class="otpstr" type="text" maxlength="1" />
                     <input class="otpstr" type="text" maxlength="1" />
                     <input class="otpstr" type="text" maxlength="1" />
-
                 </div>
                 <p id="otpprocess" style="display: none;color:rgb(0, 134, 4);fot-size:20px">Please Wait While OTP Processing
                 </p>

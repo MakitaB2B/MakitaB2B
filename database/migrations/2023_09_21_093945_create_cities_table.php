@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->tinyInteger('status')->default(1)->nullable()->unsigned();
             $table->string('city_slug')->unique();
-            $table->integer('created_by');
+            $table->bigInteger('created_by');
             $table->timestamps();
         });
     }

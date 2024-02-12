@@ -54,7 +54,7 @@
             cursor: pointer;
         }
     </style>
-    <div class="content-wrapper">
+    <div class="content-wrapper rescss">
         @push('styles')
             <!-- DataTables -->
             <link rel="stylesheet" href="{{ asset('admin_assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -101,7 +101,7 @@
                                     <div class="float-left">
                                         <h3 class="card-title"><strong>{{ $stockDetails[0]['item'] }}</strong>,
                                             <small>Total:
-                                                {{ $stockDetails[0]['grandtotal'] }}</small>
+                                                {{ number_format($stockDetails[0]['grandtotal']) }}</small>
                                         </h3>
                                         <select class="card-title" id="repparts" style="margin-left: 20px;">
                                             <option>Replaced Parts</option>

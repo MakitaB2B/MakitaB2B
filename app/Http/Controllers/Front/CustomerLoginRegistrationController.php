@@ -56,7 +56,7 @@ class CustomerLoginRegistrationController extends Controller
                     return redirect('cx-signup-otp-page/'.Crypt::encrypt($checkPhone->customer_slug).'/'.Crypt::encrypt(1));
                 }
                 }else{
-                    $msg='This Phone Number is Not Registered With Us';
+                $msg='This Phone Number is Not Registered With Us';
                 $request->session()->flash('message',$msg);
                 return redirect('/cx-signup');
                 }

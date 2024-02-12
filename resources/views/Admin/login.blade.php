@@ -77,6 +77,9 @@
                         <!-- /.col -->
                     </div>
                 </form>
+                <p class="mb-0">
+                    <a href="{{url('admin/register')}}" class="text-center">Forgot password or Register?</a>
+                </p>
             </div>
             <!-- /.card-body -->
         </div>

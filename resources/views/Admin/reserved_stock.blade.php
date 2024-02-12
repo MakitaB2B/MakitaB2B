@@ -4,7 +4,14 @@
 @section('stock_select', 'active')
 @section('reserved_stocks', 'active')
 @section('container')
-    <div class="content-wrapper">
+<style>
+    @media only screen and (max-width: 1040px) {
+        .rescss300 {
+            width:300%;
+        }
+    }
+</style>
+    <div class="content-wrapper rescss300">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <div class="container-fluid">

@@ -4,7 +4,7 @@
 @section('stock_select', 'active')
 @section('branch_stock_select', 'active')
 @section('container')
-    <div class="content-wrapper">
+    <div class="content-wrapper rescss">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <div class="container-fluid">
@@ -70,22 +70,21 @@
                                 <table class="table table-head-fixed table-bordered table-hover">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
                                             <th>Item</th>
                                             <th>Description</th>
                                             <th>Total</th>
                                             <th>Reserved</th>
-                                            <th>Action</th>
-                                            <th>Last Updated</th>
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
                                         @foreach ($result as $key => $modelVariantData)
                                             <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>{{ $modelVariantData->item }}</td>
+                                                <td>
+                                                    <a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->item) }}"
+                                                        title="View Stock Details" style="color:#00909E"> <strong>{{ $modelVariantData->item }}</strong></a>
+                                                </td>
                                                 <td>{{ $modelVariantData->description }}</td>
-                                                <td>{{ $modelVariantData->grandtotal }}</td>
+                                                <td>{{ number_format($modelVariantData->grandtotal) }}</td>
                                                 @php
                                                     $totalReservedQty = 0;
                                                     $reserveQtyStr = $modelVariantData->reservedStock->pluck('reserved')->implode('+');
@@ -95,15 +94,14 @@
                                                     }
                                                 @endphp
                                                 <td>
+                                                    @if ($totalReservedQty>0)
                                                     <a href="{{ url('admin/reserve-stock-fetchby-item/') }}/{{ Crypt::encrypt($modelVariantData->item) }}"
-                                                        title="View Reserved Details" target="_blank" style="color:#a12704">
-                                                        {{ $totalReservedQty }}
+                                                        title="View Reserved Details" target="_blank" style="color:#00909E">
+                                                        <strong>{{ $totalReservedQty }}</strong>
                                                     </a>
-                                                </td>
-                                                <td><a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->item) }}"
-                                                        title="View Stock Details"> <i class="nav-icon fas fa-eye"></i></a>
-                                                </td>
-                                                <td>{{ Carbon\Carbon::parse($modelVariantData->updated_at)->format('d M Y H:i:s') }}
+                                                    @else
+                                                    <i style="color:#dc129c">{{ $totalReservedQty }}</i>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach

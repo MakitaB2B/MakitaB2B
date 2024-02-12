@@ -107,4 +107,66 @@ class AdminLoginController extends Controller
         Auth::guard('admin')->logout();
         return redirect()->route('adminlogin')->with('error','You are logged out');
     }
+    public function register(){
+        return view('Admin.register');
+    }
+    public function checkRegisterByPhone(Request $request){
+        $checker=$this->adminService->checkIfRegisterByPhone($request->empprimphone);
+        if( count($checker)>0){
+            $status=$checker[0]->status;
+            if($status != 1){
+                $msg='Access Revoked, Contact Admin';
+                $request->session()->flash('message',$msg);
+                return redirect('admin/register');
+            }else{
+                $empSlug=$checker[0]->employee_slug;
+                $empPrimaryPhone=$checker[0]->phone_number;
+                $checker=$this->adminService->sendPasswordOTP($empSlug,$empPrimaryPhone);
+                if($checker==1){
+                    $encEmpSlug=Crypt::encrypt($empSlug);
+                    return redirect('admin/checkotp/'.$encEmpSlug);
+                }else{
+                    $msg='Error! Try Again';
+                    $request->session()->flash('message',$msg);
+                    return redirect('admin/register');
+                }
+            }
+        }else{
+            $msg='Pone number not registered';
+            $request->session()->flash('message',$msg);
+            return redirect('admin/register');
+        }
+    }
+    public function verifyEmpPwrdOtpControler(Request $request){
+        $otp=$request->otp;
+        $empSlug=$request->empslug;
+        $otpChecker=$this->adminService->verifyEmpLoginRegisOTP($otp,$empSlug);
+        if($otpChecker==1){
+            $encEmpslug=$empSlug;
+            return redirect('admin/empresetpassword/'.$encEmpslug);
+        }
+        echo $otpChecker;
+    }
+    public function empResetCreatePassword(Request $request){
+        $data = $request->validate([
+            'password' => 'required|confirmed|min:6',
+            'password_confirmation' => 'required'
+        ]);
+        $password=$request->password;
+        $decryptEmpSlug=Crypt::decrypt($request->empslug);
+        $createupdtPass=$this->adminService->empCreateUpdatePasswordService($password,$decryptEmpSlug);
+        if($createupdtPass){
+            $msg='Congrats! Login with Employee ID & Password';
+            $request->session()->flash('error',$msg);
+            return redirect('admin/login');
+        }else{
+            echo "Fail";
+        }
+    }
+    public function otpView($empSlug){
+        return view('Admin.forgetpass_otp',compact('empSlug'));
+    }
+    public function resetPasswordView($empSlug){
+        return view('Admin.reset_password',compact('empSlug'));
+    }
 }

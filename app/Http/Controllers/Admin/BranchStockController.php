@@ -58,14 +58,16 @@ class BranchStockController extends Controller
                 foreach ($explodeRQ as $rq) {
                     $totalReservedQty += (int) $rq;
                 }
+                if ($totalReservedQty>0){
+                    $totalReserveData='<a href= "'.url('admin/reserve-stock-fetchby-item/').'/'.Crypt::encrypt($data->item).'" target="_blank" style="color:#00909E">'.$totalReservedQty.'</a>';
+                }else{
+                    $totalReserveData='<i style="color:#dc129c">'.$totalReservedQty.'</i>';
+                }
                 $output.='<tr>'.
-                '<td>'.($key+1).'</td>'.
-                '<td>'.$data->item.'</td>'.
+                '<td>'.'<a href= "'.$routeTo.Crypt::encrypt($data->item).'" style="color:#00909E">'.$data->item.'</a>'.'</td>'.
                 '<td>'.$data->description.'</td>'.
-                '<td>'.$data->grandtotal.'</td>'.
-                '<td>'.'<a href= "'.'reserve-stock-fetchby-item/'.Crypt::encrypt($data->item).'" target="_blank">'.$totalReservedQty.'</a>'.'</td>'.
-                '<td>'.'<a href= "'.$routeTo.Crypt::encrypt($data->item).'"> <i class="nav-icon fas fa-eye"></i> </a>'.'</td>'.
-                '<td>'.\Carbon\Carbon::parse($data->updated_at)->format('d M Y H:i:s' ).'</td>'.
+                '<td>'.number_format($data->grandtotal).'</td>'.
+                '<td>'.$totalReserveData.'</td>'.
                 '</tr>';
                 }
         return Response($output);

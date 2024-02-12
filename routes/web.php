@@ -69,6 +69,13 @@ Route::get('/cx-logout',[CustomerLoginRegistrationController::class,'logout'])->
 /*-----Start Admin Route-----*/
 Route::get('admin/login',[AdminLoginController::class,'index'])->name('adminlogin');
 Route::post('admin/auth',[AdminLoginController::class,'auth'])->name('admin.auth');
+Route::get('admin/register',[AdminLoginController::class,'register'])->name('adminregister');
+Route::post('admin/checkregister',[AdminLoginController::class,'checkRegisterByPhone'])->name('admin.checkregister');
+Route::post('admin/empfpotpv',[AdminLoginController::class,'verifyEmpPwrdOtpControler'])->name('admin.empfpotpv');
+Route::get('admin/checkotp/{empSlug}',[AdminLoginController::class,'otpView'])->name('checkotp');
+Route::get('admin/empresetpassword/{empSlug}',[AdminLoginController::class,'resetPasswordView'])->name('empresetpassword');
+Route::post('admin/empresetpass',[AdminLoginController::class,'empResetCreatePassword'])->name('admin.empresetpass');
+
 Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/dashboard',[AdminLoginController::class,'dashboard'])->name('admin.dashboard');
     Route::get('/admins',[AdminLoginController::class,'adminList'])->name('admin.admins');
