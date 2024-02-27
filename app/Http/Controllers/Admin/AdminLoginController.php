@@ -121,7 +121,8 @@ class AdminLoginController extends Controller
             }else{
                 $empSlug=$checker[0]->employee_slug;
                 $empPrimaryPhone=$checker[0]->phone_number;
-                $checker=$this->adminService->sendPasswordOTP($empSlug,$empPrimaryPhone);
+                $empFullName=$checker[0]->full_name;
+                $checker=$this->adminService->sendPasswordOTP($empSlug,$empPrimaryPhone,$empFullName);
                 if($checker==1){
                     $encEmpSlug=Crypt::encrypt($empSlug);
                     return redirect('admin/checkotp/'.$encEmpSlug);
@@ -144,8 +145,11 @@ class AdminLoginController extends Controller
         if($otpChecker==1){
             $encEmpslug=$empSlug;
             return redirect('admin/empresetpassword/'.$encEmpslug);
+        }else{
+            $msg=$otpChecker;
+            $request->session()->flash('message',$msg);
+            return redirect('admin/checkotp/'.$empSlug);
         }
-        echo $otpChecker;
     }
     public function empResetCreatePassword(Request $request){
         $data = $request->validate([

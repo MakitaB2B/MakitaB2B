@@ -24,6 +24,18 @@
             <a href="{{url('admin/register')}}" class="h1"><b>Ma</b>Kita</a>
           </div>
           <div class="card-body">
+            @if (session()->has('message'))
+                    <div class="card card-danger shadow" style="margin-bottom:20px!important">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ session('message') }}</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i
+                                        class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+            @endif
             <p class="login-box-msg">Please Enter OTP</p>
             <form action="{{ route('admin.empfpotpv') }}" method="post">
               <div class="input-group mb-3">

@@ -37,16 +37,16 @@ class AdminService{
         return AdminLogin::with('employee:employee_no,full_name,phone_number,employee_slug')->whereNotNull('last_activity')->orderBy('last_activity','desc')->get();
     }
     public function checkIfRegisterByPhone($empPhone){
-        return DB::table('employees')->where(['phone_number'=>$empPhone])->get(['employee_slug','status','phone_number']);
+        return DB::table('employees')->where(['phone_number'=>$empPhone])->get(['employee_slug','status','phone_number','full_name']);
     }
-    public function sendPasswordOTP($empSlug,$empPrimaryPhone){
+    public function sendPasswordOTP($empSlug,$empPrimaryPhone,$empFullName){
         $otpGenerator = rand(100000,999999);
         $encryptedOTP=Crypt::encrypt($otpGenerator);
         $updateOTP=DB::table('employees')->where('employee_slug', '=', $empSlug)->
             update(['otp' => $encryptedOTP,'otp_created_at' => Carbon::now()]);
             if($updateOTP){
             $mobile=$empPrimaryPhone;
-            $message="Dear user, $otpGenerator is OTP for Makita website login, do not share OTP with anyone. -Makita Power Tools India Pvt. Ltd.";
+            $message="Dear $empFullName, Your Makita Login OTP: $otpGenerator is valid for 30 mins. Use it to set/reset password. Do not share.";
             Sms::sendSMS($message,$mobile);
             return 1;
             }else{
@@ -64,10 +64,10 @@ class AdminService{
                 if($otpMinutesDiff<=30){
                     return 1;
                 }else{
-                    return "30 minutes Excied,So OTP Expired";
+                    return "30 minutes excede,this OTP expired";
                 }
             }else{
-                return "Entered OTP Wrong";
+                return "Entered OTP is Wrong";
             }
         }else{
             return "Employee not found";
@@ -92,9 +92,10 @@ class AdminService{
             'created_by'=>'1']
          );
          if($operate){
+            $message="Dear Shankhadip, Welcome to Makita! Access with Employee ID: 4141 and your unique Password for a seamless experience.";
+            Sms::sendSMS($message,$mobile);
             return true;
          }
-
 
     }
 }
