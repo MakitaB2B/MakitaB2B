@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Makita | Log in</title>
+    <title>Makita | Register in</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -56,7 +56,11 @@
               @csrf
             </form>
             <p class="mt-3 mb-1">
+             @if(Auth::guard('admin')->check())
+              <a href="{{url('admin/direct-logout')}}">Login?</a>
+              @else
               <a href="{{url('admin/login')}}">Login?</a>
+              @endif
             </p>
           </div>
           <!-- /.login-card-body -->

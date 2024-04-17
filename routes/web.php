@@ -19,6 +19,9 @@ use App\Http\Controllers\Admin\BranchStockController;
 use App\Http\Controllers\Admin\HolidayController;
 use App\Http\Controllers\Admin\ReservedStockController;
 use App\Http\Controllers\Admin\ReplacedPartsController;
+use App\Http\Controllers\Admin\RolesPermissionController;
+use App\Http\Controllers\Admin\TeamController;
+use App\Http\Controllers\Admin\FactoryServiceStationController;
 
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
@@ -75,6 +78,7 @@ Route::post('admin/empfpotpv',[AdminLoginController::class,'verifyEmpPwrdOtpCont
 Route::get('admin/checkotp/{empSlug}',[AdminLoginController::class,'otpView'])->name('checkotp');
 Route::get('admin/empresetpassword/{empSlug}',[AdminLoginController::class,'resetPasswordView'])->name('empresetpassword');
 Route::post('admin/empresetpass',[AdminLoginController::class,'empResetCreatePassword'])->name('admin.empresetpass');
+Route::get('admin/direct-logout',[AdminLoginController::class,'logout'])->name('admin.logout');
 
 Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/dashboard',[AdminLoginController::class,'dashboard'])->name('admin.dashboard');
@@ -136,6 +140,34 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/replaced-parts-search',[ReplacedPartsController::class,'searchReplacedParts'])->name('replaced-parts-search');
     Route::post('/replaced-parts-filterguardian',[ReplacedPartsController::class,'replacedPartsFilterGuardian'])->name('replaced-parts-filterguardian');
     Route::post('/replaced-parts-filerresult',[ReplacedPartsController::class,'filterReplacedParts'])->name('replaced-parts-filerresult');
+    Route::get('/roles',[RolesPermissionController::class,'roleIndex'])->name('roles');
+    Route::get('/roles/manage-role/{roleslug?}',[RolesPermissionController::class,'manageRole'])->name('roles.manage-role');
+    Route::post('/roles/manage-role-process',[RolesPermissionController::class,'manageRoleProcess'])->name('roles.manage-role-process');
+    Route::get('/permission',[RolesPermissionController::class,'permissionIndex'])->name('permission');
+    Route::get('/permission/manage-permission/{permissionslug?}',[RolesPermissionController::class,'managePermission'])->name('permission.manage-permission');
+    Route::post('/permission/manage-permission-process',[RolesPermissionController::class,'managePermissionProcess'])->name('permission.manage-permission-process');
+    Route::get('/access-modules',[RolesPermissionController::class,'accessModuleIndex'])->name('access-modules');
+    Route::get('/access-modules/manage-modules/{moduleslug?}',[RolesPermissionController::class,'manageAccessModule'])->name('access-modules.manage-modules');
+    Route::post('/access-modules/manage-modules-process',[RolesPermissionController::class,'manageAccessModuleProcess'])->name('access-modules.manage-modules-process');
+    Route::get('/teams',[TeamController::class,'index']);
+    Route::post('/teams/manage-team-process',[TeamController::class,'createOrUpdateTeams'])->name('teams.manage-team-process');
+    Route::get('/teams/manage-team-members/{teamslug}',[TeamController::class,'manageTeamMember'])->name('teams.manage-team-members');
+    Route::post('/teams/manage-team-member-process',[TeamController::class,'manageTeamMemberProcess'])->name('teams.manage-team-member-process');
+
+    Route::get('/service-management', function () {
+        return view('Admin/service_management');
+    });
+    Route::get('/service-management/create-sr', function () {
+        return view('Admin/manage_service_request');
+    });
+
+    Route::get('/factory-service-center',[FactoryServiceStationController::class,'index']);
+    Route::get('/fsc/manage-fsc/{fscslug?}',[FactoryServiceStationController::class,'manageFSC'])->name('fsc.manage-manage-fsc');
+    Route::post('/fsc/manage-fsc-process',[FactoryServiceStationController::class,'manageFSCProcess'])->name('fsc.manage-fsc-process');
+
+    Route::get('/fsc/assignee-fsc-executive/{fscSlug}',[FactoryServiceStationController::class,'manageFSCServiceExecutive']);
+    Route::post('/fsc/manage-fsc-executive-process',[FactoryServiceStationController::class,'manageFSCServiceExecutiveProcess'])->name('fsc.manage-fsc-executive-process');
+
 });
 
 /*-----End Admin Route-----*/

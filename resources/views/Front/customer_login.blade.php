@@ -56,9 +56,9 @@
             <form method="post" action="{{ route('cx-login-credentials-process') }}">
                     <div class="row">
                         <div class="col-sm-7 form-group">
-                            <label for="userid">User ID<span class="required">*</span></label>
-                            <input class="form-control"  name="user_id" placeholder="Enter User ID"
-                                type="text" required >
+                            <label for="userid">Registered Mobile Number<span class="required">*</span></label>
+                            <input class="form-control"  name="user_id" placeholder="Registered Mobile Number"
+                                type="text" required autocomplete="off">
                             @error('userid')
                                 <div class="sufee-alert alert with-close alert-danger alert-dismissible show">
                                     {{ $message }}

@@ -38,12 +38,11 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form method="POST" action="{{ route('admins.manage-admin-process') }}"
-                                enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('admins.manage-admin-process') }}">
                                 @csrf
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-3">
                                             <label>Employee</label>
                                             <select class="custom-select select2" name="employee_slug" required>
                                                 <option value="">Please Select</option>
@@ -64,7 +63,105 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        @foreach ($employee_roles as $roleExist)
+                                            @php
+                                                $empRoleRecords[] = $roleExist->role_slug;
+                                            @endphp
+                                            <input type="hidden" name="emproles_befor_modify[]" value="{{$roleExist->role_slug}}" >
+                                        @endforeach
+                                        <div class="form-group col-md-3">
+                                            <label>Roles*</label>
+                                            <select class="select2" multiple="multiple" data-placeholder="Select Role(s)" style="width: 100%;" name="roles[]" required>
+                                                @if (count($employee_roles)>0)
+                                                    @foreach ($roles as $roleList)
+                                                        <option value="{{$roleList->role_slug}}" @if (in_array($roleList->role_slug, $empRoleRecords)) selected @endif>
+                                                            {{$roleList->name}}
+                                                        </option>
+                                                    @endforeach
+                                                @else
+                                                @foreach ($roles as $roleList)
+                                                        <option value="{{$roleList->role_slug}}">
+                                                            {{$roleList->name}}
+                                                        </option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            @error('roles')
+                                                <div
+                                                    class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                                    {{ $message }}
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        @foreach ($employee_permision as $permissionExist)
+                                            @php
+                                                $empPermissionRecords[] = $permissionExist->permission_slug;
+                                            @endphp
+                                            <input type="hidden" name="emppermission_befor_modify[]" value="{{$permissionExist->permission_slug}}" >
+                                        @endforeach
+                                        <div class="form-group col-md-3">
+                                            <label>Permissions*</label>
+                                            <select class="select2" multiple="multiple" data-placeholder="Select Permission(s)" style="width: 100%;" name="permissions[]" required>
+                                                @if (count($employee_permision)>0)
+                                                    @foreach ($permissions as $permissionist)
+                                                        <option value="{{$permissionist->permission_slug}}" @if (in_array($permissionist->permission_slug, $empPermissionRecords)) selected @endif>
+                                                            {{$permissionist->name}}
+                                                        </option>
+                                                    @endforeach
+                                                @else
+                                                    @foreach ($permissions as $permissionist)
+                                                        <option value="{{$permissionist->permission_slug}}">{{$permissionist->name}}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                            @error('permissions')
+                                                <div
+                                                    class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                                    {{ $message }}
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        @foreach ($employee_access_modules as $existModules)
+                                            @php
+                                                $empModulesRecords[] = $existModules->module_slug;
+                                            @endphp
+                                            <input type="hidden" name="accessmodules_befor_modify[]" value="{{$existModules->module_slug}}" >
+                                        @endforeach
+                                        <div class="form-group col-md-3">
+                                            <label>Access Modules*</label>
+                                            <select class="select2" multiple="multiple" data-placeholder="Select Access Module(s)" style="width: 100%;" name="accessmodules[]" required>
+                                                @if (count($employee_access_modules)>0)
+                                                    @foreach ($accessmodules as $accessmodulesList)
+                                                        <option value="{{$accessmodulesList->module_slug}}" @if (in_array($accessmodulesList->module_slug, $empModulesRecords)) selected @endif >
+                                                            {{$accessmodulesList->name}}
+                                                        </option>
+                                                    @endforeach
+                                                @else
+                                                    @foreach ($accessmodules as $accessmodulesList)
+                                                        <option value="{{$accessmodulesList->module_slug}}">{{$accessmodulesList->name}}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                            @error('accessmodules')
+                                                <div
+                                                    class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                                    {{ $message }}
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-2">
                                             <label for="exampleInputAccessID">Access ID*</label>
                                             <input type="text" class="form-control" name="access_id"
                                                 value="{{ $access_id }}" required id="exampleInputAccessID"
@@ -80,7 +177,7 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-2">
                                             <label>Access Status*</label>
                                             <select class="custom-select" name="status" required>
                                                 <option value="">Please Select</option>
@@ -123,32 +220,13 @@
         <!-- /.content -->
     </div>
     @push('scripts')
-        <script src="{{ asset('admin_assets/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
          <!-- Select2 -->
          <script src="{{ asset('admin_assets/plugins/select2/js/select2.full.min.js') }}"></script>
         <script>
             $(function() {
-                bsCustomFileInput.init();
                  //Initialize Select2 Elements
                  $('.select2').select2()
             });
-            const chooseFile = document.getElementById("choose-file");
-            const imgPreview = document.getElementById("img-preview");
-            chooseFile.addEventListener("change", function() {
-                getImgData();
-            });
-
-            function getImgData() {
-                const files = chooseFile.files[0];
-                if (files) {
-                    const fileReader = new FileReader();
-                    fileReader.readAsDataURL(files);
-                    fileReader.addEventListener("load", function() {
-                        imgPreview.style.display = "block";
-                        imgPreview.innerHTML = '<img src="' + this.result + '" style="height:100px" />';
-                    });
-                }
-            }
         </script>
     @endpush
 @endsection

@@ -20,8 +20,11 @@ class Admin
     {
         if(Auth::guard('admin')->check()){
             $status=Auth::guard('admin')->user()->status;
+            $hasPasswordSet=Auth::guard('admin')->user()->password_set;
             if($status==0){
                 return redirect()->route('adminlogin')->with('error','Access has been revoked!');
+            }elseif($hasPasswordSet==0){
+                return redirect('admin/register');
             }elseif($status==1){
                 $adminId=Auth::guard('admin')->user()->id;
                 $expireAt= now()->addMinutes(1);

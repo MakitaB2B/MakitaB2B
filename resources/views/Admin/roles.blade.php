@@ -1,6 +1,6 @@
 @extends('Admin/layout')
-@section('page_title', 'Admins List | MAKITA')
-@section('admins_select','active')
+@section('page_title', 'Role List | MAKITA')
+@section('role_select', 'active')
 @section('container')
     <div class="content-wrapper">
         @push('styles')
@@ -15,13 +15,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-2">
-                        <a href="{{ url('admin/admins/manage-admin') }}"><button type="button"
-                                class="btn btn-block btn-primary">Add Admin</button></a>
+                        <a href="{{ url('admin/roles/manage-role') }}"><button type="button"
+                                class="btn btn-block btn-primary">Add Role</button></a>
                     </div>
                     <div class="col-sm-10">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Admins</li>
+                            <li class="breadcrumb-item active">Roles</li>
                         </ol>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Admin List</h3>
+                                <h3 class="card-title">Role List</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -55,54 +55,32 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Access ID</th>
                                             <th>Name</th>
-                                            <th>Mobile</th>
-                                            <th>Rolles</th>
-                                            <th>Permission</th>
-                                            <th>Modules</th>
                                             <th>Status</th>
+                                            <th>Created By</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($adminList as $key => $list)
+                                        @foreach ($roleList as $key => $list)
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
-                                                <td>{{ $list->access_id }}</td>
-                                                <td>{{ $list->employee->pluck('full_name')->implode('') }}</td>
-                                                <td>{{ $list->employee->pluck('phone_number')->implode('') }}</td>
-                                                <td>
-                                                    @foreach ($list->employeeRoles as $role)
-                                                    {{ $role->role_slug }} {{ !$loop->last ? ', ' : '' }}
-                                                    @endforeach
-                                                </td>
-                                                <td>
-                                                    @foreach ($list->employeePermission as $role)
-                                                    {{ $role->permission_slug }} {{ !$loop->last ? ', ' : '' }}
-                                                    @endforeach
-                                                </td>
-                                                <td>
-                                                    @foreach ($list->employeeAccessModules as $role)
-                                                    {{ $role->module_slug }} {{ !$loop->last ? ', ' : '' }}
-                                                    @endforeach
-                                                </td>
+                                                <td>{{ $list->name  }}</td>
                                                 <td>{{ $list->status === 1 ? "Active" : "De-Active" }}</td>
-                                                <td><a href="{{ url('admin/admins/manage-admin/') }}/{{ Crypt::encrypt($list->admin_login_slug) }}"
-                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td>
+                                                <td>{{ $list->created_by  }}</td>
+                                                <td>
+                                                    <a href="{{ url('admin/roles/manage-role/') }}/{{ Crypt::encrypt($list->role_slug) }}"
+                                                        title="Roles"> <i class="nav-icon fas fa-edit" aria-hidden="true"></i></a>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th>#</th>
-                                            <th>Access ID</th>
                                             <th>Name</th>
-                                            <th>Mobile</th>
-                                            <th>Rolles</th>
-                                            <th>Permission</th>
-                                            <th>Modules</th>
                                             <th>Status</th>
+                                            <th>Created By</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>

@@ -1,6 +1,6 @@
 @extends('Admin/layout')
-@section('page_title', 'Admins List | MAKITA')
-@section('admins_select','active')
+@section('page_title', 'Factory Service Centers List | MAKITA')
+@section('factory_service_center_select', 'active')
 @section('container')
     <div class="content-wrapper">
         @push('styles')
@@ -15,13 +15,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-2">
-                        <a href="{{ url('admin/admins/manage-admin') }}"><button type="button"
-                                class="btn btn-block btn-primary">Add Admin</button></a>
+                        <a href="{{ url('admin/fsc/manage-fsc') }}"><button type="button"
+                                class="btn btn-block btn-primary">Add Center</button></a>
                     </div>
                     <div class="col-sm-10">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Admins</li>
+                            <li class="breadcrumb-item active">Factory Service Center</li>
                         </ol>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Admin List</h3>
+                                <h3 class="card-title">Factory Service Center List</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -55,54 +55,49 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Access ID</th>
-                                            <th>Name</th>
-                                            <th>Mobile</th>
-                                            <th>Rolles</th>
-                                            <th>Permission</th>
-                                            <th>Modules</th>
+                                            <th>State</th>
+                                            <th>City</th>
+                                            <th>Center Name</th>
+                                            <th>Phone</th>
+                                            <th>Email</th>
+                                            <th>Address</th>
                                             <th>Status</th>
+                                            <th>Created By</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($adminList as $key => $list)
+                                        @foreach ($fscList as $key => $list)
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
-                                                <td>{{ $list->access_id }}</td>
-                                                <td>{{ $list->employee->pluck('full_name')->implode('') }}</td>
-                                                <td>{{ $list->employee->pluck('phone_number')->implode('') }}</td>
-                                                <td>
-                                                    @foreach ($list->employeeRoles as $role)
-                                                    {{ $role->role_slug }} {{ !$loop->last ? ', ' : '' }}
-                                                    @endforeach
-                                                </td>
-                                                <td>
-                                                    @foreach ($list->employeePermission as $role)
-                                                    {{ $role->permission_slug }} {{ !$loop->last ? ', ' : '' }}
-                                                    @endforeach
-                                                </td>
-                                                <td>
-                                                    @foreach ($list->employeeAccessModules as $role)
-                                                    {{ $role->module_slug }} {{ !$loop->last ? ', ' : '' }}
-                                                    @endforeach
-                                                </td>
+                                                <td>{{ $list->state->pluck('name')->implode('') }}</td>
+                                                <td>{{ $list->city->pluck('name')->implode('') }}</td>
+                                                <td>{{ $list->center_name }}</td>
+                                                <td>{{ $list->phone }}</td>
+                                                <td>{{ $list->email }}</td>
+                                                <td title="{{ $list->center_address }}">{{ Str::limit($list->center_address, 20, '...') }}</td>
                                                 <td>{{ $list->status === 1 ? "Active" : "De-Active" }}</td>
-                                                <td><a href="{{ url('admin/admins/manage-admin/') }}/{{ Crypt::encrypt($list->admin_login_slug) }}"
-                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td>
+                                                <td>{{ $list->employee->full_name }}</td>
+                                                <td>
+                                                    <a href="{{ url('admin/fsc/assignee-fsc-executive/') }}/{{ Crypt::encrypt($list->fsc_slug) }}"
+                                                        title="Add Service Executives"> <i class="nav-icon fas fa-user-plus" aria-hidden="true"></i></a> &nbsp; &nbsp;
+                                                    <a href="{{ url('admin/fsc/manage-fsc/') }}/{{ Crypt::encrypt($list->fsc_slug) }}"
+                                                        title="Edit Service Center"> <i class="nav-icon fas fa-edit" aria-hidden="true"></i></a>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th>#</th>
-                                            <th>Access ID</th>
-                                            <th>Name</th>
-                                            <th>Mobile</th>
-                                            <th>Rolles</th>
-                                            <th>Permission</th>
-                                            <th>Modules</th>
+                                            <th>State</th>
+                                            <th>City</th>
+                                            <th>Center Name</th>
+                                            <th>Phone</th>
+                                            <th>Email</th>
+                                            <th>Address</th>
                                             <th>Status</th>
+                                            <th>Created By</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>

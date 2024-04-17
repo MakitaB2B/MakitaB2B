@@ -231,7 +231,7 @@
                             $('#password,#confirmpassword').css('border', '1px solid rgb(36 159 30)');
                         } else {
                             $('#submitfrom').prop('disabled', true);
-                            $('#message').html('Password doesn`t Matching').css('color', 'red');
+                            $('#message').html('The Password doesn`t Match').css('color', 'red');
                             $('#confirmpassword,#password').css('border', '1px solid #f60808');
                         }
                     }

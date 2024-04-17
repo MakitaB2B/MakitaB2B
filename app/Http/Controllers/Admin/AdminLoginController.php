@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Services\AdminService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Models\Admin\Sms;
 use Auth;
 
 class AdminLoginController extends Controller
@@ -33,8 +34,11 @@ class AdminLoginController extends Controller
         $password =$request->post('password');
         if(Auth::guard('admin')->attempt(['access_id'=>$userId, 'password'=>$password])){
             $status=Auth::guard('admin')->user()->status;
+            $hasPasswordSet=Auth::guard('admin')->user()->password_set;
             if($status==0){
                 return back()->with('error','Access has been revoked!');
+            }elseif($hasPasswordSet==0){
+                return redirect('admin/register');
             }else{
                 return redirect()->route('admin.dashboard')->with('msg','You are successfully logged in');
             }
@@ -43,6 +47,7 @@ class AdminLoginController extends Controller
         }
     }
     public function dashboard(Request $request){
+        $empAuth=Auth::guard('admin')->user();
         $dashboardData['empLoginActivity']=$this->adminService->getAllLoginActivities();
         return view('Admin/dashboard',$dashboardData);
     }
@@ -60,13 +65,22 @@ class AdminLoginController extends Controller
             $result['status'] = $arr[0]->status;
             $result['admin_login_slug'] = Crypt::encrypt($arr[0]->admin_login_slug);
             $result['admin_login_id'] = Crypt::encrypt($arr[0]->id);
+            $result['employee_roles'] = $this->adminService->getAllRolesSpecificEmployee($arr[0]->employee_slug);
+            $result['employee_permision'] = $this->adminService->getAllPermissionSpecificEmployee($arr[0]->employee_slug);
+            $result['employee_access_modules'] = $this->adminService->getAllModuleAccessSpecificEmployee($arr[0]->employee_slug);
         } else {
             $result['employee_slug'] = '';
             $result['access_id'] = '';
             $result['status'] = '';
             $result['admin_login_slug'] = Crypt::encrypt(0);
             $result['admin_login_id'] = Crypt::encrypt(0);
+            $result['employee_roles'] = [];
+            $result['employee_permision'] = [];
+            $result['employee_access_modules'] = [];
         }
+        $result['roles'] =$this->adminService->getAllRoles();
+        $result['permissions'] =$this->adminService->getAllPermissions();
+        $result['accessmodules'] =$this->adminService->getAllAccessModules();
         $result['allemp']=$this->adminService->findActiveEmployee();
         return view('Admin.manage_admin', $result);
     }
@@ -85,6 +99,8 @@ class AdminLoginController extends Controller
             'employee_slug' => 'required|unique:admin_logins,employee_slug,'.$id,
             'access_id' => 'required|unique:admin_logins,access_id,'.$id,
             'status' => 'required|numeric',
+            'roles'=>'required|array',
+            'accessmodules'=>'required|array',
         ]);
         if($data){
             $dataOparateEmpSlug=Auth::guard('admin')->user()->employee_slug ;
@@ -96,6 +112,12 @@ class AdminLoginController extends Controller
                     $msg='Admin sucessfully updated';
                  }
                  else{
+                    $empData=$this->adminService->findEmployeeBySlug($empSlug);
+                    $empMobile=$empData[0]->phone_number;
+                    $empID=$empData[0]->employee_no;
+                    $empName=$empData[0]->full_name;
+                    $message="Dear $empName, Welcome to Makita Power Tools India!, Congratulations! Your Makita login entity has been generated & your user ID is $empID, please register by visiting https://makita.ind.in/admin/register, for any query you can reach  our IT support, Best Regards, Makita Power Tools India";
+                    Sms::sendSMS($message,$empMobile);
                     $msg='Admin sucessfully inserted';
                  }
                 $request->session()->flash('message',$msg);
@@ -122,8 +144,8 @@ class AdminLoginController extends Controller
                 $empSlug=$checker[0]->employee_slug;
                 $empPrimaryPhone=$checker[0]->phone_number;
                 $empFullName=$checker[0]->full_name;
-                $checker=$this->adminService->sendPasswordOTP($empSlug,$empPrimaryPhone,$empFullName);
-                if($checker==1){
+                $OtpChecker=$this->adminService->sendPasswordOTP($empSlug,$empPrimaryPhone,$empFullName);
+                if($OtpChecker==1){
                     $encEmpSlug=Crypt::encrypt($empSlug);
                     return redirect('admin/checkotp/'.$encEmpSlug);
                 }else{
@@ -153,7 +175,7 @@ class AdminLoginController extends Controller
     }
     public function empResetCreatePassword(Request $request){
         $data = $request->validate([
-            'password' => 'required|confirmed|min:6',
+            'password' => 'required|confirmed|min:8',
             'password_confirmation' => 'required'
         ]);
         $password=$request->password;

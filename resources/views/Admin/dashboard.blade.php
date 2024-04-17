@@ -37,6 +37,15 @@
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         <h1 class="m-0">Dashboard</h1>
+                        @role('admin1126906841','super-admin965929578')
+                        Super Admin Role
+                        @endrole
+                        @permission('edit565288565','delete1300606601','view1234209540')
+                        Super Admin Permission
+                        @endpermission
+                        @module('modules2087432049')
+                        Super Admin Module
+                        @endmodule
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
