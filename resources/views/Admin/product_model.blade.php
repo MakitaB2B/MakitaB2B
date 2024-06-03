@@ -1,5 +1,5 @@
 @extends('Admin/layout')
-@section('page_title', 'Product Models | MAKITA')
+@section('page_title', 'Product Models List| MAKITA')
 @section('product_models_select','active')
 @section('container')
     <div class="content-wrapper">
