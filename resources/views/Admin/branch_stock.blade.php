@@ -50,7 +50,7 @@
                                     <div class="input-group input-group-sm">
                                         <select class="custom-select" id="stype">
                                             <option value="">Select Option</option>
-                                            <option value="item">Item</option>
+                                            <option value="item" selected="selected">Item</option>
                                             <option value="description">Description</option>
                                         </select>
                                         <input type="text" name="table_search" class="form-control float-right"
@@ -133,7 +133,7 @@
                     } else {
                         let searchtxt = $.trim($("#searchtxt").val());
                         let searchFrom = "stockpg";
-                        if (searchtxt != '' && searchtxt.length > 3) {
+                        if (searchtxt != '' && searchtxt.length > 0) {
                             $("#searchresultmsg").text('Please Wait while processing....').css({
                                 "color": "green",
                                 "font-weight": "600",
@@ -151,8 +151,8 @@
                                 }
                             });
                         }
-                        if (searchtxt.length <= 3) {
-                            $("#searchresultmsg").text('Should input more than 3 character').css({
+                        if (searchtxt.length <= 0) {
+                            $("#searchresultmsg").text('Should input a character').css({
                                 "color": "red",
                                 "font-weight": "600",
                                 "font-size": "10px"

@@ -8,6 +8,8 @@ use App\Services\EmployeeService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
+use App\Traits\HasPermissionsTrait;
+use Auth;
 
 class EmployeeController extends Controller
 {
@@ -16,7 +18,13 @@ class EmployeeController extends Controller
         $this->employeeService=$employeeService;
     }
     public function index(){
-        $employeeList=$this->employeeService->getAllEmployees();
+        $role= Auth::guard('admin')->user()->hasRole('super-admin1944305928');
+        if($role==true){
+            $employeeList=$this->employeeService->getAllEmployees();
+        }else{
+            $dataOparateEmpSlug=Auth::guard('admin')->user()->employee_slug;
+            $employeeList=$this->employeeService->findEmployeeBySlug($dataOparateEmpSlug);
+        }
         return view('Admin.employees',compact('employeeList'));
     }
     public function manageEmployee($employeeslug = '')

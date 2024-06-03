@@ -25,10 +25,19 @@
                 <a href="{{ url('admin/login') }}" class="h1" style="font-size: 1.9rem"><b>Makita</b></a>
             </div>
             <div class="card-body">
-                @if (session()->has('error'))
-                    <div class="card card-danger shadow" style="margin-bottom:20px!important">
+                @if (session()->has('error') || session()->has('sucessmsg'))
+                @php
+                    if(session()->has('error')){
+                        $msgCard='card-danger';
+                        $msg=session('error');
+                    }if(session()->has('sucessmsg')){
+                        $msgCard='card-success';
+                        $msg=session('sucessmsg');
+                    }
+                @endphp
+                    <div class="card {{$msgCard}} shadow" style="margin-bottom:20px!important">
                         <div class="card-header">
-                            <h3 class="card-title">{{ session('error') }}</h3>
+                            <h3 class="card-title">{{ $msg }}</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="remove"><i
                                         class="fas fa-times"></i>

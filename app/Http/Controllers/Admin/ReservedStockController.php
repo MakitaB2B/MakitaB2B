@@ -23,7 +23,9 @@ class ReservedStockController extends Controller
             foreach ($data as $value) {
                 set_time_limit(0);
                 // dd(array_combine($header,$value));
-                $reservedStockData=array_combine($header,$value);
+                $sanitizeDSD= sanitizeInput($value);
+                $addSlash=addslashes($sanitizeDSD);
+                $reservedStockData=array_combine($header,$addSlash);
                 ReservedStocks::create($reservedStockData);
             }
             return redirect('admin/reserved-stock');

@@ -43,7 +43,7 @@ class AdminLoginController extends Controller
                 return redirect()->route('admin.dashboard')->with('msg','You are successfully logged in');
             }
         }else{
-            return back()->with('error','Invalid Email or Password');
+            return back()->with('error','Invalid User ID or Password');
         }
     }
     public function dashboard(Request $request){
@@ -134,13 +134,9 @@ class AdminLoginController extends Controller
     }
     public function checkRegisterByPhone(Request $request){
         $checker=$this->adminService->checkIfRegisterByPhone($request->empprimphone);
-        if( count($checker)>0){
-            $status=$checker[0]->status;
-            if($status != 1){
-                $msg='Access Revoked, Contact Admin';
-                $request->session()->flash('message',$msg);
-                return redirect('admin/register');
-            }else{
+        if(count($checker)>0){
+            $checkAdminLogin=$this->adminService->findAdminLoginByEmpSlugAccessID($checker[0]->employee_slug,$checker[0]->employee_no);
+            if(count($checkAdminLogin)>0){
                 $empSlug=$checker[0]->employee_slug;
                 $empPrimaryPhone=$checker[0]->phone_number;
                 $empFullName=$checker[0]->full_name;
@@ -153,9 +149,13 @@ class AdminLoginController extends Controller
                     $request->session()->flash('message',$msg);
                     return redirect('admin/register');
                 }
+            }else{
+                $msg='Your Login ID Not Yet Created, Please Contact IT Support: 9591149431 ';
+                $request->session()->flash('message',$msg);
+                return redirect('admin/register');
             }
         }else{
-            $msg='Pone number not registered';
+            $msg='Phone number not registered or Access Revoked, Contact Admin';
             $request->session()->flash('message',$msg);
             return redirect('admin/register');
         }
@@ -183,7 +183,7 @@ class AdminLoginController extends Controller
         $createupdtPass=$this->adminService->empCreateUpdatePasswordService($password,$decryptEmpSlug);
         if($createupdtPass){
             $msg='Congrats! Login with Employee ID & Password';
-            $request->session()->flash('error',$msg);
+            $request->session()->flash('sucessmsg',$msg);
             return redirect('admin/login');
         }else{
             echo "Fail";

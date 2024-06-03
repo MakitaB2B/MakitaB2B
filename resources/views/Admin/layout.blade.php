@@ -215,6 +215,59 @@
                                 </p>
                             </a>
                         </li>
+                        <li class="nav-item @yield('stock-expandable')">
+                            <a href="#" class="nav-link @yield('stock_select')">
+                                <i class="nav-icon fa fa-microchip"></i>
+                                <p>
+                                    Stocks
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/branch-stock') }}" class="nav-link @yield('branch_stock_select')">
+                                        <i class="nav-icon fa fa-cubes"></i>
+                                        <p>Branch Stocks</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/reserved-stock') }}" class="nav-link @yield('reserved_stocks')">
+                                        <i class="nav-icon fa fa-braille"></i>
+                                        <p>Reserved Stocks</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/replaced-parts') }}" class="nav-link @yield('replaced_parts')">
+                                        <i class="nav-icon fa fa-compress"></i>
+                                        <p>Replaced  Parts</p>
+                                    </a>
+                                </li>
+                                @module('147092804369935471')
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/pending-po') }}" class="nav-link @yield('pending_po')">
+                                        <i class="nav-icon fa fa-spinner"></i>
+                                        <p>Pending PO</p>
+                                    </a>
+                                </li>
+                                @endmodule
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('admin/service-management') }}" class="nav-link @yield('service_management_select')">
+                                <i class="nav-icon fa fa-wrench"></i>
+                                <p>
+                                    Service Management
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('admin/factory-service-center') }}" class="nav-link @yield('factory_service_center_select')">
+                                <i class="nav-icon fa fa-cogs"></i>
+                                <p>
+                                    Service Center
+                                </p>
+                            </a>
+                        </li>
                         @module('product-category1569185750')
                         <li class="nav-item">
                             <a href="{{ url('admin/productcategory') }}" class="nav-link @yield('productcategory_select')">
@@ -227,7 +280,7 @@
                         @endmodule
                         @module('product-model683637913')
                         <li class="nav-item">
-                            <a href="{{ url('admin/productmodel') }}" class="nav-link @yield('product_select')">
+                            <a href="{{ url('admin/productmodel') }}" class="nav-link @yield('product_models_select')">
                                 <i class="nav-icon fa fa-snowflake"></i>
                                 <p>
                                     Product Model
@@ -310,35 +363,6 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item @yield('stock-expandable')">
-                            <a href="#" class="nav-link @yield('stock_select')">
-                                <i class="nav-icon fa fa-microchip"></i>
-                                <p>
-                                    Stocks
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ url('admin/branch-stock') }}" class="nav-link @yield('branch_stock_select')">
-                                        <i class="nav-icon fa fa-cubes"></i>
-                                        <p>Branch Stocks</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ url('admin/reserved-stock') }}" class="nav-link @yield('reserved_stocks')">
-                                        <i class="nav-icon fa fa-braille"></i>
-                                        <p>Reserved Stocks</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ url('admin/replaced-parts') }}" class="nav-link @yield('replaced_parts')">
-                                        <i class="nav-icon fa fa-compress"></i>
-                                        <p>Replaced  Parts</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
                         <li class="nav-item">
                             <a href="{{ url('admin/holidays') }}" class="nav-link @yield('holiday_select')">
                                 <i class="nav-icon fas fa-calendar"></i>
@@ -398,18 +422,10 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('admin/service-management') }}" class="nav-link @yield('service_management_select')">
-                                <i class="nav-icon fa fa-wrench"></i>
+                            <a href="{{ url('admin/daily-sales') }}" class="nav-link @yield('daily_sales')">
+                                <i class="nav-icon fa fa-book"></i>
                                 <p>
-                                    Service Management
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url('admin/factory-service-center') }}" class="nav-link @yield('factory_service_center_select')">
-                                <i class="nav-icon fa fa-cogs"></i>
-                                <p>
-                                    Service Center
+                                    Daily Sales
                                 </p>
                             </a>
                         </li>

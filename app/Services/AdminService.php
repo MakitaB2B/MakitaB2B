@@ -24,6 +24,9 @@ class AdminService{
     public function findAdminBySlug($adminSlug){
         return AdminLogin::where(['admin_login_slug'=>$adminSlug])->get();
     }
+    public function findAdminLoginByEmpSlugAccessID($empSlug,$accessId){
+        return AdminLogin::where(['employee_slug'=>$empSlug])->where(['access_id'=>$accessId])->get();
+    }
     public function findActiveEmployee(){
         return DB::table('employees')->where(['status'=>1])->orderBy('id','desc')->get(['employee_no','full_name','employee_slug']);
     }
@@ -152,7 +155,7 @@ class AdminService{
         return AdminLogin::with('employee:employee_no,full_name,phone_number,employee_slug')->whereNotNull('last_activity')->orderBy('last_activity','desc')->get();
     }
     public function checkIfRegisterByPhone($empPhone){
-        return DB::table('employees')->where(['phone_number'=>$empPhone])->get(['employee_slug','status','phone_number','full_name']);
+        return DB::table('employees')->where(['phone_number'=>$empPhone])->where(['status'=>1])->get(['employee_slug','status','phone_number','full_name','employee_no']);
     }
     public function sendPasswordOTP($empSlug,$empPrimaryPhone,$empFullName){
         $otpGenerator = rand(100000,999999);

@@ -28,6 +28,7 @@
                     @if (Auth::guard('customer')->check())
                     <li class="@yield('warrantycard_select')"><a href="{{ url('warranty-scan-machine') }}">Register Warranty</a></li>
                     <li class="@yield('warranty_list')"><a href="{{ url('warranty-registration-list-spec-cx') }}">Warranty List</a></li>
+                    <li class="@yield('cx_tools_repair_list')"><a href="{{ url('cx-tools-repair-list') }}">Tools Repair List</a></li>
                     <li class="@yield('profile_select')"><a href="{{ url('cx-signup-details') }}">Profile</a></li>
                     @endif
                     @if (Auth::guard('customer')->check())

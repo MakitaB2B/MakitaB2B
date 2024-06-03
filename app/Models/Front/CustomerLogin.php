@@ -12,4 +12,7 @@ class CustomerLogin extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $guard='customer';
+    public function customer(){
+        return $this->hasOne('App\Models\Front\Customer','customer_slug','customer_slug');
+    }
 }

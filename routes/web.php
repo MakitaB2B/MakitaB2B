@@ -22,6 +22,9 @@ use App\Http\Controllers\Admin\ReplacedPartsController;
 use App\Http\Controllers\Admin\RolesPermissionController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\FactoryServiceStationController;
+use App\Http\Controllers\Admin\DailySalesController;
+use App\Http\Controllers\Admin\ToolsService;
+use App\Http\Controllers\Admin\PendingPoController;
 
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
@@ -52,6 +55,8 @@ Route::post('/cx-login-credentials-process',[CustomerLoginRegistrationController
 Route::post('/cx-otp-verification',[CustomerLoginRegistrationController::class,'verifyCXLoginRegisOTP']);
 Route::get('/cx-forget-password',[CustomerLoginRegistrationController::class,'cxForgetPasswordView'])->name('cx-forget-password');
 Route::post('/cx-login-password-reset',[CustomerLoginRegistrationController::class,'resetCXLoginPassword'])->name('cx-login-password-reset');
+Route::get('/cxtoolsrepaircostestimation/{tsSlug}',[WarrantyController::class,'cxConfirmRejectToolsRepairCostEstimation'])->name('cxtoolsrepaircostestimation');
+Route::post('/accept-reject-cost-estimation-cx-wl',[WarrantyController::class,'acceptRejectTRCostEstimationWithoutLogin'])->name('accept-reject-cost-estimation-cx-wl');
 
 
 Route::group(['middleware' => ['customer']], function() {
@@ -66,6 +71,9 @@ Route::post('/prod-model-details',[WarrantyController::class,'getProductSpecific
 Route::post('/check-serialnumber-existence',[WarrantyController::class,'checkSerialNumberExistence'])->name('check-serialnumber-existence');
 Route::get('/warranty-registration-list-spec-cx',[WarrantyController::class,'getWarrantyListForSpecCX'])->name('warranty-registration-list-spec-cx');
 Route::get('/cx-logout',[CustomerLoginRegistrationController::class,'logout'])->name('customerlogout');
+Route::post('/cx-tsr-registration',[ToolsService::class,'createOrUpdateToolsService'])->name('cx-tsr-registration');
+Route::get('/cx-tools-repair-list',[WarrantyController::class,'listofToolsRepair'])->name('cx-tools-repair-list');
+Route::post('/accept-reject-cost-estimation-cx',[WarrantyController::class,'acceptRejectTRCostEstimation'])->name('accept-reject-cost-estimation-cx');
 });
 /*-----End Front Route-----*/
 
@@ -93,6 +101,8 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/product/manage-product/{productslug?}',[ProductController::class,'manageProduct'])->name('productcategory.manage-product');
     Route::post('/product/manage-product-process',[ProductController::class,'manageProductProcess'])->name('product.manage-product-process');
     Route::get('/productmodel',[ProductModelController::class,'index'])->name('admin.productmodel');
+    Route::get('/productmodel/manage-product-model/{productmodelslug?}',[ProductModelController::class,'manageProductModelSlug'])->name('productmodel.manage-product-model');
+    Route::post('/productmodel/manage-product-model-process',[ProductModelController::class,'manageProductModelProcess'])->name('productmodel.manage-product-model-process');
     Route::get('/department',[DepartmentController::class,'index'])->name('admin.department');
     Route::get('/department/manage-department/{departmentslug?}',[DepartmentController::class,'manageDepartment'])->name('department.manage-department');
     Route::post('/department/manage-department-process',[DepartmentController::class,'manageDepartmentProcess'])->name('department.manage-department-process');
@@ -140,6 +150,10 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/replaced-parts-search',[ReplacedPartsController::class,'searchReplacedParts'])->name('replaced-parts-search');
     Route::post('/replaced-parts-filterguardian',[ReplacedPartsController::class,'replacedPartsFilterGuardian'])->name('replaced-parts-filterguardian');
     Route::post('/replaced-parts-filerresult',[ReplacedPartsController::class,'filterReplacedParts'])->name('replaced-parts-filerresult');
+    Route::get('/pending-po',[PendingPoController::class,'index'])->name('pending-po');
+    Route::post('/upload-pending-po',[PendingPoController::class,'uploadPendingPO'])->name('upload-pending-po');
+    Route::post('/pending-po-search',[PendingPoController::class,'searchPendingPO'])->name('pending-po-search');
+
     Route::get('/roles',[RolesPermissionController::class,'roleIndex'])->name('roles');
     Route::get('/roles/manage-role/{roleslug?}',[RolesPermissionController::class,'manageRole'])->name('roles.manage-role');
     Route::post('/roles/manage-role-process',[RolesPermissionController::class,'manageRoleProcess'])->name('roles.manage-role-process');
@@ -153,20 +167,23 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/teams/manage-team-process',[TeamController::class,'createOrUpdateTeams'])->name('teams.manage-team-process');
     Route::get('/teams/manage-team-members/{teamslug}',[TeamController::class,'manageTeamMember'])->name('teams.manage-team-members');
     Route::post('/teams/manage-team-member-process',[TeamController::class,'manageTeamMemberProcess'])->name('teams.manage-team-member-process');
-
-    Route::get('/service-management', function () {
-        return view('Admin/service_management');
-    });
-    Route::get('/service-management/create-sr', function () {
-        return view('Admin/manage_service_request');
-    });
+    Route::get('/service-management',[ToolsService::class,'index'])->name('service-management');
+    Route::get('/service-management/manage-service-requiest/{srSlug?}',[ToolsService::class,'manageServiceRequest'])->name('service-management.manage-service-requiest');
+    Route::post('/service-management/manage-service-requiest-process',[ToolsService::class,'createOrUpdateToolsService'])->name('service-management.manage-service-requiest-process');
+    Route::post('/service-management/send-service-cost-estimation-cx',[ToolsService::class,'createOrUpdateServiceCostEstimation'])->name('service-management.send-service-cost-estimation-cx');
+    Route::post('/service-management/send-repair-completion-sms',[ToolsService::class,'sendRepairCompletionSMS'])->name('service-management.send-repair-completion-sms');
+    Route::post('/service-management/submit-tools-handover-data',[ToolsService::class,'insertToolstHandOverData'])->name('service-management.submit-tools-handover-data');
+    Route::post('/service-management/close-sr',[ToolsService::class,'closeSR'])->name('service-management.close-sr');
+    Route::post('/service-management/reason-over-48-hours',[ToolsService::class,'reasonOver48Hours'])->name('service-management.reason-over-48-hours');
 
     Route::get('/factory-service-center',[FactoryServiceStationController::class,'index']);
     Route::get('/fsc/manage-fsc/{fscslug?}',[FactoryServiceStationController::class,'manageFSC'])->name('fsc.manage-manage-fsc');
     Route::post('/fsc/manage-fsc-process',[FactoryServiceStationController::class,'manageFSCProcess'])->name('fsc.manage-fsc-process');
-
     Route::get('/fsc/assignee-fsc-executive/{fscSlug}',[FactoryServiceStationController::class,'manageFSCServiceExecutive']);
     Route::post('/fsc/manage-fsc-executive-process',[FactoryServiceStationController::class,'manageFSCServiceExecutiveProcess'])->name('fsc.manage-fsc-executive-process');
+
+    Route::get('/daily-sales',[DailySalesController::class,'index'])->name('daily-sales');
+    Route::post('/upload-daily-sales-report',[DailySalesController::class,'uploadDailySalesReport'])->name('upload-daily-sales-report');
 
 });
 

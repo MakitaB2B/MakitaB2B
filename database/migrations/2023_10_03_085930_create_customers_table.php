@@ -20,7 +20,7 @@ return new class extends Migration
             $table->bigInteger('state')->unsigned()->nullable();
             $table->string('city',150)->nullable();
             $table->text('address')->nullable();
-            $table->enum('gender',['Male','Female','Other'])->nullable();;
+            $table->enum('gender',['Male','Female','Other'])->nullable();
             $table->integer('age')->nullable()->unsigned();
             $table->string('industry',100)->nullable();
             $table->string('job_title',100)->nullable();

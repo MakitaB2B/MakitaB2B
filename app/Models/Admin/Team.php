@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model
 {
     use HasFactory;
-    protected $fillable=['id','team_name','team_owner','team_slug'];
+    protected $fillable=['id','team_name','team_owner','updated_by','team_slug'];
     public function employee(){
         return $this->hasOne('App\Models\Admin\Employee','employee_slug','team_owner');
     }

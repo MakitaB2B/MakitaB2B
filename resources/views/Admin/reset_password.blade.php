@@ -183,7 +183,7 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-primary btn-block" id="submitfrom">Change
+                            <button type="submit" class="btn btn-primary btn-block" id="submitfrom">Submit
                                 password</button>
                         </div>
                         <!-- /.col -->

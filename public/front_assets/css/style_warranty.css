@@ -112,7 +112,7 @@ footer a:hover {
 
 .form-control {
     border-radius: 0;
-    font-size: 10px !important;
+    /* font-size: 10px !important; */
 }
 
 label {

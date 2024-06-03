@@ -7,8 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\Front\WarrantyRegistration;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\Admin\ProductModel;
+use App\Models\Admin\FactoryServiceCenters;
+use App\Models\Admin\ToolsService;
+use App\Models\Admin\Employee;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use App\Models\Admin\Sms;
 use Carbon\Carbon;
 use Auth;
 
@@ -131,9 +135,118 @@ class WarrantyController extends Controller
     }
     public function getWarrantyListForSpecCX(){
         $cxSlug=Auth::guard('customer')->user()->customer_slug;
-        $result =  WarrantyRegistration::with('model:id,model_number,warranty_period')
+        $result['warrantyList'] =  WarrantyRegistration::with('model:id,model_number,warranty_period')
         ->where('customer_slug', $cxSlug)->orderBy('id','desc')
         ->get(['id','model_number','invoice_number','machine_serial_number','application_status','date_of_purchase','warranty_expiry_date']);
-        return view('Front.customer_prod_warranty_list', compact('result'));
+        $result['fscList']=FactoryServiceCenters::get(['center_name','fsc_slug']);
+        $user=Auth::guard('customer')->user();
+        $customer = $user->customer;
+        $result['customerName']=$customer->name;
+        $result['customerPhone']=$customer->phone;
+        return view('Front.customer_prod_warranty_list', $result);
+    }
+    public function listofToolsRepair(){
+        $cxSlug=Auth::guard('customer')->user()->customer_slug;
+        $result['toolsService']=ToolsService::with(['fscBranch:center_name,fsc_slug'])->orderBy('status','asc')->where('cx_slug','=',$cxSlug)->get(['id','trn','model','tools_sl_no','receive_date_time','tools_issue','status','cost_estimation','sr_slug','costestimation_file','service_center','repairer']);
+        return view('Front.customer_tools_repair_list',$result);
+    }
+    public function acceptRejectTRCostEstimation(Request $request){
+        $srSlug= Crypt::decrypt($request->srslug_cear);
+        $estDTConfirmByCX=Carbon::now()->toDateTimeString();
+        $costEstAccRej=$request->acceptrejectce;
+        if($costEstAccRej=='acceptce'){
+            $status=3;
+            $rejectReason=null;
+            $msg='Repair Estimation Accepted';
+        }elseif($costEstAccRej=='rejectce'){
+            $status=4;
+            $rejectReason=$request->reason_reject;
+            $msg='Repair Estimation Rejected';
+        }
+        $operate=ToolsService::where('sr_slug', $srSlug)->update(['est_date_confirm_cx' => $estDTConfirmByCX,'status'=>$status,'reason_if_rejected'=>$rejectReason]);
+        if($operate){
+
+             // SR Details
+             $rowData=$this->findToolsServiceBySlug($srSlug);
+             $dealerCXName=$rowData[0]->delear_customer_name;
+             $trn=$rowData[0]->trn;
+
+            // Repairer Details
+            $empData=$this->findEmployeeByEmpSlug($rowData[0]->repairer);
+            $repairerName=$empData[0]->full_name;
+            $repairerNumber=$empData[0]->phone_number;
+
+            if($status==4 && $costEstAccRej=='rejectce'){
+                $mobile=$rowData[0]->contact_number;
+                $message="Dear $dealerCXName, You have not approved SR $trn for the repair,kindly collect it back within 30 days from SR. Thank you, -Makita Power Tools India";
+                Sms::sendSMS($message,$mobile);
+                // SMS Notification to Repairer
+                $messagetoRepairer="Dear  $repairerName, Cost Estimation of SR  $trn is Rejected by the customer,  Your prompt response is appreciated, Makita India";
+                Sms::sendSMS($messagetoRepairer,$repairerNumber);
+            }
+            if($status==3 && $costEstAccRej=='acceptce'){
+                $messagetoRepairer="Dear  $repairerName, Cost Estimation of SR  $trn is Accepted by the customer,  Your prompt response is appreciated, Makita India";
+                Sms::sendSMS($messagetoRepairer,$repairerNumber);
+            }
+            $request->session()->flash('message',$msg);
+        }
+        return redirect('cx-tools-repair-list');
+    }
+    public function acceptRejectTRCostEstimationWithoutLogin(Request $request){
+        $srSlug= Crypt::decrypt($request->srslug_cear);
+        $estDTConfirmByCX=Carbon::now()->toDateTimeString();
+        $costEstAccRej=$request->acceptrejectce;
+        if($costEstAccRej=='acceptce'){
+            $status=3;
+            $rejectReason=null;
+            $msg='Repair Estimation Accepted';
+        }elseif($costEstAccRej=='rejectce'){
+            $status=4;
+            $rejectReason=$request->reason_reject;
+            $msg='Repair Estimation Rejected';
+        }
+        $operate=ToolsService::where('sr_slug', $srSlug)->update(['est_date_confirm_cx' => $estDTConfirmByCX,'status'=>$status,'reason_if_rejected'=>$rejectReason]);
+        if($operate){
+             // SR Details
+             $rowData=$this->findToolsServiceBySlug($srSlug);
+             $dealerCXName=$rowData[0]->delear_customer_name;
+             $trn=$rowData[0]->trn;
+
+            // Repairer Details
+            $empData=$this->findEmployeeByEmpSlug($rowData[0]->repairer);
+            $repairerName=$empData[0]->full_name;
+            $repairerNumber=$empData[0]->phone_number;
+
+            if($status==4 && $costEstAccRej=='rejectce'){
+                $mobile=$rowData[0]->contact_number;
+                $message="Dear $dealerCXName, You have not approved SR $trn for the repair,kindly collect it back within 30 days from SR. Thank you, -Makita Power Tools India";
+                Sms::sendSMS($message,$mobile);
+                // SMS Notification to Repairer
+                $messagetoRepairer="Dear  $repairerName, Cost Estimation of SR  $trn is Rejected by the customer,  Your prompt response is appreciated, Makita India";
+                Sms::sendSMS($messagetoRepairer,$repairerNumber);
+            }
+            if($status==3 && $costEstAccRej=='acceptce'){
+                $messagetoRepairer="Dear  $repairerName, Cost Estimation of SR  $trn is Accepted by the customer,  Your prompt response is appreciated, Makita India";
+                Sms::sendSMS($messagetoRepairer,$repairerNumber);
+            }
+            $request->session()->flash('message',$msg);
+        }
+        $tsSlug=base64_encode($srSlug);
+        return redirect()->route('cxtoolsrepaircostestimation', [$tsSlug]);
+    }
+    public function findToolsServiceBySlug($slug){
+        return ToolsService::where(['sr_slug'=>$slug])->get();
+    }
+    public function findEmployeeByEmpSlug($empSlug){
+        return Employee::where(['employee_slug'=>$empSlug])->get(['full_name','employee_slug','phone_number']);
+    }
+    public function cxConfirmRejectToolsRepairCostEstimation($tsSlug){
+        $decTSSlug=base64_decode($tsSlug);
+        $getData=ToolsService::where(['sr_slug'=>$decTSSlug])->get();
+        $result['costEst']=$getData[0]->cost_estimation;
+        $result['costEstFile']=$getData[0]->costestimation_file;
+        $result['toolsRepairStatus']=$getData[0]->status;
+        $result['srslug_cear']=Crypt::encrypt($getData[0]->sr_slug);
+        return view('Front.customer_toolsrepair_costest_acceptreject',$result);
     }
 }

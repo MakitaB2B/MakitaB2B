@@ -54,7 +54,7 @@
                                                 @if (count($teamMembersByTeam)>0)
                                                     @foreach ($allEmp as $empList)
                                                         <option value="{{Crypt::encrypt($empList->employee_slug)}}" @if (in_array($empList->employee_slug, $teamMemberRecords)) selected @endif>
-                                                            {{ $empList->full_name}}
+                                                            {{ $empList->full_name}}/Emp. No-> <?= $empList->employee_no ?>
                                                         </option>
                                                     @endforeach
                                                 @else

@@ -35,7 +35,7 @@ class BranchStockController extends Controller
         return view('Admin.manage_stock_records',$result);
     }
     public function searchStock(Request $request){
-        $searchValue=$request->searchtxt;
+        $searchValue=strtoupper($request->searchtxt);
         $searchFrom=$request->searchFrom;
         $searchType=$request->searchtype;
         $type = match($searchType){
@@ -43,7 +43,7 @@ class BranchStockController extends Controller
             'description'=>'description',
             default => 'item',
         };
-        $searchResult=BranchStocks::where($type,'LIKE','%'.$searchValue."%")->with('reservedStock:id,item,reserved')->get(['id','item','description','grandtotal','updated_at']);
+        $searchResult=BranchStocks::where($type,'LIKE',"$searchValue%")->with('reservedStock:id,item,reserved')->get(['id','item','description','grandtotal','updated_at']);
         if(($searchResult->count())>0 ){
             $output="";
             if($searchFrom=='stockpg'){

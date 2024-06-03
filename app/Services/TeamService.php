@@ -9,19 +9,16 @@ class TeamService{
     public function getAllTeamsWithOwner(){
         return Team::with(['employee:employee_slug,full_name,employee_no'])->select('team_name','team_owner','team_slug')->get();
     }
+    public function getTeamsByOwner($dataOparateEmpSlug){
+        return Team::with(['employee:employee_slug,full_name,employee_no'])->where(['team_owner'=>$dataOparateEmpSlug])->select('team_name','team_owner','team_slug')->get();
+    }
     public function findTeamBySlug($slug){
         return Team::where(['team_slug'=>$slug])->get();
     }
-    // public function fetchAllHolidayTypes(){
-    //     return DB::table('holiday_types')->get();
-    // }
-    // public function fetchAllStates(){
-    //     return DB::table('states')->get();
-    // }
-    public function createOrUpdateTeams($id,$request,$slug,$dataOparateEmpSlug){
+    public function createOrUpdateTeams($id,$request,$slug,$dataOparateEmpSlug,$teamOwner){
         $operate=Team::updateOrCreate(
             ['id' =>$id],
-            ['team_name'=> $request->name,'team_owner'=>$dataOparateEmpSlug,'team_slug'=>$slug]
+            ['team_name'=> $request->name,'team_owner'=>$teamOwner,'updated_by'=>$dataOparateEmpSlug,'team_slug'=>$slug]
          );
          if($operate){
             return true;
