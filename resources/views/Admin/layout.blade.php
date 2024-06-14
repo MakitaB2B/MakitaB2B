@@ -246,7 +246,7 @@
                                 <li class="nav-item">
                                     <a href="{{ url('admin/pending-po') }}" class="nav-link @yield('pending_po')">
                                         <i class="nav-icon fa fa-spinner"></i>
-                                        <p>Pending PO</p>
+                                        <p>ETA Enquiry</p>
                                     </a>
                                 </li>
                                 @endmodule
@@ -427,6 +427,29 @@
                                 <p>
                                     Daily Sales
                                 </p>
+                            </a>
+                        </li>
+                        <li class="nav-item @yield('assetaudit-expandable')">
+                            <a href="#" class="nav-link @yield('asset_audit_select')">
+                                <i class="nav-icon fa fa-bars"></i>
+                                <p>
+                                    Assets & Audit
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/asset-master') }}" class="nav-link @yield('asset_master_select')">
+                                        <i class="nav-icon fa fa-laptop"></i>
+                                        <p>Asset Master</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('admin/employee/leave-application') }}" class="nav-link @yield('employee_leave_application_select')">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Leave Application</p>
                             </a>
                         </li>
 

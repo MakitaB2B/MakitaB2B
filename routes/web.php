@@ -25,6 +25,8 @@ use App\Http\Controllers\Admin\FactoryServiceStationController;
 use App\Http\Controllers\Admin\DailySalesController;
 use App\Http\Controllers\Admin\ToolsService;
 use App\Http\Controllers\Admin\PendingPoController;
+use App\Http\Controllers\Admin\AssetMasterController;
+use App\Http\Controllers\Admin\EmployeeLeaveApplicationController;
 
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
@@ -175,15 +177,22 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/service-management/submit-tools-handover-data',[ToolsService::class,'insertToolstHandOverData'])->name('service-management.submit-tools-handover-data');
     Route::post('/service-management/close-sr',[ToolsService::class,'closeSR'])->name('service-management.close-sr');
     Route::post('/service-management/reason-over-48-hours',[ToolsService::class,'reasonOver48Hours'])->name('service-management.reason-over-48-hours');
-
     Route::get('/factory-service-center',[FactoryServiceStationController::class,'index']);
     Route::get('/fsc/manage-fsc/{fscslug?}',[FactoryServiceStationController::class,'manageFSC'])->name('fsc.manage-manage-fsc');
     Route::post('/fsc/manage-fsc-process',[FactoryServiceStationController::class,'manageFSCProcess'])->name('fsc.manage-fsc-process');
     Route::get('/fsc/assignee-fsc-executive/{fscSlug}',[FactoryServiceStationController::class,'manageFSCServiceExecutive']);
     Route::post('/fsc/manage-fsc-executive-process',[FactoryServiceStationController::class,'manageFSCServiceExecutiveProcess'])->name('fsc.manage-fsc-executive-process');
-
     Route::get('/daily-sales',[DailySalesController::class,'index'])->name('daily-sales');
     Route::post('/upload-daily-sales-report',[DailySalesController::class,'uploadDailySalesReport'])->name('upload-daily-sales-report');
+    Route::get('/asset-master',[AssetMasterController::class,'index'])->name('asset-master');
+    Route::get('/asset-master/manage-asset-master/{assetMasterSlug?}',[AssetMasterController::class,'manageAssetMaster'])->name('admin.asset-master.manage-asset-master');
+    Route::post('/asset-master/manage-asset-master-process',[AssetMasterController::class,'createOrUpdateAssetMaster'])->name('asset-master.manage-asset-master-process');
+    Route::post('/asset-master/check-assettag-existence',[AssetMasterController::class,'checkAssetTagExistance']);
+    Route::post('/asset-master/msofficelicence-existence',[AssetMasterController::class,'checkMSOfficeLicenceExistance']);
+    Route::post('/asset-master/operatingsystemserialnumber-existence',[AssetMasterController::class,'operatingSystemSerialNumberExistance']);
+
+    Route::get('/employee/leave-application',[EmployeeLeaveApplicationController::class,'index'])->name('employee.leave-application');
+    Route::get('/employee/manage-leave-application/{empLvApSlug?}',[EmployeeLeaveApplicationController::class,'manageLeaveApllication'])->name('employee.manage-leave-appllication');
 
 });
 

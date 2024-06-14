@@ -43,7 +43,13 @@ class BranchStockController extends Controller
             'description'=>'description',
             default => 'item',
         };
-        $searchResult=BranchStocks::where($type,'LIKE',"$searchValue%")->with('reservedStock:id,item,reserved')->get(['id','item','description','grandtotal','updated_at']);
+        if($type=='item'){
+            $searchQuery=$searchValue.'%';
+        }
+        if($type=='description'){
+            $searchQuery='%'.$searchValue.'%';
+        }
+        $searchResult=BranchStocks::where($type,'LIKE',"$searchQuery")->with('reservedStock:id,item,reserved')->get(['id','item','description','grandtotal','updated_at']);
         if(($searchResult->count())>0 ){
             $output="";
             if($searchFrom=='stockpg'){

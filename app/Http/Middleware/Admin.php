@@ -27,7 +27,7 @@ class Admin
                 return redirect('admin/register');
             }elseif($status==1){
                 $adminId=Auth::guard('admin')->user()->id;
-                $expireAt= now()->addMinutes(1);
+                $expireAt= now()->addMinutes(20);
                 Cache::put('emp-login-activity'.$adminId,true,$expireAt);
                 AdminLogin::where('id',$adminId)->update(['last_activity'=>now()]);
             }

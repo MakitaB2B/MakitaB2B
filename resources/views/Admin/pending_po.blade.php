@@ -29,7 +29,7 @@
                 @endif
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Pending PO</h1>
+                        <h1>ETA Enquiries</h1>
                     </div>
                     <div class="col-sm-6">
                         <b style="display: none; color:green" id="hm">File is large, it may take a while, please wait
@@ -81,6 +81,9 @@
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
+                                        @php
+                                        //    dd($result->toArray());
+                                        @endphp
                                         @foreach ($result as $key => $pendingPO)
                                             <tr>
                                                 <td>{{ $pendingPO->item }}</td>

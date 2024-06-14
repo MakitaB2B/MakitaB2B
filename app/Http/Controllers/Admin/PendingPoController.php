@@ -9,7 +9,7 @@ use App\Models\Admin\PendingPo;
 class PendingPoController extends Controller
 {
     public function index(){
-        $result=PendingPo::paginate(20,['vendorpo','vendor','name','po','line','item','itemdescription','cat','ordered','poorderdate','duedate','month']);
+        $result=PendingPo::paginate(20,['vendorpo','vendor','name','po','line','item','itemdescription','cat','ordered','poorderdate','duedate']);
         return view('Admin.pending_po',compact('result'));
     }
     public function uploadPendingPO(Request $request) {
@@ -46,9 +46,9 @@ class PendingPoController extends Controller
             foreach ($searchResult as $key => $data) {
                 $output.='<tr>'.
                 '<td>'.$data->item.'</td>'.
+                '<td>'.\Carbon\Carbon::parse($data->duedate)->format('d M Y' ).'</td>'.
                 '<td>'.$data->itemdescription.'</td>'.
                 '<td>'.$data->ordered.'</td>'.
-                '<td>'.\Carbon\Carbon::parse($data->duedate)->format('d M Y' ).'</td>'.
                 '</tr>';
                 }
         return Response($output);
