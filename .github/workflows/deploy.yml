@@ -1,6 +1,6 @@
 name: Push-to-EC2
 
-# Trigger deployment only on push to master branch
+# Trigger deployment only on push to development branch
 on:
   push:
     branches:
@@ -8,12 +8,13 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to EC2 on devlopment branch push
+    name: Deploy to EC2 on development branch push
     runs-on: ubuntu-latest
 
-   # steps:
-   #  - name: Checkout the files
-   #     uses: actions/checkout@v2
+    steps:
+      # Uncomment and adjust if additional steps are needed
+      # - name: Checkout the files
+      #   uses: actions/checkout@v2
 
       - name: Deploy to EC2
         uses: MakitaB2B/MakitaB2B@development
