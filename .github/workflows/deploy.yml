@@ -32,6 +32,11 @@ jobs:
           sudo git pull origin development
           sudo composer install
 
+      - name: Ensure storage and cache directories exist
+        run: |
+          sudo mkdir -p /var/www/html/MakitaB2B/storage
+          sudo mkdir -p /var/www/html/MakitaB2B/bootstrap/cache
+
       - name: Set correct permissions for storage and cache
         run: |
           sudo chown -R www-data:www-data /var/www/html/MakitaB2B/storage /var/www/html/MakitaB2B/bootstrap/cache
