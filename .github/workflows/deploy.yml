@@ -9,10 +9,10 @@ jobs:
     runs-on: [self-hosted]
     if: github.ref == 'refs/heads/development'
     steps:
-      - name: Check if /var/www/html is a git repository
+      - name: Check if /var/www/html/MakitaB2B is a git repository
         id: check_repo
         run: |
-          if [ -d "/var/www/html/.git" ]; then
+          if [ -d "/var/www/html/MakitaB2B/.git" ]; then
             echo "::set-output name=is_git_repo::true"
           else
             echo "::set-output name=is_git_repo::false"
@@ -22,11 +22,11 @@ jobs:
         if: steps.check_repo.outputs.is_git_repo == 'false'
         run: |
           sudo rm -rf /var/www/html
-          sudo git clone https://github.com/MakitaB2B/MakitaB2B.git /var/www/html
+          sudo git clone https://github.com/MakitaB2B/MakitaB2B.git /var/www/html/MakitaB2B
 
       - name: Pull latest changes and install dependencies
         run: |
-          cd /var/www/html
+          cd /var/www/html/MakitaB2B
           sudo git clean -f -d
           sudo git stash
           sudo git pull origin development
