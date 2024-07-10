@@ -36,3 +36,11 @@ jobs:
         run: |
           sudo chown -R www-data:www-data /var/www/html/MakitaB2B/storage /var/www/html/MakitaB2B/bootstrap/cache
           sudo chmod -R 775 /var/www/html/MakitaB2B/storage /var/www/html/MakitaB2B/bootstrap/cache
+          sudo chmod 777 -R /var/www/html
+          sudo chown -R www-data storage
+          sudo chown -R www-data storage/framework
+          sudo chmod g+w -R storage
+          sudo chmod g+w -R storage/framework
+          sudo chmod g+w -R storage/framework/sessions/
+          sudo chmod g+w -R storage/logs/
+
