@@ -9,5 +9,26 @@ jobs:
     runs-on: [self-hosted]
     if: github.ref == 'refs/heads/development'
     steps:
-      - name: Run Git Pull and Composer Install
-        run: cd /var/www/html && git clean -f -d && git stash && git pull origin development && composer install 
+      - name: Check if /var/www/html is a git repository
+        id: check_repo
+        run: |
+          if [ -d "/var/www/html/.git" ]; then
+            echo "::set-output name=is_git_repo::true"
+          else
+            echo "::set-output name=is_git_repo::false"
+          fi
+
+      - name: Clone repository if not a git repository
+        if: steps.check_repo.outputs.is_git_repo == 'false'
+        run: |
+          rm -rf /var/www/html
+          git clone https://github.com/MakitaB2B/MakitaB2B.git /var/www/html
+
+      - name: Pull latest changes and install dependencies
+        run: |
+          cd /var/www/html
+          git clean -f -d
+          git stash
+          git pull origin development
+          composer install
+
