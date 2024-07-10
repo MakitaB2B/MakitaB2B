@@ -10,4 +10,4 @@ jobs:
     if: github.ref == 'refs/heads/development'
     steps:
       - name: Run Git Pull and Composer Install
-        run: cd /var/www/healthapi && git clean -f -d && git stash && git pull origin development && composer install 
+        run: cd /var/www/MakitaB2B && git clean -f -d && git stash && git pull origin development && composer install 
