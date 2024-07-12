@@ -47,6 +47,7 @@ use App\Http\Controllers\WelcomeController;
 //     return view('welcome');
 // });
 Route::get('/',[WelcomeController::class,'welcome']);
+Route::get('/welocome',[WelcomeController::class,'image']);
 
 /*-----Start Front Route-----*/
 Route::get('/cx-login',[CustomerLoginRegistrationController::class,'cxLoginView'])->name('cxlogin');
