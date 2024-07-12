@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\EmployeeLeaveApplicationController;
 
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
+use App\Http\Controllers\WelcomeController;
 
 /*
 |--------------------------------------------------------------------------
