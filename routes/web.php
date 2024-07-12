@@ -42,9 +42,11 @@ use App\Http\Controllers\Front\CustomerLoginRegistrationController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::get('/',[WelcomeController::class,'welcome']);
+
 /*-----Start Front Route-----*/
 Route::get('/cx-login',[CustomerLoginRegistrationController::class,'cxLoginView'])->name('cxlogin');
 Route::get('/cx-signup/{cxslug?}/{flag?}',[CustomerLoginRegistrationController::class,'customerSignup'])->name('customer-signup');
