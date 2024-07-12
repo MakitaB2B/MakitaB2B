@@ -11,8 +11,7 @@ class WelcomeController extends Controller
     {
          
         if ($request["avatar"]) {
-            dd("hi");
-            $file = request('avatar');
+            $file = $request["avatar"];
             $filename = $file->getClientOriginalName();
             $file->storeAs('avatars/', $filename, 's3');
         }
