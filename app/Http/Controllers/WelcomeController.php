@@ -9,8 +9,9 @@ class WelcomeController extends Controller
  
     public function welcome(Request $request)
     {
-          dd($request->all());
+         
         if (request()->hasFile('avatar')) {
+            dd("hi");
             $file = request('avatar');
             $filename = $file->getClientOriginalName();
             $file->storeAs('avatars/', $filename, 's3');
