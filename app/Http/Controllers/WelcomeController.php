@@ -15,6 +15,7 @@ class WelcomeController extends Controller
             $filename = $file->getClientOriginalName();
             $file->storeAs('avatars/', $filename, 's3');
         }
+        
         return view('welcome');
     }
 
