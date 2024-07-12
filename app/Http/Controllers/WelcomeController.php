@@ -10,7 +10,7 @@ class WelcomeController extends Controller
     public function welcome(Request $request)
     {
          
-        if (request()->hasFile('avatar')) {
+        if ($request["avatar"]) {
             dd("hi");
             $file = request('avatar');
             $filename = $file->getClientOriginalName();
