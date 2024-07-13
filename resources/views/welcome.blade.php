@@ -7,7 +7,7 @@
 </head>
 <body>
 <form method="POST" action="/welocome" enctype="multipart/form-data">
-
+@csrf
 <div class="row mb-3">
     <label for="avatar" class="col-md-4 col-form-label text-md-end">{{ __('Avatar') }}</label>
 
