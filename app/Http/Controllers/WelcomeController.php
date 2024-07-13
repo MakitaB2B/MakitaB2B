@@ -24,7 +24,7 @@ class WelcomeController extends Controller
                 $originalName = $file->getClientOriginalName();
     
                 // Store the file (for example, in the 'uploads' directory)
-                $path = Storage::disk('s3')->putFileAs('uploads', $file, $originalName)
+                $path = Storage::disk('s3')->putFileAs('uploads', $file, $originalName);
     
                 // Further processing...
         }
