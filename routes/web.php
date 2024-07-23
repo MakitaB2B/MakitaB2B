@@ -48,6 +48,7 @@ use App\Http\Controllers\WelcomeController;
 // });
 Route::get('/',[WelcomeController::class,'welcome']);
 Route::post('/welocome',[WelcomeController::class,'image']);
+Route::get('/welcome/{image}',[WelcomeController::class,'show']);
 
 /*-----Start Front Route-----*/
 Route::get('/cx-login',[CustomerLoginRegistrationController::class,'cxLoginView'])->name('cxlogin');
@@ -92,14 +93,14 @@ Route::post('admin/empfpotpv',[AdminLoginController::class,'verifyEmpPwrdOtpCont
 Route::get('admin/checkotp/{empSlug}',[AdminLoginController::class,'otpView'])->name('checkotp');
 Route::get('admin/empresetpassword/{empSlug}',[AdminLoginController::class,'resetPasswordView'])->name('empresetpassword');
 Route::post('admin/empresetpass',[AdminLoginController::class,'empResetCreatePassword'])->name('admin.empresetpass');
-Route::get('admin/direct-logout',[AdminLoginController::class,'logout'])->name('admin.logout');
+Route::get('admin/direct-logout',[AdminLoginController::class,'logout'])->name('admin.logout.direct');  //changed route name was same as admin.logout
 
 Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/dashboard',[AdminLoginController::class,'dashboard'])->name('admin.dashboard');
     Route::get('/admins',[AdminLoginController::class,'adminList'])->name('admin.admins');
     Route::get('/admins/manage-admin/{adminSlug?}',[AdminLoginController::class,'manageAdmin'])->name('admin.admins.manage-admin');
     Route::post('/admins/manage-admin-process',[AdminLoginController::class,'manageAdminProcess'])->name('admins.manage-admin-process');
-    Route::get('/logout',[AdminLoginController::class,'logout'])->name('admin.logout');
+    Route::get('/logout',[AdminLoginController::class,'logout'])->name('admin.logout'); 
     Route::get('/productcategory',[ProductCategoryController::class,'index'])->name('admin.productcategory');
     Route::get('/productcategory/manage-productcategory/{prodcateslug?}',[ProductCategoryController::class,'manageProductCategory'])->name('productcategory.manage-productcategory');
     Route::post('/productcategory/manage-productcategory-process',[ProductCategoryController::class,'manageProductCategoryProcess'])->name('productcategory.manage-productcategory-process');
