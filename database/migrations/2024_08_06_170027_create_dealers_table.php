@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('dealers', function (Blueprint $table) {
             $table->id();
+            $table->string('dealer_slug',50)->unique();
+            $table->string('customer');
+            $table->string('dealer_name');
+            $table->string('state_code');
+            $table->integer('zip_code');
+            $table->string('cardinal_direction');
+            $table->string('type');
+            $table->string('is_authorized');
+            $table->string('is_black_listed');
+            $table->string('reason_to_blacklist');
             $table->timestamps();
         });
     }

@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('regional_managers', function (Blueprint $table) {
             $table->id();
+            $table->string('rm_slug',50)->unique();
+            $table->string('rm_name');
+            $table->string('rm_email');
             $table->timestamps();
         });
     }

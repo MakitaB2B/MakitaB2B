@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->string('transaction_slug',50)->unique();
+            $table->string('promo_code')->index();
+            $table->string('rm_name');
+            $table->string('dealer_code')->index();
+            $table->string('dealer_name');
+            $table->enum('product_type',['Offer Product','FOC']);
+            $table->string('model_no');
+            $table->string('price')->nullable();
+            $table->integer('qty');
+            $table->string('order_id')->index();
+            $table->string('ordered_by');
+            $table->string('status');
             $table->timestamps();
         });
     }
