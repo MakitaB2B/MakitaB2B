@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('transaction_slug',50)->unique();
             $table->string('promo_code')->index();
+            $table->foreign('promo_code')->references('promo_code')->on('promotions')->onDelete('cascade')->nullable();
             $table->string('rm_name');
             $table->string('dealer_code')->index();
+            $table->foreign('dealer_code')->references('dealer_code')->on('dealers')->onDelete('cascade')->nullable();
             $table->string('dealer_name');
             $table->enum('product_type',['Offer Product','FOC']);
             $table->string('model_no');

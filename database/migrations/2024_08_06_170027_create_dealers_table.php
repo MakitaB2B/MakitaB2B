@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('dealer_slug',50)->unique();
             $table->string('customer');
+            $table->string('dealer_code');
             $table->string('dealer_name');
             $table->string('state_code');
             $table->integer('zip_code');

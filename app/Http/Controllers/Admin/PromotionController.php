@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Services\PromotionService;
+use App\Services\TransactionService;
+use Illuminate\Support\Facades\Cache;
 // use Illuminate\Support\Facades\Storage;
 // use Illuminate\Support\Facades\Crypt;
 // use Illuminate\Support\Str;
@@ -11,19 +14,24 @@ use Auth;
 
 class PromotionController extends Controller
 {
-    // protected $assetMasterService;
-    // public function __construct(){
-      
-    // }
+    protected $promotionService;
+    protected $transactionService;
+    public function __construct(PromotionService $promotionService,TransactionService $transactionService){
+      $this->promotionService=$promotionService;
+      $this->transactionService=$transactionService;
+    }
+
     public function index(){
         // $promotionList=$this->assetMasterService->getAllAssetMasterWithEmp();
         return view('Admin.promotion'); // ,compact('promotionList')
     }
 
     public function promotionCreation()
-    {
+    { 
+      $result['promo_code'] = $this->promotionService->getPromoCount()+1;
+      $result['model_no']= $this->promotionService->getModel();
       $result['offer_type'] = ['solo offer','combo offer'];
-      $result['price_type'] = ['DLP','best price','special price',];
+      $result['price_type'] = ['DLP','best price','special price'];
       return view('Admin.promotion_creation', $result); 
     }
 

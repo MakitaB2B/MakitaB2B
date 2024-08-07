@@ -60,8 +60,8 @@
                                     <div class="row">
                                         <div class="form-group col-md-4">
                                             <label for="examplePromoCode">Promo Code</label>
-                                            <input type="text" class="form-control" name="promocode" value=""
-                                                id="examplePromoCode" placeholder="Promo Code" readonly>
+                                            <input type="text" class="form-control" name="promocode" value="{{$promo_code}}"
+                                                id="examplePromoCode" placeholder="Promo Code">
                                             @error('promocode')
                                             <div
                                                 class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
@@ -127,9 +127,15 @@
                                             <select class="select2" name="offer_product" style="width: 100%;" multiple="multiple" 
                                             onchange="offer_product_add_remove()" id="exampleOfferProduct">
                                                 <option value="novalue">Please Select Model No</option>
-                                                <option value="Model 1">Model 1</option>
+                                                {{-- <option value="Model 1">Model 1</option>
                                                 <option value="Model 2">Model 2</option>
-                                                <option value="Model 3">Model 3</option>
+                                                <option value="Model 3">Model 3</option> --}}
+                                                @foreach ($model_no as $modelno)
+                                                <option 
+                                                    value="{{ $modelno->item }}">{{ $modelno->item }}
+                                                </option>
+                                                @endforeach
+                                                {{-- @if ($departmentData->id == $department_id) selected @endif --}}
                                             </select>
                                             @error('offer_product')
                                             <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
@@ -210,7 +216,7 @@
 
 
     $(function () {
-        $('.select2').select2()
+        $('.select2').select2();
     });
 
 
