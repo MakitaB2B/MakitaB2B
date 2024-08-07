@@ -47,7 +47,7 @@ class AdminLogin extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     public function employee(){
-        return $this->hasMany('App\Models\Admin\Employee','employee_slug','employee_slug');
+        return $this->belongsTo('App\Models\Admin\Employee','employee_slug','employee_slug');
     }
     public function roles(){
         return $this->belongsToMany(Role::class,'role_employees','employee_slug','role_slug');

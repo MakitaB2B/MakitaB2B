@@ -348,8 +348,19 @@
                                         </div>
                                         <div class="form-group col-md-2">
                                             <label for="exampleInputReceiveDateTime">Receive Date Time</label>
+                                            @php
+                                            $receiveDateTime = \Carbon\Carbon::parse($receive_date_time);
+
+                                            // Manually add 12 hours to convert from AM to PM if necessary
+                                            if ($receiveDateTime->hour == 0) {
+                                                $receiveDateTime->addHours(12);
+                                            }
+
+                                            $receivedAt = $receiveDateTime->format('d M Y, h:i:s A');
+
+                                            @endphp
                                             <input type="text" class="form-control" disabled
-                                                value="{{ \Carbon\Carbon::parse($receive_date_time)->format('d M Y, H:i:s A') }}">
+                                                value="{{ $receivedAt }}">
                                         </div>
                                         @if ($estimation_date_time == null && $repairer != null)
                                             <div class="col-sm-6 col-md-4">

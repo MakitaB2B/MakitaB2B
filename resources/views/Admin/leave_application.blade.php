@@ -65,21 +65,48 @@
                     <th>Responsed By</th>
                     <th>Responsed Date</th>
                     <th>Comments</th>
+                    @if ($canChangeStatus==1)
                     <th>Action</th>
+                    @endif
                   </tr>
                   </thead>
                   <tbody>
-                  @foreach($result as $key=>$list)
+                  @foreach($leaveApplications as $key=>$list)
+                  @php
+                    if ($list->approval_status=='Pending'){
+                        $statusStyle="style=color:#ff8100;font-weight:bold";
+                    }if ($list->approval_status=='Approved'){
+                        $statusStyle="style=color:green;font-weight:bold";
+                    }if($list->approval_status=='Rejected'){
+                        $statusStyle="style=color:red;font-weight:bold";
+                    }
+                  @endphp
                   <tr>
                     <td>{{ $key+1 }}</td>
-                    <td>{{ $list->employee_slug }}</td>
-                    <td>{{ $list->leave_type }}</td>
-                    <td>{{ $list->from_date }}</td>
-                    <td>{{ $list->to_date }}</td>
-                    <td>{{ $list->approval_status }}</td>
-                    <td>{{ $list->responsedby_empslug }}</td>
-                    <td>{{ $list->response_datetime }}</td>
-                    <td><a href="{{ url('admin/holidays/manage-holiday')}}/{{ Crypt::encrypt($list->emp_leave_apply_slug) }}" title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td>
+                    <td>{{ $list->employee_name }}</td>
+                    <td>{{ $list->leave_type_name }}</td>
+                    <td>{{ \Carbon\Carbon::parse($list->from_date)->isoFormat('Do MMM YYYY') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($list->to_date)->isoFormat('Do MMM YYYY') }}</td>
+                    <td {{$statusStyle}}>{{ $list->approval_status }}</td>
+                    <td>{{ $list->responded_by_name }}</td>
+                    <td>{{ $list->response_datetime!=NULL ? \Carbon\Carbon::parse($list->response_datetime)->isoFormat('Do MMM YYYY, H:m A') :'' }}</td>
+                    <td title="{{$list->leave_reason}}">{{ Str::limit($list->leave_reason,'20')  }}</td>
+                    @if ($canChangeStatus==1)
+                    <td>
+                        @if ($list->approval_status=='Pending')
+                            <select class="leaveAppstatus">
+                                <option></option>
+                                <option value="Pending" {{($list->approval_status=='Pending')?'selected':''}}>Pending</option>
+                                <option value="Approved" {{($list->approval_status=='Accepted')?'selected':''}}>Approved</option>
+                                <option value="Rejected" {{($list->approval_status=='Rejected')?'selected':''}}>Rejected</option>
+                            </select>
+                        @else
+                        <p {{$statusStyle}}>{{$list->approval_status}}</p>
+                        @endif
+
+                    </td>
+                    @endif
+                    <input type="hidden" class="slug" value={{$list->emp_leave_apply_slug }} />
                   </tr>
                   @endforeach
 
@@ -95,7 +122,9 @@
                     <th>Responsed By</th>
                     <th>Responsed Date</th>
                     <th>Comments</th>
+                    @if ($canChangeStatus==1)
                     <th>Action</th>
+                    @endif
                   </tr>
                   </tfoot>
                 </table>
@@ -130,6 +159,41 @@
 <!-- Page specific script -->
 <script>
   $(function () {
+
+    $(document).ready(function() {
+        $('.leaveAppstatus').on('change', function() {
+            let status = $(this).val();
+            let slug = $(this).closest('tr').find('.slug').val();
+            let parentTr= $(this).parents("tr");
+            if(status=='Approved' || status=='Rejected'){
+                parentTr.find("td:eq(9)").text('Please Wait..').css({ "color": "#ff8d00","font-weight": "bold" });
+                $.ajax({
+                url: '/admin/employee/change-leave-applications-status',
+                type: 'post',
+                data: 'status=' + status + '&slug=' + slug +
+                    '&_token={{ csrf_token() }}',
+                success: function(result) {
+                    if(result=='sucess'){
+                        if(status=='Approved'){
+                            var style=({ "color": "green","font-weight": "bold" });
+                        }if(status=='Rejected'){
+                            var style=({ "color": "red","font-weight": "bold" })
+                        }
+                        parentTr.find("td:eq(9)").text(status).css(style);
+                        parentTr.find("td:eq(5)").text(status).css(style);
+                    }else{
+                        parentTr.find("td:eq(9)").text('Something Went Wrong,Try Again!').css({ "color": "red","font-weight": "bold" });
+                    }
+                }
+                });
+            }else{
+                alert('Please Select Correct Status');
+            }
+
+
+        });
+    });
+
     $("#example1").DataTable({
       "responsive": true, "lengthChange": false, "autoWidth": false,
       "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]

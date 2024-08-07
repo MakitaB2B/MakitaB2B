@@ -16,7 +16,7 @@ use App\Models\Admin\ReplacedParts;
 class BranchStockController extends Controller
 {
     public function index(){
-        $result=BranchStocks::with('reservedStock:id,item,reserved')->paginate(20,['item','description','grandtotal','id','updated_at']);
+        $result=BranchStocks::with('reservedStock:id,item,reserved')->paginate(20,['item','description','grandtotal','id','updated_at','cb01','dl01','gh01','gj01','id01','jm01','ka01','kl01','mh01','pn01','py01','rd01','tn01','vd01','wb01']);
         return view('Admin.branch_stock',compact('result'));
     }
     public function getBranchStockDetails($pmvSlug){
@@ -49,7 +49,7 @@ class BranchStockController extends Controller
         if($type=='description'){
             $searchQuery='%'.$searchValue.'%';
         }
-        $searchResult=BranchStocks::where($type,'LIKE',"$searchQuery")->with('reservedStock:id,item,reserved')->get(['id','item','description','grandtotal','updated_at']);
+        $searchResult=BranchStocks::where($type,'LIKE',"$searchQuery")->with('reservedStock:id,item,reserved')->get(['id','item','description','grandtotal','updated_at','cb01','dl01','gh01','gj01','id01','jm01','ka01','kl01','mh01','pn01','py01','rd01','tn01','vd01','wb01']);
         if(($searchResult->count())>0 ){
             $output="";
             if($searchFrom=='stockpg'){
@@ -69,11 +69,13 @@ class BranchStockController extends Controller
                 }else{
                     $totalReserveData='<i style="color:#dc129c">'.$totalReservedQty.'</i>';
                 }
+                $mainStock=(int)($data->cb01)+(int)($data->dl01)+(int)($data->gh01)+(int)($data->gj01)+(int)($data->id01)+(int)($data->jm01)+(int)($data->ka01)+(int)($data->kl01)+(int)($data->mh01)+(int)($data->pn01)+(int)($data->py01)+(int)($data->rd01)+(int)($data->tn01)+(int)($data->vd01)+(int)($data->wb01);
                 $output.='<tr>'.
                 '<td>'.'<a href= "'.$routeTo.Crypt::encrypt($data->item).'" style="color:#00909E">'.$data->item.'</a>'.'</td>'.
                 '<td>'.$data->description.'</td>'.
-                '<td>'.number_format($data->grandtotal).'</td>'.
+                '<td>'.$mainStock.'</td>'.
                 '<td>'.$totalReserveData.'</td>'.
+                '<td>'.$mainStock - $totalReservedQty.'</td>'.
                 '</tr>';
                 }
         return Response($output);

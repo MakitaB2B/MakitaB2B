@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\AssetMasterService;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use Auth;
@@ -51,6 +52,7 @@ class AssetMasterController extends Controller
             $result['remarks'] = $arr[0]->remarks;
             $result['status'] = $arr[0]->status;
             $result['updated_at'] = $arr[0]->updated_at;
+            $result['invoice_copy'] = $arr[0]->invoice_copy;
             $result['assetmaster_slug'] = Crypt::encrypt($arr[0]->assetmaster_slug);
         } else {
             $result['asset_tag'] = '';
@@ -80,6 +82,7 @@ class AssetMasterController extends Controller
             $result['remarks'] = '';
             $result['status'] = '';
             $result['updated_at'] = '';
+            $result['invoice_copy'] = '';
             $result['assetmaster_slug'] = Crypt::encrypt(0);
         }
         return view('Admin.manage_asset_master', $result);
@@ -90,9 +93,29 @@ class AssetMasterController extends Controller
             $rowData=$this->assetMasterService->findAssetMasterBySlug($decripedSlug);
             $id=$rowData[0]->id;
             $assetmasterSlug=$rowData[0]->assetmaster_slug;
+
+             if($request->has('invoicecopy')){
+                $invoicecopy=$rowData[0]->invoice_copy;
+                if($invoicecopy==NULL){
+                    $invoicecopy=$request->file('invoicecopy')->store('mimes/company_assets');
+                }
+                if($invoicecopy!=NULL && Storage::exists($invoicecopy)){
+                    Storage::delete($invoicecopy);
+                    $invoicecopy=$request->file('invoicecopy')->store('mimes/company_assets');
+                }
+            }else{
+                $invoicecopy=$rowData[0]->invoice_copy;
+            }
+
         }else{
             $id=0;
             $assetmasterSlug=Str::slug(rand().rand());
+
+            if($request->has('invoicecopy')){
+                $invoicecopy=$request->file('invoicecopy')->store('mimes/company_assets');
+            }else{
+                $invoicecopy='';
+            }
         }
         $data = $request->validate([
             'asset_tag' => 'required|min:2|max:250',
@@ -103,7 +126,7 @@ class AssetMasterController extends Controller
         ]);
         if($data){
             $dataOparateEmpSlug=Auth::guard('admin')->user()->employee_slug ;
-            $createUpdateAction=$this->assetMasterService->createOrUpdateAssetMaster($id,$request,$assetmasterSlug,$dataOparateEmpSlug);
+            $createUpdateAction=$this->assetMasterService->createOrUpdateAssetMaster($id,$request,$assetmasterSlug,$dataOparateEmpSlug,$invoicecopy);
             if($createUpdateAction){
                 if($decripedSlug>0){
                     $msg='Asset sucessfully updated';

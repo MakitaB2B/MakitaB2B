@@ -180,11 +180,19 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="{{ asset('admin_assets/img/user2-160x160.jpg') }}" class="img-circle elevation-2"
+                        @php
+                        $employees=Auth::guard('admin')->user()->employee;
+                        @endphp
+                        @if($employees->photo!=NULL)
+                        <img src="{{ asset($employees->photo) }}" class="img-circle elevation-2"
                             alt="User Image">
+                        @else
+                        <img src="{{ asset('admin_assets/img/avator-placeholder-3.png') }}" class="img-circle elevation-2"
+                            alt="User Image">
+                        @endif
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">{{ Auth::guard('admin')->user()->access_id }}</a>
+                        <a href="#" class="d-block">{{ $employees->full_name }}</a>
                     </div>
                 </div>
 
@@ -372,10 +380,10 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="" class="nav-link">
+                            <a href="{{ url('admin/employee/leave-application') }}" class="nav-link @yield('employee_leave_application_select')">
                                 <i class="nav-icon fa fa-calendar-minus"></i>
                                 <p>
-                                    Apply Leave
+                                    Leave Application
                                 </p>
                             </a>
                         </li>
@@ -429,11 +437,44 @@
                                 </p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ url('admin/roi') }}" class="nav-link @yield('tools_roi')">
+                                <i class="nav-icon fa fa-percent"></i>
+                                <p>
+                                    ROI
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item @yield('promotion-expandable')">
+                            <a href="#" class="nav-link @yield('promotion-select')">
+                                <i class="nav-icon fa fa-bullhorn"></i>
+                                <p>
+                                    Promo Management
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/promotions') }}" class="nav-link @yield('promotion_select')">
+                                        <i class="fas fa-percentage"></i>
+                                        <p>Promotions</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/promotions/promotion-transaction') }}" class="nav-link @yield('promotion_select')">
+                                        <i class="fa fa-shopping-cart"></i>
+                                        <p>Transactions</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item @yield('assetaudit-expandable')">
                             <a href="#" class="nav-link @yield('asset_audit_select')">
                                 <i class="nav-icon fa fa-bars"></i>
                                 <p>
-                                    Assets & Audit
+                                    Assets & Audit 
                                     <i class="fas fa-angle-left right"></i>
                                 </p>
                             </a>
@@ -446,12 +487,24 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ url('admin/employee/leave-application') }}" class="nav-link @yield('employee_leave_application_select')">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Leave Application</p>
+                        <li class="nav-item @yield('travelmanagement-expandable')">
+                            <a href="#" class="nav-link @yield('travel-management-select')">
+                                <i class="nav-icon fa fa-suitcase"></i>
+                                <p>
+                                    Travel Management
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/travelmanagement/applyviewclaimtravelexpenses') }}" class="nav-link @yield('business-trips-select')">
+                                        <i class="nav-icon fa fa-plane"></i>
+                                        <p>Business Trips</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
+                      
 
                     </ul>
                 </nav>

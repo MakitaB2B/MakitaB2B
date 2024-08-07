@@ -80,6 +80,7 @@
                                                 </td>
                                                 <td>{{ $list->warranty_status === 1 ? 'In-Warranty' : 'Expired' }}</td>
                                                 <td>
+                                                    @if($list->warranty_status==1)
                                                     <select class="appstatus">
                                                         <option></option>
                                                         <option value="in-review"
@@ -92,6 +93,9 @@
                                                             {{ $list->application_status == 'rejected' ? 'selected' : '' }}>
                                                             Rejected</option>
                                                     </select>
+                                                    @else
+                                                    {{ $list->warranty_status === 1 ? 'In-Warranty' : 'Expired' }}
+                                                    @endif
                                                 </td>
                                                 <td><a href="{{ url('admin/warranty/manage-warranty-application/') }}/{{ Crypt::encrypt($list->warranty_slug ) }}"
                                                         title="View"> <i class="nav-icon fas fa-eye"></i></a></td>

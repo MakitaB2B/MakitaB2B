@@ -8,7 +8,7 @@ class AssetMasterService{
     public function findAssetMasterBySlug($slug){
         return AssetMaster::where(['assetmaster_slug'=>$slug])->get();
     }
-    public function createOrUpdateAssetMaster($id,$request,$assetmasterSlug,$dataOparateEmpSlug){
+    public function createOrUpdateAssetMaster($id,$request,$assetmasterSlug,$dataOparateEmpSlug,$invoicecopy){
         $operate=AssetMaster::updateOrCreate(
             ['id' =>$id],
             ['asset_tag'=> $request->asset_tag,'asset_type'=>$request->asset_type,'make'=>$request->make,'model'=>$request->model,'serial_number'=>$request->serial_number,
@@ -17,7 +17,7 @@ class AssetMasterService{
             'operating_system_serial_number'=>$request->operating_system_serial_number,
             'ms_office_version'=>$request->ms_office_version,'ms_office_licence'=>$request->ms_office_licence,'vendor_name'=>$request->vendor_name,'invoice_number'=>$request->invoice_number,
             'invoice_date'=>$request->invoice_date,'amount'=>$request->amount,'warranty_period'=>$request->warranty_period,'warranty_expired_date'=>$request->warranty_expired_date,
-            'system_condition'=>$request->system_condition,'service_replacement'=>$request->service_replacement,'system_password'=>$request->system_password,
+            'system_condition'=>$request->system_condition,'service_replacement'=>$request->service_replacement,'system_password'=>$request->system_password,'invoice_copy'=>$invoicecopy,
             'remarks'=>$request->remarks,'status'=>$request->status,'assetmaster_slug'=>$assetmasterSlug,'updated_by'=>$dataOparateEmpSlug]
          );
          if($operate){
