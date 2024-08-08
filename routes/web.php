@@ -208,11 +208,11 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/promotions/transaction-creation',[PromotionController::class,'promotionTransaction'])->name('admin.promotions.transaction');
     Route::get('/promotions/promotion-fetch',[PromotionController::class,'getPromo'])->name('admin.promotions.promotion-fetch');
 
+    Route::get('/promotions/search-data', [PromotionController::class, 'searchData'])->name('search.data');
 
     Route::get('/roi', function () {  return view('Admin/roi');  });
 
-
-});
+    });
 
 /*-----End Admin Route-----*/
 

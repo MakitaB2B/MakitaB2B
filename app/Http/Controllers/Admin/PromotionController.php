@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\PromotionService;
 use App\Services\TransactionService;
-use Illuminate\Support\Facades\Cache;
+// use Illuminate\Support\Facades\Cache;
 // use Illuminate\Support\Facades\Storage;
 // use Illuminate\Support\Facades\Crypt;
 // use Illuminate\Support\Str;
+
+use App\Models\Admin\BranchStocks;
 use Auth;
 
 class PromotionController extends Controller
@@ -29,7 +31,7 @@ class PromotionController extends Controller
     public function promotionCreation()
     { 
       $result['promo_code'] = $this->promotionService->getPromoCount()+1;
-      $result['model_no']= $this->promotionService->getModel();
+      // $result['model_no']= $this->promotionService->getModel();
       $result['offer_type'] = ['solo offer','combo offer'];
       $result['price_type'] = ['DLP','best price','special price'];
       return view('Admin.promotion_creation', $result); 
@@ -43,8 +45,20 @@ class PromotionController extends Controller
     public function transactionCreation(){
       return view('Admin.transaction');
     }
+
     public function promotionTransaction(){
       return view('Admin.promotion_transaction');
+    }
+    
+    public function searchData(Request $request)
+    {
+        $query = $request->get('q');
+
+        // $results = YourModel::where('name', 'LIKE', "%{$query}%")->get();
+
+        $results = BranchStocks::where('item', 'LIKE', "%{$query}%")->get(['item']);
+
+        return response()->json($results);
     }
 
     public function getPromo(Request $request){
