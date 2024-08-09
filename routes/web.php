@@ -210,6 +210,8 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
 
     Route::get('/promotions/search-data', [PromotionController::class, 'searchData'])->name('search.data');
 
+    Route::get('/promotions/model-details-search', [PromotionController::class, 'modeldetailSearch'])->name('model.detail.Search');
+
     Route::get('/roi', function () {  return view('Admin/roi');  });
 
     });

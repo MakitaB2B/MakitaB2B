@@ -61,6 +61,14 @@ class PromotionController extends Controller
         return response()->json($results);
     }
 
+    public function modeldetailSearch(Request $request){
+      $query = $request->get('searchtxt');
+
+      $results = BranchStocks::whereIn('item',  $query)->get(['item','description']);
+
+      return response()->json($results);
+    }
+
     public function getPromo(Request $request){
 
       $promoID = $request->input('promoID');

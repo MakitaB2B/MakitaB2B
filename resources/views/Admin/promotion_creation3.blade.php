@@ -10,15 +10,11 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     @endpush
     <style>
-        .select2-container--default .select2-selection--single {
+        /* .select2-container--default .select2-selection--single {
             border-radius: 0px !important;
-        }
-
-        .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background-color:#007bff
-        }
-        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-            color:white;
+        } */
+        select2-container--default .select2-selection--multiple .select2-selection__choice {
+          background-color:#007bff !important;
         }
         .dacss {
             background: #007bff;
@@ -110,9 +106,51 @@
                                             </div>
                                             @enderror
                                         </div>
-                                        
+                                        {{-- ----------------- --}}
+                                        {{-- <div class="form-group col-md-3">
+                                            <label for="examplePromoPriceType">Price Type</label>
+                                            <select class="custom-select" name="pricetype" id="examplePromoPriceType">
+                                                <option value="">Please Select Price Type</option>
+                                                @foreach($price_type as $type)
+                                                <option value="{{$type}}">{{ucfirst(trans($type))}}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('pricetype')
+                                            <div
+                                                class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                                {{ $message }}
+                                                <button type="button" class="close" data-dismiss="alert"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            @enderror
+                                        </div> --}}
+                                        {{-- ----------------- --}}
+                                        {{-- correct code --}}
+                                        {{-- <div class="form-group col-md-12">
+                                            <label for="exampleOfferProduct">Offer Product</label>
+                                            <select class="select2" name="offer_product" style="width: 100%;" multiple="multiple" 
+                                            onchange="offer_product_add_remove()" id="exampleOfferProduct">
+                                                <option value="novalue">Please Select Model No</option>
+                                                @foreach ($model_no as $modelno)
+                                                <option 
+                                                    value="{{ $modelno->item }}">{{ $modelno->item }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                            @error('offer_product')
+                                            <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                                {{ $message }}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            @enderror
+                                        </div> --}}
+
                                         <div class="form-group col-md-12">
-                                        <label for="searchable-select">Offer Product</label>   
+                                        <label for="exampleOfferProduct">Offer Product</label>   
                                         <select id="searchable-select" class="select2 exampleOfferProduct" name="offer_product[]" multiple="multiple" style="width: 100%;" onchange="offer_product_add_remove()"></select>
                                         @error('offer_product')
                                         <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
@@ -123,7 +161,23 @@
                                         </div>
                                         @enderror
                                         </div>
-                
+                                       {{-- -------------------------------- --}}
+                                        {{-- <div class="form-group col-md-3">
+                                            <label for="examplePromoPrice">Price</label>
+                                            <input type="text" class="form-control" name="promoprice" value=""
+                                                id="examplePromoPrice" placeholder="Price">
+                                            @error('promoprice')
+                                            <div
+                                                class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                                {{ $message }}
+                                                <button type="button" class="close" data-dismiss="alert"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            @enderror
+                                        </div>  --}}
+                                        {{-- -------------------------------- --}}
                                     </div>
                                     <div class="Offer form-row">
                                     </div>
@@ -134,6 +188,9 @@
                                             <select class="select2" multiple="multiple"
                                                 data-placeholder="Select Foc Model No(s)" style="width: 100%;"
                                                 name="promofoc[]" onchange="foc_offer_product_add_remove()" id="exampleFOC">
+                                                <option value="nofoc">No Foc</option>
+                                                <option value="model1">model1</option>
+                                                <option value="model2">model2</option>
                                             </select>
                                             @error('promofoc')
                                             <div
@@ -150,7 +207,7 @@
                                     <div class="Foc ">
                                     </div>
 
-                            {{-- </div> --}}
+                            </div>
                             <!-- /.card-body -->
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary" id="submt">Submit</button>
@@ -179,34 +236,13 @@
 <script>
 
 
-    // $(function () {
-            $('#exampleFOC').select2({
-                    placeholder: 'Search for data',
-                    minimumInputLength: 3,
-                    ajax: {
-                        url: '{{ route("search.data") }}',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                q: params.term // search term
-                            };
-                        },
-                        processResults: function(data) {
-                            return {
-                                results: $.map(data, function(item) {
-                                    return {
-                                        text: item.item,
-                                        id: item.item
-                                    };
-                                })
-                            };
-                        },
-                        cache: true
-                    }
-                });
-    // });
+    $(function () {
+        $('#exampleFOC').select2();
+    });
 
+    //------------------------
+
+    $(document).ready(function() {
             $('#searchable-select').select2({
                 placeholder: 'Search for data',
                 minimumInputLength: 3,
@@ -220,6 +256,7 @@
                         };
                     },
                     processResults: function(data) {
+                        console.log(data);
                         return {
                             results: $.map(data, function(item) {
                                 return {
@@ -232,10 +269,13 @@
                     cache: true
                 }
             });
-  
+        });
+     //------------------------
 
-    let foc_loop_count = 0;
-    let foc_previousSelectedOptions = [];
+//    let foc_loop_count = 0;
+//    let foc_previousSelectedOptions = [];
+
+
 
     let loop_count = 0;
     let previousSelectedOptions = [];
@@ -244,41 +284,35 @@
     let selectedOptions = $('.exampleOfferProduct').val();
     
     let addedOptions = selectedOptions.filter(option => !previousSelectedOptions.includes(option));
-
+    
     previousSelectedOptions = selectedOptions;
-
-    $.ajax({
-        url: '/admin/promotions/model-details-search',
-        type: 'get',
-        data: { searchtxt: addedOptions },
-        success: function(result) {
-
-        result.forEach(option => {
+    
+    addedOptions.forEach(option => {
         loop_count++;
         let html = `
-             <div class="row" id="${option.item}">
+             <div class="row" id="${option}">
             <div class="form-group col-md-2">
-                <label for="exampleMode${loop_count}">Offer Model</label>
-                <input type="text" class="form-control" name="offermodel[]" value="${option.item}" id="exampleMode${loop_count}" placeholder="Offer Model" readonly>
+                <label for="exampleMode${loop_count}">Selected Model Name</label>
+                <input type="text" class="form-control" name="model1[]" value="${option}" id="exampleMode${loop_count}" placeholder="${option}" readonly>
             </div>
              <div class="form-group col-md-4">
                 <label for="offerdescription${loop_count}">Offer Description</label>
-                <input type="text" class="form-control" name="offerdescription[]" value="${option.description}" id="offerdescription${loop_count}" placeholder="Offer Description" readonly>
+                <input type="text" class="form-control" name="offerdescription[]" id="offerdescription${loop_count}" placeholder="Offer Description" readonly>
             </div>
             <div class="form-group col-md-2">
-                <label for="examplePromoMrp${loop_count}">Offer MRP</label>
-                <input type="text" class="form-control" name="promomrp[]" id="examplePromoMrp${loop_count}" placeholder="Offer MRP" readonly>
+                <label for="examplePromoMrp${loop_count}">MRP</label>
+                <input type="text" class="form-control" name="promomrp[]" id="examplePromoMrp${loop_count}" placeholder="MRP" readonly>
             </div>
             <div class="form-group col-md-2">
-                <label for="examplePromoDlp${loop_count}">Offer DLP</label>
-                <input type="text" class="form-control" name="promodlp[]" id="examplePromoDlp${loop_count}" placeholder="Offer DLP" readonly>
+                <label for="examplePromoDlp${loop_count}">DLP</label>
+                <input type="text" class="form-control" name="promodlp[]" id="examplePromoDlp${loop_count}" placeholder="DLP" readonly>
             </div>
             <div class="form-group col-md-2">
-                <label for="examplePromoStock${loop_count}">Offer Stock</label>
-                <input type="text" class="form-control" name="promostock[]" id="examplePromoStock${loop_count}" placeholder="Offer Stock" readonly>
+                <label for="examplePromoStock${loop_count}">Stock</label>
+                <input type="text" class="form-control" name="promostock[]" id="examplePromoStock${loop_count}" placeholder="Stock" readonly>
             </div>
             <div class="form-group col-md-2">
-                <label for="examplePromoPriceType${loop_count}">Offer Price Type</label>
+                <label for="examplePromoPriceType${loop_count}">Price Type</label>
                 <select class="custom-select mySelect" name="pricetype[]" id="examplePromoPriceType${loop_count}" onchange="showSelectedValue('${loop_count}')">
                     <option value="">Please Select Price Type</option>
                     @foreach($price_type as $type)
@@ -291,8 +325,8 @@
                 <input type="text" class="form-control" name="offerqty[]" id="exampleOfferQty${loop_count}" placeholder="Offer Qty">
             </div>
             <div class="form-group col-md-2">
-                <label for="examplePromoPrice${loop_count}">Offer Price</label>
-                <input type="text" class="form-control" name="promoprice[]" value="" id="examplePromoPrice${loop_count}" placeholder="Offer Price">
+                <label for="examplePromoPrice${loop_count}">Price</label>
+                <input type="text" class="form-control" name="promoprice[]" value="" id="examplePromoPrice${loop_count}" placeholder="Price">
             </div>   
             </div>
         `;
@@ -300,61 +334,7 @@
         if(option != 'novalue'){
             $('.Offer').append(html);
          }
-    });     
-           
-            
-        }
-        });
-    
-    // addedOptions.forEach(option => {
-    //     console.log(option);
-    //     loop_count++;
-    //     let html = `
-    //          <div class="row" id="${option}">
-    //         <div class="form-group col-md-2">
-    //             <label for="exampleMode${loop_count}">Offer Model</label>
-    //             <input type="text" class="form-control" name="offermodel[]" value="${option}" id="exampleMode${loop_count}" placeholder="Offer Model" readonly>
-    //         </div>
-    //          <div class="form-group col-md-4">
-    //             <label for="offerdescription${loop_count}">Offer Description</label>
-    //             <input type="text" class="form-control" name="offerdescription[]" id="offerdescription${loop_count}" placeholder="Offer Description" readonly>
-    //         </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="examplePromoMrp${loop_count}">Offer MRP</label>
-    //             <input type="text" class="form-control" name="promomrp[]" id="examplePromoMrp${loop_count}" placeholder="Offer MRP" readonly>
-    //         </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="examplePromoDlp${loop_count}">Offer DLP</label>
-    //             <input type="text" class="form-control" name="promodlp[]" id="examplePromoDlp${loop_count}" placeholder="Offer DLP" readonly>
-    //         </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="examplePromoStock${loop_count}">Offer Stock</label>
-    //             <input type="text" class="form-control" name="promostock[]" id="examplePromoStock${loop_count}" placeholder="Offer Stock" readonly>
-    //         </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="examplePromoPriceType${loop_count}">Offer Price Type</label>
-    //             <select class="custom-select mySelect" name="pricetype[]" id="examplePromoPriceType${loop_count}" onchange="showSelectedValue('${loop_count}')">
-    //                 <option value="">Please Select Price Type</option>
-    //                 @foreach($price_type as $type)
-    //                 <option value="{{$type}}">{{ucfirst(trans($type))}}</option>
-    //                 @endforeach
-    //             </select>
-    //        </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="exampleOfferQty${loop_count}">Offer Qty</label>
-    //             <input type="text" class="form-control" name="offerqty[]" id="exampleOfferQty${loop_count}" placeholder="Offer Qty">
-    //         </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="examplePromoPrice${loop_count}">Offer Price</label>
-    //             <input type="text" class="form-control" name="promoprice[]" value="" id="examplePromoPrice${loop_count}" placeholder="Offer Price">
-    //         </div>   
-    //         </div>
-    //     `;
-      
-    //     if(option != 'novalue'){
-    //         $('.Offer').append(html);
-    //      }
-    // });
+    });
 
     jQuery(".exampleOfferProduct option").not(":selected").each(function(index, option) {
         var deselectedValue = jQuery(option).val();
@@ -366,6 +346,84 @@
     });
 
     }
+
+    //------------------------------------------------
+
+    // let previousSelectedOptions = [];
+    // let loop_count = 0;
+
+    // function offer_product_add_remove() {
+        
+    //     console.log('hello');
+    //     let selectedOptions = $('#exampleOfferProduct').val();
+
+    //     if (!selectedOptions) {
+    //         console.error('selectedOptions is undefined or null');
+    //         return;
+    //     }
+
+    //     let addedOptions = selectedOptions.filter(option => !previousSelectedOptions.includes(option));
+
+    //     previousSelectedOptions = [...selectedOptions];
+
+    //     addedOptions.forEach(option => {
+    //         loop_count++;
+    //         let html = `
+    //             <div class="row" id="${option}">
+    //             <div class="form-group col-md-2">
+    //                 <label for="exampleMode${loop_count}">Selected Model Name</label>
+    //                 <input type="text" class="form-control" name="model1[]" value="${option}" id="exampleMode${loop_count}" placeholder="${option}" readonly>
+    //             </div>
+    //             <div class="form-group col-md-4">
+    //                 <label for="offerdescription${loop_count}">Offer Description</label>
+    //                 <input type="text" class="form-control" name="offerdescription[]" id="offerdescription${loop_count}" placeholder="Offer Description" readonly>
+    //             </div>
+    //             <div class="form-group col-md-2">
+    //                 <label for="examplePromoMrp${loop_count}">MRP</label>
+    //                 <input type="text" class="form-control" name="promomrp[]" id="examplePromoMrp${loop_count}" placeholder="MRP" readonly>
+    //             </div>
+    //             <div class="form-group col-md-2">
+    //                 <label for="examplePromoDlp${loop_count}">DLP</label>
+    //                 <input type="text" class="form-control" name="promodlp[]" id="examplePromoDlp${loop_count}" placeholder="DLP" readonly>
+    //             </div>
+    //             <div class="form-group col-md-2">
+    //                 <label for="examplePromoStock${loop_count}">Stock</label>
+    //                 <input type="text" class="form-control" name="promostock[]" id="examplePromoStock${loop_count}" placeholder="Stock" readonly>
+    //             </div>
+    //             <div class="form-group col-md-2">
+    //                 <label for="examplePromoPriceType${loop_count}">Price Type</label>
+    //                 <select class="custom-select mySelect" name="pricetype[]" id="examplePromoPriceType${loop_count}" onchange="showSelectedValue('${loop_count}')">
+    //                     <option value="">Please Select Price Type</option>
+    //                     @foreach($price_type as $type)
+    //                     <option value="{{$type}}">{{ucfirst(trans($type))}}</option>
+    //                     @endforeach
+    //                 </select>
+    //         </div>
+    //             <div class="form-group col-md-2">
+    //                 <label for="exampleOfferQty${loop_count}">Offer Qty</label>
+    //                 <input type="text" class="form-control" name="offerqty[]" id="exampleOfferQty${loop_count}" placeholder="Offer Qty">
+    //             </div>
+    //             <div class="form-group col-md-2">
+    //                 <label for="examplePromoPrice${loop_count}">Price</label>
+    //                 <input type="text" class="form-control" name="promoprice[]" value="" id="examplePromoPrice${loop_count}" placeholder="Price">
+    //             </div>   
+    //             </div>
+    //         `;
+
+    //         if (option !== 'novalue') {
+    //             $('.Offer').append(html);
+    //         }
+    //     });
+    // }
+
+
+
+
+
+
+
+    //-----------------------------------------------
+
 
     function foc_offer_product_add_remove() {
         // Get selected values
@@ -381,34 +439,34 @@
         addedOptions.forEach(option => {
             foc_loop_count++;
             let html = `
-                <div class="row" id="foc_${option}">
+                <div class="row" id="${option}">
                 <div class="form-group col-md-2">
-                  <label for="examplefocmodel${loop_count}">FOC Model</label>
-                  <input type="text" class="form-control" name="focmodel[]" value="${option}" id="examplefocmodel${loop_count}" placeholder="FOC Model" readonly>
+                  <label for="examplefocmodel${loop_count}">Model 1</label>
+                  <input type="text" class="form-control" name="focmodel[]" value="${option}" id="examplefocmodel${loop_count}" placeholder="Model 1" readonly>
                 </div>
                  <div class="form-group col-md-4">
-                    <label for="examplefocdescription${loop_count}">FOC Model Description</label>
-                    <input type="text" class="form-control" name="focdescription[]" value="" id="examplefocdescription${loop_count}" placeholder="FOC Model Description" readonly>
+                    <label for="examplefocdescription${loop_count}">Model Description</label>
+                    <input type="text" class="form-control" name="focdescription[]" value="" id="examplefocdescription${loop_count}" placeholder="Model 1" readonly>
                 </div>
                <div class="form-group col-md-2">
-                <label for="examplefocPromoMrp${loop_count}">FOC MRP</label>
-                <input type="text" class="form-control" name="focpromomrp[]" id="examplefocPromoMrp${loop_count}" placeholder="FOC MRP" readonly>
+                <label for="examplefocPromoMrp${loop_count}">MRP</label>
+                <input type="text" class="form-control" name="focpromomrp[]" id="examplefocPromoMrp${loop_count}" placeholder="MRP" readonly>
                </div>
                <div class="form-group col-md-2">
-                <label for="examplefocPromoDlp${loop_count}">FOC DLP</label>
-                <input type="text" class="form-control" name="focpromodlp[]" id="examplefocPromoDlp${loop_count}" placeholder="FOC DLP" readonly>
+                <label for="examplefocPromoDlp${loop_count}">DLP</label>
+                <input type="text" class="form-control" name="focpromodlp[]" id="examplefocPromoDlp${loop_count}" placeholder="DLP" readonly>
                 </div>
                 <div class="form-group col-md-2">
-                    <label for="examplefocstock${loop_count}">FOC Stock</label>
-                    <input type="text" class="form-control" name="focstock[]" value="" id="examplefocstock${loop_count}" placeholder="FOC Stock" readonly>
+                    <label for="examplefocstock${loop_count}">Model1 Stock</label>
+                    <input type="text" class="form-control" name="focstock[]" value="" id="examplefocstock${loop_count}" placeholder="Model Stock1" readonly>
                 </div>
                 <div class="form-group col-md-2">
-                    <label for="examplefocqty${loop_count}">FOC Qty</label>
-                    <input type="text" class="form-control" name="focqty[]" value="" id="examplefocqty${loop_count}" placeholder="FOC Qty">
+                    <label for="examplefocqty${loop_count}">Model1 Qty</label>
+                    <input type="text" class="form-control" name="focqty[]" value="" id="examplefocqty${loop_count}" placeholder="Model 1">
                 </div>
                <div class="form-group col-md-2">
-                <label for="examplefocSpecialPrice${loop_count}">FOC Special Price</label>
-                <input type="text" class="form-control" name="focspecialprice[]" value="" id="examplefocSpecialPrice${loop_count}" placeholder="FOC Special Price">
+                <label for="examplefocSpecialPrice${loop_count}">Special Price</label>
+                <input type="text" class="form-control" name="focspecialprice[]" value="" id="examplefocSpecialPrice${loop_count}" placeholder="Special Price">
                </div> 
                 </div>
             `;
@@ -422,7 +480,7 @@
 
         jQuery("#exampleFOC option").not(":selected").each(function(index, option) {
             var deselectedValue = jQuery(option).val();
-            var divToRemove = document.getElementById('foc_'+deselectedValue);
+            var divToRemove = document.getElementById(deselectedValue);
 
                 if (divToRemove) {
                     divToRemove.remove();
