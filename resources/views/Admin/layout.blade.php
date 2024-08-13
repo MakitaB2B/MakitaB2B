@@ -445,6 +445,40 @@
                                 </p>
                             </a>
                         </li>
+                        <li class="nav-item @yield('item-expandable')">
+                            <a href="#" class="nav-link @yield('item-select')">
+                                <i class="nav-icon fa fa-list-alt"></i>
+                                <p>
+                                    Item Info
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/items') }}" class="nav-link @yield('item-select')">
+                                        <i class="fas fa-money-bill"></i>
+                                        <p>Item Price</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item @yield('dealer-expandable')">
+                            <a href="#" class="nav-link @yield('dealer-select')">
+                                <i class="nav-icon fa fa-store"></i>
+                                <p>
+                                    Dealer Management
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/dealers') }}" class="nav-link @yield('dealer_select')">
+                                        <i class="fas fa-users"></i>
+                                        <p>Dealer master</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item @yield('promotion-expandable')">
                             <a href="#" class="nav-link @yield('promotion-select')">
                                 <i class="nav-icon fa fa-bullhorn"></i>
@@ -456,7 +490,7 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ url('admin/promotions') }}" class="nav-link @yield('promotion_select')">
-                                        <i class="fas fa-percentage"></i>
+                                        <i class='fas fa-business-time'></i>
                                         <p>Promotions</p>
                                     </a>
                                 </li>

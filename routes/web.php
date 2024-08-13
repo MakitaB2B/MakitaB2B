@@ -28,6 +28,8 @@ use App\Http\Controllers\Admin\PendingPoController;
 use App\Http\Controllers\Admin\AssetMasterController;
 use App\Http\Controllers\Admin\EmployeeLeaveApplicationController;
 use App\Http\Controllers\Admin\PromotionController;
+use App\Http\Controllers\Admin\DealerController;
+use App\Http\Controllers\Admin\ItemInfoController;
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
 
@@ -207,10 +209,11 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/promotions/promotion-transaction',[PromotionController::class,'transactionCreation'])->name('admin.promotions.promotion-transaction');
     Route::get('/promotions/transaction-creation',[PromotionController::class,'promotionTransaction'])->name('admin.promotions.transaction');
     Route::get('/promotions/promotion-fetch',[PromotionController::class,'getPromo'])->name('admin.promotions.promotion-fetch');
-
     Route::get('/promotions/search-data', [PromotionController::class, 'searchData'])->name('search.data');
-
     Route::get('/promotions/model-details-search', [PromotionController::class, 'modeldetailSearch'])->name('model.detail.Search');
+    Route::get('/items', [ItemInfoController::class, 'index'])->name('items');
+    Route::post('/upload-daily-item',[ItemInfoController::class,'uploadDailyItem'])->name('upload-daily-item');
+    Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
 
     Route::get('/roi', function () {  return view('Admin/roi');  });
 
