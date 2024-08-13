@@ -255,6 +255,23 @@
 
         result.forEach(option => {
         loop_count++;
+
+
+        // $mainStock=(int)($modelVariantData->cb01)+ (int)($modelVariantData->dl01)+(int)($modelVariantData->gh01)+(int)($modelVariantData->gj01)+(int)($modelVariantData->id01)+(int)($modelVariantData->jm01)+(int)($modelVariantData->ka01)+(int)($modelVariantData->kl01)+(int)($modelVariantData->mh01)+(int)($modelVariantData->pn01)+(int)($modelVariantData->py01)+(int)($modelVariantData->rd01)+(int)($modelVariantData->tn01)+(int)($modelVariantData->vd01)+(int)($modelVariantData->wb01);
+
+        // @php
+        //     $totalReservedQty = 0;
+        //     $reserveQtyStr = $modelVariantData->reservedStock->pluck('reserved')->implode('+');
+        //     $explodeRQ = explode('+', $reserveQtyStr);
+        //     foreach ($explodeRQ as $rq) {
+        //         $totalReservedQty += (int) $rq;
+        //     }
+        // @endphp
+
+
+        // $mainStock - $totalReservedQty
+
+
         let html = `
              <div class="row" id="${option.item}">
             <div class="form-group col-md-2">
@@ -267,21 +284,21 @@
             </div>
             <div class="form-group col-md-2">
                 <label for="examplePromoMrp${loop_count}">Offer MRP</label>
-                <input type="text" class="form-control" name="promomrp[]" id="examplePromoMrp${loop_count}" placeholder="Offer MRP" readonly>
+                <input type="text" class="form-control" name="promomrp[]" id="examplePromoMrp${loop_count}" value="${option.mrp}" placeholder="Offer MRP" readonly>
             </div>
             <div class="form-group col-md-2">
                 <label for="examplePromoDlp${loop_count}">Offer DLP</label>
-                <input type="text" class="form-control" name="promodlp[]" id="examplePromoDlp${loop_count}" placeholder="Offer DLP" readonly>
+                <input type="text" class="form-control" name="promodlp[]" id="examplePromoDlp${loop_count}" value="${option.dlp}" placeholder="Offer DLP" readonly>
             </div>
             <div class="form-group col-md-2">
                 <label for="examplePromoStock${loop_count}">Offer Stock</label>
                 <input type="text" class="form-control" name="promostock[]" id="examplePromoStock${loop_count}" placeholder="Offer Stock" readonly>
             </div>
             <div class="form-group col-md-2">
-                <label for="examplePromoPriceType${loop_count}">Offer Price Type</label>
-                <select class="custom-select mySelect" name="pricetype[]" id="examplePromoPriceType${loop_count}" onchange="showSelectedValue('${loop_count}')">
+                <label for="exampleOfferType${loop_count}">Offer Type</label>
+                <select class="custom-select mySelect" name="offertype[]" id="exampleOfferType${loop_count}">
                     <option value="">Please Select Price Type</option>
-                    @foreach($price_type as $type)
+                    @foreach($offer_type as $type)
                     <option value="{{$type}}">{{ucfirst(trans($type))}}</option>
                     @endforeach
                 </select>
@@ -290,6 +307,15 @@
                 <label for="exampleOfferQty${loop_count}">Offer Qty</label>
                 <input type="text" class="form-control" name="offerqty[]" id="exampleOfferQty${loop_count}" placeholder="Offer Qty">
             </div>
+            <div class="form-group col-md-2">
+                <label for="examplePromoPriceType${loop_count}">Price Type</label>
+                <select class="custom-select mySelect" name="pricetype[]" id="examplePromoPriceType${loop_count}" onchange="showSelectedValue('${loop_count}')">
+                    <option value="">Please Select Promotion Price Type</option>
+                    @foreach($price_type as $price)
+                    <option value="{{$price}}">{{$price}}</option>
+                    @endforeach
+                </select>
+           </div>
             <div class="form-group col-md-2">
                 <label for="examplePromoPrice${loop_count}">Offer Price</label>
                 <input type="text" class="form-control" name="promoprice[]" value="" id="examplePromoPrice${loop_count}" placeholder="Offer Price">
@@ -306,55 +332,6 @@
         }
         });
     
-    // addedOptions.forEach(option => {
-    //     console.log(option);
-    //     loop_count++;
-    //     let html = `
-    //          <div class="row" id="${option}">
-    //         <div class="form-group col-md-2">
-    //             <label for="exampleMode${loop_count}">Offer Model</label>
-    //             <input type="text" class="form-control" name="offermodel[]" value="${option}" id="exampleMode${loop_count}" placeholder="Offer Model" readonly>
-    //         </div>
-    //          <div class="form-group col-md-4">
-    //             <label for="offerdescription${loop_count}">Offer Description</label>
-    //             <input type="text" class="form-control" name="offerdescription[]" id="offerdescription${loop_count}" placeholder="Offer Description" readonly>
-    //         </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="examplePromoMrp${loop_count}">Offer MRP</label>
-    //             <input type="text" class="form-control" name="promomrp[]" id="examplePromoMrp${loop_count}" placeholder="Offer MRP" readonly>
-    //         </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="examplePromoDlp${loop_count}">Offer DLP</label>
-    //             <input type="text" class="form-control" name="promodlp[]" id="examplePromoDlp${loop_count}" placeholder="Offer DLP" readonly>
-    //         </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="examplePromoStock${loop_count}">Offer Stock</label>
-    //             <input type="text" class="form-control" name="promostock[]" id="examplePromoStock${loop_count}" placeholder="Offer Stock" readonly>
-    //         </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="examplePromoPriceType${loop_count}">Offer Price Type</label>
-    //             <select class="custom-select mySelect" name="pricetype[]" id="examplePromoPriceType${loop_count}" onchange="showSelectedValue('${loop_count}')">
-    //                 <option value="">Please Select Price Type</option>
-    //                 @foreach($price_type as $type)
-    //                 <option value="{{$type}}">{{ucfirst(trans($type))}}</option>
-    //                 @endforeach
-    //             </select>
-    //        </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="exampleOfferQty${loop_count}">Offer Qty</label>
-    //             <input type="text" class="form-control" name="offerqty[]" id="exampleOfferQty${loop_count}" placeholder="Offer Qty">
-    //         </div>
-    //         <div class="form-group col-md-2">
-    //             <label for="examplePromoPrice${loop_count}">Offer Price</label>
-    //             <input type="text" class="form-control" name="promoprice[]" value="" id="examplePromoPrice${loop_count}" placeholder="Offer Price">
-    //         </div>   
-    //         </div>
-    //     `;
-      
-    //     if(option != 'novalue'){
-    //         $('.Offer').append(html);
-    //      }
-    // });
 
     jQuery(".exampleOfferProduct option").not(":selected").each(function(index, option) {
         var deselectedValue = jQuery(option).val();
@@ -432,14 +409,35 @@
         }
 
         function showSelectedValue(id) {
-      
             var Id = document.getElementById('examplePromoPriceType'+id);
+            var Item = document.getElementById('exampleMode'+id);
             var Value = jQuery(Id).val();
+            var ItemValue = jQuery(Item).val();
+
             if (Value != "special price") {
+
+            $.ajax({
+            url: '/admin/promotions/single-model-details-search',
+            type: 'get',
+            data: { searchtxt: ItemValue },
+            success: function(result) {
+                   
+                let res = result.split('-');
+
+                console.log(res);
+                if(Value != "best price"){
+                    $('#examplePromoPrice'+id).val(res[0]);
+                }else{
+                    $('#examplePromoPrice' + id).val(res[1]);
+                }
+
                 document.getElementById('examplePromoPrice'+id).readOnly = true;
-            }else{
-                document.getElementById('examplePromoPrice'+id).readOnly = false; 
             }
+            }); 
+            }else{
+                $('#examplePromoPrice' + id).val('');
+                document.getElementById('examplePromoPrice'+id).readOnly = false; 
+            }    
         }
 
 

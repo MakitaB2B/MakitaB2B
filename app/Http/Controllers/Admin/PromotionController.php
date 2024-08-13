@@ -26,7 +26,7 @@ class PromotionController extends Controller
     public function promotionCreation()
     { 
       $result['promo_code'] = $this->promotionService->getPromoCount()+1;
-      $result['offer_type'] = ['solo offer','combo offer'];
+      $result['offer_type'] = ['Buy One Of','Combo Offer'];
       $result['price_type'] = ['DLP','best price','special price'];
       return view('Admin.promotion_creation', $result); 
     }
@@ -58,6 +58,14 @@ class PromotionController extends Controller
       $results = $this->promotionService->modeldetailSearch($query);
 
       return $results;
+    }
+
+    public function modeldetailSingleSearch(Request $request){
+
+      $query = $request->get('searchtxt');
+      $results = $this->promotionService->modeldetailSingleSearch($query);
+
+      return $results; 
     }
 
     public function getPromo(Request $request){

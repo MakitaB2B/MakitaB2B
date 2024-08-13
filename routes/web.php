@@ -211,6 +211,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/promotions/promotion-fetch',[PromotionController::class,'getPromo'])->name('admin.promotions.promotion-fetch');
     Route::get('/promotions/search-data', [PromotionController::class, 'searchData'])->name('search.data');
     Route::get('/promotions/model-details-search', [PromotionController::class, 'modeldetailSearch'])->name('model.detail.Search');
+    Route::get('/promotions/single-model-details-search', [PromotionController::class, 'modeldetailSingleSearch'])->name('model.single.detail.Search');
     Route::get('/items', [ItemInfoController::class, 'index'])->name('items');
     Route::post('/upload-daily-item',[ItemInfoController::class,'uploadDailyItem'])->name('upload-daily-item');
     Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
