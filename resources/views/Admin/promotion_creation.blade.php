@@ -256,22 +256,6 @@
         result.forEach(option => {
         loop_count++;
 
-
-        // $mainStock=(int)($modelVariantData->cb01)+ (int)($modelVariantData->dl01)+(int)($modelVariantData->gh01)+(int)($modelVariantData->gj01)+(int)($modelVariantData->id01)+(int)($modelVariantData->jm01)+(int)($modelVariantData->ka01)+(int)($modelVariantData->kl01)+(int)($modelVariantData->mh01)+(int)($modelVariantData->pn01)+(int)($modelVariantData->py01)+(int)($modelVariantData->rd01)+(int)($modelVariantData->tn01)+(int)($modelVariantData->vd01)+(int)($modelVariantData->wb01);
-
-        // @php
-        //     $totalReservedQty = 0;
-        //     $reserveQtyStr = $modelVariantData->reservedStock->pluck('reserved')->implode('+');
-        //     $explodeRQ = explode('+', $reserveQtyStr);
-        //     foreach ($explodeRQ as $rq) {
-        //         $totalReservedQty += (int) $rq;
-        //     }
-        // @endphp
-
-
-        // $mainStock - $totalReservedQty
-
-
         let html = `
              <div class="row" id="${option.item}">
             <div class="form-group col-md-2">
@@ -292,7 +276,7 @@
             </div>
             <div class="form-group col-md-2">
                 <label for="examplePromoStock${loop_count}">Offer Stock</label>
-                <input type="text" class="form-control" name="promostock[]" id="examplePromoStock${loop_count}" placeholder="Offer Stock" readonly>
+                <input type="text" class="form-control" name="promostock[]" id="examplePromoStock${loop_count}" value="${option.total_stock - option.total_reserved}" placeholder="Offer Stock" readonly>
             </div>
             <div class="form-group col-md-2">
                 <label for="exampleOfferType${loop_count}">Offer Type</label>
@@ -326,7 +310,7 @@
         if(option != 'novalue'){
             $('.Offer').append(html);
          }
-    });     
+        });     
            
             
         }
@@ -345,39 +329,41 @@
     }
 
     function foc_offer_product_add_remove() {
-        // Get selected values
+       
         let selectedOptions = $('#exampleFOC').val();
         
-        // Determine which option was added
         let addedOptions = selectedOptions.filter(option => !foc_previousSelectedOptions.includes(option));
         
-        // Update previous selected options
         foc_previousSelectedOptions = selectedOptions;
-        
-        // Handle added options
-        addedOptions.forEach(option => {
+
+        $.ajax({
+        url: '/admin/promotions/model-details-search',
+        type: 'get',
+        data: { searchtxt: addedOptions },
+        success: function(result) {
+            result.forEach(option => {
             foc_loop_count++;
             let html = `
-                <div class="row" id="foc_${option}">
+                <div class="row" id="foc_${option.item}">
                 <div class="form-group col-md-2">
                   <label for="examplefocmodel${loop_count}">FOC Model</label>
-                  <input type="text" class="form-control" name="focmodel[]" value="${option}" id="examplefocmodel${loop_count}" placeholder="FOC Model" readonly>
+                  <input type="text" class="form-control" name="focmodel[]" value="${option.item}" id="examplefocmodel${loop_count}" placeholder="FOC Model" readonly>
                 </div>
                  <div class="form-group col-md-4">
                     <label for="examplefocdescription${loop_count}">FOC Model Description</label>
-                    <input type="text" class="form-control" name="focdescription[]" value="" id="examplefocdescription${loop_count}" placeholder="FOC Model Description" readonly>
+                    <input type="text" class="form-control" name="focdescription[]" value="${option.description}" id="examplefocdescription${loop_count}" placeholder="FOC Model Description" readonly>
                 </div>
                <div class="form-group col-md-2">
                 <label for="examplefocPromoMrp${loop_count}">FOC MRP</label>
-                <input type="text" class="form-control" name="focpromomrp[]" id="examplefocPromoMrp${loop_count}" placeholder="FOC MRP" readonly>
+                <input type="text" class="form-control" name="focpromomrp[]" value="${option.mrp}" id="examplefocPromoMrp${loop_count}" placeholder="FOC MRP" readonly>
                </div>
                <div class="form-group col-md-2">
                 <label for="examplefocPromoDlp${loop_count}">FOC DLP</label>
-                <input type="text" class="form-control" name="focpromodlp[]" id="examplefocPromoDlp${loop_count}" placeholder="FOC DLP" readonly>
+                <input type="text" class="form-control" name="focpromodlp[]" value="${option.dlp}" id="examplefocPromoDlp${loop_count}" placeholder="FOC DLP" readonly>
                 </div>
                 <div class="form-group col-md-2">
                     <label for="examplefocstock${loop_count}">FOC Stock</label>
-                    <input type="text" class="form-control" name="focstock[]" value="" id="examplefocstock${loop_count}" placeholder="FOC Stock" readonly>
+                    <input type="text" class="form-control" name="focstock[]" value="${option.total_stock - option.total_reserved}" id="examplefocstock${loop_count}" placeholder="FOC Stock" readonly>
                 </div>
                 <div class="form-group col-md-2">
                     <label for="examplefocqty${loop_count}">FOC Qty</label>
@@ -396,7 +382,9 @@
             
         });
 
-
+        }
+        });
+        
         jQuery("#exampleFOC option").not(":selected").each(function(index, option) {
             var deselectedValue = jQuery(option).val();
             var divToRemove = document.getElementById('foc_'+deselectedValue);
@@ -424,7 +412,6 @@
                    
                 let res = result.split('-');
 
-                console.log(res);
                 if(Value != "best price"){
                     $('#examplePromoPrice'+id).val(res[0]);
                 }else{
