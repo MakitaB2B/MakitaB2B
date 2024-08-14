@@ -59,7 +59,7 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                        <form method="POST" action="{{ route('asset-master.manage-asset-master-process') }}"
+                        <form method="POST" action="{{ route('admin.promotions.promotion-create') }}"
                             enctype="multipart/form-data">
                             @csrf
                             <div class="card-body">
@@ -153,9 +153,9 @@
                             {{-- </div> --}}
                             <!-- /.card-body -->
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-primary" id="submt">Submit</button>
+                                <button type="submit" class="btn btn-primary float-right" id="submt">Submit</button>
                             </div>
-                            <input type="hidden" value="" name="assetmaster_slug" required />
+                            <input type="hidden" value="" name="promotion_slug" required />
                         </form>
                     </div>
                     <!-- /.card -->
@@ -178,8 +178,6 @@
  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 
-
-    // $(function () {
             $('#exampleFOC').select2({
                     placeholder: 'Search for data',
                     minimumInputLength: 3,
@@ -205,7 +203,6 @@
                         cache: true
                     }
                 });
-    // });
 
             $('#searchable-select').select2({
                 placeholder: 'Search for data',

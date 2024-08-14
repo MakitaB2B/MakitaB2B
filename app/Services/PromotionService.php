@@ -18,6 +18,10 @@ class PromotionService{
 
     }
 
+    public function createOrUpdatePromo($data){
+      Promotion::insert($data);
+    }
+
     public function modeldetailSearch($query){
 
       $result = BranchStocks::with('reservedStock:id,item,reserved')
@@ -44,7 +48,7 @@ class PromotionService{
     }
 
     public function modeldetailSingleSearch($query){
-      $results = ItemPrice::where('Item', $query)->get(['DLP as dlp', 'Best as best']);
+        $results = ItemPrice::where('Item', $query)->get(['DLP as dlp', 'Best as best']);
       return $results["0"]["dlp"]."-".$results["0"]["best"];
     }
 
@@ -53,7 +57,7 @@ class PromotionService{
 
         $results = BranchStocks::where('item', 'LIKE', "%{$query}%")->get(['item']);
 
-        return response()->json($results);
+      return response()->json($results);
     }
    
 

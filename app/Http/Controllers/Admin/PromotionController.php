@@ -26,9 +26,72 @@ class PromotionController extends Controller
     public function promotionCreation()
     { 
       $result['promo_code'] = $this->promotionService->getPromoCount()+1;
-      $result['offer_type'] = ['Buy One Of','Combo Offer'];
+      $result['offer_type'] = ['Buy One Of The Product','Combo Offer'];
       $result['price_type'] = ['DLP','best price','special price'];
       return view('Admin.promotion_creation', $result); 
+    }
+
+    public function promotionCreate(Request $request){
+         dd($request->all());
+      $promocode = $request->promocode;
+      $from_date = $request->promo_from_date;
+      $to_date = $request->promo_to_date;
+      $offer_model = $request->offermodel;
+      $offer_mrp = $request->promomrp;
+      $offer_dlp = $request->promodlp;
+      $offer_stock = $request->promostock;
+      $offer_offertype = $request->offertype;
+      $offer_offerqty = $request->offerqty;
+      $offer_pricetype = $request->pricetype;
+      $offer_promoprice = $request->promoprice;
+      $foc_model = $request->focmodel;
+      $foc_promomrp = $request->focpromomrp;
+      $foc_promodlp = $request->focpromodlp;
+      $foc_stock = $request->focstock;
+      $foc_qty = $request->focqty;
+      $foc_specialprice = $request->focspecialprice;
+
+    $data = [];
+
+      foreach ($offer_model as $key => $model) {
+          $data[] = [
+              'promotion_slug' => $this->promotionService->promotion_slug(),
+              'promo_code' => $promocode,
+              'from_date' => $from_date,
+              'to_date' =>  $to_date,
+              'model_no' => $offer_model[$key],
+              'product_type' => "FOC",
+              'qty' => $offer_offerqty[$key] ,
+              'price' => $offer_promoprice[$key],
+              'offer_type'=>$offer_offertype[$key],
+              'mrp'=>$offer_mrp[$key],
+              'dlp'=>$offer_dlp[$key],
+              'stock'=>$offer_stock[$key]
+          ];
+      }
+
+
+      foreach ( $foc_model as $key => $model) {
+        $data[] = [
+            'promotion_slug' => $this->promotionService->promotion_slug(),
+            'promo_code' => $promocode,
+            'from_date' => $from_date,
+            'to_date' =>  $to_date,
+            'model_no' => $foc_model[$key],
+            'product_type' => "FOC",
+            'qty' => $foc_qty[$key] ,
+            'price' =>  $foc_specialprice[$key],
+            'offer_type'=>'special price',
+            'mrp'=>$foc_promomrp[$key],
+            'dlp'=> $foc_promodlp[$key],
+            'stock'=>$foc_stock[$key]
+        ];
+    }
+        
+    $this->promotionService->createOrUpdatePromo($data);
+
+    return redirect('admin/promotions');
+
     }
 
     public function promotionPreview()

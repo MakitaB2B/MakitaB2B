@@ -17,11 +17,11 @@ return new class extends Migration
             $table->string('Item Description');
             // $table->foreign('')->references('promo_code')->on('promotions')->onDelete('cascade')->nullable();
             $table->string('Product Code');
-            $table->string('Category'); //->index();
+            $table->string('Category')->nullable(); //->index();
             // $table->foreign('dealer_code')->references('dealer_code')->on('dealers')->onDelete('cascade')->nullable();
-            $table->string('U/M');
+            $table->string('U/M')->nullable();
             // $table->enum('product_type',['Offer Product','FOC']);
-            $table->string('DLP');
+            $table->string('DLP')->nullable();
             $table->string('LP'); //->nullable();
             $table->string('MRP');
             $table->string('BEST');//->index();
