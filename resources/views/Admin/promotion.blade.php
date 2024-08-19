@@ -61,29 +61,23 @@
                                             <th>To Date</th>
                                             <th>Promo Code</th>
                                             <th>Offer Prod</th>
-                                            <th>Qty</th>
-                                            <th>Price Type</th>
-                                            <th>Price</th>
-                                            <th>Created By</th>
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{-- @foreach ($assetMasterList as $key => $list)
+                                        @foreach ($promo_list as $key => $list)
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
-                                                <td>{{ $list->asset_tag }}</td>
-                                                <td>{{ $list->asset_type }}</td>
-                                                <td>{{ $list->make }}</td>
-                                                <td>{{ $list->model }}</td>
-                                                <td>{{ $list->serial_number }}</td>
-                                                <td>{{ $list->service_tag }}</td>
-                                                <td>{{ $list->status === 'Active' ? "Active" : "Scrap" }}</td>
-                                                <td>{{$list->employee->full_name}}</td>
-                                                <td><a href="{{ url('admin/asset-master/manage-asset-master/') }}/{{ Crypt::encrypt($list->assetmaster_slug) }}"
-                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td>
+                                                <td>{{ \Carbon\Carbon::parse($list->from_date)->format('d M Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($list->to_date)->format('d M Y') }}</td>
+                                                <td>{{ $list->promo_code }}</td>
+                                                <td>{{ $list->model_no_array }}</td>
+                                                <td>{{ $list->status }}</td>
+                                                <td><a href="{{ url('admin/promotions/promotion-creation') }}/{{ Crypt::encrypt($list->promo_code) }}"
+                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td> 
                                             </tr>
-                                        @endforeach --}}
+                                        @endforeach
 
                                     </tbody>
                                     <tfoot>
@@ -93,10 +87,7 @@
                                             <th>To Date</th>
                                             <th>Promo Code</th>
                                             <th>Offer Prod</th>
-                                            <th>Qty</th>
-                                            <th>Price Type</th>
-                                            <th>Price</th>
-                                            <th>Created By</th>
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>

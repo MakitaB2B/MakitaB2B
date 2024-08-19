@@ -113,7 +113,7 @@
                                         
                                         <div class="form-group col-md-12">
                                         <label for="searchable-select">Offer Product</label>   
-                                        <select id="searchable-select" class="select2 exampleOfferProduct" name="offer_product[]" multiple="multiple" style="width: 100%;" onchange="offer_product_add_remove()"></select>
+                                        <select id="searchable-select" class="exampleOfferProduct select2  form-control" name="offer_product[]" multiple="multiple" style="width: 100%;" onchange="offer_product_add_remove()"></select> 
                                         @error('offer_product')
                                         <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
                                             {{ $message }}
@@ -286,7 +286,7 @@
            </div>
             <div class="form-group col-md-2">
                 <label for="exampleOfferQty${loop_count}">Offer Qty</label>
-                <input type="text" class="form-control" name="offerqty[]" id="exampleOfferQty${loop_count}" placeholder="Offer Qty">
+                <input type="text" class="form-control" name="offerqty[]" id="exampleOfferQty${loop_count}" placeholder="Offer Qty" required>
             </div>
             <div class="form-group col-md-2">
                 <label for="examplePromoPriceType${loop_count}">Price Type</label>

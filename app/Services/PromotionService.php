@@ -6,6 +6,17 @@ use App\Models\Admin\BranchStocks;
 use App\Models\Admin\ItemPrice;
 use Illuminate\Support\Facades\DB;
 class PromotionService{
+
+    public function listPromotions(){
+
+        return Promotion::select('promo_code','from_date','to_date','status', DB::raw('GROUP_CONCAT(model_no ORDER BY model_no ASC) AS model_no_array'))
+        ->where('product_type', 'Offer Product')
+        ->groupBy('promo_code','from_date','to_date','status')
+        ->orderBy('promo_code')
+        ->get();
+    
+    }
+
     public function promotion_slug(){
    
       return Str::slug(rand().rand());
@@ -14,12 +25,13 @@ class PromotionService{
 
     public function getPromoCount(){
 
-      return Promotion::count(['id']);
+      // return Promotion::count(['id']);
+     return Promotion::max('promo_code');
 
     }
 
     public function createOrUpdatePromo($data){
-      // dd($data);
+
       Promotion::insert($data);
     }
 
@@ -49,14 +61,15 @@ class PromotionService{
     }
 
     public function modeldetailSingleSearch($query){
-        $results = ItemPrice::where('Item', $query)->get(['DLP as dlp', 'Best as best']);
+      $results = ItemPrice::where('Item', $query)->get(['DLP as dlp', 'Best as best']);
+
       return $results["0"]["dlp"]."-".$results["0"]["best"];
     }
 
     public function searchData($query)
     {
 
-        $results = BranchStocks::where('item', 'LIKE', "%{$query}%")->get(['item']);
+     $results = BranchStocks::where('item', 'LIKE', "%{$query}%")->get(['item']);
 
       return response()->json($results);
     }

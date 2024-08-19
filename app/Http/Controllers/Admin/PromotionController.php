@@ -8,6 +8,7 @@ use App\Services\PromotionService;
 use App\Services\TransactionService;
 use App\Models\Admin\BranchStocks;
 use Auth;
+use Carbon\Carbon;
 
 class PromotionController extends Controller
 {
@@ -20,7 +21,9 @@ class PromotionController extends Controller
     }
 
     public function index(){
-        return view('Admin.promotion'); 
+
+      $result['promo_list']=$this->promotionService->listPromotions();
+      return view('Admin.promotion',$result); 
     }
 
     public function promotionCreation()
@@ -34,9 +37,10 @@ class PromotionController extends Controller
     public function promotionCreate(Request $request){
 
       $validated_data= $request->validate([
-        'promo_from_date'=>'required',
-        'promo_to_date'=>'required',
-    ]);
+        'promo_from_date' => 'required|date',
+        'promo_to_date' => 'required|date|after_or_equal:promo_from_date',
+        'promocode' => 'required|unique:promotions,promo_code',
+      ]);
 
       $promocode = $request->promocode;
       $from_date = $request->promo_from_date;
@@ -55,6 +59,7 @@ class PromotionController extends Controller
       $foc_stock = $request->focstock;
       $foc_qty = $request->focqty;
       $foc_specialprice = $request->focspecialprice;
+      $status = (Carbon::now()->between($from_date, $to_date)) ? 'active' : null;
 
     $data = [];
 
@@ -72,7 +77,10 @@ class PromotionController extends Controller
               'price_type'=> ($offer_pricetype[$key] == 'DLP') ? 'DLP' : (($offer_pricetype[$key] == 'best price') ? 'Best Price' : 'Special Price'),
               'mrp'=>$offer_mrp[$key],
               'dlp'=>$offer_dlp[$key],
-              'stock'=>$offer_stock[$key]
+              'stock'=>$offer_stock[$key],
+              'status'=> $status,
+              'created_at' => date('Y-m-d H:i:s'),
+              'updated_at' => date('Y-m-d H:i:s')
           ];
       }
 
@@ -90,11 +98,13 @@ class PromotionController extends Controller
             'price_type'=>'Special Price',
             'mrp'=>$foc_promomrp[$key],
             'dlp'=> $foc_promodlp[$key],
-            'stock'=>$foc_stock[$key]
+            'stock'=>$foc_stock[$key],
+            'status'=> $status,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
         ];
     }
         
-    // dd($data);
     $this->promotionService->createOrUpdatePromo($data);
 
     return redirect('admin/promotions');
@@ -107,11 +117,14 @@ class PromotionController extends Controller
     }
 
     public function transactionCreation(){
-      return view('Admin.transaction');
+
+      $result['promo_code']=BranchStocks::limit(500)->get();
+      return view('Admin.promotion_transaction',$result);
     }
 
     public function promotionTransaction(){
-      return view('Admin.promotion_transaction');
+      // $result['promo_code']=BranchStocks::limit(500)->get();
+      return view('Admin.transaction');
     }
     
     public function searchData(Request $request)

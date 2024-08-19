@@ -61,10 +61,12 @@
                                     <div class="row">
                                         <div class="form-group col-md-2">
                                             <label for="examplePromoCode">Promo Code*</label>
-                                            <select class="custom-select" name="promo_code" required id="examplePromoCode">
-                                                <option value="">Please Select</option>
-                                                <option value="PromoCode1">PromoCode1</option>
-                                                <option value="PromoCode2">PromoCode2</option>
+                                            <select class="promotions form-control" name="promo_code" required id="examplePromoCode">
+                                                    @foreach ($promo_code as $item)
+                                                    <option value="{{$item->item}}">{{$item->item}}</option>
+                                                    <option value="{{$item->item}}">{{$item->item}}</option>
+                                                    @endforeach
+                                               
                                             </select>
                                             @error('promo_code')
                                                 <div
@@ -77,7 +79,7 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                            
+                                        {{-- custom-select  --}}
                                         <div class="form-group col-md-2">
                                             <label for="exampleDealerCode">Name*</label>
                                             <select class="custom-select" name="rm_name" required id="exampleDealerCode">
@@ -228,6 +230,12 @@
       
 
         <script>
+
+            $(".promotions").select2({
+                placeholder: "Select a Promo Code",
+                allowClear: true
+            });
+
 
                 let loop_count = 0;
                 $('#examplePromoCode').on('change', function() {
