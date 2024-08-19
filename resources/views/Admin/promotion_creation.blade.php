@@ -83,7 +83,7 @@
                                         <div class="form-group col-md-4">
                                             <label for="examplePromoFromDate">From Date</label>
                                             <input type="date" class="form-control" name="promo_from_date" value=""
-                                                id="examplePromoFromDate" placeholder="Enter Promotion From Date">
+                                                id="examplePromoFromDate" placeholder="Enter Promotion From Date" required>
                                             @error('promo_from_date')
                                             <div
                                                 class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
@@ -98,7 +98,7 @@
                                         <div class="form-group col-md-4">
                                             <label for="examplePromoToDate">To Date</label>
                                             <input type="date" class="form-control" name="promo_to_date" value=""
-                                                id="examplePromoToDate" placeholder="Enter Promotion To Date">
+                                                id="examplePromoToDate" placeholder="Enter Promotion To Date" required>
                                             @error('promo_to_date')
                                             <div
                                                 class="sufee-alert alert with-close alert-danger alert-dismissible fade show">

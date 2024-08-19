@@ -32,7 +32,12 @@ class PromotionController extends Controller
     }
 
     public function promotionCreate(Request $request){
-         dd($request->all());
+
+      $validated_data= $request->validate([
+        'promo_from_date'=>'required',
+        'promo_to_date'=>'required',
+    ]);
+
       $promocode = $request->promocode;
       $from_date = $request->promo_from_date;
       $to_date = $request->promo_to_date;
@@ -60,16 +65,16 @@ class PromotionController extends Controller
               'from_date' => $from_date,
               'to_date' =>  $to_date,
               'model_no' => $offer_model[$key],
-              'product_type' => "FOC",
+              'product_type' => "Offer Product",
               'qty' => $offer_offerqty[$key] ,
               'price' => $offer_promoprice[$key],
               'offer_type'=>$offer_offertype[$key],
+              'price_type'=> ($offer_pricetype[$key] == 'DLP') ? 'DLP' : (($offer_pricetype[$key] == 'best price') ? 'Best Price' : 'Special Price'),
               'mrp'=>$offer_mrp[$key],
               'dlp'=>$offer_dlp[$key],
               'stock'=>$offer_stock[$key]
           ];
       }
-
 
       foreach ( $foc_model as $key => $model) {
         $data[] = [
@@ -81,13 +86,15 @@ class PromotionController extends Controller
             'product_type' => "FOC",
             'qty' => $foc_qty[$key] ,
             'price' =>  $foc_specialprice[$key],
-            'offer_type'=>'special price',
+            'offer_type' => null,
+            'price_type'=>'Special Price',
             'mrp'=>$foc_promomrp[$key],
             'dlp'=> $foc_promodlp[$key],
             'stock'=>$foc_stock[$key]
         ];
     }
         
+    // dd($data);
     $this->promotionService->createOrUpdatePromo($data);
 
     return redirect('admin/promotions');

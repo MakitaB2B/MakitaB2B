@@ -21,13 +21,15 @@ return new class extends Migration
             $table->enum('product_type',['Offer Product','FOC']);
             $table->string('model_no');
             $table->string('model_desc')->nullable();
-            $table->enum('price_type',['DLP','Best Price','Special price']);
-            $table->string('offer_type');
+            $table->enum('price_type',['DLP','Best Price','Special Price']);
+            $table->enum('offer_type',['Buy One Of The Product','Combo Offer'])->nullable();
+            // $table->string('offer_type');
             $table->string('mrp');
             $table->string('dlp');
             $table->string('stock');
             $table->integer('qty');
             $table->string('price')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
        
         });

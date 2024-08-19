@@ -19,6 +19,7 @@ class PromotionService{
     }
 
     public function createOrUpdatePromo($data){
+      // dd($data);
       Promotion::insert($data);
     }
 
