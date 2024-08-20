@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\PromotionService;
 use App\Services\TransactionService;
+use App\Services\RegionalMangerService;
+use App\Services\DealerService;
 use App\Models\Admin\BranchStocks;
 use Auth;
 use Carbon\Carbon;
@@ -15,9 +17,11 @@ class PromotionController extends Controller
     protected $promotionService;
     protected $transactionService;
 
-    public function __construct(PromotionService $promotionService,TransactionService $transactionService){
+    public function __construct(PromotionService $promotionService,TransactionService $transactionService,RegionalMangerService $regionalManager,DealerService $dealerService){
       $this->promotionService=$promotionService;
       $this->transactionService=$transactionService;
+      $this->regionalManager=$regionalManager;
+      $this->dealerService=$dealerService;
     }
 
     public function index(){
@@ -45,7 +49,7 @@ class PromotionController extends Controller
       $promocode = $request->promocode;
       $from_date = $request->promo_from_date;
       $to_date = $request->promo_to_date;
-      $offer_model = $request->offermodel;
+      $offer_model = $request->offermodel ?? [];
       $offer_mrp = $request->promomrp;
       $offer_dlp = $request->promodlp;
       $offer_stock = $request->promostock;
@@ -53,7 +57,9 @@ class PromotionController extends Controller
       $offer_offerqty = $request->offerqty;
       $offer_pricetype = $request->pricetype;
       $offer_promoprice = $request->promoprice;
-      $foc_model = $request->focmodel;
+      $foc_model = $request->focmodel ?? [];
+      $focdescription = $request->focdescription;
+      $offerdescription = $request->offerdescription;
       $foc_promomrp = $request->focpromomrp;
       $foc_promodlp = $request->focpromodlp;
       $foc_stock = $request->focstock;
@@ -70,6 +76,7 @@ class PromotionController extends Controller
               'from_date' => $from_date,
               'to_date' =>  $to_date,
               'model_no' => $offer_model[$key],
+              'model_desc'=>$offerdescription[$key],
               'product_type' => "Offer Product",
               'qty' => $offer_offerqty[$key] ,
               'price' => $offer_promoprice[$key],
@@ -91,6 +98,7 @@ class PromotionController extends Controller
             'from_date' => $from_date,
             'to_date' =>  $to_date,
             'model_no' => $foc_model[$key],
+            'model_desc'=>$focdescription[$key],
             'product_type' => "FOC",
             'qty' => $foc_qty[$key] ,
             'price' =>  $foc_specialprice[$key],
@@ -104,7 +112,7 @@ class PromotionController extends Controller
             'updated_at' => date('Y-m-d H:i:s')
         ];
     }
-        
+
     $this->promotionService->createOrUpdatePromo($data);
 
     return redirect('admin/promotions');
@@ -118,7 +126,10 @@ class PromotionController extends Controller
 
     public function transactionCreation(){
 
-      $result['promo_code']=BranchStocks::limit(500)->get();
+      $result['promo_code']=$this->promotionService->activePromotion();
+      $result['regional_manager']=$this->regionalManager->rmNames();
+      $result['dealer_master']=$this->dealerService->getDealers();
+
       return view('Admin.promotion_transaction',$result);
     }
 
@@ -155,61 +166,65 @@ class PromotionController extends Controller
 
       $promoID = $request->input('promoID');
 
-      $promo_products= [
-        "0"=>[
-        "offer_product"=>[
-          "0"=>[
-            "PROMOCode" => "promocode1",
-            "ModelName" => "xyz",
-            "OfferDescription" => "desc",
-            "MRP"=>"2345",
-            "DLP"=>"23458",
-            "Stock"=>"4678",
-            "PriceType" => "Special Price",
-            "OfferQty"=>"2",
-            "Price"=>"1245"
-          ],
-          "1"=>[
-            "PROMOCode" => "promocode1",
-            "ModelName" => "xyzh",
-            "OfferDescription" => "desc jhh",
-            "MRP"=>"23456",
-            "DLP"=>"23457",
-            "Stock"=>"4678",
-            "PriceType" => "Special Price",
-            "OfferQty"=>"3",
-            "Price"=>"1245"
-          ]
+      $getPromoDeatils = $this->promotionService->getPromoDeatils($promoID);
 
-        ],
-        "foc"=>[
-          "0"=>[ 
-          "PROMOCode" => "promocode1",
-          "ModelName" => "xyz",
-          "OfferDescription" => "desc",
-          "MRP"=>"2345",
-          "DLP"=>"23458",
-          "Stock"=>"4678",
-          "PriceType" => "Special Price",
-          "OfferQty"=>"2",
-          "Price"=>"1245"
-        ],
-          "1"=>[ 
-          "PROMOCode" => "promocode1",
-          "ModelName" => "xyz",
-          "OfferDescription" => "desc",
-          "MRP"=>"2345",
-          "DLP"=>"23458",
-          "Stock"=>"4678",
-          "PriceType" => "Special Price",
-          "OfferQty"=>"2",
-          "Price"=>"1245"
-          ]
-        ]
-        ]
+      // dd($getPromoDeatils);
 
-      ];
-      return response()->json($promo_products);
+      // $promo_products= [
+      //   "0"=>[
+      //   "offer_product"=>[
+      //     "0"=>[
+      //       "PROMOCode" => "promocode1",
+      //       "ModelName" => "xyz",
+      //       "OfferDescription" => "desc",
+      //       "MRP"=>"2345",
+      //       "DLP"=>"23458",
+      //       "Stock"=>"4678",
+      //       "PriceType" => "Special Price",
+      //       "OfferQty"=>"2",
+      //       "Price"=>"1245"
+      //     ],
+      //     "1"=>[
+      //       "PROMOCode" => "promocode1",
+      //       "ModelName" => "xyzh",
+      //       "OfferDescription" => "desc jhh",
+      //       "MRP"=>"23456",
+      //       "DLP"=>"23457",
+      //       "Stock"=>"4678",
+      //       "PriceType" => "Special Price",
+      //       "OfferQty"=>"3",
+      //       "Price"=>"1245"
+      //     ]
+
+      //   ],
+      //   "foc"=>[
+      //     "0"=>[ 
+      //     "PROMOCode" => "promocode1",
+      //     "ModelName" => "xyz",
+      //     "OfferDescription" => "desc",
+      //     "MRP"=>"2345",
+      //     "DLP"=>"23458",
+      //     "Stock"=>"4678",
+      //     "PriceType" => "Special Price",
+      //     "OfferQty"=>"2",
+      //     "Price"=>"1245"
+      //   ],
+      //     "1"=>[ 
+      //     "PROMOCode" => "promocode1",
+      //     "ModelName" => "xyz",
+      //     "OfferDescription" => "desc",
+      //     "MRP"=>"2345",
+      //     "DLP"=>"23458",
+      //     "Stock"=>"4678",
+      //     "PriceType" => "Special Price",
+      //     "OfferQty"=>"2",
+      //     "Price"=>"1245"
+      //     ]
+      //   ]
+      //   ]
+
+      // ];
+      return response()->json($getPromoDeatils);
     }
 
 
