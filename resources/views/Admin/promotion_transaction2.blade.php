@@ -201,18 +201,17 @@
                                     </div>
                                     <hr>
                                     <div class="promo_offer thick">
-                                       
-                                    
-                                    </div>   
-                                    <div class="foc_offer thick">
-                                      
-                                    
-                                    </div>  
-                                    
+                                        {{-- <div class="promotions">
+                                        row
+                                        </div> --}}
+                                        {{-- <div class="foc">
+                                        
+                                        </div> --}}
+                                    </div>    
                                 </div>
                                 <!-- /.card-body -->
                                 <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary" id="submitbutton">Submit</button>
+                                    <button type="submit" class="btn btn-primary" id="submt">Submit</button>
                                 </div>
                                 <input type="hidden" value="" name="assetmaster_slug" required />
                             </form>
@@ -243,236 +242,89 @@
             $('#exampleDealerName').val(res[1]);
         });
 
-        let loop_count = 0;
 
-        $('#examplePromoCode').on('change', function() {
-            $('.promo_offer').empty();
-            $('.foc_offer').empty();
-            $('#submitbutton').prop('disabled', true);
-            let promoID = $(this).val();
+    let loop_count = 0;
+    $('#examplePromoCode').on('change', function() {
+        $('.promo_offer').empty();
+
+        let promoID = $(this).val();
         $.ajax({
             url: '/admin/promotions/promotion-fetch',
             type: 'get',
             data: 'promoID=' + promoID,
             success: function(result) {
-            let  promohtml='<h6 class="dacss">Offer Product<h6>' ;let fochtml='<h6 class="dacss">FOC Product<h6>';
-            let hr =`<hr>`;
+
+                console.log(result);
+
+
+            // let html="";
             result.data.forEach(option => {
-                loop_count++;
-                let html = generateHtml(option, loop_count);
-                    
-                if (option.product_type !== 'FOC') {
-                    promohtml+=html;
-                } else {
-                    fochtml+=html;
-                }
-            });
-            promohtml+=hr;
-            fochtml+=hr;
-            $('.promo_offer').append( promohtml); 
-            $('.foc_offer').append( fochtml);
-            $('#submitbutton').prop('disabled', false);
-            }
 
-        });
+            loop_count++;
 
-        });
-
-        function generateHtml(option, loop_count) {
-
-            let html=`
-                    <div class="row rowdata">
-                        <div class="form-group col-md-2">
-                            <label for="exampleModel${loop_count}">Model No.</label>
-                            <input type="text" class="form-control" name="model[]" value="${option.model_no}" id="exampleModel${loop_count}" placeholder="${option.model_no}" readonly>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="description${loop_count}">Description</label>
-                            <input type="text" class="form-control" name="description[]" value="${option.model_desc}" id="description${loop_count}" placeholder="Description" readonly>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label for="from_date${loop_count}">From Date[mm/dd/yyyy]</label>
-                            <input type="date" class="form-control" name="from_date[]" value="${option.from_date}" id="from_date${loop_count}" placeholder="From Date" readonly>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label for="to_date${loop_count}">To Date[mm/dd/yyyy]</label>
-                            <input type="date" class="form-control" name="to_date[]" value="${option.to_date}" id="from_date${loop_count}" placeholder="To Date" readonly>
-                        </div>
-                        <div class="form-group col-md-1">
-                            <label for="exampleMrp${loop_count}">MRP</label>
-                            <input type="text" class="form-control" name="mrp[]" value="${option.mrp}" id="examplePromoMrp${loop_count}" placeholder="MRP" readonly>
-                        </div>
-                        <div class="form-group col-md-1">
-                            <label for="examplePromoDlp${loop_count}">DLP</label>
-                            <input type="text" class="form-control" name="promodlp[]" value="${option.dlp}" id="examplePromoDlp${loop_count}" placeholder="DLP" readonly>
-                        </div>
-                        <div class="form-group col-md-1">
-                            <label for="examplePromoStock${loop_count}">Stock</label>
-                            <input type="text" class="form-control" name="promostock[]" value="${option.stock}" id="examplePromoStock${loop_count}" placeholder="Stock" readonly>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label for="exampleOfferType${loop_count}">Offer Type</label>
-                            <input type="text" class="form-control" name="offertype[]" value="${option.offer_type}" id="exampleOfferType${loop_count}" placeholder="Offer Type" readonly>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label for="exampleProductType${loop_count}">Product Type</label>
-                            <input type="text" class="form-control" name="product_type[]" value="${option.product_type}" id="exampleProductType${loop_count}" placeholder="Product Type" readonly>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label for="examplePromoPriceType${loop_count}">Price Type</label>
-                            <input type="text" class="form-control" name="pricetype[]" value="${option.price_type}" id="examplePromoPriceType${loop_count}" placeholder="Price Type" readonly>
-                        </div>
-                        <div class="form-group col-md-1">
-                            <label for="exampleOfferQty${loop_count}">Offer Qty</label>
-                            <input type="text" class="form-control" name="offerqty[]" value="${option.qty}" id="exampleOfferQty${loop_count}" placeholder="Offer Qty" readonly>
-                        </div>
-                        <div class="form-group col-md-1">
-                            <label for="examplePromoPrice${loop_count}">Price</label>
-                            <input type="text" class="form-control" name="price[]" value="${option.price}" id="examplePrice${loop_count}" placeholder="Offer Price" readonly>
-                        </div>
-                     
-                `;
-
-                let offerhtml=  ` <div class="form-group col-md-2">
-                            <label for="examplePromoQty${loop_count}">Qty</label>
-                            <input type="text" class="form-control" name="qty[]" value="" id="exampleQty${loop_count}" placeholder="Qty">
-                            <span id="exampleQtyStatus${loop_count}"></span>
-                        </div>
-                    </div>`;
-
-                let fochtml=  ` <div class="form-group col-md-2">
-                            <label for="examplePromoQty${loop_count}">Qty</label>
-                            <input type="text" class="form-control" name="qty[]" value="" id="exampleQty${loop_count}" placeholder="Qty" disabled>
-                            <span id="exampleQtyStatus${loop_count}"></span>
-                        </div>
-                    </div>`;
-
-                    if(option.product_type=='FOC'){
-                    html+=fochtml;
-                    }else{
-                    html+=offerhtml;  
-                    }
-
-                return html;
-            }
-
-        function debounce(func, wait, immediate) {
-            var timeout;
-            return function() {
-                var context = this, args = arguments;
-                var later = function() {
-                    timeout = null;
-                    if (!immediate) func.apply(context, args);
-                };
-                var callNow = immediate && !timeout;
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-                if (callNow) func.apply(context, args);
-            };
-        };
-
-        $(document).on('keyup', 'input[name="qty[]"]',debounce(function() {
-
-            let modelData = [];
-            let flag=0;
-            let ajaxcall=1;
-
-            $('.rowdata').each(function() {
-              
-                let modelInput = $(this).find('input[name="model[]"]');
-                let modelNo = modelInput.val();
-                let qty = $(this).find('input[name="qty[]"]').val();
-                let offerqty = $(this).find('input[name="offerqty[]"]').val();
-                let offertype = $(this).find('input[name="offertype[]"]').val();
-                let modelId = modelInput.attr('id').replace("exampleModel", ""); 
-                $("#exampleQtyStatus"+modelId).empty();
+            let html =`<div class="row">
+                <div class="form-group col-md-2">
+                    <label for="exampleModel${loop_count}">Model No.</label>
+                    <input type="text" class="form-control" name="model[]" value="${option.model_no}" id="exampleModel${loop_count}" placeholder="${option.model_no}" readonly>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="description${loop_count}">Description</label>
+                    <input type="text" class="form-control" name="description[]" value="${option.model_desc}" id="description${loop_count}" placeholder="Description" readonly>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="from_date${loop_count}">From Date[mm/dd/yyyy]</label>
+                    <input type="date" class="form-control" name="from_date[]" value="${option.from_date}" id="from_date${loop_count}" placeholder="From Date" readonly>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="to_date${loop_count}">To Date[mm/dd/yyyy]</label>
+                    <input type="date" class="form-control" name="to_date[]" value="${option.to_date}" id="from_date${loop_count}" placeholder="To Date" readonly>
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="exampleMrp${loop_count}">MRP</label>
+                    <input type="text" class="form-control" name="mrp[]" value="${option.mrp}" id="examplePromoMrp${loop_count}" placeholder="MRP" readonly>
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="examplePromoDlp${loop_count}">DLP</label>
+                    <input type="text" class="form-control" name="promodlp[]" value="${option.dlp}" id="examplePromoDlp${loop_count}" placeholder="DLP" readonly>
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="examplePromoStock${loop_count}">Stock</label>
+                    <input type="text" class="form-control" name="promostock[]" value="${option.stock}" id="examplePromoStock${loop_count}" placeholder="Stock" readonly>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="exampleOfferType${loop_count}">Offer Type</label>
+                    <input type="text" class="form-control" name="offertype[]" value="${option.offer_type}" id="exampleOfferType${loop_count}" placeholder="Offer Type" readonly>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="exampleOfferType${loop_count}">Product Type</label>
+                    <input type="text" class="form-control" name="product_type[]" value="${option.product_type}" id="exampleOfferType${loop_count}" placeholder="Product Type" readonly>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="examplePromoPriceType${loop_count}">Price Type</label>
+                    <input type="text" class="form-control" name="pricetype[]" value="${option.price_type}" id="examplePromoPriceType${loop_count}" placeholder="Price Type" readonly>
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="exampleOfferQty${loop_count}">Offer Qty</label>
+                    <input type="text" class="form-control" name="offerqty[]" value="${option.qty}" id="exampleOfferQty${loop_count}" placeholder="Offer Qty" readonly>
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="examplePromoPrice${loop_count}">Price</label>
+                    <input type="text" class="form-control" name="promoprice[]" value="${option.price}" value="" id="examplePromoPrice${loop_count}" placeholder="Offer Price" readonly>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="examplePromoPrice${loop_count}">Qty</label>
+                    <input type="text" class="form-control" name="promoprice[]" value="" value="" id="examplePromoPrice${loop_count}" placeholder="Offer Price" >
+                </div>
+                
+                </div> 
+            `;
           
-                if ( qty % offerqty !== 0 ) {
-                     $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Qty to be multiple of OfferQty</b>');
-                     ajaxcall=0;
-                     return false;
-                }
-
-                if(flag==0 && qty>0 && offertype=='Buy One Of The Product'){
-                      flag=modelId;
-                }
-
-                if(flag!=0 && flag!=modelId && offertype!='FOC' && qty!=0){
-                    $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Buy one of the Offer Product </b>');
-                    ajaxcall=0;
-                    return false;
-                }
+            $('.promo_offer').append(html);
          
-                if (modelNo && qty) {
-                    modelData.push({
-                        model_no: modelNo,
-                        qty: qty,
-                        id: modelId 
-                    });
-                }
-            });
-            let modelDataJson = JSON.stringify(modelData);
-            let promocode=$('#examplePromoCode').val();
-            if(ajaxcall==1){
-                displayModelData(modelDataJson,promocode);
-            }
-      
-        },100));
-
-
-        function displayModelData(modelDataJson,promocode) {
-
-
-            $.ajax({
-                url: '/admin/promotions/transaction-verify',
-                type: 'get',
-                data: { data: modelDataJson ,promocode:promocode},  
-                success: function(data) {
-                    // $(".assetTagStatus").html(data);
-                    // if(data.indexOf("Asset Tag Not Available") > -1)
-                    // {
-                    //     $("#submt").prop('disabled', true);
-                    // }
-                    // if(data.indexOf("Asset Tag Available") > -1)
-                    // {
-                    //     $("#submt").prop('disabled', false);
-                    // }
-                }
-            });
-
-
-            // $('#modelDataDisplay').html(
-            //     modelData.map(data => `
-            //         <div>
-            //             Model No: ${data.model_no}, Qty: ${data.qty}
-            //         </div>
-            //     `).join('')
-            // );
-        }
-
-
-        // $('#assettag').blur(debounce(function(){
-        //     var assetTag = $.trim($('#assettag').val());
-        //     if(assetTag!=''){
-                // $.ajax({
-                //         url: '/admin/asset-master/check-assettag-existence',
-                //         type: 'post',
-                //         data: 'assettag=' + assetTag + '&_token={{ csrf_token() }}',
-                //         success: function(data) {
-                //             $(".assetTagStatus").html(data);
-                //             if(data.indexOf("Asset Tag Not Available") > -1)
-                //             {
-                //                 $("#submt").prop('disabled', true);
-                //             }
-                //             if(data.indexOf("Asset Tag Available") > -1)
-                //             {
-                //                 $("#submt").prop('disabled', false);
-                //             }
-                //         }
-                // });
-        //     }
-        // },100));
-
+               });
+              }
+           });
+        });
 
 
     </script>

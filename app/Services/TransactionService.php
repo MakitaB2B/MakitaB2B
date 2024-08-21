@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 use Illuminate\Support\Str;
+use App\Models\Admin\Promotion;
 // use App\Models\Admin\EmployeeLeaveApplication;
 // use App\Models\Admin\LeaveType;
 // use App\Models\Admin\Team;
@@ -11,6 +12,10 @@ class TransactionService{
     public function transaction_slug(){
    
         return Str::slug(rand().rand());
+    }
+
+    public function transactionVerify(){
+
     }
 
     public function getAuthEmployeeLeaveApplicationList(){

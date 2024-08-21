@@ -166,67 +166,19 @@ class PromotionController extends Controller
 
       $promoID = $request->input('promoID');
 
-      $getPromoDeatils = $this->promotionService->getPromoDeatils($promoID);
-
-      // dd($getPromoDeatils);
-
-      // $promo_products= [
-      //   "0"=>[
-      //   "offer_product"=>[
-      //     "0"=>[
-      //       "PROMOCode" => "promocode1",
-      //       "ModelName" => "xyz",
-      //       "OfferDescription" => "desc",
-      //       "MRP"=>"2345",
-      //       "DLP"=>"23458",
-      //       "Stock"=>"4678",
-      //       "PriceType" => "Special Price",
-      //       "OfferQty"=>"2",
-      //       "Price"=>"1245"
-      //     ],
-      //     "1"=>[
-      //       "PROMOCode" => "promocode1",
-      //       "ModelName" => "xyzh",
-      //       "OfferDescription" => "desc jhh",
-      //       "MRP"=>"23456",
-      //       "DLP"=>"23457",
-      //       "Stock"=>"4678",
-      //       "PriceType" => "Special Price",
-      //       "OfferQty"=>"3",
-      //       "Price"=>"1245"
-      //     ]
-
-      //   ],
-      //   "foc"=>[
-      //     "0"=>[ 
-      //     "PROMOCode" => "promocode1",
-      //     "ModelName" => "xyz",
-      //     "OfferDescription" => "desc",
-      //     "MRP"=>"2345",
-      //     "DLP"=>"23458",
-      //     "Stock"=>"4678",
-      //     "PriceType" => "Special Price",
-      //     "OfferQty"=>"2",
-      //     "Price"=>"1245"
-      //   ],
-      //     "1"=>[ 
-      //     "PROMOCode" => "promocode1",
-      //     "ModelName" => "xyz",
-      //     "OfferDescription" => "desc",
-      //     "MRP"=>"2345",
-      //     "DLP"=>"23458",
-      //     "Stock"=>"4678",
-      //     "PriceType" => "Special Price",
-      //     "OfferQty"=>"2",
-      //     "Price"=>"1245"
-      //     ]
-      //   ]
-      //   ]
-
-      // ];
-      return response()->json($getPromoDeatils);
+      $result["data"] = $this->promotionService->getPromoDeatils($promoID);
+     
+      return response()->json($result);
     }
 
+    public function transactionVerify(Request $request){
 
+      $data_array = $request->input('data') ? json_decode($request->input('data')): [];
+      $promoID = $request->input('promocode'); 
+      $promodata = $this->promotionService->getPromoDeatils($promoID);
+      dd( $data_array,   $promodata );
+      // return response()->json($result);
+
+    }
 
 }
