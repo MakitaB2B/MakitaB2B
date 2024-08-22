@@ -243,9 +243,8 @@
             $('#exampleDealerName').val(res[1]);
         });
 
-        let loop_count = 0;
-
         $('#examplePromoCode').on('change', function() {
+            let loop_count = 0;
             $('.promo_offer').empty();
             $('.foc_offer').empty();
             $('#submitbutton').prop('disabled', true);
@@ -347,7 +346,7 @@
                         </div>
                     </div>`;
 
-                    if(option.product_type=='FOC'){
+                    if(option.product_type=='FOC'||option.offer_type=="Combo Offer" && loop_count>1){
                     html+=fochtml;
                     }else{
                     html+=offerhtml;  
@@ -376,7 +375,7 @@
             let modelData = [];
             let flag=0;
             let ajaxcall=1;
-
+            let storeproductqty = 0;
             $('.rowdata').each(function() {
               
                 let modelInput = $(this).find('input[name="model[]"]');
@@ -384,33 +383,48 @@
                 let qty = $(this).find('input[name="qty[]"]').val();
                 let offerqty = $(this).find('input[name="offerqty[]"]').val();
                 let offertype = $(this).find('input[name="offertype[]"]').val();
+                let product_type = $(this).find('input[name="product_type[]"]').val();
                 let modelId = modelInput.attr('id').replace("exampleModel", ""); 
                 $("#exampleQtyStatus"+modelId).empty();
+                $("#exampleQty"+modelId).empty();
+                $("#exampleTotalPrice").empty();
           
                 if ( qty % offerqty !== 0 ) {
                      $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Qty to be multiple of OfferQty</b>');
                      ajaxcall=0;
                      return false;
+                }else{
+                    if (storeproductqty===0 && qty>0 && product_type!=='FOC'){
+                        storeproductqty=qty/offerqty;
+                    }
                 }
 
                 if(flag==0 && qty>0 && offertype=='Buy One Of The Product'){
                       flag=modelId;
                 }
 
-                if(flag!=0 && flag!=modelId && offertype!='FOC' && qty!=0){
+                if(flag!=0 && flag!=modelId && product_type!='FOC' && qty!=0){
                     $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Buy one of the Offer Product </b>');
                     ajaxcall=0;
                     return false;
+                }
+
+                if(storeproductqty!=0 && product_type=='FOC' || offertype=='Combo Offer'){
+                    $("#exampleQty"+modelId).val(storeproductqty*offerqty);
+                    qty=storeproductqty*offerqty;
                 }
          
                 if (modelNo && qty) {
                     modelData.push({
                         model_no: modelNo,
                         qty: qty,
-                        id: modelId 
+                        id: modelId ,
+                        offertype: offertype
                     });
                 }
             });
+
+            
             let modelDataJson = JSON.stringify(modelData);
             let promocode=$('#examplePromoCode').val();
             if(ajaxcall==1){
@@ -428,6 +442,8 @@
                 type: 'get',
                 data: { data: modelDataJson ,promocode:promocode},  
                 success: function(data) {
+
+                    $("#exampleTotalPrice").val(data.total_price);
                     // $(".assetTagStatus").html(data);
                     // if(data.indexOf("Asset Tag Not Available") > -1)
                     // {

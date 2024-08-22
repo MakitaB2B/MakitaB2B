@@ -173,12 +173,65 @@ class PromotionController extends Controller
 
     public function transactionVerify(Request $request){
 
-      $data_array = $request->input('data') ? json_decode($request->input('data')): [];
+      $data_array = $request->input('data') ? json_decode($request->input('data'), true) : [];
+
       $promoID = $request->input('promocode'); 
       $promodata = $this->promotionService->getPromoDeatils($promoID);
-      dd( $data_array,   $promodata );
-      // return response()->json($result);
+      $buyoneoftheproductflag = 0;$comboofferflag = 0;
+      foreach ($data_array  as $subArray) {
+        if (isset($subArray["offertype"]) && $subArray["offertype"] === "Buy One Of The Product") {
+            $buyoneoftheproductflag=1;
+            break;
+        }
+        elseif(isset($subArray["offertype"]) && $subArray["offertype"] === "Combo Offer"){
+          $comboofferflag=1;
+          break;
+        }
+      }
+ 
+      $data_array = array_filter($data_array, function($item) {
+        return $item['offertype']!="null";
+      });
+      $promomodeldata=$promodata->where("model_no",$data_array[0]["model_no"]);
+      $multiplesof=$data_array[0]['qty']/$promomodeldata->first()->qty;
+      if($buyoneoftheproductflag==1 && count($data_array)==1){
+    
+        if($data_array[0]['qty']%$promomodeldata->first()->qty==0){
 
+        $filteredPromos = $promodata->filter(function ($promo) use ($data_array, $multiplesof) {
+          $promo->qty = $promo->qty*$multiplesof;
+          $promo->price= $promo->qty*$promo->price;
+          if( $promo->stock<$promo->qty){
+            $result["total_price"] =  "stock unavialable";
+              return false; 
+          }
+          return $promo->model_no == $data_array[0]['model_no'] || $promo->product_type == 'FOC';
+        });
+
+        }
+      
+        $result["total_price"] =  $filteredPromos->sum('price');
+        
+      }elseif($comboofferflag==1 && count($data_array)>1){
+
+        $filteredPromos = $promodata->filter(function ($promo) use ($data_array, $multiplesof) {
+          $promo->qty = $promo->qty*$multiplesof;
+          $promo->price= $promo->qty*$promo->price;
+          if( $promo->stock<$promo->qty){
+            $result["total_price"] =  "stock unavialable";
+              return false; 
+          }
+          return true;
+        });
+        $result["total_price"] =  $filteredPromos->sum('price');
+
+
+      }else{
+        $result["total_price"] =  "invalid input";
+      }
+
+      dd($result["total_price"]);
+      return response()->json($result);
     }
 
 }
