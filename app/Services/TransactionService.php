@@ -14,8 +14,9 @@ class TransactionService{
         return Str::slug(rand().rand());
     }
 
-    public function transactionVerify(){
+    public function order_id(){
 
+        return Str::slug(rand());
     }
 
     public function getAuthEmployeeLeaveApplicationList(){

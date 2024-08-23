@@ -209,6 +209,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/promotions/promotion-preview',[PromotionController::class,'promotionPreview'])->name('admin.promotions.promotion-preview');
     Route::get('/promotions/promotion-transaction',[PromotionController::class,'promotionTransaction'])->name('admin.promotions.transaction');
     Route::get('/promotions/transaction-creation',[PromotionController::class,'transactionCreation'])->name('admin.promotions.promotion-transaction');
+    Route::post('/promotions/transaction-create',[PromotionController::class,'transactionCreate'])->name('admin.promotions.transaction-create');
     Route::get('/promotions/promotion-fetch',[PromotionController::class,'getPromo'])->name('admin.promotions.promotion-fetch');
     Route::get('/promotions/search-data', [PromotionController::class, 'searchData'])->name('search.data');
     Route::get('/promotions/model-details-search', [PromotionController::class, 'modeldetailSearch'])->name('model.detail.Search');

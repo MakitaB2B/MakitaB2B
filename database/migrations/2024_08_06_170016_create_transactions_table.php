@@ -17,8 +17,10 @@ return new class extends Migration
             $table->string('promo_code')->index();
             $table->foreign('promo_code')->references('promo_code')->on('promotions')->onDelete('cascade')->nullable();
             $table->string('rm_name');
-            $table->string('dealer_code')->index();
-            $table->foreign('dealer_code')->references('dealer_code')->on('dealers')->onDelete('cascade')->nullable();
+            // $table->string('dealer_code')->index();
+            // $table->foreign('dealer_code')->references('dealer_code')->on('dealers')->onDelete('cascade')->nullable();
+            $table->string('dealer_code');
+            $table->foreign('dealer_code')->references('dealer_code')->on('dealer_masters')->onDelete('cascade');
             $table->string('dealer_name');
             $table->enum('product_type',['Offer Product','FOC']);
             $table->string('model_no');
@@ -27,6 +29,7 @@ return new class extends Migration
             $table->string('order_id')->index();
             $table->string('ordered_by');
             $table->string('status');
+            $table->string('modified_by');
             $table->timestamps();
         });
     }

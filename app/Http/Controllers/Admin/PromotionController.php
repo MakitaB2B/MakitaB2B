@@ -201,10 +201,6 @@ class PromotionController extends Controller
         $filteredPromos = $promodata->filter(function ($promo) use ($data_array, $multiplesof) {
           $promo->qty = $promo->qty*$multiplesof;
           $promo->price= $promo->qty*$promo->price;
-          if( $promo->stock<$promo->qty){
-            $result["total_price"] =  "stock unavialable";
-              return false; 
-          }
           return $promo->model_no == $data_array[0]['model_no'] || $promo->product_type == 'FOC';
         });
 
@@ -217,10 +213,6 @@ class PromotionController extends Controller
         $filteredPromos = $promodata->filter(function ($promo) use ($data_array, $multiplesof) {
           $promo->qty = $promo->qty*$multiplesof;
           $promo->price= $promo->qty*$promo->price;
-          if( $promo->stock<$promo->qty){
-            $result["total_price"] =  "stock unavialable";
-              return false; 
-          }
           return true;
         });
         $result["total_price"] =  $filteredPromos->sum('price');
@@ -230,8 +222,108 @@ class PromotionController extends Controller
         $result["total_price"] =  "invalid input";
       }
 
-      dd($result["total_price"]);
       return response()->json($result);
+    }
+    
+    public function transactionCreate(Request $request){
+
+      $promocode = $request->promo_code;
+      $rm_name = $request->rm_name; 
+      $dealer_code = $request->dealer_code ?explode("-", $request->dealer_code) : [];
+      $model = $request->model;
+      $qty = $request->qty;
+      $offerqty = $request->offerqty;
+      $offertype=$request->offertype;
+      $model_offer_qty=array_intersect_key(  $offerqty, $qty); 
+      $model_qty=array_intersect_key($model, $qty);
+      $model_offer_qty_array=array_combine($model_qty, $model_offer_qty);
+      $model_qty_array=array_combine($model_qty, $qty);
+    
+      $qtytomultiply = array_map(function($key) use ($model_offer_qty_array, $model_qty_array) {
+            return $model_qty_array[$key] / $model_offer_qty_array[$key];
+        },
+        array_keys(array_intersect_key($model_qty_array, $model_offer_qty_array)));
+        
+      $promodata = $this->promotionService->getPromoDeatils($promocode);
+      $producttype=$request->product_type;
+
+      $offer=array_filter($offertype, function($value) {
+        return $value !== "null";
+       });
+      $offer = array_unique($offer);
+      $offer_type=implode(" ",  $offer);
+      
+
+      $combinedata = [];
+
+      foreach ( $model as $key => $m) {
+          $combinedata[] = [
+              'model_no' => $model[$key],
+              // 'model_desc'=>$offerdescription[$key],
+              'product_type' => $producttype[$key],
+              // 'qty' => $offer_offerqty[$key] ,
+              // 'price' => $offer_promoprice[$key],
+              'offer_type'=> $offertype[$key],
+              'qty'=>$qty[$key] ?? null,
+              // 'price_type'=> ($offer_pricetype[$key] == 'DLP') ? 'DLP' : (($offer_pricetype[$key] == 'best price') ? 'Best Price' : 'Special Price'),
+              // 'mrp'=>$offer_mrp[$key],
+              // 'dlp'=>$offer_dlp[$key],
+              // 'stock'=>$offer_stock[$key],
+              // 'status'=> $status,
+              // 'created_at' => date('Y-m-d H:i:s'),
+              // 'updated_at' => date('Y-m-d H:i:s')
+          ];
+      }
+
+       $filteredbyoffer= $this->filter_data_by_offer_type($offer_type, $combinedata);
+
+      if($offer_type=="Buy One Of The Product" && count($filteredbyoffer) != 1){
+        return 'You can only buy one of the product';
+      }else if($offer_type=="Combo Offer" && count($filteredbyoffer) < 2){
+        return 'Combo Offer should have atleast 2 products';
+      }
+
+      $mapped = $promodata->map(function($value)  use ($combinedata){
+        $singlemodel=$this->filter_data_by_model($combinedata,$value->model_no);
+        $value->user_input_qty= $singlemodel[0]["qty"];
+        return $value;
+      }); 
+          
+      dd($mapped);
+
+      dd( $promodata, $combinedata );
+
+
+
+
+      // $this->transactionService->transaction_slug();
+      // $this->transactionService->order_id();
+
+
+    }
+
+
+    public function filter_data_by_offer_type($offer_type,$data){
+
+      $filtereddata = array_filter($data, function($offer) use ($offer_type){
+          return $offer["offer_type"] == $offer_type;
+      });
+
+      return $filtereddata;
+    }
+
+
+    public function filter_data_by_model($data,$model){
+
+      $filtereddata = array_reduce($data, function ($carry, $item) use($model) {
+        if ($item['model_no']==$model) {
+          // return $item;
+            $carry[] = $item;
+        }
+        return $carry;
+    }, []);
+    
+     return $filtereddata;
     }
 
 }

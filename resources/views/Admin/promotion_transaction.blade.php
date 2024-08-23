@@ -56,7 +56,7 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form method="POST" action="{{ route('asset-master.manage-asset-master-process') }}" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('admin.promotions.transaction-create') }}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="card-body">
                                     <div class="row">
@@ -214,7 +214,7 @@
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary" id="submitbutton">Submit</button>
                                 </div>
-                                <input type="hidden" value="" name="assetmaster_slug" required />
+                                {{-- <input type="hidden" value="" name="assetmaster_slug" required /> --}}
                             </form>
                         </div>
                         <!-- /.card -->
@@ -370,6 +370,7 @@
             };
         };
 
+        $(document).ready(function() {
         $(document).on('keyup', 'input[name="qty[]"]',debounce(function() {
 
             let modelData = [];
@@ -384,10 +385,15 @@
                 let offerqty = $(this).find('input[name="offerqty[]"]').val();
                 let offertype = $(this).find('input[name="offertype[]"]').val();
                 let product_type = $(this).find('input[name="product_type[]"]').val();
+                let stock= $(this).find('input[name="promostock[]"]').val();
                 let modelId = modelInput.attr('id').replace("exampleModel", ""); 
                 $("#exampleQtyStatus"+modelId).empty();
                 $("#exampleQty"+modelId).empty();
                 $("#exampleTotalPrice").empty();
+
+                if(!(stock-qty >= 0)){
+                    $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Qty to be less than or equal to stock</b>');
+                }
           
                 if ( qty % offerqty !== 0 ) {
                      $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Qty to be multiple of OfferQty</b>');
@@ -402,7 +408,7 @@
                 if(flag==0 && qty>0 && offertype=='Buy One Of The Product'){
                       flag=modelId;
                 }
-
+            
                 if(flag!=0 && flag!=modelId && product_type!='FOC' && qty!=0){
                     $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Buy one of the Offer Product </b>');
                     ajaxcall=0;
@@ -424,18 +430,18 @@
                 }
             });
 
-            
             let modelDataJson = JSON.stringify(modelData);
             let promocode=$('#examplePromoCode').val();
+
             if(ajaxcall==1){
                 displayModelData(modelDataJson,promocode);
             }
       
         },100));
 
+        });
 
         function displayModelData(modelDataJson,promocode) {
-
 
             $.ajax({
                 url: '/admin/promotions/transaction-verify',
@@ -444,50 +450,14 @@
                 success: function(data) {
 
                     $("#exampleTotalPrice").val(data.total_price);
-                    // $(".assetTagStatus").html(data);
-                    // if(data.indexOf("Asset Tag Not Available") > -1)
-                    // {
-                    //     $("#submt").prop('disabled', true);
-                    // }
-                    // if(data.indexOf("Asset Tag Available") > -1)
-                    // {
-                    //     $("#submt").prop('disabled', false);
-                    // }
+    
                 }
             });
 
-
-            // $('#modelDataDisplay').html(
-            //     modelData.map(data => `
-            //         <div>
-            //             Model No: ${data.model_no}, Qty: ${data.qty}
-            //         </div>
-            //     `).join('')
-            // );
         }
 
 
-        // $('#assettag').blur(debounce(function(){
-        //     var assetTag = $.trim($('#assettag').val());
-        //     if(assetTag!=''){
-                // $.ajax({
-                //         url: '/admin/asset-master/check-assettag-existence',
-                //         type: 'post',
-                //         data: 'assettag=' + assetTag + '&_token={{ csrf_token() }}',
-                //         success: function(data) {
-                //             $(".assetTagStatus").html(data);
-                //             if(data.indexOf("Asset Tag Not Available") > -1)
-                //             {
-                //                 $("#submt").prop('disabled', true);
-                //             }
-                //             if(data.indexOf("Asset Tag Available") > -1)
-                //             {
-                //                 $("#submt").prop('disabled', false);
-                //             }
-                //         }
-                // });
-        //     }
-        // },100));
+      
 
 
 
