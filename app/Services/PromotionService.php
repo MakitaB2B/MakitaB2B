@@ -9,11 +9,11 @@ class PromotionService{
 
     public function listPromotions(){
 
-        return Promotion::select('promo_code','from_date','to_date','status', DB::raw('GROUP_CONCAT(model_no ORDER BY model_no ASC) AS model_no_array'))
-        ->where('product_type', 'Offer Product')
-        ->groupBy('promo_code','from_date','to_date','status')
-        ->orderBy('promo_code')
-        ->get();
+      return Promotion::select('promo_code','from_date','to_date','status', DB::raw('GROUP_CONCAT(model_no ORDER BY model_no ASC) AS model_no_array'))
+      ->where('product_type', 'Offer Product')
+      ->groupBy('promo_code','from_date','to_date','status')
+      ->orderBy('promo_code')
+      ->get();
     
     }
 

@@ -1,11 +1,7 @@
 <?php
 namespace App\Services;
 use Illuminate\Support\Str;
-use App\Models\Admin\Promotion;
-// use App\Models\Admin\EmployeeLeaveApplication;
-// use App\Models\Admin\LeaveType;
-// use App\Models\Admin\Team;
-// use Illuminate\Support\Facades\DB;
+use App\Models\Admin\Transaction;
 
 class TransactionService{
 
@@ -19,9 +15,11 @@ class TransactionService{
         return Str::slug(rand());
     }
 
-    public function getAuthEmployeeLeaveApplicationList(){
-   
+    public function createOrUpdateTransac($data){
+
+        Transaction::insert($data);
     }
+
     public function findBySlug(){
  
     }
@@ -34,25 +32,7 @@ class TransactionService{
     public function getAllEmpLeaveApplicationService(){
  
     }
-    public function updateLeaveApplicationStatus(){
-    
-    }
-    public function getAllLeaveTypes(){
-       
-    }
-    public function checkIfTeamOwner(){
-        
-    }
-    public function getLeaveApplicationByTeamOwner(){
-
-
-    }
-    public function getLeaveApplicationListByEmployee(){
-     
-    }
-    public function changeLeaveApplicationStatusService(){
- 
-    }
+  
 
 }
 ?>

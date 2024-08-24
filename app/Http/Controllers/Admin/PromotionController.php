@@ -11,6 +11,7 @@ use App\Services\DealerService;
 use App\Models\Admin\BranchStocks;
 use Auth;
 use Carbon\Carbon;
+use App\Models\Admin\Transaction;
 
 class PromotionController extends Controller
 {
@@ -134,7 +135,7 @@ class PromotionController extends Controller
     }
 
     public function promotionTransaction(){
-      // $result['promo_code']=BranchStocks::limit(500)->get();
+
       return view('Admin.transaction');
     }
     
@@ -192,6 +193,7 @@ class PromotionController extends Controller
       $data_array = array_filter($data_array, function($item) {
         return $item['offertype']!="null";
       });
+
       $promomodeldata=$promodata->where("model_no",$data_array[0]["model_no"]);
       $multiplesof=$data_array[0]['qty']/$promomodeldata->first()->qty;
       if($buyoneoftheproductflag==1 && count($data_array)==1){
@@ -215,8 +217,8 @@ class PromotionController extends Controller
           $promo->price= $promo->qty*$promo->price;
           return true;
         });
-        $result["total_price"] =  $filteredPromos->sum('price');
 
+        $result["total_price"] =  $filteredPromos->sum('price');
 
       }else{
         $result["total_price"] =  "invalid input";
@@ -238,11 +240,18 @@ class PromotionController extends Controller
       $model_qty=array_intersect_key($model, $qty);
       $model_offer_qty_array=array_combine($model_qty, $model_offer_qty);
       $model_qty_array=array_combine($model_qty, $qty);
-    
+     
+      $order_id = $this->transactionService->order_id();
+      
       $qtytomultiply = array_map(function($key) use ($model_offer_qty_array, $model_qty_array) {
             return $model_qty_array[$key] / $model_offer_qty_array[$key];
         },
         array_keys(array_intersect_key($model_qty_array, $model_offer_qty_array)));
+
+        // $qtytomultiply = array_unique($qtytomultiply);
+        $qtytomultiply = array_filter($qtytomultiply);
+        $qtytomultiply = array_unique($qtytomultiply);
+        $qtytomultiply = implode(" ",   $qtytomultiply);
         
       $promodata = $this->promotionService->getPromoDeatils($promocode);
       $producttype=$request->product_type;
@@ -253,60 +262,84 @@ class PromotionController extends Controller
       $offer = array_unique($offer);
       $offer_type=implode(" ",  $offer);
       
-
       $combinedata = [];
 
       foreach ( $model as $key => $m) {
           $combinedata[] = [
               'model_no' => $model[$key],
-              // 'model_desc'=>$offerdescription[$key],
               'product_type' => $producttype[$key],
-              // 'qty' => $offer_offerqty[$key] ,
-              // 'price' => $offer_promoprice[$key],
               'offer_type'=> $offertype[$key],
               'qty'=>$qty[$key] ?? null,
-              // 'price_type'=> ($offer_pricetype[$key] == 'DLP') ? 'DLP' : (($offer_pricetype[$key] == 'best price') ? 'Best Price' : 'Special Price'),
-              // 'mrp'=>$offer_mrp[$key],
-              // 'dlp'=>$offer_dlp[$key],
-              // 'stock'=>$offer_stock[$key],
-              // 'status'=> $status,
-              // 'created_at' => date('Y-m-d H:i:s'),
-              // 'updated_at' => date('Y-m-d H:i:s')
+              'offer_qty'=>$offerqty[$key],
           ];
       }
 
-       $filteredbyoffer= $this->filter_data_by_offer_type($offer_type, $combinedata);
-
-      if($offer_type=="Buy One Of The Product" && count($filteredbyoffer) != 1){
-        return 'You can only buy one of the product';
-      }else if($offer_type=="Combo Offer" && count($filteredbyoffer) < 2){
-        return 'Combo Offer should have atleast 2 products';
+      $filteredbyoffer= $this->filter_data_by_offer_type($offer_type, $combinedata);
+      $filteredbyoffer = array_values( $filteredbyoffer);
+    
+      if($offer_type=="Buy One Of The Product" && count($filteredbyoffer) != 1 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0){
+        return 'You can only buy one of the product or product should be multiple of offer quantity';
+      }else if($offer_type=="Combo Offer" && count($filteredbyoffer) < 2 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0){
+        return 'Combo Offer should have atleast 2 products  or product should be multiple of offer quantity';
       }
+     
+      try {
+            $mapped = $promodata->map(function($value) use ($offer_type,$combinedata, $qtytomultiply,$rm_name,$dealer_code,$order_id,$filteredbyoffer) {
 
-      $mapped = $promodata->map(function($value)  use ($combinedata){
-        $singlemodel=$this->filter_data_by_model($combinedata,$value->model_no);
-        $value->user_input_qty= $singlemodel[0]["qty"];
-        return $value;
-      }); 
+                $singlemodel = $this->filter_data_by_model($combinedata, $value->model_no);
+                $userInputQty = $singlemodel[0]["offer_qty"] * $qtytomultiply;
+              
+                if(($offer_type== "Buy One Of The Product" && $filteredbyoffer[0]["model_no"]==$value->model_no ||$value->product_type=="FOC") || $offer_type== "Combo Offer") {
+                  if ( $value->total_stock < $userInputQty) {
+                    throw new \Exception('Stock not available for model: ' . $value->model_no);
+                }
+
+                if (!Carbon::parse(Carbon::now())->between( $value->from_date, $value->to_date)) {
+                  throw new \Exception('Promotion has been ended: ' . $value->model_no);
+                }
+
+                $value->from_date;
+                $value->to_date;
+                $value->price_type;
+                $value->offer_type;
+                $value->mrp;
+                $value->dlp;
+                $value->stock;
+                $value->order_qty = $userInputQty;
+                $value->offer_qty = $value->qty;
+                $value->transaction_slug = $this->transactionService->transaction_slug();
+                $value->rm_name= $rm_name;
+                $value->dealer_code = $dealer_code[0];
+                $value->dealer_name= $dealer_code[1];
+                $value->order_id = $order_id ;
+                $value->ordered_by = Auth::guard('admin')->user()->access_id;
+                $value->status= "order placed";
+                $value->modified_by = "none";
+                $value->offer_price =  $value->price;
+                $value->order_price =  $value->price * $userInputQty;
+                $value->created_at = date('Y-m-d H:i:s'); //Carbon::parse(Carbon::now())->format('Y-m-d H:i:s');//
+                unset($value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc);
           
-      dd($mapped);
-
-      dd( $promodata, $combinedata );
-
-
-
-
-      // $this->transactionService->transaction_slug();
-      // $this->transactionService->order_id();
-
+                return collect($value)->except('reserved_stock');
+                }
+             
+                
+            })->filter()->toArray();
+        
+          } catch (\Exception $e) {
+              return $e->getMessage();
+         }
+           dd();
+         $this->transactionService->createOrUpdateTransac($mapped);
+         
+        return redirect('admin/promotions/promotion-transaction');
 
     }
-
 
     public function filter_data_by_offer_type($offer_type,$data){
 
       $filtereddata = array_filter($data, function($offer) use ($offer_type){
-          return $offer["offer_type"] == $offer_type;
+          return $offer["offer_type"] == $offer_type && !is_null($offer['qty']);
       });
 
       return $filtereddata;
@@ -317,13 +350,12 @@ class PromotionController extends Controller
 
       $filtereddata = array_reduce($data, function ($carry, $item) use($model) {
         if ($item['model_no']==$model) {
-          // return $item;
             $carry[] = $item;
         }
         return $carry;
-    }, []);
+        }, []);
     
-     return $filtereddata;
+      return $filtereddata;
     }
 
 }
