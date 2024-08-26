@@ -25,7 +25,6 @@ return new class extends Migration
             $table->integer('order_qty');
             $table->string('promo_code')->index();
             $table->foreign('promo_code')->references('promo_code')->on('promotions')->onDelete('cascade')->nullable();
-           
             $table->string('rm_name');
             // $table->string('dealer_code')->index();
             // $table->foreign('dealer_code')->references('dealer_code')->on('dealers')->onDelete('cascade')->nullable();
@@ -42,7 +41,9 @@ return new class extends Migration
             $table->string('ordered_by');
             $table->string('status');
             $table->string('modified_by');
-            $table->timestamps();
+            $table->timestamp('created_at')->default(date('Y-m-d H:i:s')); //->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(date('Y-m-d H:i:s')); //->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            // $table->timestamps();
         });
     }
 

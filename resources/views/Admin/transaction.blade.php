@@ -57,47 +57,47 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>From Date</th>
-                                            <th>To Date</th>
+                                            <th>Order Id</th>
                                             <th>Promo Code</th>
-                                            <th>Offer Prod</th>
-                                            <th>Qty</th>
-                                            <th>Price Type</th>
-                                            <th>Price</th>
-                                            <th>Created By</th>
-                                            <th>Action</th>
+                                            <th>Order Price</th>
+                                            <th>Status</th>
+                                            <th>RM Name</th>
+                                            <th>Dealer Code</th>
+                                            <th>Dealer Name</th>
+                                            <th>Created At</th>
+                                            <th>Action</th> 
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{-- @foreach ($assetMasterList as $key => $list)
+                                        @foreach ($transactions as $key => $list)
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
-                                                <td>{{ $list->asset_tag }}</td>
-                                                <td>{{ $list->asset_type }}</td>
-                                                <td>{{ $list->make }}</td>
-                                                <td>{{ $list->model }}</td>
-                                                <td>{{ $list->serial_number }}</td>
-                                                <td>{{ $list->service_tag }}</td>
-                                                <td>{{ $list->status === 'Active' ? "Active" : "Scrap" }}</td>
-                                                <td>{{$list->employee->full_name}}</td>
+                                                <td>{{ $list->order_id }}</td>
+                                                <td>{{ $list->promo_code}}</td>
+                                               <td>{{ $list->total_price }}</td>
+                                                <td>{{ $list->status }}</td>
+                                                <td>{{ $list->rm_name }}</td>
+                                                <td>{{ $list->dealer_code }}</td>
+                                                <td>{{ $list->dealer_name }}</td>
+                                                <td>{{$list->created_at}}</td>
                                                 <td><a href="{{ url('admin/asset-master/manage-asset-master/') }}/{{ Crypt::encrypt($list->assetmaster_slug) }}"
-                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td>
+                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td> 
                                             </tr>
-                                        @endforeach --}}
+                                        @endforeach
 
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th>#</th>
-                                            <th>From Date</th>
-                                            <th>To Date</th>
+                                            <th>Order Id</th>
                                             <th>Promo Code</th>
-                                            <th>Offer Prod</th>
-                                            <th>Qty</th>
-                                            <th>Price Type</th>
-                                            <th>Price</th>
-                                            <th>Created By</th>
-                                            <th>Action</th>
+                                            <th>Order Price</th>
+                                            <th>Status</th>
+                                            <th>RM Name</th>
+                                            <th>Dealer Code</th>
+                                            <th>Dealer Name</th>
+                                            <th>Created At</th>
+                                            <th>Action</th> 
                                         </tr>
                                     </tfoot>
                                 </table>

@@ -135,8 +135,10 @@ class PromotionController extends Controller
     }
 
     public function promotionTransaction(){
+      
+      $result['transactions']=$this->transactionService->allTransactions();
 
-      return view('Admin.transaction');
+      return view('Admin.transaction',$result);
     }
     
     public function searchData(Request $request)
@@ -228,7 +230,6 @@ class PromotionController extends Controller
     }
     
     public function transactionCreate(Request $request){
-
       $promocode = $request->promo_code;
       $rm_name = $request->rm_name; 
       $dealer_code = $request->dealer_code ?explode("-", $request->dealer_code) : [];
@@ -279,7 +280,7 @@ class PromotionController extends Controller
     
       if($offer_type=="Buy One Of The Product" && count($filteredbyoffer) != 1 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0){
         return 'You can only buy one of the product or product should be multiple of offer quantity';
-      }else if($offer_type=="Combo Offer" && count($filteredbyoffer) < 2 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0){
+      }else if($offer_type=="Combo Offer" && count($filteredbyoffer) > 1 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0){
         return 'Combo Offer should have atleast 2 products  or product should be multiple of offer quantity';
       }
      
@@ -297,6 +298,7 @@ class PromotionController extends Controller
                 if (!Carbon::parse(Carbon::now())->between( $value->from_date, $value->to_date)) {
                   throw new \Exception('Promotion has been ended: ' . $value->model_no);
                 }
+                // $formattedDate = Carbon::now()->format('Y-m-d H:i:s');
 
                 $value->from_date;
                 $value->to_date;
@@ -317,9 +319,9 @@ class PromotionController extends Controller
                 $value->modified_by = "none";
                 $value->offer_price =  $value->price;
                 $value->order_price =  $value->price * $userInputQty;
-                $value->created_at = date('Y-m-d H:i:s'); //Carbon::parse(Carbon::now())->format('Y-m-d H:i:s');//
-                unset($value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc);
-          
+                // $value->created_at =  Carbon::parse($formattedDate)->format('Y-m-d H:i:s');
+                // $value->updated_at = $formattedDate;
+                unset($value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc);      
                 return collect($value)->except('reserved_stock');
                 }
              
@@ -329,7 +331,8 @@ class PromotionController extends Controller
           } catch (\Exception $e) {
               return $e->getMessage();
          }
-           dd();
+
+
          $this->transactionService->createOrUpdateTransac($mapped);
          
         return redirect('admin/promotions/promotion-transaction');
