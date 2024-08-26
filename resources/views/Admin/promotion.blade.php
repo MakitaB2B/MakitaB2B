@@ -62,7 +62,7 @@
                                             <th>Promo Code</th>
                                             <th>Offer Prod</th>
                                             <th>Status</th>
-                                            {{-- <th>Action</th> --}}
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -74,8 +74,8 @@
                                                 <td>{{ $list->promo_code }}</td>
                                                 <td>{{ $list->model_no_array }}</td>
                                                 <td>{{ $list->status }}</td>
-                                                {{-- <td><a href="{{ url('admin/promotions/promotion-creation') }}/{{ Crypt::encrypt($list->promo_code) }}"
-                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td>  --}}
+                                                <td><a href="{{ url('admin/promotions/promotion-preview/') }}/{{ Crypt::encrypt($list->promo_code) }}"
+                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td> 
                                             </tr>
                                         @endforeach
 
@@ -88,7 +88,7 @@
                                             <th>Promo Code</th>
                                             <th>Offer Prod</th>
                                             <th>Status</th>
-                                            {{-- <th>Action</th> --}}
+                                            <th>Action</th>
                                         </tr>
                                     </tfoot>
                                 </table>

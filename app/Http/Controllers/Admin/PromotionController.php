@@ -12,6 +12,7 @@ use App\Models\Admin\BranchStocks;
 use Auth;
 use Carbon\Carbon;
 use App\Models\Admin\Transaction;
+use Illuminate\Support\Facades\Crypt;
 
 class PromotionController extends Controller
 {
@@ -120,9 +121,14 @@ class PromotionController extends Controller
 
     }
 
-    public function promotionPreview()
+    public function promotionPreview($id)
     {
-      return view('Admin.promotion_preview');
+      $promo_code = Crypt::decrypt($id);
+      $promotion = $this->promotionService->getPromoDeatilsWithStock($promo_code);
+      $result['focproduct'] = $promotion->where('product_type','FOC')->values();
+      $result['offerproduct'] = $promotion->where('product_type','Offer Product')->values();
+   
+      return view('Admin.promotion_preview',$result);
     }
 
     public function transactionCreation(){
