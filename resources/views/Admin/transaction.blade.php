@@ -1,8 +1,8 @@
 @extends('Admin/layout')
-@section('page_title', 'Promotion List | MAKITA')
-@section('promotion-expandable','menu-open')
-@section('promotion-select','active')
-@section('promotion_select','active')
+@section('page_title', 'Transaction List | MAKITA')
+@section('transaction-expandable','menu-open')
+@section('transaction-select','active')
+@section('transaction_select','active')
 @section('container')
     <div class="content-wrapper">
         @push('styles')
@@ -80,7 +80,7 @@
                                                 <td>{{ $list->dealer_code }}</td>
                                                 <td>{{ $list->dealer_name }}</td>
                                                 <td>{{$list->created_at}}</td>
-                                                <td><a href="{{ url('admin/asset-master/manage-asset-master/') }}/{{ Crypt::encrypt($list->assetmaster_slug) }}"
+                                                <td><a href="{{ url('admin/promotions/transaction-preview/') }}/{{ Crypt::encrypt($list->order_id) }}"
                                                         title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td> 
                                             </tr>
                                         @endforeach

@@ -456,11 +456,6 @@
 
         }
 
-
-      
-
-
-
     </script>
     @endpush
 @endsection

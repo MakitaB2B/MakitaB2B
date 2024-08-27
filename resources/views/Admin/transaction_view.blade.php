@@ -1,8 +1,8 @@
 @extends('Admin/layout')
-@section('page_title', 'Promotion Preview | MAKITA')
-@section('promotion-preview-expandable','menu-open')
-@section('promotion-preview-select','active')
-@section('promotion_preview_select','active')
+@section('page_title', 'Transaction Preview | MAKITA')
+@section('transaction-preview-expandable','menu-open')
+@section('transaction-preview-select','active')
+@section('transaction_preview_select','active')
 @section('container')
 
  <style>
@@ -18,12 +18,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Promotion Preview</h1>
+            <h1>Transaction Preview</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Promotion Preview</li>
+              <li class="breadcrumb-item active">Transaction Preview</li>
             </ol>
           </div>
         </div>
@@ -36,7 +36,7 @@
       <!-- Default box -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Promotion Preview</h3>
+          <h3 class="card-title">Transaction Preview</h3>
 
           <div class="card-tools">
             {{-- <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -55,7 +55,7 @@
                 <div class="col-12 col-sm-4">
                   <div class="info-box bg-light">
                     <div class="info-box-content">
-                      <span class="info-box-text text-center text-muted">Promo Code</span>
+                      <span class="info-box-text text-center text-muted">Order Id</span>
                       <span class="info-box-number text-center text-muted mb-0">{{$offerproduct[0]["promo_code"] ?? null}}</span>
                     </div>
                   </div>
@@ -63,7 +63,7 @@
                 <div class="col-12 col-sm-4">
                   <div class="info-box bg-light">
                     <div class="info-box-content">
-                      <span class="info-box-text text-center text-muted">From Date</span>
+                      <span class="info-box-text text-center text-muted">Promo Code</span>
                       <span class="info-box-number text-center text-muted mb-0">{{\Carbon\Carbon::parse($offerproduct[0]["from_date"] ?? null)->format('d-m-Y') }}</span>
                     </div>
                   </div>
@@ -71,7 +71,7 @@
                 <div class="col-12 col-sm-4">
                   <div class="info-box bg-light">
                     <div class="info-box-content">
-                      <span class="info-box-text text-center text-muted">To Date</span>
+                      <span class="info-box-text text-center text-muted">Order Date</span>
                       <span class="info-box-number text-center text-muted mb-0">{{\Carbon\Carbon::parse($offerproduct[0]["to_date"] ?? null)->format('d-m-Y') ?? null}}</span>
                     </div>
                   </div>

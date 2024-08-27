@@ -30,6 +30,8 @@ return new class extends Migration
             $table->integer('qty');
             $table->string('price')->nullable();
             $table->string('status')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('modified_by')->nullable();
             $table->timestamps();
        
         });
@@ -40,6 +42,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->dropForeign(['promo_code']);
+        });
+
         Schema::dropIfExists('promotions');
     }
 };

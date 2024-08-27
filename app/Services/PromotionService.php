@@ -45,6 +45,13 @@ class PromotionService{
       Promotion::insert($data);
     }
 
+    public function UpdatePromo($promocode,$status,$emp_no){
+
+      Promotion::where('promo_code', $promocode)->update(['status'=> $status,'modified_by'=>$emp_no]);
+      return Promotion::where('promo_code', $promocode) ->groupBy('promo_code', 'status')->get(['promo_code', 'status']);
+     
+    }
+
     public function getPromoDeatils($promocode){
       return Promotion::with('reservedStock:id,item,reserved')
       ->join('item_prices', 'promotions.model_no', '=', 'item_prices.Item')

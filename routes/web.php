@@ -210,11 +210,13 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/promotions/promotion-transaction',[PromotionController::class,'promotionTransaction'])->name('admin.promotions.transaction');
     Route::get('/promotions/transaction-creation',[PromotionController::class,'transactionCreation'])->name('admin.promotions.promotion-transaction');
     Route::post('/promotions/transaction-create',[PromotionController::class,'transactionCreate'])->name('admin.promotions.transaction-create');
+    Route::get('/promotions/transaction-preview/{orderid}',[PromotionController::class,'transactionPreview'])->name('promotions.transaction-preview');
     Route::get('/promotions/promotion-fetch',[PromotionController::class,'getPromo'])->name('admin.promotions.promotion-fetch');
     Route::get('/promotions/search-data', [PromotionController::class, 'searchData'])->name('search.data');
     Route::get('/promotions/model-details-search', [PromotionController::class, 'modeldetailSearch'])->name('model.detail.Search');
     Route::get('/promotions/single-model-details-search', [PromotionController::class, 'modeldetailSingleSearch'])->name('model.single.detail.Search');
     Route::get('/promotions/transaction-verify',[PromotionController::class,'transactionVerify'])->name('admin.promotions.transaction-verify');
+    Route::post('/promotions/promotion-changestatus', [PromotionController::class, 'changeStatus'])->name('promotions.change-status');
     Route::get('/items', [ItemInfoController::class, 'index'])->name('items');
     Route::post('/upload-daily-item',[ItemInfoController::class,'uploadDailyItem'])->name('upload-daily-item');
     Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
