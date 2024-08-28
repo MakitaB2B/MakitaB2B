@@ -253,11 +253,11 @@
                                                         <td>{{ $key + 1 }}</td>
                                                         <td><a href="{{ url('admin/employee/manage-employee/') }}/{{ Crypt::encrypt($empLoginActivityData->employee_slug) }}"
                                                                 title="Edit">
-                                                                MIN-{{ $empLoginActivityData->employee->pluck('employee_no')->implode('') }}</a>
+                                                                MIN-{{ $empLoginActivityData->employee->employee_no }}</a>
                                                         </td>
-                                                        <td>{{ $empLoginActivityData->employee->pluck('full_name')->implode('') }}
+                                                        <td>{{ $empLoginActivityData->employee->full_name }}
                                                         </td>
-                                                        <td>{{ $empLoginActivityData->employee->pluck('phone_number')->implode('') }}
+                                                        <td>{{ $empLoginActivityData->employee->phone_number }}
                                                         </td>
                                                         <td>
                                                             {{ \Carbon\Carbon::parse($empLoginActivityData->last_activity)->diffForHumans() }}

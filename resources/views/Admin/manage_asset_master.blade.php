@@ -41,7 +41,7 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form method="POST" action="{{ route('asset-master.manage-asset-master-process') }}">
+                            <form method="POST" action="{{ route('asset-master.manage-asset-master-process') }}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="card-body">
                                     <div class="row">
@@ -455,9 +455,25 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-2">
+                                            <label for="exampleSystemPassword">System Password</label>
+                                            <input type="text" class="form-control" name="system_password"
+                                                value="{{ $system_password }}"  id="exampleSystemPassword"
+                                                placeholder="Enter System Password">
+                                            @error('system_password')
+                                                <div
+                                                    class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                                    {{ $message }}
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-1">
                                             <label>Status*</label>
                                             <select class="custom-select" name="status" required>
-                                                <option value="">Please Select</option>
+                                                <option value="">Select One</option>
                                                 <option @if ($status == 'Active') selected @endif value="Active">
                                                     Active
                                                 </option>
@@ -476,25 +492,27 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-2">
-                                            <label for="exampleSystemPassword">System Password</label>
-                                            <input type="text" class="form-control" name="system_password"
-                                                value="{{ $system_password }}"  id="exampleSystemPassword"
-                                                placeholder="Enter System Password">
-                                            @error('system_password')
-                                                <div
-                                                    class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
-                                                    {{ $message }}
-                                                    <button type="button" class="close" data-dismiss="alert"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                </div>
-                                            @enderror
+                                        <div class="form-group col-md-1">
+                                            <label for="exampleSystemPassword">Updated at</label>
+                                            <input  class="form-control" value="{{ \Carbon\Carbon::parse($updated_at)->format('d M Y' ) }}" disabled title="{{ \Carbon\Carbon::parse($updated_at)->format('d M Y H:i:s' ) }}">
                                         </div>
-                                        <div class="form-group col-md-2">
-                                            <label for="exampleSystemPassword">Last Updated at</label>
-                                            <input  class="form-control" value="{{ \Carbon\Carbon::parse($updated_at)->format('d M Y H:i:s' ) }}" disabled>
+                                        <div class="form-group col-md-1">
+                                            <label for="exampleSystemPassword">Invoice</label>
+                                            <input type="file" name="invoicecopy" class="custom-file-input" id="invocecopy" accept=".pdf" style="opacity: 1 !important; width:90px !important;">
+                                            <marquee scrollamount="10" id="ifn" style="margin-top: -10px;"></marquee>
+                                        </div>
+                                        <div class="form-group col-md-1">
+                                            <div id="img-preview" style="height: 100px">
+                                                @if ($invoice_copy != '')
+                                                <p><a href="{{ asset($invoice_copy) }}"
+                                                    target="iframe_a" style="color: black"><i
+                                                        class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
+                                                </p>
+                                                <iframe src="{{ asset($invoice_copy) }}"
+                                                frameBorder="0" scrolling="auto" height="50px"
+                                                width="100px"></iframe>
+                                                @endif
+                                            </div>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label for="exampleSpecification">Specification</label>
@@ -650,6 +668,10 @@
                 });
             }
         },100));
+        $('#invocecopy').change(function (e) {
+                const geekss = e.target.files[0].name;
+                $("#ifn").text(geekss);
+        });
 
         });
 

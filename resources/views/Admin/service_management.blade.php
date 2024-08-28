@@ -81,9 +81,53 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Service List</h3>
+                            <div id="accordion">
+                                <div class="card card-success">
+                                    <div class="card-header">
+                                        <h4 class="card-title w-100">
+                                            <a class="d-block w-100" data-toggle="collapse" href="#collapseTwo">
+                                                <i class="fa fa-file-excel" aria-hidden="true"></i> Export Data To Excel
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseTwo" class="collapse" data-parent="#accordion">
+
+                                            <form action="{{ route('service-management.export-asm-report-exel') }}"
+                                                method="post">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="form-group col-md-2">
+                                                            <label for="fromDate">From Date*</label>
+                                                            <input type="date" name="asmfrom_date"
+                                                                class="form-control" required>
+                                                        </div>
+                                                        <div class="form-group col-md-2">
+                                                            <label for="">To Date*</label>
+                                                            <input type="date" name="asmto_date"
+                                                                class="form-control" required>
+                                                        </div>
+                                                        <div class="form-group col-md-2">
+                                                            <label for="">Service Center*</label>
+                                                            <select class="custom-select" name="service_center" id="state" required>
+                                                                <option value="">Please Select Center</option>
+                                                                <option value="26">All Service Center</option>
+                                                                @foreach ($allServiceCenter as  $serviceCenterList)
+                                                                <option value="{{$serviceCenterList->fsc_slug}}">{{$serviceCenterList->center_name}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        @csrf
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer">
+                                                    <button type="submit" class="btn btn-success">Export To EXCEL</button>
+                                                </div>
+                                            </form>
+
+                                    </div>
+                                </div>
                             </div>
+
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
@@ -105,82 +149,95 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($toolsServiceList as $key => $list)
-                                        @php
-                                            $status = match ($list->status) {
-                                                0 => 'New Case',
-                                                1 => 'Repairer Assigned',
-                                                2 => 'Estimation Shared',
-                                                3 => 'Estimation Approved By Customer',
-                                                4 => 'Estimation Rejected By Customer',
-                                                5 => 'Repair Completed yet to deliverd',
-                                                6 => 'Deliverd',
-                                                7 => 'Closed',
-                                                default => 'Something Wrong',
-                                            };
-                                        @endphp
-                                        <tr>
-                                            <td>{{ $key+1 }}</td>
-                                            <td><a href="{{ url('admin/service-management/manage-service-requiest/') }}/{{ Crypt::encrypt($list->sr_slug) }}"
-                                                title="Manage SR">{{ $list->trn }}</a></td>
-                                            <td>{{ \Carbon\Carbon::parse($list->sr_date)->format('d M Y, H:i:s A') }}</td>
-                                            <td>{{ $list->fscBranch->center_name }}</td>
-                                            <td>{{ $list->delear_customer_name }}</td>
-                                            <td>{{ $list->model }}</td>
-                                            <td>{{ $list->cost_estimation }}</td>
-                                            <td>{{ $status }}</td>
-                                            <td>
-                                                @if (\Carbon\Carbon::parse($list->waranty->warranty_expiry_date)-> lte(\Carbon\Carbon::now()))
-                                                <p style="color:red;font-size: 17px;font-weight: 600;">Out of-Warranty</p>
-                                               @else
-                                               <p style="color:#0fb904;font-size: 17px;font-weight: 600;">In-Warrant</p>
-                                               @endif
-                                            </td>
-                                            <td>{{ \Carbon\Carbon::parse($list->waranty->warranty_expiry_date)->format('d M Y') }}</td>
-                                            <td>
-                                                @if ($list->total_hour_for_repair>2880)
-                                                <p style="color:red;font-size: 17px;font-weight: 600;">No</p>
-                                                @else
-                                                <p style="color:#0fb904;font-size: 17px;font-weight: 600;">Yes</p>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($list->total_hour_for_repair != NULL)
-                                                @php
-                                                $totalHoursForRepair = $list->total_hour_for_repair;
-                                                $hours = floor($totalHoursForRepair / 60);
-                                                $minutes = $totalHoursForRepair % 60;
-                                                @endphp
-                                                {{ $hours.' hours'. ':' . $minutes.' mins' }}
-                                                @endif
-                                                @if($list->receive_date_time != NULL && $list->estimation_date_time == NULL)
-                                                @php
-                                                $totalHoursForRepair = now()->diffInMinutes($list->receive_date_time);
-                                                $hours = floor($totalHoursForRepair / 60);
-                                                $minutes = $totalHoursForRepair % 60;
-                                                @endphp
-                                                {{ $hours.' hours'. ':' . $minutes.' mins' }}
-                                                @endif
-                                                @if($list->est_date_confirm_cx != NULL && $list->repair_complete_date_time == NULL && $list->status!=4 && $list->status!=7)
-                                                @php
-                                                $totalHoursForRepair = now()->diffInMinutes($list->est_date_confirm_cx);
-                                                $hours = floor($totalHoursForRepair / 60);
-                                                $minutes = $totalHoursForRepair % 60;
-                                                @endphp
-                                                {{ $hours.' hours'. ':' . $minutes.' mins' }}
-                                                @endif
-                                                @if($list->duration_a_b!= NULL && $list->status==2)
-                                                @php
-                                                $durationAB = $list->duration_a_b;
-                                                $hours = floor($durationAB / 60);
-                                                $minutes = $durationAB % 60;
-                                                @endphp
-                                                {{ $hours.' hours'. ':' . $minutes.' mins' }}
-                                                @endif
-                                                @if($list->repair_complete_date_time== NULL && $list->status==7)
-                                                <p style="color:red;font-size: 17px;font-weight: 600;">Rejected By CX</p>
-                                                @endif
-                                            </td>
-                                        </tr>
+                                            @php
+                                                $status = match ($list->status) {
+                                                    0 => 'New Case',
+                                                    1 => 'Repairer Assigned',
+                                                    2 => 'Estimation Shared',
+                                                    3 => 'Estimation Approved By Customer',
+                                                    4 => 'Estimation Rejected By Customer',
+                                                    5 => 'Repair Completed yet to deliverd',
+                                                    6 => 'Deliverd',
+                                                    7 => 'Closed',
+                                                    default => 'Something Wrong',
+                                                };
+                                            @endphp
+                                            <tr>
+                                                <td>{{ $key + 1 }}</td>
+                                                <td><a href="{{ url('admin/service-management/manage-service-requiest/') }}/{{ Crypt::encrypt($list->sr_slug) }}"
+                                                        title="Manage SR">{{ $list->trn }}</a></td>
+                                                <td>{{ \Carbon\Carbon::parse($list->sr_date)->format('d M Y, H:i:s A') }}
+                                                </td>
+                                                <td>{{ $list->fscBranch->center_name }}</td>
+                                                <td>{{ $list->delear_customer_name }}</td>
+                                                <td>{{ $list->model }}</td>
+                                                <td>{{ $list->cost_estimation }}</td>
+                                                <td>{{ $status }}</td>
+                                                <td>
+                                                    @if (\Carbon\Carbon::parse($list->waranty->warranty_expiry_date)->lte(\Carbon\Carbon::now()))
+                                                        <p style="color:red;font-size: 17px;font-weight: 600;">Out
+                                                            of-Warranty</p>
+                                                    @else
+                                                        <p style="color:#0fb904;font-size: 17px;font-weight: 600;">
+                                                            In-Warrant</p>
+                                                    @endif
+                                                </td>
+                                                <td>{{ \Carbon\Carbon::parse($list->waranty->warranty_expiry_date)->format('d M Y') }}
+                                                </td>
+                                                <td>
+                                                    @if ($list->total_hour_for_repair > 2880)
+                                                        <p style="color:red;font-size: 17px;font-weight: 600;">No</p>
+                                                    @else
+                                                        <p style="color:#0fb904;font-size: 17px;font-weight: 600;">Yes</p>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($list->total_hour_for_repair != null)
+                                                        @php
+                                                            $totalHoursForRepair = $list->total_hour_for_repair;
+                                                            $hours = floor($totalHoursForRepair / 60);
+                                                            $minutes = $totalHoursForRepair % 60;
+                                                        @endphp
+                                                        {{ $hours . ' hours' . ':' . $minutes . ' mins' }}
+                                                    @endif
+                                                    @if ($list->receive_date_time != null && $list->estimation_date_time == null)
+                                                        @php
+                                                            $totalHoursForRepair = now()->diffInMinutes(
+                                                                $list->receive_date_time,
+                                                            );
+                                                            $hours = floor($totalHoursForRepair / 60);
+                                                            $minutes = $totalHoursForRepair % 60;
+                                                        @endphp
+                                                        {{ $hours . ' hours' . ':' . $minutes . ' mins' }}
+                                                    @endif
+                                                    @if (
+                                                        $list->est_date_confirm_cx != null &&
+                                                            $list->repair_complete_date_time == null &&
+                                                            $list->status != 4 &&
+                                                            $list->status != 7)
+                                                        @php
+                                                            $totalHoursForRepair = now()->diffInMinutes(
+                                                                $list->est_date_confirm_cx,
+                                                            );
+                                                            $hours = floor($totalHoursForRepair / 60);
+                                                            $minutes = $totalHoursForRepair % 60;
+                                                        @endphp
+                                                        {{ $hours . ' hours' . ':' . $minutes . ' mins' }}
+                                                    @endif
+                                                    @if ($list->duration_a_b != null && $list->status == 2)
+                                                        @php
+                                                            $durationAB = $list->duration_a_b;
+                                                            $hours = floor($durationAB / 60);
+                                                            $minutes = $durationAB % 60;
+                                                        @endphp
+                                                        {{ $hours . ' hours' . ':' . $minutes . ' mins' }}
+                                                    @endif
+                                                    @if ($list->repair_complete_date_time == null && $list->status == 7)
+                                                        <p style="color:red;font-size: 17px;font-weight: 600;">Rejected By
+                                                            CX</p>
+                                                    @endif
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                     <tfoot>

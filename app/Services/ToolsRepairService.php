@@ -74,5 +74,8 @@ class ToolsRepairService{
     public function findEmployeeBySlug($empSlug){
         return Employee::where(['employee_slug'=>$empSlug])->get(['full_name']);
     }
+    public function getAllServiceCenters(){
+        return FactoryServiceCenters::get(['center_name','fsc_slug']);
+    }
 }
 ?>

@@ -71,19 +71,23 @@
                                         <tr>
                                             <th>Item</th>
                                             <th>Description</th>
-                                            <th>Total</th>
+                                            <th>Total Main Stock</th>
                                             <th>Reserved</th>
+                                            <th>Sellable</th>
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
                                         @foreach ($result as $key => $modelVariantData)
+                                            @php
+                                                $mainStock=(int)($modelVariantData->cb01)+ (int)($modelVariantData->dl01)+(int)($modelVariantData->gh01)+(int)($modelVariantData->gj01)+(int)($modelVariantData->id01)+(int)($modelVariantData->jm01)+(int)($modelVariantData->ka01)+(int)($modelVariantData->kl01)+(int)($modelVariantData->mh01)+(int)($modelVariantData->pn01)+(int)($modelVariantData->py01)+(int)($modelVariantData->rd01)+(int)($modelVariantData->tn01)+(int)($modelVariantData->vd01)+(int)($modelVariantData->wb01);
+                                            @endphp
                                             <tr>
                                                 <td>
                                                     <a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->item) }}"
                                                         title="View Stock Details" style="color:#00909E"> <strong>{{ $modelVariantData->item }}</strong></a>
                                                 </td>
                                                 <td>{{ $modelVariantData->description }}</td>
-                                                <td>{{ number_format($modelVariantData->grandtotal) }}</td>
+                                                <td>{{ $mainStock}}</td>
                                                 @php
                                                     $totalReservedQty = 0;
                                                     $reserveQtyStr = $modelVariantData->reservedStock->pluck('reserved')->implode('+');
@@ -102,6 +106,7 @@
                                                     <i style="color:#dc129c">{{ $totalReservedQty }}</i>
                                                     @endif
                                                 </td>
+                                                <td>{{($mainStock - $totalReservedQty)}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

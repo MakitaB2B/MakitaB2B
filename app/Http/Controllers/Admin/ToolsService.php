@@ -5,12 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\ToolsRepairService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use App\Traits\HasPermissionsTrait;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\Admin\Sms;
 use Carbon\Carbon;
 use Auth;
+
+use App\Exports\ASMReportExport;
+use Excel;
 
 class ToolsService extends Controller
 {
@@ -21,12 +27,13 @@ class ToolsService extends Controller
     public function index(){
         $role= Auth::guard('admin')->user()->hasRole('super-admin1944305928');
         if($role==true){
-            $toolsService=$this->toolsRepairService->getAllToolsServices();
+            $result['toolsServiceList']=$this->toolsRepairService->getAllToolsServices();
         }else{
             $dataOparateEmpSlug=Auth::guard('admin')->user()->employee_slug;
-            $toolsService=$this->toolsRepairService->getToolsServicesByRepairer($dataOparateEmpSlug);
+            $result['toolsServiceList']=$this->toolsRepairService->getToolsServicesByRepairer($dataOparateEmpSlug);
         }
-        return view('Admin.service_management',['toolsServiceList'=>$toolsService]);
+        $result['allServiceCenter']=$this->toolsRepairService->getAllServiceCenters();
+        return view('Admin.service_management',$result);
     }
     public function manageServiceRequest($srSlug = ''){
         if ($srSlug > 0) {
@@ -250,5 +257,183 @@ class ToolsService extends Controller
         $msg='The Reason For Over 48 Hours Data Inserted Sucessfully';
         $request->session()->flash('message',$msg);
         return redirect('admin/service-management');
+    }
+    public function aSMReportExportExcel(Request $request){
+
+        //With Package
+
+        // $fromDate=$request->asmfrom_date;
+        // $toDate=$request->asmto_date;
+        // $serviceCenter=$request->service_center;
+
+        // $formatedFromDate=Carbon::parse($fromDate)->format('d M Y');
+        // $formatedToDate=Carbon::parse($toDate)->format('d M Y');
+        // $fileName="ASM Report $formatedFromDate-$formatedToDate.xlsx";
+
+        // return Excel::download(new ASMReportExport($fromDate,$toDate,$serviceCenter), $fileName);
+
+
+        // CSV Export
+
+        // $fromDate=$request->asmfrom_date;
+        // $toDate=$request->asmto_date;
+        // $serviceCenter=$request->service_center;
+
+        // $formatedFromDate=Carbon::parse($fromDate)->format('d M Y');
+        // $formatedToDate=Carbon::parse($toDate)->format('d M Y');
+        // $fileName="ASM Report $formatedFromDate-$formatedToDate.csv";
+
+        // $query =  DB::table('tools_services')
+        // ->leftJoin('factory_service_centers', 'tools_services.service_center', '=', 'factory_service_centers.fsc_slug')
+        // ->leftJoin('employees', 'tools_services.repairer', '=', 'employees.employee_slug')
+        // ->leftJoin('warranty_registrations', 'tools_services.tools_sl_no', '=', 'warranty_registrations.machine_serial_number')
+        // ->select(
+        //     'tools_services.trn',
+        //     'tools_services.sr_date',
+        //     'tools_services.delear_customer_name',
+        //     'tools_services.contact_number',
+        //     'tools_services.model',
+        //     'tools_services.receive_date_time',
+        //     'tools_services.estimation_date_time',
+        //     'tools_services.duration_a_b',
+        //     'tools_services.est_date_confirm_cx',
+        //     'tools_services.repair_complete_date_time',
+        //     'tools_services.duration_c_d',
+        //     'tools_services.handover_date_time',
+        //     'tools_services.status',
+        //     'tools_services.total_hour_for_repair',
+        //     'tools_services.cost_estimation',
+        //     'tools_services.repair_parts_details',
+        //     'tools_services.reason_for_over_48h',
+        //     'tools_services.part_number_reason_for_delay',
+        //     'factory_service_centers.center_name',
+        //     'employees.full_name',
+        //     'warranty_registrations.warranty_expiry_date',
+        //     'warranty_registrations.invoice_number'
+        // )
+        // ->whereDate('tools_services.sr_date', '>=', $fromDate)
+        // ->whereDate('tools_services.sr_date', '<=', $toDate)
+        // ->orderBy('tools_services.created_at', 'asc');
+        // if ($serviceCenter !=26) {
+        //     $query->where('tools_services.service_center', '=', $serviceCenter);
+        // }
+        // $datas=$query->get();
+
+        // header('Content-Type: text/csv');
+        // header('Content-Disposition: attachment;filename="' . $fileName . '"');
+        // $output = fopen('php://output', 'w');
+
+        // // Write the header row
+        // fputcsv($output, ['TRN(To Estimation)', 'Date', 'Month', 'Name of The Branch', 'Repairer', 'Delar Name/Customer Name', 'Contact Number', 'Model', 'Received Date(A)', 'Estimation Date(B)', 'Duration A to B', 'Estimation Date(Confirmed by customer)', 'Repair Complete Date(D)', 'Duration C to D', 'Handover Date', 'Status', 'Total Hour for Repair', 'Within 48 Hours', 'Invoice Number', 'RS.', 'Waranty (Yes/No)', 'Repair Parts Details', 'Reson Over 48 Hours (Details are required)', 'Part Number if it is the Reason for Delay']);
+
+        //  // Write the data rows
+        //  foreach ($datas as $data) {
+        //     $status = match ($data->status) {
+        //         0 => 'Under-Diagnosing',
+        //         1 => 'Repairer Assigned',
+        //         2 => 'Estimation Shared',
+        //         3 => 'Estimation Approved By You',
+        //         4 => 'Estimation Rejected By You',
+        //         5 => 'Repair Completed yet to deliverd',
+        //         6 => 'Deliverd',
+        //         7 => 'Closed',
+        //         default => 'Contact Admin',
+        //     };
+        //     fputcsv($output, [$data->trn, Carbon::parse($data->sr_date)->format('d-M-Y'), Carbon::parse($data->sr_date)->format('m'), $data->center_name, $data->full_name, $data->delear_customer_name, $data->contact_number, $data->model, Carbon::parse($data->receive_date_time)->format('d M Y'),Carbon::parse($data->estimation_date_time)->format('d M Y'),intdiv($data->duration_a_b, 60).':'. ($data->duration_a_b % 60),Carbon::parse($data->est_date_confirm_cx)->format('d M Y'),Carbon::parse($data->repair_complete_date_time)->format('d M Y'), intdiv($data->duration_c_d, 60).':'. ($data->duration_c_d % 60),  Carbon::parse($data->handover_date_time)->format('d M Y, h:i:s A'), $status, intdiv($data->total_hour_for_repair, 60).':'. ($data->total_hour_for_repair % 60), $data->total_hour_for_repair > (48 * 60) ? 'NG' : 'OK', '', $data->cost_estimation, Carbon::parse($data->warranty_expiry_date)->isFuture() ? 'No' : 'Yes', $data->repair_parts_details, $data->reason_for_over_48h, $data->part_number_reason_for_delay]);
+        // }
+
+        // fclose($output);
+        // exit;
+
+        // Create a new Spreadsheet object
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set the headers
+        $headers = ['ID', 'Name', 'Email'];
+        $sheet->fromArray($headers, NULL, 'A1');
+
+        // Set header style
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'FFFFFFFF'],
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FF0000FF'],
+            ],
+        ];
+
+        $sheet->getStyle('A1:C1')->applyFromArray($styleArray);
+
+
+        $fromDate=$request->asmfrom_date;
+        $toDate=$request->asmto_date;
+        $serviceCenter=$request->service_center;
+
+        $formatedFromDate=Carbon::parse($fromDate)->format('d M Y');
+        $formatedToDate=Carbon::parse($toDate)->format('d M Y');
+        $fileName="ASM Report $formatedFromDate-$formatedToDate.xlsx";
+
+        $query =  DB::table('tools_services')
+        ->leftJoin('factory_service_centers', 'tools_services.service_center', '=', 'factory_service_centers.fsc_slug')
+        ->leftJoin('employees', 'tools_services.repairer', '=', 'employees.employee_slug')
+        ->leftJoin('warranty_registrations', 'tools_services.tools_sl_no', '=', 'warranty_registrations.machine_serial_number')
+        ->select(
+            'tools_services.trn',
+            'tools_services.sr_date',
+            'tools_services.delear_customer_name',
+            'tools_services.contact_number',
+            'tools_services.model',
+            'tools_services.receive_date_time',
+            'tools_services.estimation_date_time',
+            'tools_services.duration_a_b',
+            'tools_services.est_date_confirm_cx',
+            'tools_services.repair_complete_date_time',
+            'tools_services.duration_c_d',
+            'tools_services.handover_date_time',
+            'tools_services.status',
+            'tools_services.total_hour_for_repair',
+            'tools_services.cost_estimation',
+            'tools_services.repair_parts_details',
+            'tools_services.reason_for_over_48h',
+            'tools_services.part_number_reason_for_delay',
+            'factory_service_centers.center_name',
+            'employees.full_name',
+            'warranty_registrations.warranty_expiry_date',
+            'warranty_registrations.invoice_number'
+        )
+        ->whereDate('tools_services.sr_date', '>=', $fromDate)
+        ->whereDate('tools_services.sr_date', '<=', $toDate)
+        ->orderBy('tools_services.created_at', 'asc');
+        if ($serviceCenter !=26) {
+            $query->where('tools_services.service_center', '=', $serviceCenter);
+        }
+        $datas=$query->get();
+
+        // Fetch users from the database
+
+        // $users = User::all();
+        $data = [];
+        foreach ($datas as $user) {
+            $data[] = [$user->trn, $user->sr_date, $user->delear_customer_name];
+        }
+
+        // Add the data below the headers
+        $sheet->fromArray($data, NULL, 'A2');
+
+        // Output the spreadsheet as a download
+        $writer = new Xlsx($spreadsheet);
+
+        // Redirect output to a client's web browser (Excel)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $fileName . '"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        exit;
+
+
+
     }
 }

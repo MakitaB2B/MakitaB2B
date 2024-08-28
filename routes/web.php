@@ -27,10 +27,11 @@ use App\Http\Controllers\Admin\ToolsService;
 use App\Http\Controllers\Admin\PendingPoController;
 use App\Http\Controllers\Admin\AssetMasterController;
 use App\Http\Controllers\Admin\EmployeeLeaveApplicationController;
-
+use App\Http\Controllers\Admin\PromotionController;
+use App\Http\Controllers\Admin\DealerController;
+use App\Http\Controllers\Admin\ItemInfoController;
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
-use App\Http\Controllers\WelcomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,13 +44,9 @@ use App\Http\Controllers\WelcomeController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-Route::get('/',[WelcomeController::class,'welcome']);
-Route::post('/welocome',[WelcomeController::class,'image']);
-Route::get('/welcome/{image}',[WelcomeController::class,'show']);
-
+Route::get('/', function () {
+    return view('welcome');
+});
 /*-----Start Front Route-----*/
 Route::get('/cx-login',[CustomerLoginRegistrationController::class,'cxLoginView'])->name('cxlogin');
 Route::get('/cx-signup/{cxslug?}/{flag?}',[CustomerLoginRegistrationController::class,'customerSignup'])->name('customer-signup');
@@ -93,14 +90,14 @@ Route::post('admin/empfpotpv',[AdminLoginController::class,'verifyEmpPwrdOtpCont
 Route::get('admin/checkotp/{empSlug}',[AdminLoginController::class,'otpView'])->name('checkotp');
 Route::get('admin/empresetpassword/{empSlug}',[AdminLoginController::class,'resetPasswordView'])->name('empresetpassword');
 Route::post('admin/empresetpass',[AdminLoginController::class,'empResetCreatePassword'])->name('admin.empresetpass');
-Route::get('admin/direct-logout',[AdminLoginController::class,'logout'])->name('admin.logout.direct');  //changed route name was same as admin.logout
+// Route::get('admin/direct-logout',[AdminLoginController::class,'logout'])->name('admin.logout');
 
 Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/dashboard',[AdminLoginController::class,'dashboard'])->name('admin.dashboard');
     Route::get('/admins',[AdminLoginController::class,'adminList'])->name('admin.admins');
     Route::get('/admins/manage-admin/{adminSlug?}',[AdminLoginController::class,'manageAdmin'])->name('admin.admins.manage-admin');
     Route::post('/admins/manage-admin-process',[AdminLoginController::class,'manageAdminProcess'])->name('admins.manage-admin-process');
-    Route::get('/logout',[AdminLoginController::class,'logout'])->name('admin.logout'); 
+    Route::get('/logout',[AdminLoginController::class,'logout'])->name('admin.logout');
     Route::get('/productcategory',[ProductCategoryController::class,'index'])->name('admin.productcategory');
     Route::get('/productcategory/manage-productcategory/{prodcateslug?}',[ProductCategoryController::class,'manageProductCategory'])->name('productcategory.manage-productcategory');
     Route::post('/productcategory/manage-productcategory-process',[ProductCategoryController::class,'manageProductCategoryProcess'])->name('productcategory.manage-productcategory-process');
@@ -182,6 +179,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/service-management/submit-tools-handover-data',[ToolsService::class,'insertToolstHandOverData'])->name('service-management.submit-tools-handover-data');
     Route::post('/service-management/close-sr',[ToolsService::class,'closeSR'])->name('service-management.close-sr');
     Route::post('/service-management/reason-over-48-hours',[ToolsService::class,'reasonOver48Hours'])->name('service-management.reason-over-48-hours');
+    Route::post('/service-management/export-asm-report-exel',[ToolsService::class,'aSMReportExportExcel'])->name('service-management.export-asm-report-exel');
     Route::get('/factory-service-center',[FactoryServiceStationController::class,'index']);
     Route::get('/fsc/manage-fsc/{fscslug?}',[FactoryServiceStationController::class,'manageFSC'])->name('fsc.manage-manage-fsc');
     Route::post('/fsc/manage-fsc-process',[FactoryServiceStationController::class,'manageFSCProcess'])->name('fsc.manage-fsc-process');
@@ -198,8 +196,35 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
 
     Route::get('/employee/leave-application',[EmployeeLeaveApplicationController::class,'index'])->name('employee.leave-application');
     Route::get('/employee/manage-leave-application/{empLvApSlug?}',[EmployeeLeaveApplicationController::class,'manageLeaveApllication'])->name('employee.manage-leave-appllication');
+    Route::post('/employee/manage-leave-application-process',[EmployeeLeaveApplicationController::class,'createOrUpdateLeaveApllication'])->name('employee.manage-leave-appllication-process');
+    Route::post('/employee/change-leave-applications-status',[EmployeeLeaveApplicationController::class,'changeLeaveApplicationStatus'])->name('employee.change-leave-applications-status');
 
-});
+    Route::get('/travelmanagement/applyviewclaimtravelexpenses',function(){
+        return view('Admin/business_travel_list');
+    })->name('travelmanagement.applyviewclaimtravelexpenses');
+
+    Route::get('/promotions',[PromotionController::class,'index'])->name('promo');
+    Route::get('/promotions/promotion-creation',[PromotionController::class,'promotionCreation'])->name('admin.promotions.promotion-creation');
+    Route::post('/promotions/promotion-create',[PromotionController::class,'promotionCreate'])->name('admin.promotions.promotion-create');
+    Route::get('/promotions/promotion-preview/{promocode}',[PromotionController::class,'promotionPreview'])->name('admin.promotions.promotion-preview');
+    Route::get('/promotions/promotion-transaction',[PromotionController::class,'promotionTransaction'])->name('admin.promotions.transaction');
+    Route::get('/promotions/transaction-creation',[PromotionController::class,'transactionCreation'])->name('admin.promotions.promotion-transaction');
+    Route::post('/promotions/transaction-create',[PromotionController::class,'transactionCreate'])->name('admin.promotions.transaction-create');
+    Route::get('/promotions/transaction-preview/{orderid}',[PromotionController::class,'transactionPreview'])->name('promotions.transaction-preview');
+    Route::get('/promotions/promotion-fetch',[PromotionController::class,'getPromo'])->name('admin.promotions.promotion-fetch');
+    Route::get('/promotions/search-data', [PromotionController::class, 'searchData'])->name('search.data');
+    Route::get('/promotions/model-details-search', [PromotionController::class, 'modeldetailSearch'])->name('model.detail.Search');
+    Route::get('/promotions/single-model-details-search', [PromotionController::class, 'modeldetailSingleSearch'])->name('model.single.detail.Search');
+    Route::get('/promotions/transaction-verify',[PromotionController::class,'transactionVerify'])->name('admin.promotions.transaction-verify');
+    Route::post('/promotions/promotion-changestatus', [PromotionController::class, 'changeStatus'])->name('promotions.change-status');
+    Route::post('/promotions/transaction-changestatus', [PromotionController::class, 'changeTransationStatus'])->name('transaction.change-status');
+    Route::get('/items', [ItemInfoController::class, 'index'])->name('items');
+    Route::post('/upload-daily-item',[ItemInfoController::class,'uploadDailyItem'])->name('upload-daily-item');
+    Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
+
+    Route::get('/roi', function () {  return view('Admin/roi');  });
+
+    });
 
 /*-----End Admin Route-----*/
 
