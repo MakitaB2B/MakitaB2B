@@ -14,13 +14,13 @@ class TransactionService{
 
     public function order_id(){
 
+        $orderExists = Transaction::distinct()->pluck('order_id')->toArray();
+
         do {
 
             $orderId = Str::slug(rand());
     
-            $orderExists = Transaction::where('order_id', $orderId)->exists();
-          
-        } while ($orderExists);
+        } while (in_array($orderId, $orderExists));
     
         return $orderId;
     }
@@ -60,13 +60,6 @@ class TransactionService{
         return Transaction::where('order_id',$orderid) ->groupBy('order_id', 'status')->get(['order_id', 'status']);
        
     }
-
-    // public function createOrUpdateLeaveApllicationService(){
-      
-    // }
-    // public function getAllEmpLeaveApplicationService(){
- 
-    // }
   
 
 }
