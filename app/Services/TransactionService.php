@@ -14,11 +14,19 @@ class TransactionService{
 
     public function order_id(){
 
-        return Str::slug(rand());
+        do {
+
+            $orderId = Str::slug(rand());
+    
+            $orderExists = Transaction::where('order_id', $orderId)->exists();
+          
+        } while ($orderExists);
+    
+        return $orderId;
     }
 
     public function createOrUpdateTransac($data){
-        
+
         try {
             DB::transaction(function () use ($data) {
               Transaction::insert($data);
@@ -32,9 +40,9 @@ class TransactionService{
 
     public function allTransactions(){
 
-       return Transaction::select('order_id', \DB::raw('SUM(order_price) as total_price'),'status','created_at','promo_code','rm_name','dealer_code','dealer_name')
-        ->groupBy('order_id', 'promo_code','rm_name','dealer_code','dealer_name','status', 'created_at')
-        ->orderBy('order_id', 'asc') 
+       return Transaction::select('order_id', \DB::raw('SUM(order_price) as total_price'),'status','created_at','promo_code','rm_name','dealer_code','dealer_name','order_date')
+        ->groupBy('order_id', 'promo_code','rm_name','dealer_code','dealer_name','status', 'created_at','order_date')
+        ->orderBy('order_date', 'desc') 
         ->get();
  
     }

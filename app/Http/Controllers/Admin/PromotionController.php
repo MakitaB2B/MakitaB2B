@@ -363,6 +363,7 @@ class PromotionController extends Controller
                   $value->modified_by = "none";
                   $value->offer_price =  $value->price;
                   $value->order_price =  $value->price * $userInputQty;
+                  $value->order_date = date('Y-m-d H:i:s');
                   // $value->created_at =  Carbon::parse($formattedDate)->format('Y-m-d H:i:s');
                   // $value->updated_at = $formattedDate;
                   unset($value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc);      

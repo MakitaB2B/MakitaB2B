@@ -38,6 +38,7 @@ class PromotionService{
     public function getPromoCount(){
 
       // return Promotion::count(['id']); //  return Promotion::max('promo_code');
+
       return Promotion::selectRaw('MAX(CAST(promo_code AS UNSIGNED)) as max_promo_code')->pluck('max_promo_code')->first();
 
     }

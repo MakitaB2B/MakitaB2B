@@ -72,7 +72,7 @@
                   <div class="info-box bg-light">
                     <div class="info-box-content">
                       <span class="info-box-text text-center text-muted">Order Date</span>
-                      <span class="info-box-number text-center text-muted mb-0">{{\Carbon\Carbon::parse($offerproduct[0]["created_at"] ?? null)->format('d-m-Y') ?? null}}</span>
+                      <span class="info-box-number text-center text-muted mb-0">{{\Carbon\Carbon::parse($offerproduct[0]["order_date"] ?? null)->format('d-m-Y') ?? null}}</span>
                     </div>
                   </div>
                 </div>

@@ -64,7 +64,7 @@
                                             <th>RM Name</th>
                                             <th>Dealer Code</th>
                                             <th>Dealer Name</th>
-                                            <th>Created At</th>
+                                            <th>Order Date</th>
                                             <th>Action</th> 
                                         </tr>
                                     </thead>
@@ -79,7 +79,7 @@
                                                 <td>{{ $list->rm_name }}</td>
                                                 <td>{{ $list->dealer_code }}</td>
                                                 <td>{{ $list->dealer_name }}</td>
-                                                <td>{{$list->created_at}}</td>
+                                                <td>{{$list->order_date}}</td>
                                                 <td><a href="{{ url('admin/promotions/transaction-preview/') }}/{{ Crypt::encrypt($list->order_id) }}"
                                                         title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td> 
                                             </tr>
@@ -96,7 +96,7 @@
                                             <th>RM Name</th>
                                             <th>Dealer Code</th>
                                             <th>Dealer Name</th>
-                                            <th>Created At</th>
+                                            <th>Order Date</th>
                                             <th>Action</th> 
                                         </tr>
                                     </tfoot>

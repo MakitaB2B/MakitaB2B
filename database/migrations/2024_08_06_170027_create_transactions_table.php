@@ -41,6 +41,7 @@ return new class extends Migration
             $table->string('ordered_by');
             $table->string('status');
             $table->string('modified_by');
+            $table->string('order_date');
             $table->timestamp('created_at')->default(date('Y-m-d H:i:s')); //->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(date('Y-m-d H:i:s')); //->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             // $table->timestamps();
