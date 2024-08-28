@@ -56,7 +56,7 @@
                   <div class="info-box bg-light">
                     <div class="info-box-content">
                       <span class="info-box-text text-center text-muted">Order Id</span>
-                      <span class="info-box-number text-center text-muted mb-0">{{$offerproduct[0]["promo_code"] ?? null}}</span>
+                      <span class="info-box-number text-center text-muted mb-0">{{$offerproduct[0]["order_id"] ?? null}}</span>
                     </div>
                   </div>
                 </div>
@@ -64,7 +64,7 @@
                   <div class="info-box bg-light">
                     <div class="info-box-content">
                       <span class="info-box-text text-center text-muted">Promo Code</span>
-                      <span class="info-box-number text-center text-muted mb-0">{{\Carbon\Carbon::parse($offerproduct[0]["from_date"] ?? null)->format('d-m-Y') }}</span>
+                      <span class="info-box-number text-center text-muted mb-0">{{$offerproduct[0]["promo_code"] ?? null }}</span>
                     </div>
                   </div>
                 </div>
@@ -72,7 +72,7 @@
                   <div class="info-box bg-light">
                     <div class="info-box-content">
                       <span class="info-box-text text-center text-muted">Order Date</span>
-                      <span class="info-box-number text-center text-muted mb-0">{{\Carbon\Carbon::parse($offerproduct[0]["to_date"] ?? null)->format('d-m-Y') ?? null}}</span>
+                      <span class="info-box-number text-center text-muted mb-0">{{\Carbon\Carbon::parse($offerproduct[0]["created_at"] ?? null)->format('d-m-Y') ?? null}}</span>
                     </div>
                   </div>
                 </div>
@@ -98,24 +98,20 @@
                         <input type="text" id="inputName" class="form-control" value="{{ $offer->model_no }}" readonly>
                       </div>
                       <div class="form-group col-md-6">
-                        <label for="inputName">Model Description</label>
-                        <input type="text" id="inputName" class="form-control" value="{{$offer->model_desc}}" readonly>
+                        <label for="inputName">RM Name</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->rm_name }}" readonly>
                       </div>
                       <div class="form-group col-md-6">
-                        <label for="inputName">MRP</label>
-                        <input type="text" id="inputName" class="form-control" value="{{$offer->mrp}}" readonly>
+                        <label for="inputName">Dealer Code</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->dealer_code }}" readonly>
                       </div>
                       <div class="form-group col-md-6">
-                        <label for="inputName">DLP</label>
-                        <input type="text" id="inputName" class="form-control" value="{{$offer->dlp}}" readonly>
+                        <label for="inputName">Dealer Name</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->dealer_name }}" readonly>
                       </div>
                       <div class="form-group col-md-6">
-                        <label for="inputName">Stock</label>
-                        <input type="text" id="inputName" class="form-control" value="{{$offer->stock}}" readonly>
-                      </div>
-                      <div class="form-group col-md-6">
-                        <label for="inputName">Product Type Type</label>
-                        <input type="text" id="inputName" class="form-control" value="{{$offer->product_type}}" >
+                        <label for="inputName">Product Type</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->product_type}}" readonly>
                       </div>
                       <div class="form-group col-md-6">
                         <label for="inputName">Offer Type</label>
@@ -126,12 +122,20 @@
                         <input type="text" id="inputName" class="form-control" value="{{$offer->price_type}}" >
                       </div>
                       <div class="form-group col-md-6">
-                        <label for="inputName">Offer Qty</label>
-                        <input type="text" id="inputName" class="form-control" value="{{$offer->qty}}" >
+                        <label for="inputName">Order Qty</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->order_qty}}" >
                       </div>
                       <div class="form-group col-md-6">
-                        <label for="inputName">Price</label>
-                        <input type="text" id="inputName" class="form-control" value="{{$offer->price}}" >
+                        <label for="inputName">Offer Price</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->offer_price}}" >
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Order Price</label>
+                        <input type="text" id="inputName" class="form-control" style="border: 2px solid black;" value="{{$offer->order_price}}" >
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Status</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->status}}" >
                       </div>
                     </div>
 
@@ -157,42 +161,50 @@
                     <div class="card-body">
                       @foreach($focproduct as $offer)
                      <div class="row">
-                        <div class="form-group col-md-6">
-                          <label for="inputName">FOC Model</label>
-                          <input type="text" id="inputName" class="form-control" value="{{ $offer->model_no }}" readonly>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="inputName">FOC Description</label>
-                          <input type="text" id="inputName" class="form-control" value="{{$offer->model_desc}}" readonly>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="inputName">MRP</label>
-                          <input type="text" id="inputName" class="form-control" value="{{$offer->mrp}}" readonly>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="inputName">DLP</label>
-                          <input type="text" id="inputName" class="form-control" value="{{$offer->dlp}}" readonly>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="inputName">Stock</label>
-                          <input type="text" id="inputName" class="form-control" value="{{$offer->stock}}" readonly>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="inputName">FOC Qty</label>
-                          <input type="text" id="inputName" class="form-control" value="{{$offer->qty}}" >
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="inputName">Product Type Type</label>
-                          <input type="text" id="inputName" class="form-control" value="{{$offer->product_type}}" >
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="inputName">Offer Type</label>
-                          <input type="text" id="inputName" class="form-control" value="{{$offer->offer_type}}" >
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="inputName">Special Price</label>
-                          <input type="text" id="inputName" class="form-control" value="{{$offer->price}}" >
-                        </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Offer Model</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->model_no }}" readonly>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">RM Name</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->rm_name }}" readonly>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Dealer Code</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->dealer_code }}" readonly>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Dealer Name</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->dealer_name }}" readonly>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Product Type</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->product_type}}" readonly>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Offer Type</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->offer_type}}" >
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Price Type</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->price_type}}" >
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Order Qty</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->order_qty}}" >
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Offer Price</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->offer_price}}" >
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Order Price</label>
+                        <input type="text" id="inputName" class="form-control" style="border: 2px solid black;" value="{{$offer->order_price}}" >
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Status</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->status}}" >
+                      </div>
                       </div>
   
                       <hr>
@@ -206,133 +218,18 @@
               {{-- General --}}
               <div class="row">
                 <div class="col-12">
-                  <h4>Sample Mail Format</h4>
-                    <div class="post">
-                      {{-- <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
-                        <span class="username">
-                          <a href="#">Jonathan Burke Jr.</a>
-                        </span>
-                        <span class="description">Shared publicly - 7:45 PM today</span>
-                      </div> --}}
-                      <p>
-                       We would like to approve the following promotion.
-                      </p>
-                      <p>
-                        {{$textfromatmodelqty}}
-                       </p>
-                       <p>
-                      {{$offerproduct[0]["stock"]}} No's of {{$offerproduct[0]["model_no"]}} available.
-                       </p>
-                       <p> Please Check below link to view Promotion Preview</p>
-
-                      <p>
-                        <a href="http://127.0.0.1:8080/admin/promotions/promotion-preview/{{Crypt::encrypt($offerproduct[0]["promo_code"] ?? null)}}" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Promotion Preview</a>
-                      </p>
-                      <p>PROMO NO - {{$offerproduct[0]->promo_code}}</p>
-
-                          <!-- /.card -->
-                  <div class="card card-info">
-                    <div class="card-header">
-                      <h3 class="card-title">Promotion</h3>
-        
-                      <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                          <i class="fas fa-minus"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="card-body p-0">
-                      <table class="table table-bordered">
-                       
-                        <thead>
-                          <tr>
-                            <th>Offer Model</th>
-                            <th>MRP</th>
-                            <th>DLP</th>
-                            <th>BEST</th>
-                            <th>SPECIAL</th>
-                            <th>TOTAL STOCK</th>
-                            <th>HO</th>
-                            <th>DELHI</th>
-                            <th>Gujarat</th>
-                            <th>Kerala</th>
-                            <th>Chennai</th>
-                            <th>Kolkata</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @foreach($offerproduct as $offer)
-                          <tr>
-                            <td>{{$offer->model_no}}</td>
-                            <td>{{$offer->mrp}}</td>
-                            <td>{{$offer->dlp}}</td>
-                            <td>{{$offer->best}}</td>
-                            <td>{{$offer->price ?? '-'}}</td> 
-                            <td>{{$offer->stock}}</td>
-                            <td>{{$offer->ka01 ?? '-'}}</td>
-                            <td>{{$offer->dl01 ?? '-'}}</td>
-                            <td>{{$offer->gj01 ?? '-'}}</td>
-                            <td>{{$offer->kl01 ?? '-'}}</td>
-                            <td>{{$offer->tn01 ?? '-'}}</td>
-                            <td>{{$offer->wb01 ?? '-'}}</td>
-                          </tr>
-                          @endforeach
-                        </tbody>
-                      </table>
-
-                    </div>
-                    <div class="card-body p-0">
-                      <table class="table table-bordered">
-                       
-                        <thead>
-                          <tr>
-                            <th>FOC Model</th>
-                            <th>MRP</th>
-                            <th>DLP</th>
-                            <th>BEST</th>
-                            <th>SPECIAL</th>
-                            <th>TOTAL STOCK</th>
-                            <th>HO</th>
-                            <th>DELHI</th>
-                            <th>Gujarat</th>
-                            <th>Kerala</th>
-                            <th>Chennai</th>
-                            <th>Kolkata</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @foreach($focproduct as $offer)
-                          <tr>
-                            <td>{{$offer->model_no}}</td>
-                            <td>{{$offer->mrp}}</td>
-                            <td>{{$offer->dlp}}</td>
-                            <td>{{$offer->best}}</td>
-                            <td>{{$offer->price ?? '-'}}</td>
-                            <td>{{$offer->stock}}</td>
-                            <td>{{$offer->ka01 ?? '-'}}</td>
-                            <td>{{$offer->dl01 ?? '-'}}</td>
-                            <td>{{$offer->gj01 ?? '-'}}</td>
-                            <td>{{$offer->kl01 ?? '-'}}</td>
-                            <td>{{$offer->tn01 ?? '-'}}</td>
-                            <td>{{$offer->wb01 ?? '-'}}</td>
-                          </tr>
-                          @endforeach
-                        </tbody>
-                      </table>
-                    </div>
-                 
-                  </div>
+                  <h4>Change Order status</h4>
+                <div class="post">
                   <div class="card-footer">
                     <div class="row">
                       <div class="form-group col-md-4">
-                          <label for="exampleStatus">Promotion Status</label>
+                          <label for="exampleStatus">Order Status</label>
                           <select class="custom-select mySelect" name="status" id="exampleStatus">
                               @foreach($status as $type)
-                                  <option value="{{$offerproduct[0]["promo_code"]}}-{{$type}}">{{$type}}</option>
+                                  <option value="{{$offerproduct[0]["order_id"]}}-{{$type}}">{{$type}}</option>
                               @endforeach
                           </select>
-                          <span id="examplePromotionStatus"></span>
+                          <span id="exampleTransactionStatus"></span>
                       </div>
                   
                       <div class="form-group col-md-4 d-flex align-items-end">
@@ -340,16 +237,16 @@
                           <span id="changeStatusButtonText"></span>
                       </div>
                   
-                      <div class="form-group col-md-4 d-flex align-items-end">
+                      {{-- <div class="form-group col-md-4 d-flex align-items-end">
                           <button type="submit" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</button>
                           <span id="sendMailButtonText"></span>
-                      </div>
+                      </div> --}}
                   </div>
                   
                   </div>
                   <!-- /.card -->
 
-                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -369,11 +266,11 @@
   <script>
       $(document).ready(function() {
           $('#changeStatusButton').on('click', function() {
-            $("#examplePromotionStatus").empty();
+            $("#exampleTransactionStatus").empty();
               var status = $('#exampleStatus').val();
   
               $.ajax({
-                  url: '{{ route("promotions.change-status") }}', 
+                  url: '{{ route("transaction.change-status") }}', 
                   type: 'POST',
                   data: {
                       status: status,
@@ -381,7 +278,7 @@
                   },
                   success: function(response) {
 
-                    $("#examplePromotionStatus").html('<b style="color:green;">Status changed for promo:'+ response.data[0].promo_code+ ', status:'+ response.data[0].status +'</b>');
+                    $("#exampleTransactionStatus").html('<b style="color:green;">Status changed for order id:'+ response.data[0].order_id+ ', status:'+ response.data[0].status +'</b>');
   
                   },
                   error: function(xhr, status, error) {

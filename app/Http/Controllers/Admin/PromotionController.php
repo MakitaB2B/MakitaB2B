@@ -138,13 +138,21 @@ class PromotionController extends Controller
 
     public function changeStatus(Request $request)
     {
-       $emp_no = Auth::guard('admin')->user()->access_id;
+        $emp_no = Auth::guard('admin')->user()->access_id;
         $status = $request->input('status');
         $statusarray= explode('-', $status);
         $result = $this->promotionService->UpdatePromo($statusarray[0],$statusarray[1], $emp_no);
         return response()->json(['data' => $result]);
     }
 
+    public function changeTransationStatus(Request $request){
+
+        $emp_no = Auth::guard('admin')->user()->access_id;
+        $status = $request->input('status');
+        $statusarray= explode('-', $status);
+        $result = $this->transactionService->UpdateTransaction($statusarray[0],$statusarray[1], $emp_no);
+        return response()->json(['data' => $result]);
+    }
     public function transactionCreation(){
 
       $result['promo_code']=$this->promotionService->activePromotion();
@@ -162,17 +170,14 @@ class PromotionController extends Controller
     }
 
     public function transactionPreview($id){
+
       $order_id = Crypt::decrypt($id);
       $transaction = $this->transactionService->getTransactionDetails($order_id);
       $result['focproduct'] = $transaction->where('product_type','FOC')->values();
       $result['offerproduct'] = $transaction->where('product_type','Offer Product')->values();
-      return view('Admin.transaction_view.blade',$result);
-      // dd($result);
-      // $result['focproduct'] = $promotion->where('product_type','FOC')->values();
-      // $result['offerproduct'] = $promotion->where('product_type','Offer Product')->values();
-      // $result['textfromatmodelqty'] = $this->textFormatModelQty($result['offerproduct']->toArray(),$result['focproduct']->toArray());
-      // $result['status'] = ['active','closed'];
-      // dd($order_id);
+      $result['status'] = ['open','block','cancel'];
+      return view('Admin.transaction_view',$result);
+
     }
     
     public function searchData(Request $request)
@@ -354,7 +359,7 @@ class PromotionController extends Controller
                   $value->dealer_name= $dealer_code[1];
                   $value->order_id = $order_id ;
                   $value->ordered_by = Auth::guard('admin')->user()->access_id;
-                  $value->status= "order placed";
+                  $value->status= "open";
                   $value->modified_by = "none";
                   $value->offer_price =  $value->price;
                   $value->order_price =  $value->price * $userInputQty;

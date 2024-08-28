@@ -217,6 +217,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/promotions/single-model-details-search', [PromotionController::class, 'modeldetailSingleSearch'])->name('model.single.detail.Search');
     Route::get('/promotions/transaction-verify',[PromotionController::class,'transactionVerify'])->name('admin.promotions.transaction-verify');
     Route::post('/promotions/promotion-changestatus', [PromotionController::class, 'changeStatus'])->name('promotions.change-status');
+    Route::post('/promotions/transaction-changestatus', [PromotionController::class, 'changeTransationStatus'])->name('transaction.change-status');
     Route::get('/items', [ItemInfoController::class, 'index'])->name('items');
     Route::post('/upload-daily-item',[ItemInfoController::class,'uploadDailyItem'])->name('upload-daily-item');
     Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
