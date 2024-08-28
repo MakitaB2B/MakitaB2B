@@ -5,6 +5,8 @@ use App\Models\Admin\Promotion;
 use App\Models\Admin\BranchStocks;
 use App\Models\Admin\ItemPrice;
 use Illuminate\Support\Facades\DB;
+use Exception;
+ 
 class PromotionService{
 
     public function listPromotions(){
@@ -12,7 +14,7 @@ class PromotionService{
       return Promotion::select('promo_code','from_date','to_date','status', DB::raw('GROUP_CONCAT(model_no ORDER BY model_no ASC) AS model_no_array'))
       ->where('product_type', 'Offer Product')
       ->groupBy('promo_code','from_date','to_date','status')
-      ->orderBy('promo_code')
+      ->orderBy('promo_code','desc')
       ->get();
     
     }
@@ -42,7 +44,18 @@ class PromotionService{
 
     public function createOrUpdatePromo($data){
 
-      Promotion::insert($data);
+      try {
+        DB::transaction(function () use ($data) {
+
+          Promotion::insert($data);
+          return true; 
+         }); 
+        } catch (Exception $e) {
+
+          return $e->getMessage();
+
+        }
+
     }
 
     public function UpdatePromo($promocode,$status,$emp_no){

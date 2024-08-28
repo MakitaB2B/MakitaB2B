@@ -2,6 +2,8 @@
 namespace App\Services;
 use Illuminate\Support\Str;
 use App\Models\Admin\Transaction;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class TransactionService{
 
@@ -16,8 +18,16 @@ class TransactionService{
     }
 
     public function createOrUpdateTransac($data){
-
-       return Transaction::insert($data);
+        
+        try {
+            DB::transaction(function () use ($data) {
+              Transaction::insert($data);
+            });
+            return true;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+  
     }
 
     public function allTransactions(){
