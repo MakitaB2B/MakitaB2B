@@ -27,11 +27,11 @@
                     <div class="col-sm-6">
                         <b style="display: none; color:green" id="hm">File is large, it may take a while, please wait
                             while processing.....</b>
-                        <form action="{{ route('upload-daily-stock') }}" method="post" enctype="multipart/form-data"
+                        <form action="{{ route('upload-dealer') }}" method="post" enctype="multipart/form-data"
                             id="suf">
                             @csrf
                             <input type="submit" value="Upload" class="btn float-right" id="submitstock">
-                            <label for="inputField" class="btn btn-info float-right">Stocks File</label>
+                            <label for="inputField" class="btn btn-info float-right">Dealer File</label>
                             <input type="file" name="mycsv" id="inputField" style="display:none" required>
                         </form>
                     </div>
@@ -50,8 +50,8 @@
                                     <div class="input-group input-group-sm">
                                         <select class="custom-select" id="stype">
                                             <option value="">Select Option</option>
-                                            <option value="item" selected="selected">Item</option>
-                                            <option value="description">Description</option>
+                                            <option value="item" selected="selected">Customer</option>
+                                            <option value="description">Name</option>
                                         </select>
                                         <input type="text" name="table_search" class="form-control float-right"
                                             placeholder="Search by Item" id="searchtxt">
@@ -69,11 +69,11 @@
                                 <table class="table table-head-fixed table-bordered table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Item</th>
-                                            <th>Description</th>
-                                            <th>Total Main Stock</th>
-                                            <th>Reserved</th>
-                                            <th>Sellable</th>
+                                            <th>Customer</th>
+                                            <th>Name</th>
+                                            <th>Zip</th>
+                                            <th>City</th>
+                                            <th>County</th>
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">

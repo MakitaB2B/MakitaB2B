@@ -29,7 +29,7 @@ return new class extends Migration
             // $table->string('dealer_code')->index();
             // $table->foreign('dealer_code')->references('dealer_code')->on('dealers')->onDelete('cascade')->nullable();
             $table->string('dealer_code');
-            $table->foreign('dealer_code')->references('dealer_code')->on('dealer_masters')->onDelete('cascade');
+            // $table->foreign('dealer_code')->references('Customer')->on('dealer_masters')->onDelete('cascade');
             $table->string('dealer_name');
             $table->enum('product_type',['Offer Product','FOC']);
             $table->string('model_no');
