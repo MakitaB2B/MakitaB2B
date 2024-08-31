@@ -103,7 +103,7 @@
                                             <select class="custom-select select2" name="dealer_code" required id="exampleDealerCode">
                                                 <option value="0">Select Dealer Code</option>
                                                 @foreach ($dealer_master as $item)
-                                                <option value="{{$item->dealer_code}}-{{$item->dealer_name}}">{{$item->dealer_code}}</option>
+                                                <option value="{{$item->Customer}}-{{$item->Name}}">{{$item->Customer}}</option>
                                                 @endforeach
                                             </select>
                                             @error('dealer_code')
@@ -240,7 +240,7 @@
         $('#exampleDealerCode').on('change', function() {
             var selectedValue = $(this).val();
             let res = selectedValue.split('-');
-            $('#exampleDealerName').val(res[1]);
+            $('#exampleDealerName').val(res[2]);
         });
 
         $('#examplePromoCode').on('change', function() {

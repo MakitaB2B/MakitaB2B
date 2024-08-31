@@ -355,8 +355,8 @@ class PromotionController extends Controller
                   $value->offer_qty = $value->qty;
                   $value->transaction_slug = $this->transactionService->transaction_slug();
                   $value->rm_name= $rm_name;
-                  $value->dealer_code = $dealer_code[0];
-                  $value->dealer_name= $dealer_code[1];
+                  $value->dealer_code = $dealer_code[0].$dealer_code[1];
+                  $value->dealer_name= $dealer_code[2];
                   $value->order_id = $order_id ;
                   $value->ordered_by = Auth::guard('admin')->user()->access_id;
                   $value->status= "open";

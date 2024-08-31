@@ -48,8 +48,8 @@ class PromotionService{
       try {
         DB::transaction(function () use ($data) {
 
-          Promotion::insert($data);
-          return true; 
+           $promotion = Promotion::insert($data);
+        
          }); 
         } catch (Exception $e) {
 
