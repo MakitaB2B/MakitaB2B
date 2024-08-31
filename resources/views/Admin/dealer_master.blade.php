@@ -71,48 +71,25 @@
                                         <tr>
                                             <th>Customer</th>
                                             <th>Name</th>
-                                            <th>Zip</th>
-                                            <th>City</th>
-                                            <th>County</th>
+                                            <th>Created At</th>
+                                            {{-- <th>City</th>
+                                            <th>County</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
-                                        {{-- @foreach ($result as $key => $modelVariantData)
-                                            @php
-                                                $mainStock=(int)($modelVariantData->cb01)+ (int)($modelVariantData->dl01)+(int)($modelVariantData->gh01)+(int)($modelVariantData->gj01)+(int)($modelVariantData->id01)+(int)($modelVariantData->jm01)+(int)($modelVariantData->ka01)+(int)($modelVariantData->kl01)+(int)($modelVariantData->mh01)+(int)($modelVariantData->pn01)+(int)($modelVariantData->py01)+(int)($modelVariantData->rd01)+(int)($modelVariantData->tn01)+(int)($modelVariantData->vd01)+(int)($modelVariantData->wb01);
-                                            @endphp
+                                     @foreach ($result as $key => $data)
+                                         
                                             <tr>
-                                                <td>
-                                                    <a href="{{ url('admin/branch-stock-details/') }}/{{ Crypt::encrypt($modelVariantData->item) }}"
-                                                        title="View Stock Details" style="color:#00909E"> <strong>{{ $modelVariantData->item }}</strong></a>
-                                                </td>
-                                                <td>{{ $modelVariantData->description }}</td>
-                                                <td>{{ $mainStock}}</td>
-                                                @php
-                                                    $totalReservedQty = 0;
-                                                    $reserveQtyStr = $modelVariantData->reservedStock->pluck('reserved')->implode('+');
-                                                    $explodeRQ = explode('+', $reserveQtyStr);
-                                                    foreach ($explodeRQ as $rq) {
-                                                        $totalReservedQty += (int) $rq;
-                                                    }
-                                                @endphp
-                                                <td>
-                                                    @if ($totalReservedQty>0)
-                                                    <a href="{{ url('admin/reserve-stock-fetchby-item/') }}/{{ Crypt::encrypt($modelVariantData->item) }}"
-                                                        title="View Reserved Details" target="_blank" style="color:#00909E">
-                                                        <strong>{{ $totalReservedQty }}</strong>
-                                                    </a>
-                                                    @else
-                                                    <i style="color:#dc129c">{{ $totalReservedQty }}</i>
-                                                    @endif
-                                                </td>
-                                                <td>{{($mainStock - $totalReservedQty)}}</td>
+                                                <td>{{ $data->Customer }}</td>
+                                                <td>{{ $data->Name }}</td>
+                                                <td>{{($data->created_at)}}</td>
                                             </tr>
-                                        @endforeach --}}
+
+                                    @endforeach 
                                     </tbody>
                                 </table>
                                 <div class="d-flex justify-content-center" style="margin-top:15px">
-                                    {{-- {!! $result->links() !!} --}}
+                                    {!! $result->links() !!}
                                 </div>
                             </div>
                             <!-- /.card-body -->

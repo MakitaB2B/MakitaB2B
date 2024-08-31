@@ -44,9 +44,7 @@ class ItemInfoController extends Controller
         foreach ($stockData as $key => $value) {
 
             if(!empty($key)){
-                        $consistentRecord[$key] = $key=="MRP" ||$key=="LP" || $key=="DLP" || $key=="BEST" 
-                        ? intval(str_replace(',', '', $stockData[$key]))
-                        : $stockData[$key] ;
+                        $consistentRecord[$key] = $key=="MRP" ||$key=="LP" || $key=="DLP" || $key=="BEST" ? intval(str_replace(',', '', $stockData[$key])) : $stockData[$key] ;
                          
                         }
         }
