@@ -141,6 +141,7 @@ class PromotionController extends Controller
         $emp_no = Auth::guard('admin')->user()->access_id;
         $status = $request->input('status');
         $statusarray= explode('-', $status);
+        $this->promotionService->addcounts();
         $result = $this->promotionService->UpdatePromo($statusarray[0],$statusarray[1], $emp_no);
         return response()->json(['data' => $result]);
     }
@@ -149,7 +150,10 @@ class PromotionController extends Controller
 
         $emp_no = Auth::guard('admin')->user()->access_id;
         $status = $request->input('status');
-        $statusarray= explode('-', $status);
+        $dealer_code = $request->input('dealer_code');
+        $promo_code = $request->input('promo_code');
+        $statusarray = explode('-', $status);
+        $addcount = $this->dealerService->addcounts($dealer_code);
         $result = $this->transactionService->UpdateTransaction($statusarray[0],$statusarray[1], $emp_no);
         return response()->json(['data' => $result]);
     }
@@ -158,6 +162,8 @@ class PromotionController extends Controller
       $result['promo_code']=$this->promotionService->activePromotion();
       $result['regional_manager']=$this->regionalManager->rmNames();
       $result['dealer_master']=$this->dealerService->getDealers();
+
+      dd( $result['dealer_master']);
 
       return view('Admin.promotion_transaction',$result);
     }
@@ -175,7 +181,7 @@ class PromotionController extends Controller
       $transaction = $this->transactionService->getTransactionDetails($order_id);
       $result['focproduct'] = $transaction->where('product_type','FOC')->values();
       $result['offerproduct'] = $transaction->where('product_type','Offer Product')->values();
-      $result['status'] = ['open','block','cancel'];
+      $result['status'] = ['open','cancel']; //,'block'
       return view('Admin.transaction_view',$result);
 
     }

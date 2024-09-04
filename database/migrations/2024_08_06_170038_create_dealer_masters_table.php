@@ -40,6 +40,7 @@ return new class extends Migration
             // $table->string('Status (Active/Deactive)')->nullable();
 
             $table->tinyInteger('cancelled_count')->nullable(); 
+            $table->string('status')->nullable();
             $table->string('is_black_listed')->nullable();
             $table->longText('comments')->nullable();
 

@@ -64,7 +64,7 @@
                   <div class="info-box bg-light">
                     <div class="info-box-content">
                       <span class="info-box-text text-center text-muted">Promo Code</span>
-                      <span class="info-box-number text-center text-muted mb-0">{{$offerproduct[0]["promo_code"] ?? null }}</span>
+                      <span class="info-box-number text-center text-muted mb-0" >{{$offerproduct[0]["promo_code"] ?? null }}</span>
                     </div>
                   </div>
                 </div>
@@ -241,6 +241,9 @@
                           <button type="submit" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</button>
                           <span id="sendMailButtonText"></span>
                       </div> --}}
+
+                      <input type="hidden" name="model_number" id="dealer_code"  value="{{$offerproduct[0]["dealer_code"]}}" required>
+                      <input type="hidden" name="model_number" id="promo_code"  value="{{$offerproduct[0]["promo_code"]}}" required>
                   </div>
                   
                   </div>
@@ -268,13 +271,19 @@
           $('#changeStatusButton').on('click', function() {
             $("#exampleTransactionStatus").empty();
               var status = $('#exampleStatus').val();
-  
+              var dealer_code = $('#dealer_code').val();
+              var promo_code = $('#promo_code').val();
+
+              console.log(dealer_code,promo_code);
+              
               $.ajax({
                   url: '{{ route("transaction.change-status") }}', 
                   type: 'POST',
                   data: {
                       status: status,
-                      _token: '{{ csrf_token() }}'
+                      _token: '{{ csrf_token() }}',
+                      dealer_code: dealer_code,
+                      promo_code: promo_code
                   },
                   success: function(response) {
 
