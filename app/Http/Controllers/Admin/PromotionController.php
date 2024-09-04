@@ -209,7 +209,7 @@ class PromotionController extends Controller
       $promoID = $request->input('promoID');
 
       $result["data"] = $this->promotionService->getPromoDeatils($promoID);
-     
+      
       return response()->json($result);
     }
 
@@ -330,7 +330,7 @@ class PromotionController extends Controller
                   $userInputQty = $singlemodel[0]["offer_qty"] * $qtytomultiply;
                 
                   if(($offer_type== "Buy One Of The Product" && $filteredbyoffer[0]["model_no"]==$value->model_no ||$value->product_type=="FOC") || $offer_type== "Combo Offer") {
-                    if ( $value->total_stock < $userInputQty) {
+                    if ( $value->stock < $userInputQty) {
                       throw new \Exception('Stock not available for model: ' . $value->model_no);
                   }
 
@@ -355,7 +355,7 @@ class PromotionController extends Controller
                   $value->offer_qty = $value->qty;
                   $value->transaction_slug = $this->transactionService->transaction_slug();
                   $value->rm_name= $rm_name;
-                  $value->dealer_code = $dealer_code[0].$dealer_code[1];
+                  $value->dealer_code = $dealer_code[0].'-'.$dealer_code[1];
                   $value->dealer_name= $dealer_code[2];
                   $value->order_id = $order_id ;
                   $value->ordered_by = Auth::guard('admin')->user()->access_id;
@@ -366,7 +366,7 @@ class PromotionController extends Controller
                   $value->order_date = date('Y-m-d H:i:s');
                   // $value->created_at =  Carbon::parse($formattedDate)->format('Y-m-d H:i:s');
                   // $value->updated_at = $formattedDate;
-                  unset($value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc);      
+                  unset($value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc,$value->total_order_qty);      
                   return collect($value)->except('reserved_stock');
                   }
               

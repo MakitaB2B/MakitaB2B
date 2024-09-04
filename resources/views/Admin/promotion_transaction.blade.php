@@ -247,6 +247,7 @@
             let loop_count = 0;
             $('.promo_offer').empty();
             $('.foc_offer').empty();
+            $("#exampleTotalPrice").empty();
             $('#submitbutton').prop('disabled', true);
             let promoID = $(this).val();
         $.ajax({
