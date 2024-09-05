@@ -40,10 +40,13 @@ return new class extends Migration
             // $table->string('Status (Active/Deactive)')->nullable();
 
             $table->tinyInteger('cancelled_count')->nullable(); 
-            $table->string('status')->nullable();
+            // $table->string('status')->nullable();
+            $table->enum('status',['Active','Deactive'])->default('Active')->nullable();
+            $table->enum('commercial_status',['block','open'])->default('open')->nullable();
+            // $table->enum('commercial_status',['Offer Product','FOC']);
             $table->string('is_black_listed')->nullable();
             $table->longText('comments')->nullable();
-
+            $table->string('modified_by')->nullable();
 
             // $table->string('dealer_code')->unique();
             // $table->string('dealer_name');

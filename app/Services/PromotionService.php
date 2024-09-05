@@ -121,6 +121,7 @@ class PromotionService{
       ->join('branch_stocks', 'promotions.model_no', '=', 'branch_stocks.item')
       ->leftJoin('transactions', 'promotions.model_no', '=', 'transactions.model_no')
       ->where('promotions.promo_code', $promocode)
+      ->where('transactions.status', '!=','cancel')
       ->select(
           'promotions.from_date', 'promotions.promo_code', 'promotions.to_date', 'promotions.product_type',
           'promotions.model_no', 'promotions.model_desc', 'promotions.price_type', 'promotions.offer_type',

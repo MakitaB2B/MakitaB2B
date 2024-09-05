@@ -24,6 +24,56 @@ class DealerController extends Controller
         return view('Admin.dealer_master',compact('result')); 
     }
 
+    public function dealerSearch(Request $request){
+        $searchValue=strtoupper($request->searchtxt);
+        $searchFrom=$request->searchFrom;
+        $searchType=$request->searchtype;
+        $type = match($searchType){
+            'customer'=>'customer',
+            'name'=>'name',
+            'status'=>'status',
+            'commercial_status'=>'commercial_status',
+            default => 'customer',
+        };
+        if($type=='customer'){
+            $searchQuery=$searchValue.'%';
+            $column = 'Customer';
+        }
+        if($type=='name'){
+            $searchQuery='%'.$searchValue.'%';
+            $column = 'Name';
+        }
+        if($type=='status'){
+            $searchQuery='%'.$searchValue.'%';
+            $column = 'status';
+        }
+        if($type=='commercial_status'){
+            $searchQuery='%'.$searchValue.'%';
+            $column = 'commercial_status';
+        }
+
+        $searchResult=Dealer::where($column,'LIKE',"$searchQuery")->get(['id','Customer','Name','status','commercial_status','created_at']);
+        if(($searchResult->count())>0 ){
+            $output="";
+            if($searchFrom=='itempg'){
+                $routeTo="items/";
+            }
+
+            foreach ($searchResult as $key => $data) {
+                $output.='<tr>'.
+                '<td>'.$data->Customer.'</td>'.
+                '<td>'.$data->Name.'</td>'.
+                '<td>'.$data->status.'</td>'.
+                '<td>'.$data->commercial_status.'</td>'.
+                '<td>'.$data->created_at.'</td>'.
+                '</tr>';
+                }
+        return Response($output);
+        }else{
+            echo "No Record Found";
+        }
+    }
+
     public function uploadDealer(Request $request){
 
         if (request()->has('mycsv')) {
@@ -41,16 +91,18 @@ class DealerController extends Controller
 
             foreach ($stockData as $key => $value) {
             
-            if(!empty($key) && $key=="Customer" || $key=="Name"){
+            if(!empty($key) && $key=="Customer" || $key=="Name" || $key=="Status (Active/Deactive)"){
 
-            $consistentRecord[$key] = ($key == "Start Date" || $key == "Registration Date") && !empty($stockData[$key]) ? Carbon::createFromFormat('d/m/Y', $stockData[$key])->format('Y-m-d') : (empty($stockData[$key]) ? null : $stockData[$key]);
+            $fieldKey = ($key == "Status (Active/Deactive)") ? 'status' : $key;
+
+            $consistentRecord[$fieldKey] = ($key == "Start Date" || $key == "Registration Date") && !empty($stockData[$key]) ? Carbon::createFromFormat('d/m/Y', $stockData[$key])->format('Y-m-d') : (empty($stockData[$key]) ? null : $stockData[$key]);
 
             }
                     
             }
             $consistentRecord['dealer_slug'] =  $this->dealerService->dealer_slug();
             $dealerData[] = $consistentRecord;
-
+           
             if (count($dealerData) >= $batchSize) {
        
                 $dealerData = $this->filter_dealer_code($dealerData);

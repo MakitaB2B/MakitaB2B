@@ -8,6 +8,7 @@ use App\Services\PromotionService;
 use App\Services\TransactionService;
 use App\Services\RegionalMangerService;
 use App\Services\DealerService;
+use App\Services\DealerCancelledService;
 use App\Models\Admin\BranchStocks;
 use Auth;
 use Carbon\Carbon;
@@ -19,11 +20,12 @@ class PromotionController extends Controller
     protected $promotionService;
     protected $transactionService;
 
-    public function __construct(PromotionService $promotionService,TransactionService $transactionService,RegionalMangerService $regionalManager,DealerService $dealerService){
+    public function __construct(PromotionService $promotionService,TransactionService $transactionService,RegionalMangerService $regionalManager,DealerService $dealerService,DealerCancelledService $dealerCancelledService){
       $this->promotionService=$promotionService;
       $this->transactionService=$transactionService;
       $this->regionalManager=$regionalManager;
       $this->dealerService=$dealerService;
+      $this->dealerCancelledService=$dealerCancelledService;
     }
 
     public function index(){
@@ -141,7 +143,7 @@ class PromotionController extends Controller
         $emp_no = Auth::guard('admin')->user()->access_id;
         $status = $request->input('status');
         $statusarray= explode('-', $status);
-        $this->promotionService->addcounts();
+        // $this->promotionService->addcounts();
         $result = $this->promotionService->UpdatePromo($statusarray[0],$statusarray[1], $emp_no);
         return response()->json(['data' => $result]);
     }
@@ -152,8 +154,12 @@ class PromotionController extends Controller
         $status = $request->input('status');
         $dealer_code = $request->input('dealer_code');
         $promo_code = $request->input('promo_code');
+        $cancelled_date = date('Y-m-d H:i:s');
         $statusarray = explode('-', $status);
-        $addcount = $this->dealerService->addcounts($dealer_code);
+        if($statusarray[1]=='cancel'){
+          $addcount = $this->dealerService->addcounts($dealer_code, $emp_no);
+          $this->dealerCancelledService->Create($dealer_code, $promo_code,$cancelled_date);
+        }
         $result = $this->transactionService->UpdateTransaction($statusarray[0],$statusarray[1], $emp_no);
         return response()->json(['data' => $result]);
     }
@@ -162,8 +168,6 @@ class PromotionController extends Controller
       $result['promo_code']=$this->promotionService->activePromotion();
       $result['regional_manager']=$this->regionalManager->rmNames();
       $result['dealer_master']=$this->dealerService->getDealers();
-
-      dd( $result['dealer_master']);
 
       return view('Admin.promotion_transaction',$result);
     }

@@ -50,8 +50,10 @@
                                     <div class="input-group input-group-sm">
                                         <select class="custom-select" id="stype">
                                             <option value="">Select Option</option>
-                                            <option value="item" selected="selected">Customer</option>
-                                            <option value="description">Name</option>
+                                            <option value="customer" selected="selected">Customer</option>
+                                            <option value="name">Name</option>
+                                            <option value="status">Status</option>
+                                            <option value="commercial_status">Commercial Status</option>
                                         </select>
                                         <input type="text" name="table_search" class="form-control float-right"
                                             placeholder="Search by Item" id="searchtxt">
@@ -71,9 +73,9 @@
                                         <tr>
                                             <th>Customer</th>
                                             <th>Name</th>
+                                            <th>Status</th>
+                                            <th>Commercial Status</th>
                                             <th>Created At</th>
-                                            {{-- <th>City</th>
-                                            <th>County</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
@@ -82,6 +84,8 @@
                                             <tr>
                                                 <td>{{ $data->Customer }}</td>
                                                 <td>{{ $data->Name }}</td>
+                                                <td>{{ $data->status }}</td>
+                                                <td>{{ $data->commercial_status }}</td>
                                                 <td>{{($data->created_at)}}</td>
                                             </tr>
 
@@ -114,7 +118,7 @@
                         });
                     } else {
                         let searchtxt = $.trim($("#searchtxt").val());
-                        let searchFrom = "stockpg";
+                        let searchFrom = "dealerpg";
                         if (searchtxt != '' && searchtxt.length > 0) {
                             $("#searchresultmsg").text('Please Wait while processing....').css({
                                 "color": "green",
@@ -122,7 +126,7 @@
                                 "font-size": "11px"
                             });
                             $.ajax({
-                                url: '/admin/stock-search',
+                                url: '/admin/dealer-search',
                                 type: 'post',
                                 data: 'searchtxt=' + searchtxt + '&searchtype=' + searchType +
                                     '&searchFrom=' + searchFrom +

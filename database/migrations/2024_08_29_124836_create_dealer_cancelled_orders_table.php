@@ -18,7 +18,10 @@ return new class extends Migration
             // $table->foreign('dealer_code')->references('Customer')->on('dealer_masters')->onDelete('cascade');
             $table->string('promo_code')->index();
             $table->foreign('promo_code')->references('promo_code')->on('promotions')->onDelete('cascade')->nullable();
-            $table->timestamps();
+            $table->string('cancelled_date');
+            $table->timestamp('created_at')->default(date('Y-m-d H:i:s'));
+            $table->timestamp('updated_at')->default(date('Y-m-d H:i:s'));
+            // $table->timestamps();
         });
     }
 

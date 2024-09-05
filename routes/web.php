@@ -219,8 +219,10 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/promotions/promotion-changestatus', [PromotionController::class, 'changeStatus'])->name('promotions.change-status');
     Route::post('/promotions/transaction-changestatus', [PromotionController::class, 'changeTransationStatus'])->name('transaction.change-status');
     Route::get('/items', [ItemInfoController::class, 'index'])->name('items');
+    Route::post('/items-search',[ItemInfoController::class,'itemSearch'])->name('item-search');
     Route::post('/upload-daily-item',[ItemInfoController::class,'uploadDailyItem'])->name('upload-daily-item');
     Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
+    Route::post('/dealer-search',[DealerController::class,'dealerSearch'])->name('item-search');
     Route::post('/upload-dealer',[DealerController::class,'uploadDealer'])->name('upload-dealer');
     Route::get('/roi', function () {  return view('Admin/roi');  });
 
