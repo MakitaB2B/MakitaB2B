@@ -12,13 +12,13 @@ use Illuminate\Queue\SerializesModels;
 class PromoMail extends Mailable
 {
     use Queueable, SerializesModels;
-
+    public $details;
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($details)
     {
-        //
+        $this->details = $details;
     }
 
     /**
@@ -36,8 +36,13 @@ class PromoMail extends Mailable
      */
     public function content(): Content
     {
+        // return new Content(
+        //     view: 'mails.promomail',
+        // );
+
         return new Content(
-            view: 'view.name',
+            view: 'mails.promomail',
+            with: ['details' => $this->details], // Pass the data to the view
         );
     }
 

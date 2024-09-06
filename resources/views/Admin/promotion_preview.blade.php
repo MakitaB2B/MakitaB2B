@@ -339,9 +339,9 @@
                           <button type="submit" class="btn btn-primary" id="changeStatusButton">Change Status</button>
                           <span id="changeStatusButtonText"></span>
                       </div>
-                  
+                     
                       <div class="form-group col-md-4 d-flex align-items-end">
-                          <button type="submit" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</button>
+                          <a href="/admin/promotions/promomail/{{Crypt::encrypt($offerproduct[0]["promo_code"] ?? null)}}" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</a>
                           <span id="sendMailButtonText"></span>
                       </div>
                   </div>

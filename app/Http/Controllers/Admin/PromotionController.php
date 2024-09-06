@@ -14,6 +14,7 @@ use Auth;
 use Carbon\Carbon;
 use App\Models\Admin\Transaction;
 use Illuminate\Support\Facades\Crypt;
+use App\Jobs\PromoJob;
 
 class PromotionController extends Controller
 {
@@ -391,6 +392,18 @@ class PromotionController extends Controller
           $this->transactionService->createOrUpdateTransac($mapped);
           
           return redirect('admin/promotions/promotion-transaction');
+
+      }
+
+      public function promomail($id){
+        
+        $promo_code = Crypt::decrypt($id);
+        $details["promo_deatails"] = $this->promotionService->getPromoDeatils($promo_code);
+        $details['email'] = 'lobojeanz@gmail.com';
+        // dispatch(new  App\Http\Controllers\Admin\Jobs\PromoJob($details));
+        // dispatch(new App\Jobs\PromoJob($details));
+        $promojob=PromoJob::dispatch($details);
+        return response()->json(['message'=>'Mail Send Successfully!!']);
 
       }
 

@@ -224,6 +224,17 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
     Route::post('/dealer-search',[DealerController::class,'dealerSearch'])->name('item-search');
     Route::post('/upload-dealer',[DealerController::class,'uploadDealer'])->name('upload-dealer');
+
+    // Route::get('/send-promo-email', function(){
+    //     $details['email'] = 'lobojeanz@gmail.com';
+    //     dispatch(new App\Jobs\PromoJob($details));
+    //     return response()->json(['message'=>'Mail Send Successfully!!']);
+    // });
+
+    // Route::get('/promotions/promomail',  function () {  return view('mails.promomail');  });
+
+    Route::get('/promotions/promomail/{promocode}', [PromotionController::class, 'promomail']);
+
     Route::get('/roi', function () {  return view('Admin/roi');  });
 
     });
