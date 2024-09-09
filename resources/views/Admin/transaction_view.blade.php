@@ -237,10 +237,11 @@
                           <span id="changeStatusButtonText"></span>
                       </div>
                   
-                      {{-- <div class="form-group col-md-4 d-flex align-items-end">
-                          <button type="submit" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</button>
-                          <span id="sendMailButtonText"></span>
-                      </div> --}}
+                      <div class="form-group col-md-4 d-flex align-items-end">
+                        <a href="/admin/promotions/transactionmail/{{Crypt::encrypt($offerproduct[0]["order_id"] ?? null)}}" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</a>
+                          {{-- <button type="submit" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</button> --}}
+                          {{-- <span id="sendMailButtonText"></span> --}}
+                      </div>
 
                       <input type="hidden" name="model_number" id="dealer_code"  value="{{$offerproduct[0]["dealer_code"]}}" required>
                       <input type="hidden" name="model_number" id="promo_code"  value="{{$offerproduct[0]["promo_code"]}}" required>

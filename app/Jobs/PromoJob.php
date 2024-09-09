@@ -31,7 +31,18 @@ class PromoJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $email = new PromoMail();
+        $email = new PromoMail($this->details);
         Mail::to($this->details['email'])->send($email);
+    }
+
+
+    public function retryUntil()
+    {
+        return now()->addMinutes(1); // Retry for 10 minutes
+    }
+
+    public function maxAttempts()
+    {
+        return 5; // Allow 5 attempts before failing
     }
 }

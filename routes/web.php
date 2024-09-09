@@ -231,9 +231,11 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     //     return response()->json(['message'=>'Mail Send Successfully!!']);
     // });
 
-    // Route::get('/promotions/promomail',  function () {  return view('mails.promomail');  });
+    // Route::get('/promotions/promomailview/{promocode}',  function () {  return view('mails.promomail');  });
+    Route::get('/promotions/transactionmailview',  function () {  return view('mails.transactionmail');  });
 
     Route::get('/promotions/promomail/{promocode}', [PromotionController::class, 'promomail']);
+    Route::get('/promotions/transactionmail/{transactioncode}', [PromotionController::class, 'transactionmail']);
 
     Route::get('/roi', function () {  return view('Admin/roi');  });
 

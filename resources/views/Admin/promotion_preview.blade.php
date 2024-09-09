@@ -26,10 +26,13 @@
               <li class="breadcrumb-item active">Promotion Preview</li>
             </ol>
           </div>
+          @if(session('message'))
+          <span id="sendMailButtonText"><b style="color:green;">{{ session('message') }}</b></span>
+          @endif
         </div>
       </div><!-- /.container-fluid -->
     </section>
-
+  
     <!-- Main content -->
     <section class="content">
 
@@ -342,7 +345,9 @@
                      
                       <div class="form-group col-md-4 d-flex align-items-end">
                           <a href="/admin/promotions/promomail/{{Crypt::encrypt($offerproduct[0]["promo_code"] ?? null)}}" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</a>
-                          <span id="sendMailButtonText"></span>
+                          @if(session('message'))
+                          <span id="sendMailButtonText"><b style="color:green;">{{ session('message') }}</b></span>
+                          @endif
                       </div>
                   </div>
                   

@@ -397,15 +397,46 @@ class PromotionController extends Controller
 
       public function promomail($id){
         
-        $promo_code = Crypt::decrypt($id);
-        $details["promo_deatails"] = $this->promotionService->getPromoDeatils($promo_code);
-        $details['email'] = 'lobojeanz@gmail.com';
-        // dispatch(new  App\Http\Controllers\Admin\Jobs\PromoJob($details));
-        // dispatch(new App\Jobs\PromoJob($details));
-        $promojob=PromoJob::dispatch($details);
-        return response()->json(['message'=>'Mail Send Successfully!!']);
+      $cryptpromo = $id;
+      $promo_code = Crypt::decrypt($id);
+      $promotion = $this->promotionService->getPromoDeatilsWithStock($promo_code);
+      $details['focproduct'] = $promotion->where('product_type','FOC')->values();
+      $details['offerproduct'] = $promotion->where('product_type','Offer Product')->values();
+      $details['textfromatmodelqty'] = $this->textFormatModelQty( $details['offerproduct']->toArray(),$details['focproduct']->toArray());
+      $details['email'] = 'lobojeanz@gmail.com';
+      
+      try {
+        $promojob = PromoJob::dispatch($details);
+      } catch (\Exception $e) {
+        Log::error($e->getMessage());
+
+        return redirect()->route('admin.promotions.promotion-preview',['promocode' => $cryptpromo])->with('message', 'Failed to send promo mail. Please try again.');
+      }
+
+       return redirect()->route('admin.promotions.promotion-preview',['promocode' => $cryptpromo])->with('message', 'Mail Send Successfully!!');
 
       }
+
+      public function transactionmail($id){
+
+      $crypttransaction = $id;
+      $order_id = Crypt::decrypt($id);
+      $transaction = $this->transactionService->getTransactionDetails($order_id);
+      $details['focproduct'] = $transaction->where('product_type','FOC')->values();
+      $details['offerproduct'] = $transaction->where('product_type','Offer Product')->values();
+      $details['email'] = 'lobojeanz@gmail.com';
+
+      try {
+        $promojob = PromoJob::dispatch($details);
+      } catch (\Exception $e) {
+        Log::error($e->getMessage());
+
+        return redirect()->route('promotions.transaction-preview',['orderid' => $crypttransaction])->with('message', 'Failed to send promo mail. Please try again.');
+      }
+
+       return redirect()->route('promotions.transaction-preview',['orderid' =>   $crypttransaction])->with('message', 'Mail Send Successfully!!');
+
+      }  
 
       public function filter_data_by_offer_type($offer_type,$data){
 

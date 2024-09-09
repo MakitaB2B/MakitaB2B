@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {{-- <title>Document</title> --}}
     <style>
         /* General Styling */
         body {
@@ -49,65 +51,63 @@
             font-weight: bold;
             color: #444;
         }
+        .red{
+            color:red;
+        }
     </style>
 </head>
 <body>
 
-    <p>We would like to approve the following promotion.</p>
+    <p><b>Dear MD,</b></p>
 
-    {{-- You can uncomment and use the following text format model and quantity if needed --}}
-    <p>{{ $details['textfromatmodelqty'] }}</p>
+    <p>I have applied for the following PROMO.</p>
+    <p class="red">**This is Auto Approval Applicable PROMO.**</p>
+    <p><small>Auto Approved by system.</small></p>
+    <p class="red"><b>102 set(s) / no(s) left for the promotional campaign.</b></p>
 
-    {{-- You can also use the stock information if needed --}}
-    <p>{{ $details['offerproduct'][0]["stock"] }} No's of {{ $details['offerproduct'][0]["model_no"] }} available.</p>
+    <p><u>Detail</u></p>
 
-    <p>Please check the link below to view the Promotion Preview:</p>
-
-    {{-- Uncomment the link below when needed --}}
-    
-    <p>
-      <a href="{{ url('http://127.0.0.1:8080/admin/promotions/promotion-preview/' . Crypt::encrypt($details['offerproduct'][0]["promo_code"] ?? null)) }}" class="link-black text-sm">
-        <i class="fas fa-link mr-1"></i> Promotion Preview
-      </a>
-    </p>
-    <p>PROMO NO - {{ $details['offerproduct'][0]->promo_code }}</p> 
-   
+    <table>
+        <thead>
+          <tr>
+            <th>Promo Code</th>
+            <th>Dealer Code</th>
+            <th>Dealer Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{-- @foreach($details['offerproduct'] as $offer) --}}
+          <tr>
+            <td>Promo Code</td>
+            <td>Dealer Code</td>
+            <td>Dealer Name</td>
+          </tr>
+          {{-- @endforeach --}}
+        </tbody>
+    </table>
 
     <h3 class="table-heading">Offer Product(s)</h3>
     <table>
       <thead>
         <tr>
           <th>Offer Model</th>
-          <th>MRP</th>
-          <th>DLP</th>
-          <th>BEST</th>
-          <th>SPECIAL</th>
-          <th>TOTAL STOCK</th>
-          <th>HO</th>
-          <th>DELHI</th>
-          <th>Gujarat</th>
-          <th>Kerala</th>
-          <th>Chennai</th>
-          <th>Kolkata</th>
+          <th>Desscription</th>
+          <th>Price Type</th>
+          <th>Price</th>
+          <th>Qty</th>
         </tr>
       </thead>
       <tbody>
-        @foreach($details['offerproduct'] as $offer)
+        {{-- @foreach($details['offerproduct'] as $offer) --}}
         <tr>
-          <td>{{ $offer->model_no }}</td>
-          <td>{{ $offer->mrp }}</td>
-          <td>{{ $offer->dlp }}</td>
-          <td>{{ $offer->best }}</td>
-          <td>{{ $offer->price ?? '-' }}</td>
-          <td>{{ $offer->stock }}</td>
-          <td>{{ $offer->ka01 ?? '-' }}</td>
-          <td>{{ $offer->dl01 ?? '-' }}</td>
-          <td>{{ $offer->gj01 ?? '-' }}</td>
-          <td>{{ $offer->kl01 ?? '-' }}</td>
-          <td>{{ $offer->tn01 ?? '-' }}</td>
-          <td>{{ $offer->wb01 ?? '-' }}</td>
+          <td>Offer Model</td>
+          <td>Offer Model</td>
+          <td>Offer Model</td>
+          <td>Offer Model</td>
+          <td>Offer Model</td>
+          
         </tr>
-        @endforeach
+        {{-- @endforeach --}}
       </tbody>
     </table>
 
@@ -120,17 +120,18 @@
           <th>DLP</th>
           <th>BEST</th>
           <th>SPECIAL</th>
-          <th>TOTAL STOCK</th>
-          <th>HO</th>
-          <th>DELHI</th>
-          <th>Gujarat</th>
-          <th>Kerala</th>
-          <th>Chennai</th>
-          <th>Kolkata</th>
         </tr>
       </thead>
       <tbody>
-        @foreach($details['focproduct'] as $offer)
+
+        <tr>
+            <td>Offer Model</td>
+            <td>Offer Model</td>
+            <td>Offer Model</td>
+            <td>Offer Model</td>
+            <td>Offer Model</td>
+        </tr>
+        {{-- @foreach($details['focproduct'] as $offer)
         <tr>
           <td>{{ $offer->model_no }}</td>
           <td>{{ $offer->mrp }}</td>
@@ -145,9 +146,10 @@
           <td>{{ $offer->tn01 ?? '-' }}</td>
           <td>{{ $offer->wb01 ?? '-' }}</td>
         </tr>
-        @endforeach
+        @endforeach --}}
       </tbody>
     </table>
+    <p>Please check here.</p>
 
 </body>
 </html>
