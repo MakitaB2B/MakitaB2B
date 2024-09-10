@@ -238,9 +238,8 @@
                       </div>
                   
                       <div class="form-group col-md-4 d-flex align-items-end">
-                        <a href="/admin/promotions/transactionmail/{{Crypt::encrypt($offerproduct[0]["order_id"] ?? null)}}" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</a>
-                          {{-- <button type="submit" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</button> --}}
-                          {{-- <span id="sendMailButtonText"></span> --}}
+                          <button type="submit" class="btn btn-primary btn-lg float-right" id="sendMailButton" data-order-id="{{Crypt::encrypt($offerproduct[0]["order_id"] ?? null)}}">Send Mail</button>
+                          <span id="sendMailButtonText"></span>
                       </div>
 
                       <input type="hidden" name="model_number" id="dealer_code"  value="{{$offerproduct[0]["dealer_code"]}}" required>
@@ -269,13 +268,12 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
       $(document).ready(function() {
+
           $('#changeStatusButton').on('click', function() {
             $("#exampleTransactionStatus").empty();
               var status = $('#exampleStatus').val();
               var dealer_code = $('#dealer_code').val();
               var promo_code = $('#promo_code').val();
-
-              console.log(dealer_code,promo_code);
               
               $.ajax({
                   url: '{{ route("transaction.change-status") }}', 
@@ -296,6 +294,30 @@
                   }
               });
           });
+
+          $('#sendMailButton').on('click', function() {
+            $("#sendMailButtonText").empty();
+            var currentDomain = window.location.origin;
+            var orderid = $(this).data('order-id');  // Get the encrypted promo code from the data attribute
+              $.ajax({
+                  url: currentDomain+'/admin/promotions/transactionmail/' + orderid, 
+                  type: 'GET',
+                  // data: {
+                  //     status: status,
+                  //     _token: '{{ csrf_token() }}'
+                  // },
+                  success: function(response) {
+
+                    $("#sendMailButtonText").html('<b style="color:green;">'+ response.message +'</b>');
+  
+                  },
+                  error: function(xhr, status, error) {
+      
+                  }
+              });
+          });
+
+
       });
   </script>
   

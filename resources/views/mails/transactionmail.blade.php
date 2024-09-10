@@ -90,22 +90,25 @@
         <tr>
           <th>Offer Model</th>
           <th>Description</th>
+          <th>Offer Type</th>
+          <th>Product Type</th>
           <th>Price Type</th>
           <th>Price</th>
           <th>Qty</th>
         </tr>
       </thead>
       <tbody>
-        {{-- @foreach($details['offerproduct'] as $offer) --}}
+        @foreach($details['offerproduct'] as $offer)
         <tr>
-          <td>Offer Model</td>
-          <td>Offer Model</td>
-          <td>Offer Model</td>
-          <td>Offer Model</td>
-          <td>Offer Model</td>
-          
+          <td>{{ $offer["model_no"] }}</td>
+          <td>{{ $offer["description"] }}</td>
+          <td>{{ $offer["offer_type"] }}</td>
+          <td>{{ $offer["product_type"] }}</td>
+          <td>{{ $offer["price_type"] }}</td>
+          <td>{{ $offer["order_price"] }}</td>
+          <td>{{ $offer["order_qty"] }}</td>
         </tr>
-        {{-- @endforeach --}}
+        @endforeach
       </tbody>
     </table>
 
@@ -114,44 +117,32 @@
       <thead>
         <tr>
           <th>Offer Model</th>
-          <th>Desscription</th>
+          <th>Description</th>
+          <th>Offer Type</th>
+          <th>Product Type</th>
           <th>Price Type</th>
           <th>Price</th>
           <th>Qty</th>
         </tr>
       </thead>
       <tbody>
-
+        @foreach($details['focproduct'] as $offer)
         <tr>
-            <td>Offer Model</td>
-            <td>Offer Model</td>
-            <td>Offer Model</td>
-            <td>Offer Model</td>
-            <td>Offer Model</td>
+          <td>{{ $offer["model_no"] }}</td>
+          <td>{{ $offer["description"] }}</td>
+          <td>{{ $offer["offer_type"] }}</td>
+          <td>{{ $offer["product_type"] }}</td>
+          <td>{{ $offer["price_type"] }}</td>
+          <td>{{ $offer["order_price"] }}</td>
+          <td>{{ $offer["order_qty"] }}</td>
         </tr>
-        {{-- @foreach($details['focproduct'] as $offer)
-        <tr>
-          <td>{{ $offer->model_no }}</td>
-          <td>{{ $offer->mrp }}</td>
-          <td>{{ $offer->dlp }}</td>
-          <td>{{ $offer->best }}</td>
-          <td>{{ $offer->price ?? '-' }}</td>
-          <td>{{ $offer->stock }}</td>
-          <td>{{ $offer->ka01 ?? '-' }}</td>
-          <td>{{ $offer->dl01 ?? '-' }}</td>
-          <td>{{ $offer->gj01 ?? '-' }}</td>
-          <td>{{ $offer->kl01 ?? '-' }}</td>
-          <td>{{ $offer->tn01 ?? '-' }}</td>
-          <td>{{ $offer->wb01 ?? '-' }}</td>
-        </tr>
-        @endforeach --}}
+        @endforeach 
       </tbody>
     </table>
     <p>Please check here.</p>
 
     <p>
-      {{-- {{ url('admin/promotions/transaction-preview/') }}/{{ Crypt::encrypt($list->order_id) }} --}}
-      <a href="" class="link-black text-sm">
+      <a href="{{ url('http://127.0.0.1:8080/admin/promotions/transaction-preview') }}/{{ Crypt::encrypt($details['offerproduct'][0]['order_id']) }}" class="link-black text-sm">
         <i class="fas fa-link mr-1"></i> Transaction View
       </a>
     </p>

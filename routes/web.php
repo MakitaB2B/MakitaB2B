@@ -234,8 +234,8 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     // Route::get('/promotions/promomailview/{promocode}',  function () {  return view('mails.promomail');  });
     // Route::get('/promotions/transactionmailview',  function () {  return view('mails.transactionmail');  });
 
-    Route::get('/promotions/promomail/{promocode}', [PromotionController::class, 'promomail']);
-    Route::get('/promotions/transactionmail/{transactioncode}', [PromotionController::class, 'transactionmail']);
+    Route::get('/promotions/promomail/{promocode}', [PromotionController::class, 'promomail'])->name('promomail');
+    Route::get('/promotions/transactionmail/{transactioncode}', [PromotionController::class, 'transactionmail'])->name('transactionmail');
 
     Route::get('/roi', function () {  return view('Admin/roi');  });
 

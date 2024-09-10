@@ -410,11 +410,12 @@ class PromotionController extends Controller
       } catch (\Exception $e) {
         Log::error($e->getMessage());
 
-        return redirect()->route('admin.promotions.promotion-preview',['promocode' => $cryptpromo])->with('message', 'Failed to send promo mail. Please try again.');
+        // return redirect()->route('admin.promotions.promotion-preview',['promocode' => $cryptpromo])->with('message', 'Failed to send promo mail. Please try again.');
+      return response()->json(['message' => $e->getMessage()]);
       }
 
-       return redirect()->route('admin.promotions.promotion-preview',['promocode' => $cryptpromo])->with('message', 'Mail Send Successfully!!');
-
+      //  return redirect()->route('admin.promotions.promotion-preview',['promocode' => $cryptpromo])->with('message', 'Mail Send Successfully!!');
+      return response()->json(['message' => "Promotion Mail Sent Successfully!"]);
       }
 
       public function transactionmail($id){
@@ -433,11 +434,12 @@ class PromotionController extends Controller
 
         Log::error($e->getMessage());
 
-        return redirect()->route('promotions.transaction-preview',['orderid' => $crypttransaction])->with('message', 'Failed to send promo mail. Please try again.');
+        // return redirect()->route('promotions.transaction-preview',['orderid' => $crypttransaction])->with('message', 'Failed to send promo mail. Please try again.');
+        return response()->json(['message' => $e->getMessage()]);
       }
 
-       return redirect()->route('promotions.transaction-preview',['orderid' =>   $crypttransaction])->with('message', 'Mail Send Successfully!!');
-
+      //  return redirect()->route('promotions.transaction-preview',['orderid' =>   $crypttransaction])->with('message', 'Mail Send Successfully!!');
+      return response()->json(['message' => "Transaction Mail Sent Successfully!"]);
       }  
 
       public function filter_data_by_offer_type($offer_type,$data){
