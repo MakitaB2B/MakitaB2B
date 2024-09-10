@@ -49,7 +49,7 @@ class TransactionService{
     public function getTransactionDetails($orderid){
 
         return Transaction::where('order_id',$orderid)
-        ->select('order_id','created_at','promo_code','product_type','model_no','price_type','offer_type','order_qty','offer_price','promo_code','rm_name','dealer_code','dealer_name','product_type','model_no','order_price','order_id','status')
+        ->select('order_id','created_at','promo_code','product_type','model_no','price_type','offer_type','order_qty','offer_price','promo_code','rm_name','dealer_code','dealer_name','product_type','model_no','order_price','order_id','status','stock',)
         ->get();
 
     }

@@ -8,13 +8,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Mail\PromoMail;
+use App\Mail\TransactionMail;
 use Mail;
-
-class PromoJob implements ShouldQueue
+class TransactionJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
     protected $details;
 
     /**
@@ -30,14 +28,13 @@ class PromoJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $email = new PromoMail($this->details);
+        $email = new TransactionMail($this->details);
         Mail::to($this->details['email'])->send($email);
     }
 
-
     public function retryUntil()
     {
-        return now()->addSeconds(20); //->addMinutes(1); // Retry for 10 minutes
+        return now()->addSeconds(20);  //->addMinutes(1); // Retry for 10 minutes
     }
 
     public function maxAttempts()

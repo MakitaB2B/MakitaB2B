@@ -63,7 +63,7 @@
     <p>I have applied for the following PROMO.</p>
     <p class="red">**This is Auto Approval Applicable PROMO.**</p>
     <p><small>Auto Approved by system.</small></p>
-    <p class="red"><b>102 set(s) / no(s) left for the promotional campaign.</b></p>
+    <p class="red"><b>{{$details['offerproduct'][0]["stock"]}} set(s) / no(s) left for the promotional campaign.</b></p>
 
     <p><u>Detail</u></p>
 
@@ -76,13 +76,11 @@
           </tr>
         </thead>
         <tbody>
-          {{-- @foreach($details['offerproduct'] as $offer) --}}
           <tr>
-            <td>Promo Code</td>
-            <td>Dealer Code</td>
-            <td>Dealer Name</td>
+            <td>{{ $details['offerproduct'][0]['promo_code'] }}</td>
+            <td>{{ $details['offerproduct'][0]['dealer_code'] }}</td>
+            <td>{{ $details['offerproduct'][0]['dealer_name'] }}</td>
           </tr>
-          {{-- @endforeach --}}
         </tbody>
     </table>
 
@@ -91,7 +89,7 @@
       <thead>
         <tr>
           <th>Offer Model</th>
-          <th>Desscription</th>
+          <th>Description</th>
           <th>Price Type</th>
           <th>Price</th>
           <th>Qty</th>
@@ -115,11 +113,11 @@
     <table>
       <thead>
         <tr>
-          <th>FOC Model</th>
-          <th>MRP</th>
-          <th>DLP</th>
-          <th>BEST</th>
-          <th>SPECIAL</th>
+          <th>Offer Model</th>
+          <th>Desscription</th>
+          <th>Price Type</th>
+          <th>Price</th>
+          <th>Qty</th>
         </tr>
       </thead>
       <tbody>
@@ -150,6 +148,13 @@
       </tbody>
     </table>
     <p>Please check here.</p>
+
+    <p>
+      {{-- {{ url('admin/promotions/transaction-preview/') }}/{{ Crypt::encrypt($list->order_id) }} --}}
+      <a href="" class="link-black text-sm">
+        <i class="fas fa-link mr-1"></i> Transaction View
+      </a>
+    </p>
 
 </body>
 </html>

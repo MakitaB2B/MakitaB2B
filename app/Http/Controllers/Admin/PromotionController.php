@@ -15,7 +15,7 @@ use Carbon\Carbon;
 use App\Models\Admin\Transaction;
 use Illuminate\Support\Facades\Crypt;
 use App\Jobs\PromoJob;
-
+use App\Jobs\TransactionJob;
 class PromotionController extends Controller
 {
     protected $promotionService;
@@ -424,11 +424,13 @@ class PromotionController extends Controller
       $transaction = $this->transactionService->getTransactionDetails($order_id);
       $details['focproduct'] = $transaction->where('product_type','FOC')->values();
       $details['offerproduct'] = $transaction->where('product_type','Offer Product')->values();
+      // $details['offerproductStock'] =  $this->transactionService->getTransactionWithStock($details['offerproduct'][0]["model_no"],$order_id);
       $details['email'] = 'lobojeanz@gmail.com';
 
       try {
-        $promojob = PromoJob::dispatch($details);
+        $transactionjob = TransactionJob::dispatch($details);
       } catch (\Exception $e) {
+
         Log::error($e->getMessage());
 
         return redirect()->route('promotions.transaction-preview',['orderid' => $crypttransaction])->with('message', 'Failed to send promo mail. Please try again.');
@@ -474,6 +476,6 @@ class PromotionController extends Controller
 
         return $finalString;
       
-    }
+      }
 
 }

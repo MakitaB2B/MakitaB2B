@@ -255,7 +255,7 @@
             type: 'get',
             data: 'promoID=' + promoID,
             success: function(result) {
-                console.log(result);
+
             let  promohtml='<h6 class="dacss">Offer Product<h6>' ;let fochtml='<h6 class="dacss">FOC Product<h6>';
             let hr =`<hr>`;
             result.data.forEach(option => {
