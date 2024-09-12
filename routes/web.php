@@ -179,6 +179,8 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/service-management/submit-tools-handover-data',[ToolsService::class,'insertToolstHandOverData'])->name('service-management.submit-tools-handover-data');
     Route::post('/service-management/close-sr',[ToolsService::class,'closeSR'])->name('service-management.close-sr');
     Route::post('/service-management/reason-over-48-hours',[ToolsService::class,'reasonOver48Hours'])->name('service-management.reason-over-48-hours');
+    Route::post('/service-management/repair-delayed-sms-48',[ToolsService::class,'repairdelayedsms48'])->name('service-management.repair-delayed-sms-48');
+    Route::post('/service-management/repair-complete-sms-24',[ToolsService::class,'repaircompletesms24'])->name('service-management.repair-complete-sms-24');
     Route::post('/service-management/export-asm-report-exel',[ToolsService::class,'aSMReportExportExcel'])->name('service-management.export-asm-report-exel');
     Route::get('/factory-service-center',[FactoryServiceStationController::class,'index']);
     Route::get('/fsc/manage-fsc/{fscslug?}',[FactoryServiceStationController::class,'manageFSC'])->name('fsc.manage-manage-fsc');
