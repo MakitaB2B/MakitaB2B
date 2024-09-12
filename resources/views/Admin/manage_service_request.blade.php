@@ -178,6 +178,70 @@
         </div>
     </div>
 
+    <!-- Repair Delayed SMS - Customer -->
+    <div class="modal" id="customer_delay_button">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h6 class="modal-title">Repair Delayed SMS - Customer</h6>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('service-management.repair-delayed-sms-48') }}"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label>Repair Delayed SMS - Customer*</label>
+                                <textarea class="form-control" name="repairdelayedsmscustomer" rows="5"
+                                    placeholder="Explain The Reason Why Repair Will Be Delayed To Customer" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <!-- /.card-body -->
+                        <input type="hidden" name="slug_repairdelayedsmscustomer" id="Slugrdsc48H" required> 
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Repair Complete SMS - Customer -->
+    <div class="modal" id="complete_repair_button">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h6 class="modal-title">Repair Complete SMS - Customer</h6>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('service-management.repair-complete-sms-24') }}"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label>Repair Complete SMS - Customer*</label>
+                                <textarea class="form-control" name="repaircompletesmscustomer" rows="5"
+                                    placeholder="Send An Intimation About Completion Of Repair To Customer" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <!-- /.card-body -->
+                        <input type="hidden" name="slug_repaircompletesmscustomer" id="Slugrdsc24H" required>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- The SR Close Modal -->
     <div class="modal" id="closeSRModal">
         <div class="modal-dialog">
@@ -523,12 +587,50 @@
                                             @endif
                                         @endif
 
+                                        @if ($customer_delay_button == "yes")
+                                        <div class="form-group col-md-4">
+                                            <label for="exampleInputGECFC">.</label>
+                                            <h4 class="text-center bg-info cp" data-toggle="modal"
+                                                data-target="#customer_delay_button" id="rdsc48">Repair Delayed SMS - Customer
+                                            </h4>
+                                        </div>
+                                        @endif
+
+                                        @if ($complete_repair_button == "yes")
+                                        <div class="form-group col-md-4">
+                                            <label>.</label>
+                                            <h4 class="text-center bg-warning cp" data-toggle="modal"
+                                                data-target="#complete_repair_button" id="rcsc24">Repair Complete SMS - Customer
+                                            </h4>
+                                        </div>
+                                        @endif
+
                                         @if ($reason_for_over_48h != null)
                                             <div class="form-group col-md-6">
                                                 <label>Reason for over 48 Hours</label>
                                                 <textarea class="form-control" rows="2" disabled>{{ $reason_for_over_48h }}</textarea>
                                             </div>
                                         @endif
+
+                                        @if ($repair_delayed_sms_customer != null)
+                                        <div class="form-group col-md-6">
+                                            <label>Repair delayed sms - customer</label>
+                                            @foreach ($repair_delayed_sms_customer as $repair_delayed_sms)
+                                            <textarea class="form-control mt-1" rows="1" disabled>{{ $repair_delayed_sms->delay_message }}</textarea>   
+                                            @endforeach
+                                        </div>
+                                        @endif
+
+                                        @if ($repair_complete_sms_customer != null)
+                                        <div class="form-group col-md-6">
+                                            <label>Repair Complete SMS - Customer</label>
+                                           @foreach ($repair_complete_sms_customer as $complete_sms_customer)
+                                            <textarea class="form-control mt-1" rows="1" disabled>{{ $complete_sms_customer->complete_message }}</textarea>
+                                            @endforeach 
+                                      
+                                        </div>
+                                        @endif
+
                                         @if ($part_number_reason_for_delay != null)
                                             <div class="form-group col-md-6">
                                                 <label>Part Number Reason For Delayed</label>
@@ -644,6 +746,16 @@
                 $("#trf48h").click(function() {
                     var srSlug = $.trim($("#srSlug").val());
                     $("#srSlugTRF48H").val(srSlug);
+                });
+                $("#rdsc48").click(function() {
+                    var srSlug = $.trim($("#srSlug").val());
+                    console.log(srSlug);
+                    $("#Slugrdsc48H").val(srSlug);
+                });
+                $("#rcsc24").click(function() {
+                    var srSlug = $.trim($("#srSlug").val());
+                    console.log(srSlug);
+                    $("#Slugrdsc24H").val(srSlug);
                 });
                 //Date and time picker
                 $('#reservationdatetime').datetimepicker({

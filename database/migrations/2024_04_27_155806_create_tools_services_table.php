@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tools_services', function (Blueprint $table) {
+        Schema::table('tools_services', function (Blueprint $table) {
+            if (!Schema::hasColumn('tools_services','id')) {
             $table->id();
             $table->string('cx_slug',50)->comment('Customer Slug');
             $table->string('trn',20)->index()->unique();
@@ -38,10 +39,22 @@ return new class extends Migration
             $table->text('repair_parts_details')->nullable();
             $table->text('reason_for_over_48h')->nullable();
             $table->text('part_number_reason_for_delay')->nullable();
+            }
+            if (!Schema::hasColumn('tools_services','repairdelayedsmscustomer')) {
+                $table->text('repairdelayedsmscustomer')->nullable()->after('part_number_reason_for_delay');
+            }
+            if (!Schema::hasColumn('tools_services','repaircompletesmscustomer')) {
+                $table->text('repaircompletesmscustomer')->nullable()->after('repairdelayedsmscustomer');
+            }
+            if (!Schema::hasColumn('tools_services','repair_complete_sms_count')) {
+                $table->tinyInteger('repair_complete_sms_count')->default(0)->after('repaircompletesmscustomer');
+            }
+            if (!Schema::hasColumn('tools_services','id')) {
             $table->text('sr_closing_reason')->nullable();
             $table->string('sr_slug',20)->unique();
             $table->string('last_updatedByemp',20)->nullable();
             $table->timestamps();
+            }
         });
     }
 
