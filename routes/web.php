@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\EmployeeLeaveApplicationController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\DealerController;
 use App\Http\Controllers\Admin\ItemInfoController;
+use App\Http\Controllers\Admin\BilledTransactionController;
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
 
@@ -224,7 +225,9 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
     Route::post('/dealer-search',[DealerController::class,'dealerSearch'])->name('item-search');
     Route::post('/upload-dealer',[DealerController::class,'uploadDealer'])->name('upload-dealer');
-
+    Route::get('/billed-transactions',[BilledTransactionController::class,'index'])->name('billed-transactions');
+    Route::post('/upload-billed-transaction',[BilledTransactionController::class,'uploadBilledTransaction'])->name('upload-billed-transaction');
+    // 
     // Route::get('/send-promo-email', function(){
     //     $details['email'] = 'lobojeanz@gmail.com';
     //     dispatch(new App\Jobs\PromoJob($details));
@@ -236,7 +239,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
 
     Route::get('/promotions/promomail/{promocode}', [PromotionController::class, 'promomail'])->name('promomail');
     Route::get('/promotions/transactionmail/{transactioncode}', [PromotionController::class, 'transactionmail'])->name('transactionmail');
-
+ 
     Route::get('/roi', function () {  return view('Admin/roi');  });
 
     });
