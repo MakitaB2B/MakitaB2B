@@ -122,6 +122,7 @@ class PromotionService{
           $join->on('promotions.model_no', '=', 't.model_no');
       })
       ->where('promotions.promo_code', $promocode)
+      ->orderBy('promotions.product_type','asc')
       ->select(
           'promotions.from_date', 'promotions.promo_code', 'promotions.to_date', 'promotions.product_type',
           'promotions.model_no', 'promotions.model_desc', 'promotions.price_type', 'promotions.offer_type',
