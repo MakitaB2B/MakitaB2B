@@ -50,10 +50,10 @@
                                     <div class="input-group input-group-sm">
                                         <select class="custom-select" id="stype">
                                             <option value="">Select Option</option>
-                                            <option value="customer" selected="selected">Customer</option>
+                                            <option value="invoice" selected="selected">Invoice</option>
                                             <option value="name">Name</option>
-                                            <option value="status">Status</option>
-                                            <option value="commercial_status">Commercial Status</option>
+                                            <option value="invoice date">Invoice Date</option>
+                                            <option value="transaction_id">Transaction Id</option>
                                         </select>
                                         <input type="text" name="table_search" class="form-control float-right"
                                             placeholder="Search by Item" id="searchtxt">
@@ -71,32 +71,41 @@
                                 <table class="table table-head-fixed table-bordered table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Day</th>
                                             <th>Invoice</th>
                                             <th>Name</th>
-                                            <th>Planner Code</th>
                                             <th>Invoice Date</th>
-                                            <th>Customer</th>
-                                            <th>Site</th>
-                                            <th>Salesperson</th> 
+                                            <th><b>Transaction Id</b></th>
+                                            <th>Promo Code</th>
+                                            <th>Order</th>
+                                            <th>Item</th>
+                                            <th>Description</th> 
+                                            <th>Qty Invoiced</th> 
+                                            <th>Price</th> 
+                                            <th>Created At</th>
+                                            <th>Updated At</th>
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
-                                     {{-- @foreach ($result as $key => $data)
-                                         
+                                     @foreach ($result as $key => $data)
                                             <tr>
-                                                <td>{{ $data->Customer }}</td>
+                                                <td>{{ $data->Invoice }}</td>
                                                 <td>{{ $data->Name }}</td>
-                                                <td>{{ $data->status }}</td>
-                                                <td>{{ $data->commercial_status }}</td>
-                                                <td>{{($data->created_at)}}</td>
+                                                <td>{{ ($data->{"Invoice Date"}) }} </td>
+                                                <td>{{ $data->order_id }}</td>
+                                                <td>{{ $data->promo_code }}</td>
+                                                <td>{{ $data->Order }}</td>
+                                                <td>{{ $data->Item }}</td>
+                                                <td>{{ $data->Description }}</td>
+                                                <td>{{ ($data->{"Qty Invoiced"}) }}</td>
+                                                <td>{{ $data->Price }}</td>
+                                                <td>{{ $data->created_at }}</td>
+                                                <td>{{ $data->updated_at }}</td>
                                             </tr>
-
-                                    @endforeach  --}}
+                                    @endforeach 
                                     </tbody>
                                 </table>
                                 <div class="d-flex justify-content-center" style="margin-top:15px">
-                                    {{-- {!! $result->links() !!} --}}
+                                    {!! $result->links() !!}
                                 </div>
                             </div>
                             <!-- /.card-body -->

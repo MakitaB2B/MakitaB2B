@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
+            if (!Schema::hasColumn('transactions', 'id')) {
             $table->id();
             $table->string('transaction_slug',50)->unique();
             $table->string('from_date');
@@ -42,8 +43,14 @@ return new class extends Migration
             $table->string('status');
             $table->string('modified_by');
             $table->string('order_date');
+            }
+            if (!Schema::hasColumn('transactions', 'billed_qty')) {
+            $table->integer('billed_qty')->nullable()->after('order_date'); // Add 'billed_qty' column after 'order_qty'
+            }
+            if (!Schema::hasColumn('transactions', 'id')) {
             $table->timestamp('created_at')->default(date('Y-m-d H:i:s')); //->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(date('Y-m-d H:i:s')); //->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            }
             // $table->timestamps();
         });
     }
