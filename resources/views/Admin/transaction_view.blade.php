@@ -134,6 +134,10 @@
                         <input type="text" id="inputName" class="form-control" style="border: 2px solid black;" value="{{$offer->order_price}}" >
                       </div>
                       <div class="form-group col-md-6">
+                        <label for="inputName">Billed Qty</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->billed_qty}}" >
+                      </div>
+                      <div class="form-group col-md-6">
                         <label for="inputName">Status</label>
                         <input type="text" id="inputName" class="form-control" value="{{$offer->status}}" >
                       </div>
@@ -200,6 +204,10 @@
                       <div class="form-group col-md-6">
                         <label for="inputName">Order Price</label>
                         <input type="text" id="inputName" class="form-control" style="border: 2px solid black;" value="{{$offer->order_price}}" >
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Billed Qty</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->billed_qty}}" >
                       </div>
                       <div class="form-group col-md-6">
                         <label for="inputName">Status</label>

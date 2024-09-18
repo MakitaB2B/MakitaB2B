@@ -80,10 +80,10 @@
                                         </div>
 
                                         <div class="form-group col-md-2">
-                                            <label for="exampleRmname">Name*</label>
+                                            <label for="exampleRmname">Regional Manager Name*</label>
                                             <select class="custom-select select2" name="rm_name" required id="exampleRmname">
                                                 @foreach ($regional_manager as $item)
-                                                <option value="{{$item->rm_name}}">{{$item->rm_name}}</option>
+                                                <option value="{{$item->full_name}}">{{$item->full_name}}</option>
                                                 @endforeach
                                             </select>
                                             @error('rm_name')

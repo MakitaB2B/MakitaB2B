@@ -26,13 +26,13 @@ class BilledTransactionController extends Controller
     }
 
     public function uploadBilledTransaction(Request $request){
-
+        
         if (request()->has('mycsv')) {
 
         $data = array_map('str_getcsv', file(request()->mycsv));
 
         array_shift($data);
-
+        DB::transaction(function () use($data) {
         $header = array_map('trim', array_shift($data));
            
             set_time_limit(0);
@@ -60,7 +60,7 @@ class BilledTransactionController extends Controller
             $billedData[] = $consistentRecord;
            
             if (count($billedData) >= $batchSize) {
-       
+               
                 BilledTransaction::insert($billedData);
                
                 $billedData= []; 
@@ -73,11 +73,11 @@ class BilledTransactionController extends Controller
         }
 
         $changedstatus = $this->changeStatusToBilled();
-
+        }); 
         return redirect('admin/billed-transactions');
       }
 
-
+   
     }
 
     public function changeStatusToBilled(){

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\PromotionService;
 use App\Services\TransactionService;
-use App\Services\RegionalMangerService;
+use App\Services\EmployeeService;
 use App\Services\DealerService;
 use App\Services\DealerCancelledService;
 use App\Models\Admin\BranchStocks;
@@ -21,10 +21,10 @@ class PromotionController extends Controller
     protected $promotionService;
     protected $transactionService;
 
-    public function __construct(PromotionService $promotionService,TransactionService $transactionService,RegionalMangerService $regionalManager,DealerService $dealerService,DealerCancelledService $dealerCancelledService){
+    public function __construct(PromotionService $promotionService,TransactionService $transactionService,EmployeeService $employeeService,DealerService $dealerService,DealerCancelledService $dealerCancelledService){
       $this->promotionService=$promotionService;
       $this->transactionService=$transactionService;
-      $this->regionalManager=$regionalManager;
+      $this->employeeService=$employeeService;
       $this->dealerService=$dealerService;
       $this->dealerCancelledService=$dealerCancelledService;
     }
@@ -165,9 +165,10 @@ class PromotionController extends Controller
         return response()->json(['data' => $result]);
     }
     public function transactionCreation(){
-
+      $designation='regional manager';
+      $department='sales';
       $result['promo_code']=$this->promotionService->activePromotion();
-      $result['regional_manager']=$this->regionalManager->rmNames();
+      $result['regional_manager']= $this->employeeService->getEmployeeByDesignation($designation,$department);  //$this->regionalManager->rmNames();
       $result['dealer_master']=$this->dealerService->getDealers();
 
       return view('Admin.promotion_transaction',$result);
