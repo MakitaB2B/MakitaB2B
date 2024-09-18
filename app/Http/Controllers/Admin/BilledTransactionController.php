@@ -8,6 +8,7 @@ use App\Services\BilledTransactionService;
 use Carbon\Carbon;
 use App\Models\Admin\BilledTransaction;
 use Illuminate\Support\Facades\DB;
+use App\Models\Admin\Transaction;
 
 class BilledTransactionController extends Controller
 {
@@ -79,29 +80,103 @@ class BilledTransactionController extends Controller
 
     }
 
-    public function changeStatusToBilled(Request $request){
+    public function changeStatusToBilled(){
+            
+        // DB::enableQueryLog();
 
-        DB::table('transactions as t')
-        ->join(DB::raw('(SELECT order_id,Item, SUM(Qty Invoiced) as total_qty FROM billed_transactions GROUP BY order_id, model_no) as bt'), function ($join) {
-            $join->on('t.order_id', '=', 'bt.order_id')
-                 ->on('t.model_no', '=', 'bt.Item')
-                 ->on('t.promo_code', '=', 'bt.promo_code')
-                 ;
+        //-----------built query
+
+        // $start_date = now()->subDays(7)->toDateString();
+        // $end_date = now()->toDateString();
+
+        // $billedTransactionQuery = Transaction::join('billed_transactions', function($join) {
+        //     $join->on('billed_transactions.order_id', '=', 'transactions.order_id')
+        //          ->on('billed_transactions.Item', '=', 'transactions.model_no')
+        //          ->on('billed_transactions.promo_code', '=', 'transactions.promo_code');
+        // })
+        // ->select(
+        //     'billed_transactions.order_id', 
+        //     'billed_transactions.Item',
+        //     'billed_transactions.created_at', 
+        //     DB::raw('SUM(billed_transactions.`Qty Invoiced`) AS total_qty') // Use DB::raw for aggregate functions
+        // )
+        // ->groupBy(
+        //     'billed_transactions.order_id', 
+        //     'billed_transactions.Item',
+        //     'billed_transactions.created_at'
+        // )
+        // ->whereBetween('billed_transactions.created_at', [ $start_date, $end_date])
+        // ->update([
+        //     'transactions.status' => DB::raw("
+        //         CASE 
+        //             WHEN transactions.order_qty = total_qty THEN 'billed'
+        //             WHEN transactions.created_at < NOW() - INTERVAL 7 DAY THEN 'cancelled'
+        //             ELSE transactions.status
+        //         END
+        //     "),
+          
+        //     'transactions.billed_qty' => DB::raw("
+        //         CASE
+        //             WHEN transactions.order_qty != total_qty THEN total_qty
+        //             ELSE total_qty
+        //         END
+        //     ")
+        // ]);
+        // ->get();
+    
+       //-----------built query
+        $start_date = now()->subDays(7)->toDateString();
+        $end_date = now()->toDateString();
+        
+        Transaction::join('billed_transactions', function($join) {
+            $join->on('billed_transactions.order_id', '=', 'transactions.order_id')
+                 ->on('billed_transactions.Item', '=', 'transactions.model_no')
+                 ->on('billed_transactions.promo_code', '=', 'transactions.promo_code');
         })
-        ->where(function ($query) {
-            $query->whereColumn('t.order_qty', 'bt.total_qty')
-                  ->orWhere('bt.created_at', '<', now()->subDays(7));
-        })
+        ->whereBetween('billed_transactions.created_at', [$start_date, $end_date])
         ->update([
-            't.status' => DB::raw("
+            'transactions.status' => DB::raw("
                 CASE 
-                    WHEN t.order_qty = bt.total_qty THEN 'billed'
-                    WHEN t.created_at < NOW() - INTERVAL 7 DAY THEN 'cancelled'
-                    ELSE t.status
+                    WHEN transactions.order_qty = (
+                        SELECT SUM(bt.`Qty Invoiced`) 
+                        FROM billed_transactions as bt 
+                        WHERE bt.order_id = transactions.order_id 
+                        AND bt.Item = transactions.model_no 
+                        AND bt.promo_code = transactions.promo_code
+                    ) THEN 'billed'
+                    WHEN transactions.created_at < NOW() - INTERVAL 7 DAY THEN 'cancelled'
+                    ELSE transactions.status
+                END
+            "),
+          
+            'transactions.billed_qty' => DB::raw("
+                CASE
+                    WHEN transactions.order_qty != (
+                        SELECT SUM(bt.`Qty Invoiced`) 
+                        FROM billed_transactions as bt 
+                        WHERE bt.order_id = transactions.order_id 
+                        AND bt.Item = transactions.model_no 
+                        AND bt.promo_code = transactions.promo_code
+                    ) THEN (
+                        SELECT SUM(bt.`Qty Invoiced`) 
+                        FROM billed_transactions as bt 
+                        WHERE bt.order_id = transactions.order_id 
+                        AND bt.Item = transactions.model_no 
+                        AND bt.promo_code = transactions.promo_code
+                    )
+                    ELSE (
+                        SELECT SUM(bt.`Qty Invoiced`) 
+                        FROM billed_transactions as bt 
+                        WHERE bt.order_id = transactions.order_id 
+                        AND bt.Item = transactions.model_no 
+                        AND bt.promo_code = transactions.promo_code
+                    )
                 END
             ")
         ]);
-    
+        
 
+        // dd(DB::getQueryLog());
+    
     }    
 }
