@@ -46,7 +46,7 @@ use App\Http\Controllers\Front\CustomerLoginRegistrationController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
 });
 /*-----Start Front Route-----*/
 Route::get('/cx-login',[CustomerLoginRegistrationController::class,'cxLoginView'])->name('cxlogin');
