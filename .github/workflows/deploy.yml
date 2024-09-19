@@ -20,7 +20,7 @@ jobs:
 
       - name: Add /var/www/html/MakitaB2B as a safe Git directory
         run: |
-          git config --global --add safe.directory /var/www/html/MakitaB2B
+          git config --global --add safe.directory '*'
         continue-on-error: true  # Continue even if this fails to debug
 
       - name: Debug ownership of /var/www/html/MakitaB2B
