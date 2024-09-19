@@ -27,7 +27,7 @@ jobs:
         run: |
           ls -ld /var/www/html/MakitaB2B
           ls -la /var/www/html/MakitaB2B/.git
-        continue-on-error: true  # Continue and log the output to help with debugging
+        continue-on-error: true  # Continue and log the output to help with debugging ..
 
       - name: Clone repository if not a git repository
         if: steps.check_repo.outputs.is_git_repo == 'false'
