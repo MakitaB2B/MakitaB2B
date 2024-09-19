@@ -64,7 +64,7 @@
                   <div class="info-box bg-light">
                     <div class="info-box-content">
                       <span class="info-box-text text-center text-muted">Promo Code</span>
-                      <span class="info-box-number text-center text-muted mb-0">{{$offerproduct[0]["promo_code"] ?? null }}</span>
+                      <span class="info-box-number text-center text-muted mb-0" >{{$offerproduct[0]["promo_code"] ?? null }}</span>
                     </div>
                   </div>
                 </div>
@@ -132,6 +132,10 @@
                       <div class="form-group col-md-6">
                         <label for="inputName">Order Price</label>
                         <input type="text" id="inputName" class="form-control" style="border: 2px solid black;" value="{{$offer->order_price}}" >
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Billed Qty</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->billed_qty}}" >
                       </div>
                       <div class="form-group col-md-6">
                         <label for="inputName">Status</label>
@@ -202,6 +206,10 @@
                         <input type="text" id="inputName" class="form-control" style="border: 2px solid black;" value="{{$offer->order_price}}" >
                       </div>
                       <div class="form-group col-md-6">
+                        <label for="inputName">Billed Qty</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->billed_qty}}" >
+                      </div>
+                      <div class="form-group col-md-6">
                         <label for="inputName">Status</label>
                         <input type="text" id="inputName" class="form-control" value="{{$offer->status}}" >
                       </div>
@@ -237,10 +245,13 @@
                           <span id="changeStatusButtonText"></span>
                       </div>
                   
-                      {{-- <div class="form-group col-md-4 d-flex align-items-end">
-                          <button type="submit" class="btn btn-primary btn-lg float-right" id="sendMailButton">Send Mail</button>
+                      <div class="form-group col-md-4 d-flex align-items-end">
+                          <button type="submit" class="btn btn-primary btn-lg float-right" id="sendMailButton" data-order-id="{{Crypt::encrypt($offerproduct[0]["order_id"] ?? null)}}">Send Mail</button>
                           <span id="sendMailButtonText"></span>
-                      </div> --}}
+                      </div>
+
+                      <input type="hidden" name="model_number" id="dealer_code"  value="{{$offerproduct[0]["dealer_code"]}}" required>
+                      <input type="hidden" name="model_number" id="promo_code"  value="{{$offerproduct[0]["promo_code"]}}" required>
                   </div>
                   
                   </div>
@@ -265,16 +276,21 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
       $(document).ready(function() {
+
           $('#changeStatusButton').on('click', function() {
             $("#exampleTransactionStatus").empty();
               var status = $('#exampleStatus').val();
-  
+              var dealer_code = $('#dealer_code').val();
+              var promo_code = $('#promo_code').val();
+              
               $.ajax({
                   url: '{{ route("transaction.change-status") }}', 
                   type: 'POST',
                   data: {
                       status: status,
-                      _token: '{{ csrf_token() }}'
+                      _token: '{{ csrf_token() }}',
+                      dealer_code: dealer_code,
+                      promo_code: promo_code
                   },
                   success: function(response) {
 
@@ -286,6 +302,30 @@
                   }
               });
           });
+
+          $('#sendMailButton').on('click', function() {
+            $("#sendMailButtonText").empty();
+            var currentDomain = window.location.origin;
+            var orderid = $(this).data('order-id');  // Get the encrypted promo code from the data attribute
+              $.ajax({
+                  url: currentDomain+'/admin/promotions/transactionmail/' + orderid, 
+                  type: 'GET',
+                  // data: {
+                  //     status: status,
+                  //     _token: '{{ csrf_token() }}'
+                  // },
+                  success: function(response) {
+
+                    $("#sendMailButtonText").html('<b style="color:green;">'+ response.message +'</b>');
+  
+                  },
+                  error: function(xhr, status, error) {
+      
+                  }
+              });
+          });
+
+
       });
   </script>
   

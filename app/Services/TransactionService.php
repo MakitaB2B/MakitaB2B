@@ -33,23 +33,43 @@ class TransactionService{
             });
             return true;
         } catch (Exception $e) {
-            return $e->getMessage();
+             return $e->getMessage();
         }
   
     }
 
     public function allTransactions(){
 
-       return Transaction::select('order_id', \DB::raw('SUM(order_price) as total_price'),'status','created_at','promo_code','rm_name','dealer_code','dealer_name','order_date')
-        ->groupBy('order_id', 'promo_code','rm_name','dealer_code','dealer_name','status', 'created_at','order_date')
-        ->orderBy('order_date', 'desc') 
-        ->get();
+    //    return Transaction::select('order_id', \DB::raw('SUM(order_price) as total_price'),'status','created_at','promo_code','rm_name','dealer_code','dealer_name','order_date')
+    //     ->groupBy('order_id', 'promo_code','rm_name','dealer_code','dealer_name','status', 'created_at','order_date')
+    //     ->orderBy('order_date', 'desc') 
+    //     ->get();
+
+    return Transaction::select(
+        'order_id', 
+        \DB::raw('SUM(order_price) as total_price'),
+        'promo_code',
+        'rm_name',
+        'dealer_code',
+        'dealer_name',
+        'order_date',
+        'created_at',
+        \DB::raw("CASE
+            WHEN COUNT(CASE WHEN status = 'billed' THEN 1 END) = COUNT(*) THEN 'billed'
+            WHEN COUNT(CASE WHEN status = 'billed' THEN 1 END) > 0 AND COUNT(CASE WHEN status = 'open' THEN 1 END) > 0 THEN 'partially billed'
+            ELSE MIN(status)
+        END as status")
+    )
+    ->groupBy('order_id', 'promo_code', 'rm_name', 'dealer_code', 'dealer_name', 'order_date', 'created_at')
+    ->orderBy('order_date', 'desc')
+    ->get();
+
  
     }
     public function getTransactionDetails($orderid){
 
-        return Transaction::where('order_id',$orderid)
-        ->select('order_id','created_at','promo_code','product_type','model_no','price_type','offer_type','order_qty','offer_price','promo_code','rm_name','dealer_code','dealer_name','product_type','model_no','order_price','order_id','status')
+        return Transaction::join('branch_stocks', 'branch_stocks.item', '=', 'transactions.model_no')->where('order_id',$orderid)
+        ->select('branch_stocks.description','order_id','transactions.created_at','promo_code','product_type','model_no','price_type','offer_type','order_qty','offer_price','promo_code','rm_name','dealer_code','dealer_name','product_type','model_no','order_price','order_id','status','stock','transactions.billed_qty')
         ->get();
 
     }

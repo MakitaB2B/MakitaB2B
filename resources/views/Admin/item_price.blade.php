@@ -118,7 +118,7 @@
                         });
                     } else {
                         let searchtxt = $.trim($("#searchtxt").val());
-                        let searchFrom = "stockpg";
+                        let searchFrom = "itempg";
                         if (searchtxt != '' && searchtxt.length > 0) {
                             $("#searchresultmsg").text('Please Wait while processing....').css({
                                 "color": "green",
@@ -126,7 +126,7 @@
                                 "font-size": "11px"
                             });
                             $.ajax({
-                                url: '/admin/stock-search',
+                                url: '/admin/items-search',
                                 type: 'post',
                                 data: 'searchtxt=' + searchtxt + '&searchtype=' + searchType +
                                     '&searchFrom=' + searchFrom +
@@ -147,7 +147,7 @@
                     }
                 });
 
-                $('#submitstock').on('click', function() {
+                $('#submititem').on('click', function() {
                     $("#suf").hide();
                     $("#hm").show();
 

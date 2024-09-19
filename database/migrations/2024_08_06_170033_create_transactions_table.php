@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table) {
+            if (!Schema::hasColumn('transactions', 'id')) {
             $table->id();
             $table->string('transaction_slug',50)->unique();
             $table->string('from_date');
@@ -29,7 +30,7 @@ return new class extends Migration
             // $table->string('dealer_code')->index();
             // $table->foreign('dealer_code')->references('dealer_code')->on('dealers')->onDelete('cascade')->nullable();
             $table->string('dealer_code');
-            $table->foreign('dealer_code')->references('dealer_code')->on('dealer_masters')->onDelete('cascade');
+            // $table->foreign('dealer_code')->references('Customer')->on('dealer_masters')->onDelete('cascade');
             $table->string('dealer_name');
             $table->enum('product_type',['Offer Product','FOC']);
             $table->string('model_no');
@@ -42,8 +43,20 @@ return new class extends Migration
             $table->string('status');
             $table->string('modified_by');
             $table->string('order_date');
+            }
+            // if (!Schema::hasColumn('transactions', 'billed_qty')) {
+            // $table->integer('billed_qty')->nullable()->after('order_date');
+            // }
+
+            if (!Schema::hasColumn('transactions', 'billed_qty')) {
+                // Add 'billed_qty' column after 'order_date'
+                $table->integer('billed_qty')->nullable()->after('order_date');
+            }
+
+            if (!Schema::hasColumn('transactions', 'id')) {
             $table->timestamp('created_at')->default(date('Y-m-d H:i:s')); //->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(date('Y-m-d H:i:s')); //->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            }
             // $table->timestamps();
         });
     }

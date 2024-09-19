@@ -9,18 +9,53 @@ use Illuminate\Support\Facades\Log;
 
 class ItemInfoController extends Controller
 {
-    // protected $promotionService;
-    // protected $transactionService;
-
-    // public function __construct(PromotionService $promotionService,TransactionService $transactionService){
-    //   $this->promotionService=$promotionService;
-    //   $this->transactionService=$transactionService;
-    // }
 
     public function index(Request $request){
 
         $result=ItemPrice::paginate(20,['Item','Item Description','U/M','DLP','LP','MRP','BEST']);
         return view('Admin.item_price',compact('result')); 
+    }
+
+    public function itemSearch(Request $request){
+        $searchValue=strtoupper($request->searchtxt);
+        $searchFrom=$request->searchFrom;
+        $searchType=$request->searchtype;
+        $type = match($searchType){
+            'item'=>'item',
+            'description'=>'description',
+            default => 'item',
+        };
+        if($type=='item'){
+            $searchQuery=$searchValue.'%';
+            $column = 'Item';
+        }
+        if($type=='description'){
+            $searchQuery='%'.$searchValue.'%';
+            $column = 'Item Description';
+        }
+
+        $searchResult=ItemPrice::where($column,'LIKE',"$searchQuery")->get(['id','Item','Item Description','U/M','DLP','LP','MRP','BEST']);
+        if(($searchResult->count())>0 ){
+            $output="";
+            if($searchFrom=='itempg'){
+                $routeTo="items/";
+            }
+
+            foreach ($searchResult as $key => $data) {
+                $output.='<tr>'.
+                '<td>'.$data->Item.'</td>'.
+                '<td>'.$data->{'Item Description'}.'</td>'.
+                '<td>'.$data->{'U/M'}.'</td>'.
+                '<td>'.$data->{'DLP'}.'</td>'.
+                '<td title="'.$data->{'LP'}.'">'.$data->descriptionsystem.'</td>'.
+                '<td>'.$data->{'MRP'}.'</td>'.
+                '<td>'.$data->{'BEST'}.'</td>'.
+                '</tr>';
+                }
+        return Response($output);
+        }else{
+            echo "No Record Found";
+        }
     }
 
     public function uploadDailyItem() {
@@ -44,9 +79,7 @@ class ItemInfoController extends Controller
         foreach ($stockData as $key => $value) {
 
             if(!empty($key)){
-                        $consistentRecord[$key] = $key=="MRP" ||$key=="LP" || $key=="DLP" || $key=="BEST" 
-                        ? intval(str_replace(',', '', $stockData[$key]))
-                        : $stockData[$key] ;
+                        $consistentRecord[$key] = $key=="MRP" ||$key=="LP" || $key=="DLP" || $key=="BEST" ? intval(str_replace(',', '', $stockData[$key])) : $stockData[$key] ;
                          
                         }
         }

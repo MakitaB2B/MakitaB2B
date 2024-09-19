@@ -479,6 +479,23 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item @yield('billedtransaction-expandable')">
+                            <a href="#" class="nav-link @yield('billedtransaction-select')">
+                                <i class="fas fa-file-invoice"></i>
+                                <p>
+                                    Billed Transaction Master
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/billed-transactions') }}" class="nav-link @yield('billedtransaction_select')">
+                                        <i class="fas fa-money-bill"></i>
+                                        <p>Billed Transactions</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item @yield('promotion-expandable')">
                             <a href="#" class="nav-link @yield('promotion-select')">
                                 <i class="nav-icon fa fa-bullhorn"></i>

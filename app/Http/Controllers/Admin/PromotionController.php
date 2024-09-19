@@ -6,24 +6,27 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\PromotionService;
 use App\Services\TransactionService;
-use App\Services\RegionalMangerService;
+use App\Services\EmployeeService;
 use App\Services\DealerService;
+use App\Services\DealerCancelledService;
 use App\Models\Admin\BranchStocks;
 use Auth;
 use Carbon\Carbon;
 use App\Models\Admin\Transaction;
 use Illuminate\Support\Facades\Crypt;
-
+use App\Jobs\PromoJob;
+use App\Jobs\TransactionJob;
 class PromotionController extends Controller
 {
     protected $promotionService;
     protected $transactionService;
 
-    public function __construct(PromotionService $promotionService,TransactionService $transactionService,RegionalMangerService $regionalManager,DealerService $dealerService){
+    public function __construct(PromotionService $promotionService,TransactionService $transactionService,EmployeeService $employeeService,DealerService $dealerService,DealerCancelledService $dealerCancelledService){
       $this->promotionService=$promotionService;
       $this->transactionService=$transactionService;
-      $this->regionalManager=$regionalManager;
+      $this->employeeService=$employeeService;
       $this->dealerService=$dealerService;
+      $this->dealerCancelledService=$dealerCancelledService;
     }
 
     public function index(){
@@ -141,6 +144,7 @@ class PromotionController extends Controller
         $emp_no = Auth::guard('admin')->user()->access_id;
         $status = $request->input('status');
         $statusarray= explode('-', $status);
+        // $this->promotionService->addcounts();
         $result = $this->promotionService->UpdatePromo($statusarray[0],$statusarray[1], $emp_no);
         return response()->json(['data' => $result]);
     }
@@ -149,14 +153,22 @@ class PromotionController extends Controller
 
         $emp_no = Auth::guard('admin')->user()->access_id;
         $status = $request->input('status');
-        $statusarray= explode('-', $status);
+        $dealer_code = $request->input('dealer_code');
+        $promo_code = $request->input('promo_code');
+        $cancelled_date = date('Y-m-d H:i:s');
+        $statusarray = explode('-', $status);
+        if($statusarray[1]=='cancel'){
+          $addcount = $this->dealerService->addcounts($dealer_code, $emp_no);
+          $this->dealerCancelledService->Create($dealer_code, $promo_code,$cancelled_date);
+        }
         $result = $this->transactionService->UpdateTransaction($statusarray[0],$statusarray[1], $emp_no);
         return response()->json(['data' => $result]);
     }
     public function transactionCreation(){
-
+      $designation='regional manager';
+      $department='sales';
       $result['promo_code']=$this->promotionService->activePromotion();
-      $result['regional_manager']=$this->regionalManager->rmNames();
+      $result['regional_manager']= $this->employeeService->getEmployeeByDesignation($designation,$department);  //$this->regionalManager->rmNames();
       $result['dealer_master']=$this->dealerService->getDealers();
 
       return view('Admin.promotion_transaction',$result);
@@ -175,7 +187,7 @@ class PromotionController extends Controller
       $transaction = $this->transactionService->getTransactionDetails($order_id);
       $result['focproduct'] = $transaction->where('product_type','FOC')->values();
       $result['offerproduct'] = $transaction->where('product_type','Offer Product')->values();
-      $result['status'] = ['open','block','cancel'];
+      $result['status'] = ['open','cancel']; //,'block'
       return view('Admin.transaction_view',$result);
 
     }
@@ -209,7 +221,7 @@ class PromotionController extends Controller
       $promoID = $request->input('promoID');
 
       $result["data"] = $this->promotionService->getPromoDeatils($promoID);
-     
+      
       return response()->json($result);
     }
 
@@ -330,7 +342,7 @@ class PromotionController extends Controller
                   $userInputQty = $singlemodel[0]["offer_qty"] * $qtytomultiply;
                 
                   if(($offer_type== "Buy One Of The Product" && $filteredbyoffer[0]["model_no"]==$value->model_no ||$value->product_type=="FOC") || $offer_type== "Combo Offer") {
-                    if ( $value->total_stock < $userInputQty) {
+                    if ( $value->stock < $userInputQty) {
                       throw new \Exception('Stock not available for model: ' . $value->model_no);
                   }
 
@@ -355,8 +367,8 @@ class PromotionController extends Controller
                   $value->offer_qty = $value->qty;
                   $value->transaction_slug = $this->transactionService->transaction_slug();
                   $value->rm_name= $rm_name;
-                  $value->dealer_code = $dealer_code[0];
-                  $value->dealer_name= $dealer_code[1];
+                  $value->dealer_code = $dealer_code[0].'-'.$dealer_code[1];
+                  $value->dealer_name= $dealer_code[2];
                   $value->order_id = $order_id ;
                   $value->ordered_by = Auth::guard('admin')->user()->access_id;
                   $value->status= "open";
@@ -366,7 +378,7 @@ class PromotionController extends Controller
                   $value->order_date = date('Y-m-d H:i:s');
                   // $value->created_at =  Carbon::parse($formattedDate)->format('Y-m-d H:i:s');
                   // $value->updated_at = $formattedDate;
-                  unset($value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc);      
+                  unset($value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc,$value->total_order_qty);      
                   return collect($value)->except('reserved_stock');
                   }
               
@@ -383,6 +395,53 @@ class PromotionController extends Controller
           return redirect('admin/promotions/promotion-transaction');
 
       }
+
+      public function promomail($id){
+        
+      $cryptpromo = $id;
+      $promo_code = Crypt::decrypt($id);
+      $promotion = $this->promotionService->getPromoDeatilsWithStock($promo_code);
+      $details['focproduct'] = $promotion->where('product_type','FOC')->values();
+      $details['offerproduct'] = $promotion->where('product_type','Offer Product')->values();
+      $details['textfromatmodelqty'] = $this->textFormatModelQty( $details['offerproduct']->toArray(),$details['focproduct']->toArray());
+      $details['email'] = 'lobojeanz@gmail.com';
+      
+      try {
+        $promojob = PromoJob::dispatch($details);
+      } catch (\Exception $e) {
+        Log::error($e->getMessage());
+
+        // return redirect()->route('admin.promotions.promotion-preview',['promocode' => $cryptpromo])->with('message', 'Failed to send promo mail. Please try again.');
+      return response()->json(['message' => $e->getMessage()]);
+      }
+
+      //  return redirect()->route('admin.promotions.promotion-preview',['promocode' => $cryptpromo])->with('message', 'Mail Send Successfully!!');
+      return response()->json(['message' => "Promotion Mail Sent Successfully!"]);
+      }
+
+      public function transactionmail($id){
+
+      $crypttransaction = $id;
+      $order_id = Crypt::decrypt($id);
+      $transaction = $this->transactionService->getTransactionDetails($order_id);
+      $details['focproduct'] = $transaction->where('product_type','FOC')->values();
+      $details['offerproduct'] = $transaction->where('product_type','Offer Product')->values();
+      // $details['offerproductStock'] =  $this->transactionService->getTransactionWithStock($details['offerproduct'][0]["model_no"],$order_id);
+      $details['email'] = 'lobojeanz@gmail.com';
+
+      try {
+        $transactionjob = TransactionJob::dispatch($details);
+      } catch (\Exception $e) {
+
+        Log::error($e->getMessage());
+
+        // return redirect()->route('promotions.transaction-preview',['orderid' => $crypttransaction])->with('message', 'Failed to send promo mail. Please try again.');
+        return response()->json(['message' => $e->getMessage()]);
+      }
+
+      //  return redirect()->route('promotions.transaction-preview',['orderid' =>   $crypttransaction])->with('message', 'Mail Send Successfully!!');
+      return response()->json(['message' => "Transaction Mail Sent Successfully!"]);
+      }  
 
       public function filter_data_by_offer_type($offer_type,$data){
 
@@ -420,6 +479,6 @@ class PromotionController extends Controller
 
         return $finalString;
       
-    }
+      }
 
 }

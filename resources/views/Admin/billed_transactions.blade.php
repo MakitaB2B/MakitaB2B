@@ -1,8 +1,8 @@
 @extends('Admin/layout')
-@section('page_title', 'Dealer Master | MAKITA')
-@section('dealer-master-expandable', 'menu-open')
-@section('dealer-master_select', 'active')
-@section('dealer_master_select', 'active')
+@section('page_title', 'Billed Transaction List | MAKITA')
+@section('billedtransaction-expandable','menu-open')
+@section('billedtransaction-select','active')
+@section('billedtransaction_select','active')
 @section('container')
     <div class="content-wrapper rescss">
         <!-- Content Header (Page header) -->
@@ -22,16 +22,16 @@
                 @endif
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Dealer Master</h1>
+                        <h1>Billed Transactions</h1>
                     </div>
                     <div class="col-sm-6">
                         <b style="display: none; color:green" id="hm">File is large, it may take a while, please wait
                             while processing.....</b>
-                        <form action="{{ route('upload-dealer') }}" method="post" enctype="multipart/form-data"
+                        <form action="{{ route('upload-billed-transaction') }}" method="post" enctype="multipart/form-data"
                             id="suf">
                             @csrf
                             <input type="submit" value="Upload" class="btn float-right" id="submitstock">
-                            <label for="inputField" class="btn btn-info float-right">Dealer File</label>
+                            <label for="inputField" class="btn btn-info float-right">Billed File</label>
                             <input type="file" name="mycsv" id="inputField" style="display:none" required>
                         </form>
                     </div>
@@ -45,15 +45,15 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Dealer Master</h3>
+                                <h3 class="card-title">Billed Transactions</h3>
                                 <div class="card-tools">
                                     <div class="input-group input-group-sm">
                                         <select class="custom-select" id="stype">
                                             <option value="">Select Option</option>
-                                            <option value="customer" selected="selected">Customer</option>
+                                            <option value="invoice" selected="selected">Invoice</option>
                                             <option value="name">Name</option>
-                                            <option value="status">Status</option>
-                                            <option value="commercial_status">Commercial Status</option>
+                                            <option value="invoice date">Invoice Date</option>
+                                            <option value="transaction_id">Transaction Id</option>
                                         </select>
                                         <input type="text" name="table_search" class="form-control float-right"
                                             placeholder="Search by Item" id="searchtxt">
@@ -71,24 +71,36 @@
                                 <table class="table table-head-fixed table-bordered table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Customer</th>
+                                            <th>Invoice</th>
                                             <th>Name</th>
-                                            <th>Status</th>
-                                            <th>Commercial Status</th>
+                                            <th>Invoice Date</th>
+                                            <th><b>Transaction Id</b></th>
+                                            <th>Promo Code</th>
+                                            <th>Order</th>
+                                            <th>Item</th>
+                                            <th>Description</th> 
+                                            <th>Qty Invoiced</th> 
+                                            <th>Price</th> 
                                             <th>Created At</th>
+                                            <th>Updated At</th>
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
                                      @foreach ($result as $key => $data)
-                                         
                                             <tr>
-                                                <td>{{ $data->Customer }}</td>
+                                                <td>{{ $data->Invoice }}</td>
                                                 <td>{{ $data->Name }}</td>
-                                                <td>{{ $data->status }}</td>
-                                                <td>{{ $data->commercial_status }}</td>
-                                                <td>{{($data->created_at)}}</td>
+                                                <td>{{ ($data->{"Invoice Date"}) }} </td>
+                                                <td>{{ $data->order_id }}</td>
+                                                <td>{{ $data->promo_code }}</td>
+                                                <td>{{ $data->Order }}</td>
+                                                <td>{{ $data->Item }}</td>
+                                                <td>{{ $data->Description }}</td>
+                                                <td>{{ ($data->{"Qty Invoiced"}) }}</td>
+                                                <td>{{ $data->Price }}</td>
+                                                <td>{{ $data->created_at }}</td>
+                                                <td>{{ $data->updated_at }}</td>
                                             </tr>
-
                                     @endforeach 
                                     </tbody>
                                 </table>
@@ -156,3 +168,4 @@
         </script>
     @endpush
 @endsection
+
