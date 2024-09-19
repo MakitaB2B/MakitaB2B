@@ -13,12 +13,17 @@ jobs:
         id: check_repo
         run: |
           if [ -d "/var/www/html/MakitaB2B/.git" ]; then
-            echo "is_git_repo=true" >> $GITHUB_ENV
+            echo "::set-output name=is_git_repo::true"
           else
-            echo "is_git_repo=false" >> $GITHUB_ENV
-          
+            echo "::set-output name=is_git_repo::false"
+          fi
+
+      - name: Add /var/www/html/MakitaB2B as a safe Git directory
+        run: |
+          git config --global --add safe.directory /var/www/html/MakitaB2B
+
       - name: Clone repository if not a git repository
-        if: env.is_git_repo == 'false'
+        if: steps.check_repo.outputs.is_git_repo == 'false'
         run: |
           sudo rm -rf /var/www/html/MakitaB2B
           sudo git clone https://github.com/MakitaB2B/MakitaB2B.git /var/www/html/MakitaB2B
@@ -27,9 +32,9 @@ jobs:
         run: |
           cd /var/www/html/MakitaB2B
           sudo git clean -f -d
-          sudo git diff --quiet || sudo git stash
+          sudo git stash
           sudo git pull origin development
-          composer install --no-dev --optimize-autoloader
+          sudo composer install
 
       - name: Ensure storage and cache directories exist
         run: |
@@ -40,3 +45,13 @@ jobs:
         run: |
           sudo chown -R www-data:www-data /var/www/html/MakitaB2B/storage /var/www/html/MakitaB2B/bootstrap/cache
           sudo chmod -R 775 /var/www/html/MakitaB2B/storage /var/www/html/MakitaB2B/bootstrap/cache
+
+          # Additional permissions specific to Laravel
+          sudo chown -R www-data:www-data /var/www/html/MakitaB2B/storage/*
+          sudo chown -R www-data:www-data /var/www/html/MakitaB2B/bootstrap/cache/*
+
+          # Ensure specific permissions for storage directories
+          sudo chmod -R 777 /var/www/html/MakitaB2B/storage
+          sudo chmod -R 777 /var/www/html/MakitaB2B/storage/framework
+          sudo chmod -R 777 /var/www/html/MakitaB2B/storage/framework/sessions
+          sudo chmod -R 777 /var/www/html/MakitaB2B/storage/logs
