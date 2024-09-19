@@ -1,4 +1,5 @@
 name: Development Build
+
 on:
   push:
     branches: [development]
@@ -19,7 +20,7 @@ jobs:
 
       - name: Add /var/www/html/MakitaB2B as a safe Git directory
         run: |
-          git config --global --add safe.directory *
+          git config --global --add safe.directory '*'
         continue-on-error: true  # Continue even if this fails to debug
 
       - name: Debug ownership of /var/www/html/MakitaB2B
@@ -37,7 +38,6 @@ jobs:
 
       - name: Pull latest changes and install dependencies
         run: |
-          sudo chown www-data:ubuntu -R .git
           cd /var/www/html/MakitaB2B
           sudo git clean -f -d
           sudo git stash || true  # Don't fail if there's nothing to stash
@@ -53,11 +53,12 @@ jobs:
         run: |
           sudo chown -R www-data:www-data /var/www/html/MakitaB2B/storage /var/www/html/MakitaB2B/bootstrap/cache
           sudo chmod -R 775 /var/www/html/MakitaB2B/storage /var/www/html/MakitaB2B/bootstrap/cache
-        
+
+          # Additional permissions specific to Laravel
           sudo chown -R www-data:www-data /var/www/html/MakitaB2B/storage/*
           sudo chown -R www-data:www-data /var/www/html/MakitaB2B/bootstrap/cache/*
 
-          sudo chmod 777 -R /var/www/html
+          # Ensure specific permissions for storage directories
           sudo chmod -R 777 /var/www/html/MakitaB2B/storage
           sudo chmod -R 777 /var/www/html/MakitaB2B/storage/framework
           sudo chmod -R 777 /var/www/html/MakitaB2B/storage/framework/sessions
