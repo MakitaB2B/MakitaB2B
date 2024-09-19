@@ -37,7 +37,7 @@ jobs:
 
       - name: Pull latest changes and install dependencies
         run: |
-          sudo chown www-data:ubuntu -R .git
+          # sudo chown www-data:ubuntu -R .git
           cd /var/www/html/MakitaB2B
           sudo git clean -f -d
           sudo git stash || true  # Don't fail if there's nothing to stash
