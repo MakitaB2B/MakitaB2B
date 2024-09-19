@@ -18,10 +18,6 @@ jobs:
             echo "::set-output name=is_git_repo::false"
           fi
 
-      - name: Add /var/www/html/MakitaB2B as a safe Git directory
-        run: |
-          git config --global --add safe.directory /var/www/html/MakitaB2B
-
       - name: Clone repository if not a git repository
         if: steps.check_repo.outputs.is_git_repo == 'false'
         run: |
@@ -51,6 +47,7 @@ jobs:
           sudo chown -R www-data:www-data /var/www/html/MakitaB2B/bootstrap/cache/*
 
           # Ensure specific permissions for storage directories
+          sudo chmod 777 -R /var/www/html
           sudo chmod -R 777 /var/www/html/MakitaB2B/storage
           sudo chmod -R 777 /var/www/html/MakitaB2B/storage/framework
           sudo chmod -R 777 /var/www/html/MakitaB2B/storage/framework/sessions
