@@ -20,7 +20,14 @@ jobs:
 
       - name: Add /var/www/html/MakitaB2B as a safe Git directory
         run: |
-          git config --global safe.directory '*'
+          git config --global --add safe.directory /var/www/html/MakitaB2B
+        continue-on-error: true  # Continue even if this fails to debug
+
+      - name: Debug ownership of /var/www/html/MakitaB2B
+        run: |
+          ls -ld /var/www/html/MakitaB2B
+          ls -la /var/www/html/MakitaB2B/.git
+        continue-on-error: true  # Continue and log the output to help with debugging
 
       - name: Clone repository if not a git repository
         if: steps.check_repo.outputs.is_git_repo == 'false'
@@ -32,7 +39,7 @@ jobs:
         run: |
           cd /var/www/html/MakitaB2B
           sudo git clean -f -d
-          sudo git stash
+          sudo git stash || true  # Don't fail if there's nothing to stash
           sudo git pull origin development
           sudo composer install
 
