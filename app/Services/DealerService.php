@@ -12,7 +12,7 @@ class DealerService{
 
     public function getDealersPaginated(){
 
-        return Dealer::orderBy('created_at')->paginate(20,['Customer','Name','status','commercial_status','created_at']);  //,'commercial_status',
+        return Dealer::orderBy('created_at')->paginate(20,['Customer','Name','E Mail ID','status','commercial_status','created_at']);  //,'commercial_status',
    
     }
 

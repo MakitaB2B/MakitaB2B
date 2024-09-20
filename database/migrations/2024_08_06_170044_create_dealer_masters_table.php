@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dealer_masters', function (Blueprint $table) {
-            $table->id();
-            $table->string('dealer_slug',50)->unique();
-            $table->string('Customer')->unique()->index(); //dealer code
-            // $table->tinyInteger('Ship To')->nullable();
-            $table->string('Name')->nullable();
+        Schema::table('dealer_masters', function (Blueprint $table) {
+           
             
             //$table->longText('Address [1]')->nullable();
             //$table->longText('Address [2]')->nullable();
@@ -38,16 +34,29 @@ return new class extends Migration
             // $table->date('Registration Date')->nullable();
             // $table->tinyInteger('State Code')->nullable();
             // $table->string('Status (Active/Deactive)')->nullable();
-
-            $table->tinyInteger('cancelled_count')->nullable(); 
+            // $table->tinyInteger('Ship To')->nullable();
             // $table->string('status')->nullable();
+            if (!Schema::hasColumn('dealer_masters', 'id')) {
+            $table->id();
+            $table->string('dealer_slug',50)->unique();
+            $table->string('Customer')->unique()->index(); //dealer code
+            $table->string('Name')->nullable();
+            }
+            if (!Schema::hasColumn('dealer_masters', 'E Mail ID')) {
+                $table->string('E Mail ID')->nullable()->after('Name');
+            }
+
+            if (!Schema::hasColumn('dealer_masters', 'id')) {
+            $table->tinyInteger('cancelled_count')->nullable(); 
             $table->enum('status',['Active','Deactive'])->default('Active')->nullable();
             $table->enum('commercial_status',['block','open'])->default('open')->nullable();
-            // $table->enum('commercial_status',['Offer Product','FOC']);
             $table->string('is_black_listed')->nullable();
             $table->longText('comments')->nullable();
             $table->string('modified_by')->nullable();
+            }
+          
 
+            // $table->enum('commercial_status',['Offer Product','FOC']);
             // $table->string('dealer_code')->unique();
             // $table->string('dealer_name');
             // $table->string('state_code');
@@ -58,8 +67,10 @@ return new class extends Migration
             // $table->string('is_black_listed');
             // $table->string('reason_to_blacklist');
             // $table->timestamps();
+            if (!Schema::hasColumn('dealer_masters', 'id')) {
             $table->timestamp('created_at')->default(date('Y-m-d H:i:s'));
             $table->timestamp('updated_at')->default(date('Y-m-d H:i:s'));
+            }
         });
     }
 
