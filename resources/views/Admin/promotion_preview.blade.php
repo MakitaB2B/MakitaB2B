@@ -230,7 +230,7 @@
                        <p> Please Check below link to view Promotion Preview</p>
 
                       <p>
-                        <a href="http://127.0.0.1:8080/admin/promotions/promotion-preview/{{Crypt::encrypt($offerproduct[0]["promo_code"] ?? null)}}" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Promotion Preview</a>
+                        <a href="{{request()->getSchemeAndHttpHost()}}/admin/promotions/promotion-preview/{{Crypt::encrypt($offerproduct[0]["promo_code"] ?? null)}}" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Promotion Preview</a>
                       </p>
                       <p>PROMO NO - {{$offerproduct[0]->promo_code}}</p>
 

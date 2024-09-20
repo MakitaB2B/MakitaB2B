@@ -404,7 +404,7 @@ class PromotionController extends Controller
       $details['focproduct'] = $promotion->where('product_type','FOC')->values();
       $details['offerproduct'] = $promotion->where('product_type','Offer Product')->values();
       $details['textfromatmodelqty'] = $this->textFormatModelQty( $details['offerproduct']->toArray(),$details['focproduct']->toArray());
-      $details['email'] = 'lobojeanz@gmail.com';
+      $details['email'] = 'jeanlobo@makita.in';
       
       try {
         $promojob = PromoJob::dispatch($details);
