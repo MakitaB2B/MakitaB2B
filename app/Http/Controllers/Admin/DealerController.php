@@ -31,6 +31,7 @@ class DealerController extends Controller
         $type = match($searchType){
             'customer'=>'customer',
             'name'=>'name',
+            'email'=>'email',
             'status'=>'status',
             'commercial_status'=>'commercial_status',
             default => 'customer',
@@ -52,7 +53,12 @@ class DealerController extends Controller
             $column = 'commercial_status';
         }
 
-        $searchResult=Dealer::where($column,'LIKE',"$searchQuery")->get(['id','Customer','Name','status','commercial_status','created_at']);
+        if($type=='email'){
+            $searchQuery='%'.$searchValue.'%';
+            $column = 'E Mail ID';
+        }
+
+        $searchResult=Dealer::where($column,'LIKE',"$searchQuery")->get(['id','Customer','Name','E Mail ID','status','commercial_status','created_at']);
         if(($searchResult->count())>0 ){
             $output="";
             if($searchFrom=='itempg'){
@@ -63,6 +69,7 @@ class DealerController extends Controller
                 $output.='<tr>'.
                 '<td>'.$data->Customer.'</td>'.
                 '<td>'.$data->Name.'</td>'.
+                '<td>'.$data->{"E Mail ID"}.'</td>'.
                 '<td>'.$data->status.'</td>'.
                 '<td>'.$data->commercial_status.'</td>'.
                 '<td>'.$data->created_at.'</td>'.
@@ -75,7 +82,7 @@ class DealerController extends Controller
     }
 
     public function uploadDealer(Request $request){
-
+          
         if (request()->has('mycsv')) {
             $data = array_map('str_getcsv', file(request()->mycsv));
             $header = array_map('trim', array_shift($data));
@@ -91,7 +98,7 @@ class DealerController extends Controller
 
             foreach ($stockData as $key => $value) {
             
-            if(!empty($key) && $key=="Customer" || $key=="Name" || $key=="Status (Active/Deactive)"){
+            if(!empty($key) && $key=="Customer" || $key=="Name" || $key=="Status (Active/Deactive)" || $key=="E Mail ID"){
 
             $fieldKey = ($key == "Status (Active/Deactive)") ? 'status' : $key;
 
@@ -102,6 +109,7 @@ class DealerController extends Controller
             }
             $consistentRecord['dealer_slug'] =  $this->dealerService->dealer_slug();
             $dealerData[] = $consistentRecord;
+
            
             if (count($dealerData) >= $batchSize) {
        

@@ -52,6 +52,7 @@
                                             <option value="">Select Option</option>
                                             <option value="customer" selected="selected">Customer</option>
                                             <option value="name">Name</option>
+                                            <option value="email">Email</option>
                                             <option value="status">Status</option>
                                             <option value="commercial_status">Commercial Status</option>
                                         </select>
@@ -73,6 +74,7 @@
                                         <tr>
                                             <th>Customer</th>
                                             <th>Name</th>
+                                            <th>Email</th>
                                             <th>Status</th>
                                             <th>Commercial Status</th>
                                             <th>Created At</th>
@@ -84,6 +86,7 @@
                                             <tr>
                                                 <td>{{ $data->Customer }}</td>
                                                 <td>{{ $data->Name }}</td>
+                                                <td>{{ $data->{"E Mail ID"} }}</td>
                                                 <td>{{ $data->status }}</td>
                                                 <td>{{ $data->commercial_status }}</td>
                                                 <td>{{($data->created_at)}}</td>
