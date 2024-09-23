@@ -30,6 +30,7 @@ class TransactionJob implements ShouldQueue
     {
         $email = new TransactionMail($this->details);
         Mail::to($this->details['email'])->send($email);
+
     }
 
     public function retryUntil()

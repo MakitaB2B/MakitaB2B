@@ -420,15 +420,15 @@ class PromotionController extends Controller
       }
 
       public function transactionmail($id){
-
       $crypttransaction = $id;
       $order_id = Crypt::decrypt($id);
       $transaction = $this->transactionService->getTransactionDetails($order_id);
       $details['focproduct'] = $transaction->where('product_type','FOC')->values();
       $details['offerproduct'] = $transaction->where('product_type','Offer Product')->values();
       // $details['offerproductStock'] =  $this->transactionService->getTransactionWithStock($details['offerproduct'][0]["model_no"],$order_id);
-      $details['email'] = 'lobojeanz@gmail.com';
-
+      $details['email'] = TEST_PROMO_TRANSACTION_TO_EMAILS;
+      $details['cc'] = TEST_PROMO_TRANSACTION_CC_EMAILS;
+  
       try {
         $transactionjob = TransactionJob::dispatch($details);
       } catch (\Exception $e) {

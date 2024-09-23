@@ -52,6 +52,7 @@
     </style>
 </head>
 <body>
+    <p><b>Note - This is a test mail</b></p>
 
     <p>We would like to approve the following promotion.</p>
 
@@ -66,7 +67,11 @@
     {{-- Uncomment the link below when needed --}}
     
     <p>
-      <a href="{{ url('http://127.0.0.1:8080/admin/promotions/promotion-preview/' . Crypt::encrypt($details['offerproduct'][0]["promo_code"] ?? null)) }}" class="link-black text-sm">
+      {{-- <a href="{{ url('{{request()->getSchemeAndHttpHost()}}/admin/promotions/promotion-preview/' . Crypt::encrypt($details['offerproduct'][0]["promo_code"] ?? null)) }}" class="link-black text-sm"> --}}
+        <a href="{{ url(request()->getSchemeAndHttpHost() . '/admin/promotions/promotion-preview/' . Crypt::encrypt($details['offerproduct'][0]["promo_code"] ?? null)) }}">
+          Promotion Preview
+      </a>
+      
         <i class="fas fa-link mr-1"></i> Promotion Preview
       </a>
     </p>

@@ -21,5 +21,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrap();
+
+        // $app = base_path('constants/app.php');
+        // include $app;
+        foreach (glob(base_path() . "/constants/*.php") as $filename
+        ) {
+            include $filename;
+        }
     }
 }

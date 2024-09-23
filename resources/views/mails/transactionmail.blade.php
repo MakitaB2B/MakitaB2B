@@ -57,7 +57,7 @@
     </style>
 </head>
 <body>
-
+    <p><b>Note - This is a test mail</b></p>
     <p><b>Dear MD,</b></p>
 
     <p>I have applied for the following PROMO.</p>
@@ -142,7 +142,7 @@
     <p>Please check here.</p>
 
     <p>
-      <a href="{{ url('{{request()->getSchemeAndHttpHost()}}/admin/promotions/transaction-preview') }}/{{ Crypt::encrypt($details['offerproduct'][0]['order_id']) }}" class="link-black text-sm">
+      <a href="{{ url(request()->getSchemeAndHttpHost().'/admin/promotions/transaction-preview') }}/{{ Crypt::encrypt($details['offerproduct'][0]['order_id']) }}" class="link-black text-sm">
         <i class="fas fa-link mr-1"></i> Transaction View
       </a>
     </p>

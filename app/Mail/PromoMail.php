@@ -55,4 +55,19 @@ class PromoMail extends Mailable
     {
         return [];
     }
+
+    public function build()
+    {
+        return $this->from('lobojeanz@gmail.com','MD')  // SMTP sender for sending
+                    ->replyTo('lobojeanz@gmail.com', 'MD') // Reply-to email displayed to receiver
+                    ->subject('Promotion Transaction Mail')
+                    ->view('mails.promomail')
+                    ->with(['details' => $this->details])
+                    ->withSwiftMessage(function ($message) {
+                        $message->getHeaders()
+                                ->addTextHeader('MD', 'lobojeanz@gmail.com');  // Add custom "Sender" header
+                    });
+    }
 }
+
+
