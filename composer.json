@@ -30,7 +30,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "constants/app.php"
+            "constants/*.php"
         ]
     },
     "autoload-dev": {
