@@ -52,7 +52,9 @@
     </style>
 </head>
 <body>
-    <p><b>Note - This is a test mail</b></p>
+      @if(!app()->environment('production'))
+      <p><b>Note - This is a test mail</b></p>
+      @endif
 
     <p>We would like to approve the following promotion.</p>
 

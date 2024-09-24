@@ -57,7 +57,9 @@
     </style>
 </head>
 <body>
+    @if(!app()->environment('production'))
     <p><b>Note - This is a test mail</b></p>
+    @endif
     <p><b>Dear MD,</b></p>
 
     <p>I have applied for the following PROMO.</p>

@@ -75,14 +75,14 @@ class TransactionMail extends Mailable
 
     public function build()
     {
-        return $this->from(TEST_PROMO_TRANSACTION_FROM_EMAILS,'RM')  // SMTP sender for sending
-                    //->replyTo(TEST_PROMO_TRANSACTION_FROM_EMAILS, 'Custom Sender Name') // Reply-to email displayed to receiver
-                    ->subject('Promotion Transaction Mail')
+        return $this->from(PROMO_TRANSACTION_FROM_EMAILS,'RM')  // SMTP sender for sending
+                    ->replyTo(PROMO_TRANSACTION_FROM_EMAILS,'RM') // Reply-to email displayed to receiver
+                    ->subject('MakitaERP - Promotion Transaction Mail')
                     ->view('mails.transactionmail')
                     ->with(['details' => $this->details])
                     ->withSwiftMessage(function ($message) {
                         $message->getHeaders()
-                                ->addTextHeader('RM', TEST_PROMO_TRANSACTION_FROM_EMAILS);  // Add custom "Sender" header
+                                ->addTextHeader('RM',PROMO_TRANSACTION_FROM_EMAILS);  // Add custom "Sender" header
                     });
     }
 
