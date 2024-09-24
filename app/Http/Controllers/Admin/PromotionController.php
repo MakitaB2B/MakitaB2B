@@ -404,8 +404,9 @@ class PromotionController extends Controller
       $details['focproduct'] = $promotion->where('product_type','FOC')->values();
       $details['offerproduct'] = $promotion->where('product_type','Offer Product')->values();
       $details['textfromatmodelqty'] = $this->textFormatModelQty( $details['offerproduct']->toArray(),$details['focproduct']->toArray());
-      $details['email'] = 'lobojeanz@gmail.com';
-      
+      $details['email'] = PROMO_TO;
+      $details['cc'] = PROMO_CC;
+      $details['bcc'] =PROMO_BCC;
       try {
         $promojob = PromoJob::dispatch($details);
       } catch (\Exception $e) {
@@ -420,15 +421,16 @@ class PromotionController extends Controller
       }
 
       public function transactionmail($id){
-
       $crypttransaction = $id;
       $order_id = Crypt::decrypt($id);
       $transaction = $this->transactionService->getTransactionDetails($order_id);
       $details['focproduct'] = $transaction->where('product_type','FOC')->values();
       $details['offerproduct'] = $transaction->where('product_type','Offer Product')->values();
       // $details['offerproductStock'] =  $this->transactionService->getTransactionWithStock($details['offerproduct'][0]["model_no"],$order_id);
-      $details['email'] = 'lobojeanz@gmail.com';
-
+      $details['email'] = PROMO_TRANSACTION_TO_EMAILS;
+      $details['cc'] = PROMO_TRANSACTION_CC_EMAILS;
+      $details['bcc'] =PROMO_TRANSACTION_BCC;
+  
       try {
         $transactionjob = TransactionJob::dispatch($details);
       } catch (\Exception $e) {

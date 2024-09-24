@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use App;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,5 +22,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrap();
+
+        $environment = App::environment();
+
+        if ($environment != "production") {
+            $environment = "local";
+        }
+
+        foreach (glob(base_path() . "/constants/" . $environment . "/*.php") as $filename) {
+
+            include $filename;
+        }
+        
     }
 }

@@ -24,27 +24,27 @@ class PromoMail extends Mailable
     /**
      * Get the message envelope.
      */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Promotion Mail',
-        );
-    }
+    // public function envelope(): Envelope
+    // {
+    //     return new Envelope(
+    //         subject: 'Promotion Mail',
+    //     );
+    // }
 
     /**
      * Get the message content definition.
      */
-    public function content(): Content
-    {
+    // public function content(): Content
+    // {
         // return new Content(
         //     view: 'mails.promomail',
         // );
 
-        return new Content(
-            view: 'mails.promomail',
-            with: ['details' => $this->details], // Pass the data to the view
-        );
-    }
+    //     return new Content(
+    //         view: 'mails.promomail',
+    //         with: ['details' => $this->details], 
+    //     );
+    // }
 
     /**
      * Get the attachments for the message.
@@ -55,4 +55,19 @@ class PromoMail extends Mailable
     {
         return [];
     }
+
+    public function build()
+    {
+        return $this->from(PROMO_FROM,'MD')  // SMTP sender for sending
+                    ->replyTo(PROMO_FROM, 'MD') // Reply-to email displayed to receiver
+                    ->subject('MakitaERP - Promotion Mail')
+                    ->view('mails.promomail')
+                    ->with(['details' => $this->details])
+                    ->withSwiftMessage(function ($message) {
+                        $message->getHeaders()
+                                ->addTextHeader('MD', PROMO_FROM);  // Add custom "Sender" header
+                    });
+    }
 }
+
+

@@ -57,7 +57,9 @@
     </style>
 </head>
 <body>
-
+    @if(!app()->environment('production'))
+    <p><b>Note - This is a test mail</b></p>
+    @endif
     <p><b>Dear MD,</b></p>
 
     <p>I have applied for the following PROMO.</p>
@@ -142,7 +144,7 @@
     <p>Please check here.</p>
 
     <p>
-      <a href="{{ url('http://127.0.0.1:8080/admin/promotions/transaction-preview') }}/{{ Crypt::encrypt($details['offerproduct'][0]['order_id']) }}" class="link-black text-sm">
+      <a href="{{ url(request()->getSchemeAndHttpHost().'/admin/promotions/transaction-preview') }}/{{ Crypt::encrypt($details['offerproduct'][0]['order_id']) }}" class="link-black text-sm">
         <i class="fas fa-link mr-1"></i> Transaction View
       </a>
     </p>

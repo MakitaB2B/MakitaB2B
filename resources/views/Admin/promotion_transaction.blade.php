@@ -78,7 +78,7 @@
                                                 </div>
                                             @enderror
                                         </div>
-
+{{-- 
                                         <div class="form-group col-md-2">
                                             <label for="exampleRmname">Regional Manager Name*</label>
                                             <select class="custom-select select2" name="rm_name" required id="exampleRmname">
@@ -86,6 +86,23 @@
                                                 <option value="{{$item->full_name}}">{{$item->full_name}}</option>
                                                 @endforeach
                                             </select>
+                                            @error('rm_name')
+                                                <div
+                                                    class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                                    {{ $message }}
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                            @enderror
+                                        </div> --}}
+
+                                        <div class="form-group col-md-2">
+                                            <label for="exampleRmname">Regional Manager Name*</label>
+                                            <input type="text" class="form-control" name="rm_name"
+                                                value="{{Auth::guard('admin')->user()->employee->full_name}}" required id="exampleRmname"
+                                                placeholder="Enter Model" disabled>
                                             @error('rm_name')
                                                 <div
                                                     class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
@@ -121,7 +138,7 @@
                                             <label for="exampleDealerName">Dealer Name*</label>
                                             <input type="text" class="form-control" name="dealername"
                                                 value="" required id="exampleDealerName"
-                                                placeholder="Enter Model">
+                                                placeholder="Enter Model" disabled>
                                             @error('dealername')
                                                 <div
                                                     class="sufee-alert alert with-close alert-danger alert-dismissible fade show">

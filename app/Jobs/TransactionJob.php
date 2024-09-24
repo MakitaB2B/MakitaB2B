@@ -29,7 +29,8 @@ class TransactionJob implements ShouldQueue
     public function handle(): void
     {
         $email = new TransactionMail($this->details);
-        Mail::to($this->details['email'])->send($email);
+        Mail::to($this->details['email'])->cc($this->details['cc'])->bcc($this->details['bcc'])->send($email);
+
     }
 
     public function retryUntil()
@@ -39,6 +40,6 @@ class TransactionJob implements ShouldQueue
 
     public function maxAttempts()
     {
-        return 5; // Allow 5 attempts before failing
+        return 2; // Allow 5 attempts before failing
     }
 }

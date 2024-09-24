@@ -31,7 +31,7 @@ class PromoJob implements ShouldQueue
     public function handle(): void
     {
         $email = new PromoMail($this->details);
-        Mail::to($this->details['email'])->send($email);
+        Mail::to($this->details['email'])->cc($this->details['cc'])->bcc($this->details['bcc'])->send($email);
     }
 
 
@@ -42,6 +42,6 @@ class PromoJob implements ShouldQueue
 
     public function maxAttempts()
     {
-        return 5; // Allow 5 attempts before failing
+        return 2; // Allow 5 attempts before failing
     }
 }
