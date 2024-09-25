@@ -11,21 +11,38 @@
     <div class="card-container">
     
         <!-- Top Section -->
-        <div class="top-section card card-front">
-            <h2>Top Section Content</h2>
-            <p>This could be the logo or employee information.</p>
+        <div class="card card-front">
+             <div class="card-front-top">
+
+                <div class="card-left">
+
+                </div>
+                <div class="card-right">
+
+                </div>
+
+             </div>
+
+            <div class="card-front-bottom">
+
+            </div>
         </div>
 
         <!-- Bottom Section -->
-        <div class="bottom-section card-rear">
-            <h2>Bottom Section Content</h2>
-            <p>This could be the contact information, QR code, or any other details.</p>
+        <div class="card card-rear">
+             <div class="card-rear-top">
+                <div class="card-left">
+
+                </div>
+                <div class="card-right">
+
+                </div>
+             </div>
+             <div class="card-rear-bottom">
+
+             </div>
         </div>
       
-       
-
-
-
     </div>
 
     {{-- <svg width="108.95mm" height="139.87mm" viewBox="0 0 1089.5 1398.7" xmlns="http://www.w3.org/2000/svg">
