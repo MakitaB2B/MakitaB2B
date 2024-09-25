@@ -76,6 +76,8 @@
                                                             title="Previous Company documents required"><i class="fa fa-certificate" aria-hidden="true"></i></a>&nbsp;
                                                     <a href="{{ url('admin/employee/manage-employee/') }}/{{ Crypt::encrypt($list->employee_slug) }}"
                                                         title="Edit"> <i class="nav-icon fas fa-edit"></i></a>
+                                                    <a href="{{ url('admin/employee/business-card/') }}/{{ Crypt::encrypt($list->employee_slug) }}"
+                                                            title="Download Business Card"> <i class="fas fa-arrow-alt-circle-down"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach

@@ -135,4 +135,15 @@ class EmployeeController extends Controller
             }
          }
     }
+
+    public function viewBusinessCard($employeeslug = ''){
+
+        return view('Admin.employees');
+    }
+
+    public function businessCard($employeeslug = ''){
+
+        return view('Admin.employee_business_card');
+    }
+    
 }

@@ -116,6 +116,8 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/designation/get-designations-by-department',[DesignationController::class,'prepareDesignationsByDepertmant']);
     Route::get('/employee',[EmployeeController::class,'index'])->name('admin.employee');
     Route::get('/employee/manage-employee/{employeeslug?}',[EmployeeController::class,'manageEmployee'])->name('employee.manage-employee');
+    Route::get('/employee/business-card-view/{employeeslug?}',[EmployeeController::class,'viewBusinessCard'])->name('employee.view-business-card');
+    Route::get('/employee/business-card/{employeeslug?}',[EmployeeController::class,'businessCard'])->name('employee.business-card');
     Route::post('/employee/manage-employee-process',[EmployeeController::class,'manageEmployeeProcess'])->name('employee.manage-employee-process');
     Route::get('/employee/manage-employee-stiffdoc/{employeeslug?}',[EmployeeStiffDocsController::class,'manageEmployeeStiffDocs'])->name('employee.manage-employee-stiffdoc');
     Route::post('/employee/manage-employee-stiffdoc-process',[EmployeeStiffDocsController::class,'manageEmployeeStiffDocsProcess'])->name('employee.manage-employee-stiffdoc-process');
