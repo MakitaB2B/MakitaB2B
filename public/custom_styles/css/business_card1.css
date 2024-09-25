@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root{
+    --color-green: #00909E;
+    --color-black: black;
+    --color-white: #FFFFFF;
+    --max-width: 10.895cm;
+    --max-height: 13.987cm;
+    --card-width: 9.5cm;
+    --card-height: 5.8cm;
+}
+
+/* General reset */
+*, ::before, ::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Helvetica', sans-serif;
+    background: pink;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    color: var(--color-black);
+}
+
+/* Card container */
+.card-container {
+    display: flex;
+    flex-direction: column;
+    width: var(--max-width);
+    height: var(--max-height);
+    gap: 20px;
+}
+
+/* Front and rear card styles */
+.card-front, .card-rear {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+    width: var(--card-width);
+    height: var(--card-height);
+    position: relative;
+    overflow: hidden; /* Ensures content stays within the card */
+}
+
+.card-front {
+    background-color: var(--color-white);
+}
+
+.card-rear {
+    background-color: var(--color-green);
+}
+
+/* Fix image overflow by setting max-width and max-height */
+img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Ensures the image scales proportionally and stays inside the container */
+    display: block; /* Removes any extra spacing around the image */
+}
+
+/* Specific image containment for .bottom logos */
+.card-container .card-rear .card-rear-bottom img,
+.card-container .card-front-bottom img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Layout for the card-left and card-right sections */
+.card-container .card-rear .card-rear-top .card-right,
+.card-container .card-front .card-front-top .card-right {
+    width: 4.555cm;
+}
+
+.card-container .card-left {
+    width: calc(100% - 4.555cm); /* Adjust width of the left side */
+}
+
+/* Control the bottom logos layout */
+.card-rear-bottom, .card-front-bottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
+}

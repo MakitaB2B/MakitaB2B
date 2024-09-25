@@ -1,14 +1,55 @@
-body, html {
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root{
+    --color-green: #00909E;
+    --color-black: black;
+    --color-white: #FFFFFF;
+    --max-width: 10.895cm;
+    --max-height: 13.987cm;
+    --card-width: 9.5cm;
+    --card-height: 5.8cm;
+}
+
+/* body, html {
     margin: 0;
     padding: 0;
+    
+} */
+
+
+*, ::before, ::after{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+img{
+    max-width: 100%;
+    max-height: 100%;
+}
+
+body{
+    font-family: 'Helvetica', sans-serif;
+    background: pink;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;     /* Center vertically */
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    color: var(--color-black);
     
 }
 
 .card-container {
     display: flex;
     flex-direction: column;
-    height: 100vh; 
+    /* height: 100vh;  */
+    width: var(--max-width);
+    height: var(--max-height);
     gap: 20px;
+   
 }
 
 .card-front, .card-rear {
@@ -18,16 +59,39 @@ body, html {
     align-items: center;
     padding: 40px;
     text-align: center;
+    width: var(--card-width);
+    height: var(--card-height);
+    /* width:9.5 cm;
+    height:5.8 cm */
 }
 
 .card-front {
-    background-color: #f4f4f4;
-    border-bottom: 2px solid #ccc;
+    background-color: var(--color-white); 
 }
 
 .card-rear {
-    background-color: #e0e0e0;
+    background-color: var(--color-green);
 } 
+
+
+
+.card-container .card-rear .bottom img{
+    width: var(--max-width);
+    height: auto; /* Automatically adjusts the height to maintain the aspect ratio */
+    display: block;
+    /* object-fit: contain; */
+    /* display: grid;
+    grid-template-columns: 1fr 8fr 1fr;
+    height: 100%;
+    width: 100%; */
+}
+
+
+
+.card-container .card-rear .card-rear-top .card-right,.card-container .card-front .card-front-top .card-right{
+  width:4.555 cm;
+
+}
 
 
 

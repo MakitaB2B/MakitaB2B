@@ -3,64 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ asset('custom_styles/css/business_card.css') }}">
-    <title>Makita Business Card</title>
+    <title>Business Card</title>
+    <link rel="stylesheet" href="{{ asset('custom_styles/css/style1.css') }}">
 </head>
 <body>
-
-    <div class="card-container">
-    
-        <!-- Top Section -->
-        <div class="card card-front">
-             <div class="card-front-top">
-
-                <div class="card-left">
-
-                </div>
-                <div class="card-right">
-
-                </div>
-
-             </div>
-
-            <div class="card-front-bottom">
-
+    <div class="business-card-container">
+    <div class="business-card front" style="width: 550px; height:350px">
+        <div class="left-section" style="width: 40% !important;">
+            <p><strong>D Janarthanan</strong><br>Sr. Sales & Service Engineer</p>
+            <div class="qr-code">
+                <!-- Add your QR code image here -->
+                <img src="{{ asset('custom_styles/img/QR_code_for_mobile_English_Wikipedia.svg') }}" alt="QR Code" style="width:110px; height:110px;margin-top:30px">
             </div>
         </div>
-
-        <!-- Bottom Section -->
-        <div class="card card-rear">
-             <div class="card-rear-top">
-                <div class="card-left">
-
-                </div>
-                <div class="card-right">
-
-                </div>
-             </div>
-             <div class="card-rear-bottom">
-
-             </div>
+        <div class="right-section" style="width: 60% !important;">
+            <p style="font-size: 16px;"><strong>Makita Power Tools India Pvt. Ltd.</strong><br>
+            No. 30, Jawaharlal Nehru Salai,<br>
+            100 Feet Road, Koyambedu,<br>
+            Chennai - 600107<br>
+            Tel: +91-44-2479-2522<br>
+            Mobile: +91-98400-43109<br>
+            Email: ope_tn@makita.in<br>
+            Website: <a href="https://www.makita.in">www.makita.in</a>
+            </p>
         </div>
-      
+        <div class="logo">
+            <img src="{{ asset('custom_styles/img/logo-05.png') }}" alt="Card Logo" style="width:500px; height:90px;">
+        </div>
     </div>
 
-    {{-- <svg width="108.95mm" height="139.87mm" viewBox="0 0 1089.5 1398.7" xmlns="http://www.w3.org/2000/svg">
-        <!-- Background with rounded corners -->
-        <rect x="0" y="0" width="1089.5" height="1398.7" rx="30" ry="30" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-        
-        <!-- Top Section -->
-        <rect x="0" y="0" width="1089.5" height="580" fill="#f4f4f4" />
-        <text x="50%" y="290" font-size="60" text-anchor="middle" fill="#000">Top Section</text>
-        
-        <!-- Address Section -->
-        <rect x="0" y="580" width="1089.5" height="455.5" fill="#e0e0e0" />
-        <text x="50%" y="800" font-size="50" text-anchor="middle" fill="#000">Address and Contact Information</text>
-        
-        <!-- Bottom Section -->
-        <rect x="0" y="1035.5" width="1089.5" height="363.2" fill="#008297" />
-        <text x="50%" y="1220" font-size="60" text-anchor="middle" fill="#fff">QR Code or Details</text>
-    </svg> --}}
-
+    <div class="business-card back">
+        <div class="back-header">
+            <img src="{{ asset('custom_styles/img/logo-03.png') }}" alt="Card Logo">
+            <img src="{{ asset('custom_styles/img/logo-04.png') }}" alt="Card Logo">
+        </div>
+        <div class="back-details">
+            <p><strong>D Janarthanan</strong><br>Sr. Sales & Service Engineer</p>
+            <p><strong>Head Office:</strong><br>
+            Makita Power Tools India Pvt. Ltd.<br>
+            Unit - II, Sy. Nos. 93/3 & 93/4,<br>
+            Koralur Village, Kasaba Hobli,<br>
+            Hoskote Taluk, Bangalore - 560067<br>
+            Mobile: +91-98400-43109<br>
+            Email: ope_tn@makita.in<br>
+            Website: <a href="https://www.makita.in">www.makita.in</a>
+            </p>
+        </div>
+        <div class="footer">
+            <img  src="{{ asset('custom_styles/img/logo-02.png') }}" alt="Card Logo">
+        </div>
+    </div>
+    </div>
 </body>
 </html>

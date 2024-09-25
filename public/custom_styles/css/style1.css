@@ -1,0 +1,104 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.business-card-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.business-card {
+    width: 350px;
+    height: 200px;
+    border: 1px solid #ccc;
+    /* border-radius: 8px; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    padding: 15px;
+    margin: 10px;
+}
+
+.front {
+    position: relative;
+}
+
+.left-section {
+    float: left;
+    width: 60%;
+}
+
+.qr-code img {
+    width: 60px;
+    height: 60px;
+    margin-top: 10px;
+}
+
+.right-section {
+    float: right;
+    width: 35%;
+    text-align: right;
+    font-size: 12px;
+}
+
+.logo {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.logo img {
+    width: 100px;
+}
+
+.back {
+    background-color: #00a1e1;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.back-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.back-header .logo {
+    width: 70px;
+}
+
+.back-details {
+    font-size: 12px;
+    text-align: left;
+}
+
+.footer {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
