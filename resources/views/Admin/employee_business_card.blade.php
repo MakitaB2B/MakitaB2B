@@ -33,9 +33,10 @@
     </div>
 
     <div class="business-card back">
-        <div class="back-header">
-            <img src="{{ asset('custom_styles/img/logo-03.png') }}" alt="Card Logo">
-            <img src="{{ asset('custom_styles/img/logo-04.png') }}" alt="Card Logo">
+        
+        <div class="back-header" style="display: inline-grid;">
+            <img src="{{ asset('custom_styles/img/logo-04.png') }}" style="height:50px" alt="Card Logo">
+            <img src="{{ asset('custom_styles/img/logo-03.png') }}" style="height:50px;margin-top:30px;" alt="Card Logo">
         </div>
         <div class="back-details">
             <p><strong>D Janarthanan</strong><br>Sr. Sales & Service Engineer</p>
@@ -49,8 +50,9 @@
             Website: <a href="https://www.makita.in">www.makita.in</a>
             </p>
         </div>
+        
         <div class="footer">
-            <img  src="{{ asset('custom_styles/img/logo-02.png') }}" alt="Card Logo">
+            <img  src="{{ asset('custom_styles/img/logo-02.png') }}" alt="Card Logo" style="width: 548px;">
         </div>
     </div>
     </div>
