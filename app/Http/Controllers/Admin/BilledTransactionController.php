@@ -26,7 +26,15 @@ class BilledTransactionController extends Controller
     }
 
     public function uploadBilledTransaction(Request $request){
+
+        $validator = \Validator::make(request()->all(), [
+            'mycsv' =>'required|file|mimes:csv,txt|max:2048',
+        ]);
         
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        }
+
         if (request()->has('mycsv')) {
 
         $data = array_map('str_getcsv', file(request()->mycsv));
