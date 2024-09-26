@@ -124,10 +124,63 @@ class BilledTransactionController extends Controller
         // ]);
         // ->get();
     
-       //-----------built query
+       //-----------built query 
+       //-----------working code
+        // $start_date = now()->subDays(7)->toDateString();
+        // $end_date = now()->toDateString();
+        
+        // Transaction::join('billed_transactions', function($join) {
+        //     $join->on('billed_transactions.order_id', '=', 'transactions.order_id')
+        //          ->on('billed_transactions.Item', '=', 'transactions.model_no')
+        //          ->on('billed_transactions.promo_code', '=', 'transactions.promo_code');
+        // })
+        // ->whereBetween('billed_transactions.created_at', [$start_date, $end_date])
+        // ->update([
+        //     'transactions.status' => DB::raw("
+        //         CASE 
+        //             WHEN transactions.order_qty = (
+        //                 SELECT SUM(bt.`Qty Invoiced`) 
+        //                 FROM billed_transactions as bt 
+        //                 WHERE bt.order_id = transactions.order_id 
+        //                 AND bt.Item = transactions.model_no 
+        //                 AND bt.promo_code = transactions.promo_code
+        //             ) THEN 'billed'
+        //             WHEN transactions.created_at < NOW() - INTERVAL 7 DAY THEN 'cancelled'
+        //             ELSE transactions.status
+        //         END
+        //     "),
+          
+        //     'transactions.billed_qty' => DB::raw("
+        //         CASE
+        //             WHEN transactions.order_qty != (
+        //                 SELECT SUM(bt.`Qty Invoiced`) 
+        //                 FROM billed_transactions as bt 
+        //                 WHERE bt.order_id = transactions.order_id 
+        //                 AND bt.Item = transactions.model_no 
+        //                 AND bt.promo_code = transactions.promo_code
+        //             ) THEN (
+        //                 SELECT SUM(bt.`Qty Invoiced`) 
+        //                 FROM billed_transactions as bt 
+        //                 WHERE bt.order_id = transactions.order_id 
+        //                 AND bt.Item = transactions.model_no 
+        //                 AND bt.promo_code = transactions.promo_code
+        //             )
+        //             ELSE (
+        //                 SELECT SUM(bt.`Qty Invoiced`) 
+        //                 FROM billed_transactions as bt 
+        //                 WHERE bt.order_id = transactions.order_id 
+        //                 AND bt.Item = transactions.model_no 
+        //                 AND bt.promo_code = transactions.promo_code
+        //             )
+        //         END
+        //     ")
+        // ]);
+
+       //-----------working code
+
         $start_date = now()->subDays(7)->toDateString();
         $end_date = now()->toDateString();
-        
+
         Transaction::join('billed_transactions', function($join) {
             $join->on('billed_transactions.order_id', '=', 'transactions.order_id')
                  ->on('billed_transactions.Item', '=', 'transactions.model_no')
@@ -144,11 +197,11 @@ class BilledTransactionController extends Controller
                         AND bt.Item = transactions.model_no 
                         AND bt.promo_code = transactions.promo_code
                     ) THEN 'billed'
-                    WHEN transactions.created_at < NOW() - INTERVAL 7 DAY THEN 'cancelled'
+                    WHEN transactions.order_date < NOW() - INTERVAL 7 DAY 
+                        AND transactions.billed_qty IS NULL THEN 'cancelled'
                     ELSE transactions.status
                 END
             "),
-          
             'transactions.billed_qty' => DB::raw("
                 CASE
                     WHEN transactions.order_qty != (
@@ -174,6 +227,7 @@ class BilledTransactionController extends Controller
                 END
             ")
         ]);
+        
         
 
         // dd(DB::getQueryLog());
