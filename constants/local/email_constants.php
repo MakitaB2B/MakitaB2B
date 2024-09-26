@@ -21,6 +21,8 @@
 defined('PROMO_TRANSACTION_CC_EMAILS') OR define('PROMO_TRANSACTION_CC_EMAILS', [
     'lobojeanz@gmail.com',
     'it_security@makita.in',
+    'sales@makita.in',
+    'veena@makita.in'
  ]);
  
  defined('PROMO_TRANSACTION_TO_EMAILS') OR define('PROMO_TRANSACTION_TO_EMAILS','jeanlobo@makita.in');
@@ -59,6 +61,8 @@ defined('PROMO_TO') OR define('PROMO_TO', [
  defined('PROMO_CC') OR define('PROMO_CC', [
      'jeanlobo94@gmail.com',
      'jeanlobo@makita.in',
+     'sales@makita.in',
+     'veena@makita.in'
   ]);
  
  defined('PROMO_FROM') OR define('PROMO_FROM','jeanlobo94@gmail.com');
