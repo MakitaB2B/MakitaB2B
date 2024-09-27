@@ -102,7 +102,7 @@
                                             <label for="exampleRmname">Regional Manager Name*</label>
                                             <input type="text" class="form-control" name="rm_name"
                                                 value="{{Auth::guard('admin')->user()->employee->full_name}}" required id="exampleRmname"
-                                                placeholder="Enter Model" disabled>
+                                                placeholder="Enter Model" >
                                             @error('rm_name')
                                                 <div
                                                     class="sufee-alert alert with-close alert-danger alert-dismissible fade show">

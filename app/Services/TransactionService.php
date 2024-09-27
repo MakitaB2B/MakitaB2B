@@ -27,14 +27,16 @@ class TransactionService{
 
     public function createOrUpdateTransac($data){
 
-        try {
+         try {
             DB::transaction(function () use ($data) {
-              Transaction::insert($data);
-            });
-            return true;
+                
+             Transaction::insert($data);
+          
+             });
+             return true; 
         } catch (Exception $e) {
              return $e->getMessage();
-        }
+         }return true;
   
     }
 

@@ -386,6 +386,7 @@ class PromotionController extends Controller
               })->filter()->toArray();
           
             } catch (\Exception $e) {
+              
                 return $e->getMessage();
           }
 
