@@ -8,23 +8,24 @@
 </head>
 <body>
     <div class="business-card-container">
-    <div class="business-card front" style="width: 550px; height:350px">
-        <div class="left-section" style="width: 40% !important;">
-            <p><strong>D Janarthanan</strong><br>Sr. Sales & Service Engineer</p>
+    <div class="business-card front" >  
+        {{-- style="width: 550px; height:350px" --}}
+        <div class="left-section" >
+            <p><strong>D Janarthanan</strong><br><small>Sr. Sales & Service Engineer</small></p>
             <div class="qr-code">
                 <!-- Add your QR code image here -->
-                <img src="{{ asset('custom_styles/img/QR_code_for_mobile_English_Wikipedia.svg') }}" alt="QR Code" style="width:110px; height:110px;margin-top:30px">
+                <img src="{{ asset('custom_styles/img/QR_code_for_mobile_English_Wikipedia.svg') }}" alt="QR Code">
             </div>
         </div>
-        <div class="right-section" style="width: 60% !important;">
-            <p style="font-size: 16px;"><strong>Makita Power Tools India Pvt. Ltd.</strong><br>
-            No. 30, Jawaharlal Nehru Salai,<br>
+        <div class="right-section">
+            <p><strong>Makita Power Tools India Pvt. Ltd.</strong><br>
+            <small> No. 30, Jawaharlal Nehru Salai,<br>
             100 Feet Road, Koyambedu,<br>
             Chennai - 600107<br>
-            Tel: +91-44-2479-2522<br>
-            Mobile: +91-98400-43109<br>
-            Email: ope_tn@makita.in<br>
-            Website: <a href="https://www.makita.in">www.makita.in</a>
+            Tel: +91-44-2479-2522<br></p>
+            <p>Mobile  : +91-98400-43109<br>
+               Email   : ope_tn@makita.in<br>
+               Website : <a href="https://www.makita.in">www.makita.in</a></small>
             </p>
         </div>
         <div class="logo">
@@ -39,16 +40,33 @@
             <img src="{{ asset('custom_styles/img/logo-03.png') }}" style="height:50px;margin-top:30px;" alt="Card Logo">
         </div>
         <div class="back-details">
-            <p><strong>D Janarthanan</strong><br>Sr. Sales & Service Engineer</p>
-            <p><strong>Head Office:</strong><br>
-            Makita Power Tools India Pvt. Ltd.<br>
-            Unit - II, Sy. Nos. 93/3 & 93/4,<br>
+            <span>
+            <p><strong>D Janarthanan</strong><br><small>Sr. Sales & Service Engineer</small></p>
+            </span>
+            <span>
+            <p><small>Head Office:</small><br></p>    
+            <p><strong>Makita Power Tools India Pvt. Ltd.</strong><br>
+            <small> Unit - II, Sy. Nos. 93/3 & 93/4,<br>
             Koralur Village, Kasaba Hobli,<br>
-            Hoskote Taluk, Bangalore - 560067<br>
-            Mobile: +91-98400-43109<br>
-            Email: ope_tn@makita.in<br>
-            Website: <a href="https://www.makita.in">www.makita.in</a>
-            </p>
+            Hoskote Taluk, Bangalore - 560067<br></p>
+          {{-- <pre>Mobile  : +91-98400-43109<br>
+               Email   : ope_tn@makita.in<br>
+               Website : <a href="https://www.makita.in">www.makita.in</a></small></pre> --}}
+               <div class="contact-info">
+                <div>
+                  <span>Mobile :</span>
+                  <span>+91-98400-43109</span>
+                </div>
+                <div>
+                  <span>Email :</span>
+                  <span><a href="mailto:ope_tn@makita.in">ope_tn@makita.in</a></span>
+                </div>
+                <div>
+                  <span>Website :</span>
+                  <span><a href="https://www.makita.in">www.makita.in</a></span>
+                </div>
+              </div>
+            </span>
         </div>
         
         <div class="footer">
