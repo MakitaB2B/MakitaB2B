@@ -277,7 +277,7 @@
             </div>
             <div class="form-group col-md-2">
                 <label for="exampleOfferType${loop_count}">Offer Type</label>
-                <select class="custom-select mySelect" name="offertype[]" id="exampleOfferType${loop_count}">
+                <select class="custom-select mySelect" name="offertype[]" required id="exampleOfferType${loop_count}">
                     <option value="">Please Select Price Type</option>
                     @foreach($offer_type as $type)
                     <option value="{{$type}}">{{ucfirst(trans($type))}}</option>
@@ -286,11 +286,11 @@
            </div>
             <div class="form-group col-md-2">
                 <label for="exampleOfferQty${loop_count}">Offer Qty</label>
-                <input type="text" class="form-control" name="offerqty[]" id="exampleOfferQty${loop_count}" placeholder="Offer Qty" required>
+                <input type="text" class="form-control" name="offerqty[]" required id="exampleOfferQty${loop_count}" placeholder="Offer Qty" required>
             </div>
             <div class="form-group col-md-2">
                 <label for="examplePromoPriceType${loop_count}">Price Type</label>
-                <select class="custom-select mySelect" name="pricetype[]" id="examplePromoPriceType${loop_count}" onchange="showSelectedValue('${loop_count}')">
+                <select class="custom-select mySelect" name="pricetype[]" required id="examplePromoPriceType${loop_count}" onchange="showSelectedValue('${loop_count}')">
                     <option value="">Please Select Promotion Price Type</option>
                     @foreach($price_type as $price)
                     <option value="{{$price}}">{{$price}}</option>
@@ -299,7 +299,7 @@
            </div>
             <div class="form-group col-md-2">
                 <label for="examplePromoPrice${loop_count}">Offer Price</label>
-                <input type="text" class="form-control" name="promoprice[]" value="" id="examplePromoPrice${loop_count}" placeholder="Offer Price">
+                <input type="text" class="form-control" name="promoprice[]" value="" required id="examplePromoPrice${loop_count}" placeholder="Offer Price">
             </div>   
             </div>
         `;
@@ -364,11 +364,11 @@
                 </div>
                 <div class="form-group col-md-2">
                     <label for="examplefocqty${loop_count}">FOC Qty</label>
-                    <input type="text" class="form-control" name="focqty[]" value="" id="examplefocqty${loop_count}" placeholder="FOC Qty">
+                    <input type="text" class="form-control" name="focqty[]" value="" id="examplefocqty${loop_count}" required placeholder="FOC Qty">
                 </div>
                <div class="form-group col-md-2">
                 <label for="examplefocSpecialPrice${loop_count}">FOC Special Price</label>
-                <input type="text" class="form-control" name="focspecialprice[]" value="" id="examplefocSpecialPrice${loop_count}" placeholder="FOC Special Price">
+                <input type="text" class="form-control" name="focspecialprice[]" value="" id="examplefocSpecialPrice${loop_count}" required placeholder="FOC Special Price">
                </div> 
                 </div>
             `;
