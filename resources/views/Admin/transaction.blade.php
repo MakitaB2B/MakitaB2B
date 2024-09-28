@@ -57,7 +57,7 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Order Id</th>
+                                            <th>Transaction Id</th>
                                             <th>Promo Code</th>
                                             <th>Order Price</th>
                                             <th>Status</th>

@@ -75,6 +75,7 @@
             <th>Promo Code</th>
             <th>Dealer Code</th>
             <th>Dealer Name</th>
+            <th>Transaction ID</th>
           </tr>
         </thead>
         <tbody>
@@ -82,6 +83,7 @@
             <td>{{ $details['offerproduct'][0]['promo_code'] }}</td>
             <td>{{ $details['offerproduct'][0]['dealer_code'] }}</td>
             <td>{{ $details['offerproduct'][0]['dealer_name'] }}</td>
+            <td>{{ $details['offerproduct'][0]['order_id'] }}</td>
           </tr>
         </tbody>
     </table>
@@ -134,7 +136,7 @@
           <td>{{ $offer["description"] }}</td>
           <td>{{ $offer["offer_type"] }}</td>
           <td>{{ $offer["product_type"] }}</td>
-          <td>{{ $offer["price_type"] }}</td>
+          <td>{{ $offer["order_price"] == 0 ? ' - ' : $offer["price_type"] }}</td>
           <td>{{ $offer["order_price"] }}</td>
           <td>{{ $offer["order_qty"] }}</td>
         </tr>
