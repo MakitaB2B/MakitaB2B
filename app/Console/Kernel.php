@@ -13,6 +13,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+
+        // $schedule->command("daily:promo-follow-up")    ->cron("*/15 2-23 * * *")->onOneServer();
+        // $schedule->command("queue:pending-payments --all")->daily()->onOneServer();
+
+        // $schedule->command("stp:monitoring --tenant=".$tenant->id)->dailyAt('11:00');
     }
 
     /**
