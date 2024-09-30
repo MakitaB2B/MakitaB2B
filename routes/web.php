@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\ItemInfoController;
 use App\Http\Controllers\Admin\BilledTransactionController;
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
+use App\Http\Controllers\Admin\TravelManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -203,6 +204,8 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/travelmanagement/applyviewclaimtravelexpenses',function(){
         return view('Admin/business_travel_list');
     })->name('travelmanagement.applyviewclaimtravelexpenses');
+
+    Route::post('/travelmanagement/create-travel-management-applications',[TravelManagementController::class,'createTravelMangmentApplication'])->name('travelmanagement.create-travel-management-applications');
 
     Route::get('/promotions',[PromotionController::class,'index'])->name('promo');
     Route::get('/promotions/promotion-creation',[PromotionController::class,'promotionCreation'])->name('admin.promotions.promotion-creation');
