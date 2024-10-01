@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        // $schedule->command("daily:promo-follow-up")    ->cron("*/15 2-23 * * *")->onOneServer();
+        // $schedule->command("daily:promo-follow-up")    //->cron("*/15 2-23 * * *")->onOneServer();
         // $schedule->command("queue:pending-payments --all")->daily()->onOneServer();
 
         // $schedule->command("stp:monitoring --tenant=".$tenant->id)->dailyAt('11:00');

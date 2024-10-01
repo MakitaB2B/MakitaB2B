@@ -12,6 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('billed_transactions', function (Blueprint $table) {
+            if (!Schema::hasColumn('billed_transactions', 'Day')) {
+                $table->string('Day')->nullable();
+            }
             if (!Schema::hasColumn('billed_transactions', 'id')) {
             $table->id();
             $table->string('billed_transaction_slug',50)->unique();

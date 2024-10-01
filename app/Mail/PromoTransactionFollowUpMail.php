@@ -56,6 +56,6 @@ class PromoTransactionFollowUpMail extends Mailable
     public function build()
     {
         return $this->subject('Promo Transaction Follow Up Mail')
-                    ->view('emails.promofollowupmail');
+                    ->view('mails.promofollowupmail');
     }
 }

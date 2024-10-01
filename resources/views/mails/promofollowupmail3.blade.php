@@ -49,19 +49,6 @@
             font-weight: bold;
             color: #444;
         }
-        /* Sub-table styling */
-        .sub-table {
-            margin-top: 10px;
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .sub-table th, .sub-table td {
-            padding: 5px;
-            border: 1px solid #ddd;
-        }
-        .sub-table th {
-            background-color: #e8e8e8;
-        }
     </style>
 </head>
 <body>
@@ -104,26 +91,9 @@
             @php
               $merged_data = json_decode($offer->merged_data, true);
             @endphp
-            <table class="sub-table">
-              <thead>
-                <tr>
-                  <th>Model No</th>
-                  <th>Order Qty</th>
-                  <th>Billed Qty</th>
-                  <th>Product Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($merged_data as $item)
-                <tr>
-                  <td>{{ $item['model_no'] }}</td>
-                  <td>{{ $item['order_qty'] }}</td>
-                  <td>{{ $item['billed_qty'] ?? 'N/A' }}</td>
-                  <td>{{ $item['product_type'] }}</td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
+            @foreach($merged_data as $item)
+              <b>{{ $item['model_no'] }}</b>: {{ $item['order_qty'] }} pcs, {{ $item['billed_qty'] ?? 'N/A' }} , {{ $item['product_type'] }}<br>
+            @endforeach
           </td>
         </tr>
         @endforeach

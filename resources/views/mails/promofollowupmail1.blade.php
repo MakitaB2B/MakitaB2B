@@ -49,25 +49,12 @@
             font-weight: bold;
             color: #444;
         }
-        /* Sub-table styling */
-        .sub-table {
-            margin-top: 10px;
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .sub-table th, .sub-table td {
-            padding: 5px;
-            border: 1px solid #ddd;
-        }
-        .sub-table th {
-            background-color: #e8e8e8;
-        }
     </style>
 </head>
 <body>
-    @if(!app()->environment('production'))
-    <p><b>Note - This is a test mail</b></p>
-    @endif
+      @if(!app()->environment('production'))
+      <p><b>Note - This is a test mail</b></p>
+      @endif
 
     <p>List of Dealers to be followed up for today - {{date('d-m-Y')}}.</p>
    
@@ -84,7 +71,6 @@
           <th>Dealer Code</th>
           <th>Dealer Name</th>
           <th>Dealer Email</th>
-          <th>Order Details</th>
         </tr>
       </thead>
       <tbody>
@@ -99,32 +85,7 @@
           <td>{{ $offer->full_name }}</td>
           <td>{{ $offer->dealer_code }}</td>
           <td>{{ $offer->dealer_name }}</td>
-          <td>{{ $offer->dealer_email }}</td>
-          <td>
-            @php
-              $merged_data = json_decode($offer->merged_data, true);
-            @endphp
-            <table class="sub-table">
-              <thead>
-                <tr>
-                  <th>Model No</th>
-                  <th>Order Qty</th>
-                  <th>Billed Qty</th>
-                  <th>Product Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($merged_data as $item)
-                <tr>
-                  <td>{{ $item['model_no'] }}</td>
-                  <td>{{ $item['order_qty'] }}</td>
-                  <td>{{ $item['billed_qty'] ?? 'N/A' }}</td>
-                  <td>{{ $item['product_type'] }}</td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </td>
+          <td>{{ $offer->dealer_email}}</td>
         </tr>
         @endforeach
       </tbody>
