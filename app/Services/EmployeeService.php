@@ -50,9 +50,8 @@ class EmployeeService{
     ->join('departments', 'employees.department_id', '=', 'departments.id')
     ->where('designation_name', '=', $designation)
     ->where('name', '=', $department)
-    ->select('employees.full_name')
+    ->select('employees.full_name','employees.official_email')
     ->get();
-
 
     }
 
