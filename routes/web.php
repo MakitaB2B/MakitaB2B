@@ -206,6 +206,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     })->name('travelmanagement.applyviewclaimtravelexpenses');
 
     Route::post('/travelmanagement/create-travel-management-applications',[TravelManagementController::class,'createTravelMangmentApplication'])->name('travelmanagement.create-travel-management-applications');
+    Route::post('/travelmanagement/create-ltc-claim-application',[TravelManagementController::class,'createLtcClaimApplication'])->name('travelmanagement.create-ltc-claim-application');
 
     Route::get('/promotions',[PromotionController::class,'index'])->name('promo');
     Route::get('/promotions/promotion-creation',[PromotionController::class,'promotionCreation'])->name('admin.promotions.promotion-creation');

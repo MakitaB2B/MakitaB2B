@@ -17,6 +17,17 @@ class TravelManagementController extends Controller
         $this->travelManagementService=$travelManagementService;
     }
     public function createTravelMangmentApplication(Request $request){
+
+        echo $request->vechile_type;
+        echo '<br>';
+        echo $request->vechile_number;
+        echo '<br>';
+        echo $request->fuel_expenses;
+        echo '<br>';
+        print_r($request->groupbt_employees);
+
+        die();
+
         $applicantSlug=Auth::guard('admin')->user()->employee_slug;
         $btaSlug=Str::slug(rand().rand());
         $travelID='bta'.rand();
@@ -35,28 +46,5 @@ class TravelManagementController extends Controller
         }
 
      }
-     public function getAllBTRequestsForMangersTeam(){
-        $result=$this->travelManagementService->getAllBTRequestsForMangersTeamService();
-        return view('Admin.bt_trips_requests_mangers',compact('result'));
-     }
-     public function changeBTAStatusToManagerApprovReject(Request $request){
-        $status=$request->status;
-        $btaSlug=$request->btaSlug;
-
-        $checkStatus=$this->travelManagementService->checkBTAManagerApprovalStatus($btaSlug);
-
-        if($checkStatus[0]->status == 0){
-            $result=$this->travelManagementService->changeBTAStatusToManagerApprovRejectService($status,$btaSlug);
-            echo "Sucess";
-        }else{
-            echo "Alredy Inserted Before";
-        }
-    }
-
-    public function createLtcClaimApplication($btaSlug){
-  
-        // return view('Admin.bt_trip_request_details_mangers',compact('btaDetails'));
-    }
-
 
 }
