@@ -36,8 +36,8 @@ class Kernel extends ConsoleKernel
             $today = now()->format('Y-m-d');
 
             if ($today !== $firstsat && $today !== $thirdsat) {
-                // $schedule->command('daily:promo-follow-up')->cron('0 5 * * 1-6');
-                $schedule->command("daily:promo-follow-up")->dailyAt('13:15');
+                $schedule->command('daily:promo-follow-up')->cron('0 6 * * 1-6');
+                // $schedule->command("daily:promo-follow-up")->dailyAt('13:15');
             }
           
 
