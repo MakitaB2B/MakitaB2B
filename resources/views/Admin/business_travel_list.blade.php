@@ -429,7 +429,7 @@
 
                     <!-- Modal body -->
                     <div class="modal-body">
-                        <form method="POST" action="{{ route('service-management.send-service-cost-estimation-cx') }}"
+                        <form method="POST" action="{{ route('travelmanagement.create-ltc-claim-application') }}"
                             enctype="multipart/form-data">
                             @csrf
                             <div class="row">

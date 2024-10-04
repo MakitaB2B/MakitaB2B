@@ -53,7 +53,9 @@ class TravelManagementController extends Controller
         }
     }
 
-    public function createLtcClaimApplication($btaSlug){
+    public function createLtcClaimApplication(Request $request){
+
+        dd($request->all());
   
         // return view('Admin.bt_trip_request_details_mangers',compact('btaDetails'));
     }
