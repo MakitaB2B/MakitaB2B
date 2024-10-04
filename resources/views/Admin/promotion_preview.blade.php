@@ -397,7 +397,11 @@
           });
 
           $('#sendMailButton').on('click', function() {
+            // var $this = $(this);
+            // $this.prop('disabled', true);  // Disable the button
+            $('#sendMailButton').remove();
             $("#sendMailButtonText").empty();
+            $("#sendMailButtonText").html('<b style="color:green;">Please wait...</b>');
             var currentDomain = window.location.origin;
             var promocode = $(this).data('promo-code');  // Get the encrypted promo code from the data attribute
               $.ajax({

@@ -431,7 +431,6 @@ class PromotionController extends Controller
       $details['email'] = PROMO_TRANSACTION_TO_EMAILS;
       $details['cc'] = PROMO_TRANSACTION_CC_EMAILS;
       $details['bcc'] =PROMO_TRANSACTION_BCC;
-  
       try {
         $transactionjob = TransactionJob::dispatch($details);
       } catch (\Exception $e) {

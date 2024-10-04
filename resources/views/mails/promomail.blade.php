@@ -104,8 +104,8 @@
           <td>{{ $offer->model_no }}</td>
           <td>{{ $offer->mrp }}</td>
           <td>{{ $offer->dlp }}</td>
-          <td>{{ $offer->best }}</td>
-          <td>{{ $offer->price ?? '-' }}</td>
+          <td style="color: {{ $offer->price_type == 'Best Price'? 'orange' : '#444' }};">{{ $offer->best }}</td>
+          <td style="color: {{ $offer->price_type == 'Special Price'? 'orange' : '#444' }};">{{ $offer->price ?? '-' }}</td>
           <td>{{ $offer->stock }}</td>
           <td>{{ $offer->ka01 ?? '-' }}</td>
           <td>{{ $offer->dl01 ?? '-' }}</td>
@@ -142,8 +142,8 @@
           <td>{{ $offer->model_no }}</td>
           <td>{{ $offer->mrp }}</td>
           <td>{{ $offer->dlp }}</td>
-          <td>{{ $offer->best }}</td>
-          <td>{{ $offer->price ?? '-' }}</td>
+          <td style="color: {{ $offer->price_type == 'Best Price'? 'orange' : '#444' }};">{{ $offer->best }}</td>
+          <td style="color: {{ $offer->price_type == 'Special Price'? 'orange' : '#444' }};">{{ $offer->price ?? '-' }}</td>
           <td>{{ $offer->stock }}</td>
           <td>{{ $offer->ka01 ?? '-' }}</td>
           <td>{{ $offer->dl01 ?? '-' }}</td>
