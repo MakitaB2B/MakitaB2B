@@ -4,6 +4,8 @@ use App\Models\Admin\BtaApplication;
 use App\Models\Admin\BtaExpensesBreakups;
 use App\Models\Admin\BtaGroupBt;
 use App\Models\Admin\TeamMembers;
+use App\Models\Admin\LtcClaim;
+use App\Models\Admin\LtcMiscellaneousExp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
@@ -15,6 +17,21 @@ use Auth;
 
 
 class TravelManagementService{
+
+     public function ltc_claim_id(){
+        
+        $ltcIdExists = LtcClaim::distinct()->pluck('ltc_claim_id')->toArray();
+
+        do {
+
+            $ltcId = 'ltc'.rand();
+    
+        } while (in_array($ltcId,$ltcIdExists ));
+    
+        return $ltcId;
+
+     } 
+   
      public function createBTAApplication($request,$btaSlug,$applicantSlug,$travelID,$status){
 
         try {
@@ -128,6 +145,70 @@ class TravelManagementService{
     }
     public function checkBTAManagerApprovalStatus($btaSlug){
         return BtaApplication::where(['bta_slug'=>$btaSlug])->get(['status','mannager_approved_by']);
+    }
+
+    public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
+
+        try {
+
+            DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
+
+                $teamDetails = TeamMembers::WHERE('team_member','=',$employeeSlug)->get(['team_owner']);
+
+                $teamManager = count($teamDetails)>0 ? $teamDetails[0]->team_owner : null ;
+
+                $date = $request->post("date");
+              
+                $ltcClaimData = [];
+
+                foreach ($date as $index => $dateData) {
+                    $ltcClaimData[] = [
+
+                        'ltc_claim_slug' => Str::slug(rand().rand()),
+                        'employee_slug' => $employeeSlug,
+                        'ltc_claim_id' => $ltc_id,
+                        'ltc_month' => Carbon::parse($request->ltc_month)->month,
+                        'ltc_year' => $request->ltc_year,
+                        'date' => $request->date[$index],
+                        'mode_of_transport' =>$request->mode_of_transport[$index],
+                        'opening_meter' => $request->opening_meter[$index],
+                        'closing_meter'=> $request->closing_meter[$index],
+                        'total_km' => $request->total_km[$index],
+                        'place_visited' => $request->place_visited[$index],
+                        'claim_amount' => $request->claim_amount[$index],
+                        'lunch_exp' => $request->lunch_exp[$index],
+                        'fuel_exp' => $request->fuel_exp[$index],
+                        'toll_charge' => $request->toll_charge[$index],
+                        'manager_slug' => $teamManager,
+
+                    ];
+                }
+            
+                if (!empty($ltcClaimData)) {
+                    LtcClaim::insert($ltcClaimData);
+                }
+
+                $ltcMiscellaneousExp = new LtcMiscellaneousExp([
+                    'ltc_miscellaneous_slug' => Str::slug(rand().rand()),
+                    'ltc_claim_id' => $ltc_id,
+                    'courier_bill' =>  $request->courier_bill,
+                    'xerox_stationary' => $request->xerox_stationary,
+                    'office_expense' => $request->office_expense,
+                    'monthly_mobile_bills' => $request->monthly_mobile_bills,
+                    'remarks' => $request->remarks
+                ]);
+
+                $ltcMiscellaneousExp->save();
+
+            });
+
+            return true;
+        } catch (Exception $e) {
+
+            dd($e);
+            return false;
+        }
+       
     }
 
 }

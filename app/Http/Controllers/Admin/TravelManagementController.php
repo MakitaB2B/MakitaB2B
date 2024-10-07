@@ -55,9 +55,19 @@ class TravelManagementController extends Controller
 
     public function createLtcClaimApplication(Request $request){
 
-        dd($request->all());
-  
-        // return view('Admin.bt_trip_request_details_mangers',compact('btaDetails'));
+        $employeeSlug=Auth::guard('admin')->user()->employee_slug;
+
+        $ltc_id = $this->travelManagementService->ltc_claim_id();
+        $status=0;
+
+        $createUpdateAction=$this->travelManagementService->createLtcClaim($request,$employeeSlug,$ltc_id,$status);
+
+        $msg = $createUpdateAction ? 'Yes! You Have Sucessfully Applied for LTC' : 'Error! LTC Application Not Executed';
+        
+        $request->session()->flash('message',$msg);
+            
+        return redirect('admin/travelmanagement/applyviewclaimtravelexpenses');
+      
     }
 
 

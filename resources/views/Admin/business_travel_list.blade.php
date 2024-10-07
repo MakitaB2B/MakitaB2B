@@ -435,7 +435,7 @@
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">LTC for the Month*</label>
-                                    <select class="custom-select form-control-border">
+                                    <select class="custom-select form-control-border" name=ltc_month>
                                         <option>January</option>
                                         <option>February</option>
                                         <option>March</option>
@@ -452,7 +452,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">LTC for the Year*</label>
-                                    <select class="custom-select form-control-border">
+                                    <select class="custom-select form-control-border" name=ltc_year>
                                         <option>2024</option>
                                         <option>2025</option>
                                         <option>2026</option>
@@ -466,52 +466,52 @@
                             <div class="row" id="ltc_expenses">
                                 <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Date*</label>
-                                    <input type="date" class="form-control" name="cost_estimation" required
+                                    <input type="date" class="form-control" name="date[]" required
                                         id="exampleInputCostEstimation">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Mode of Transport*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="mode_of_transport[]" required
                                         id="exampleInputCostEstimation" placeholder="Mode of Transport">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Opening Meter*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="opening_meter[]" required
                                         id="exampleInputCostEstimation" placeholder="Opening Meter">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Closing Meter*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="closing_meter[]" required
                                         id="exampleInputCostEstimation" placeholder="Closing Meter">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Total KM*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="total_km[]" required
                                         id="exampleInputCostEstimation" placeholder="Enter Total KM">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Places Visited*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="place_visited[]" required
                                         placeholder="Enter Places Visited">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Claim Amount*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="claim_amount[]" required
                                         placeholder="Enter Claim Amount">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Lunch Exp.*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="lunch_exp[]" required
                                         placeholder="Enter Lunch Exp.">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Fuel Expenses*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="fuel_exp[]" required
                                         placeholder="Fuel Expenses">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Toll Charges*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="toll_charge[]" required
                                         placeholder="Toll Charges">
                                 </div>
                                 <div class="form-group col-md-4" style="margin-top: 30px;">
@@ -528,22 +528,22 @@
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">Courier Bill*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="courier_bill" required
                                         placeholder="Monthly Courier Bill">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">Xerox & Stationary*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="xerox_stationary" required
                                         placeholder="Xerox & Stationary">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">Office Expenses*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="office_expense" required
                                         placeholder="Enter Office Expenses">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">Monthly Mobile Bills*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="monthly_mobile_bill" required
                                         placeholder="Enter Mobile Bills">
                                 </div>
                             </div>
@@ -551,7 +551,7 @@
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label for="exampleServiceCost">Remark, If Any</label>
-                                    <textarea class="form-control" name="permanent_address" rows="2" placeholder="Enter Remark, If Any"
+                                    <textarea class="form-control" name="remarks" rows="2" placeholder="Enter Remark, If Any"
                                         required=""></textarea>
                                 </div>
                             </div>
@@ -853,25 +853,25 @@
                 var html = '<input name="ewe_slug[]" type="hidden"><div class="row" id="ltcexpense_' + loop_count +
                     '" style="margin-top:20px">';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="" required value="" id="exampleCompanyName" ></div>';
+                    '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="date[]" required value="" id="exampleCompanyName" ></div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlPlaceofVisit">Mode of Transport*</label> <input type="text" class="form-control" required name="" placeholder="Mode of Transport"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlPlaceofVisit">Mode of Transport*</label> <input type="text" class="form-control" required name="mode_of_transport[]" placeholder="Mode of Transport"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlJFt">Opening Meter*</label> <input type="text" class="form-control" required name="" placeholder="Opening Meter"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlJFt">Opening Meter*</label> <input type="text" class="form-control" required name="opening_meter[]" placeholder="Opening Meter"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlAccomodation">Closing Meter*</label> <input type="text" class="form-control" required name="" placeholder="Closing Meter"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlAccomodation">Closing Meter*</label> <input type="text" class="form-control" required name="closing_meter[]" placeholder="Closing Meter"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTAConviniance">Total KM*</label> <input type="text"  class="form-control" required name="" placeholder="Total KM"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputBTAConviniance">Total KM*</label> <input type="text"  class="form-control" required name="total_km[]" placeholder="Total KM"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTAConviniance">Places Visited*</label> <input type="text"  class="form-control" required name="" placeholder="Places Visited"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputBTAConviniance">Places Visited*</label> <input type="text"  class="form-control" required name="place_visited[]" placeholder="Places Visited"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Claim Amount*</label> <input type="text" class="form-control" required name="" placeholder="Claim Amount"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Claim Amount*</label> <input type="text" class="form-control" required name="claim_amount" placeholder="Claim Amount"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="" placeholder="Lunch Exp."> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="lunch_exp" placeholder="Lunch Exp."> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Fuel Expenses*</label> <input type="text" class="form-control" required name="" placeholder="Fuel Expenses"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Fuel Expenses*</label> <input type="text" class="form-control" required name="fuel_exp" placeholder="Fuel Expenses"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Toll Charges*</label> <input type="text" class="form-control" required name="" placeholder="Toll Charges"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Toll Charges*</label> <input type="text" class="form-control" required name="toll_charge" placeholder="Toll Charges"> </div>';
                 html +=
                     '<div class="form-group col-md-3"><br><button type="button" class="btn btn-danger btn-lg" onclick=remove_more_ltexpenses("' +
                     loop_count + '")>Remove</button></div>';
