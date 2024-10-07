@@ -60,7 +60,7 @@ class PromoMail extends Mailable
     {
         return $this->from(PROMO_FROM,'MD')  // SMTP sender for sending
                     ->replyTo(PROMO_FROM, 'MD') // Reply-to email displayed to receiver
-                    ->subject('MakitaERP - Promotion Mail'.'Promo Code -'.$this->details['offerproduct'][0]['promo_code'])
+                    ->subject('MakitaERP - Promotion Mail '.'(Promo Code -'.$this->details['offerproduct'][0]['promo_code'].')')
                     ->view('mails.promomail')
                     ->with(['details' => $this->details])
                     ->withSwiftMessage(function ($message) {

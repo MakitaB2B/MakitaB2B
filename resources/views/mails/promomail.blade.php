@@ -32,7 +32,8 @@
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 2px; /* Reduced padding for smaller spacing */
+            font-size: 12px; /* Slightly reduced font size for compactness */
             text-align: left;
         }
         th {
@@ -103,7 +104,7 @@
         <tr>
           <td>{{ $offer->model_no }}</td>
           <td>{{ $offer->mrp }}</td>
-          <td>{{ $offer->dlp }}</td>
+          <td style="color: {{ $offer->price_type == 'DLP'? 'orange' : '#444' }};">{{ $offer->dlp }}</td>
           <td style="color: {{ $offer->price_type == 'Best Price'? 'orange' : '#444' }};">{{ $offer->best }}</td>
           <td style="color: {{ $offer->price_type == 'Special Price'? 'orange' : '#444' }};">{{ $offer->price ?? '-' }}</td>
           <td>{{ $offer->stock }}</td>
@@ -141,7 +142,7 @@
         <tr>
           <td>{{ $offer->model_no }}</td>
           <td>{{ $offer->mrp }}</td>
-          <td>{{ $offer->dlp }}</td>
+          <td style="color: {{ $offer->price_type == 'DLP'? 'orange' : '#444' }};">{{ $offer->dlp }}</td>
           <td style="color: {{ $offer->price_type == 'Best Price'? 'orange' : '#444' }};">{{ $offer->best }}</td>
           <td style="color: {{ $offer->price_type == 'Special Price'? 'orange' : '#444' }};">{{ $offer->price ?? '-' }}</td>
           <td>{{ $offer->stock }}</td>
