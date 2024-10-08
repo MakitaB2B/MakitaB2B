@@ -147,8 +147,17 @@ class TravelManagementService{
         return BtaApplication::where(['bta_slug'=>$btaSlug])->get(['status','mannager_approved_by']);
     }
 
-    public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
+    public function getAllLTCRequestsForMangers(){
+        $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
+        return LtcClaim::with(['employee:employee_slug,full_name'])
+        ->select('ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'date', 'status', \DB::raw('COUNT(*) as request_count'))
+        ->where('manager_slug', '=', $loginUserSlug)
+        ->groupBy('ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'date', 'status')
+        ->get();
+    }
 
+    public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
+  
         try {
 
             DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
@@ -180,6 +189,8 @@ class TravelManagementService{
                         'fuel_exp' => $request->fuel_exp[$index],
                         'toll_charge' => $request->toll_charge[$index],
                         'manager_slug' => $teamManager,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
 
                     ];
                 }
@@ -194,7 +205,7 @@ class TravelManagementService{
                     'courier_bill' =>  $request->courier_bill,
                     'xerox_stationary' => $request->xerox_stationary,
                     'office_expense' => $request->office_expense,
-                    'monthly_mobile_bills' => $request->monthly_mobile_bills,
+                    'monthly_mobile_bills' => $request->monthly_mobile_bill,
                     'remarks' => $request->remarks
                 ]);
 
@@ -204,8 +215,6 @@ class TravelManagementService{
 
             return true;
         } catch (Exception $e) {
-
-            dd($e);
             return false;
         }
        

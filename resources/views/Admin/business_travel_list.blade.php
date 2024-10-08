@@ -850,8 +850,8 @@
             // LTC
             function add_more_ltcexpenses() {
                 loop_count++;
-                var html = '<input name="ewe_slug[]" type="hidden"><div class="row" id="ltcexpense_' + loop_count +
-                    '" style="margin-top:20px">';
+                var html = '<input name="" type="hidden"><div class="row" id="ltcexpense_' + loop_count +
+                   '" style="margin-top:20px">';
                 html +=
                     '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="date[]" required value="" id="exampleCompanyName" ></div>';
                 html +=
@@ -865,13 +865,13 @@
                 html +=
                     '<div class="form-group col-md-4"> <label for="exampleInputBTAConviniance">Places Visited*</label> <input type="text"  class="form-control" required name="place_visited[]" placeholder="Places Visited"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Claim Amount*</label> <input type="text" class="form-control" required name="claim_amount" placeholder="Claim Amount"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Claim Amount*</label> <input type="text" class="form-control" required name="claim_amount[]" placeholder="Claim Amount"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="lunch_exp" placeholder="Lunch Exp."> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="lunch_exp[]" placeholder="Lunch Exp."> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Fuel Expenses*</label> <input type="text" class="form-control" required name="fuel_exp" placeholder="Fuel Expenses"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Fuel Expenses*</label> <input type="text" class="form-control" required name="fuel_exp[]" placeholder="Fuel Expenses"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Toll Charges*</label> <input type="text" class="form-control" required name="toll_charge" placeholder="Toll Charges"> </div>';
+                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Toll Charges*</label> <input type="text" class="form-control" required name="toll_charge[]" placeholder="Toll Charges"> </div>';
                 html +=
                     '<div class="form-group col-md-3"><br><button type="button" class="btn btn-danger btn-lg" onclick=remove_more_ltexpenses("' +
                     loop_count + '")>Remove</button></div>';

@@ -70,5 +70,11 @@ class TravelManagementController extends Controller
       
     }
 
+    public function ltcRequestManagers(){
+
+        $result=$this->travelManagementService->getAllLTCRequestsForMangers();
+
+        return view('Admin.ltc_trips_requests_mangers',compact('result'));
+    }
 
 }

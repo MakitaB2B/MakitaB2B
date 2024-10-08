@@ -554,6 +554,16 @@
                                     </a>
                                 </li>
                             </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/travelmanagement/ltc-request-managers') }}" class="nav-link @yield('ltcmanager-trips-select')">
+                                        <i class="fa fa-motorcycle" aria-hidden="true"></i>
+                                        <p>Ltc Request For Managers</p>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            
                         </li>
                       
 
