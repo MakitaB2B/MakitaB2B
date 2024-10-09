@@ -5,6 +5,7 @@ use App\Models\Admin\BtaExpensesBreakups;
 use App\Models\Admin\BtaGroupBt;
 use App\Models\Admin\TeamMembers;
 use App\Models\Admin\LtcClaim;
+use App\Models\Admin\LtcClaimApplication;
 use App\Models\Admin\LtcMiscellaneousExp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
@@ -149,11 +150,28 @@ class TravelManagementService{
 
     public function getAllLTCRequestsForMangers(){
         $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
-        return LtcClaim::with(['employee:employee_slug,full_name'])
-        ->select('ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'date', 'status', \DB::raw('COUNT(*) as request_count'))
+        return LtcClaimApplication::with(['employee:employee_slug,full_name'])
+        ->select('ltc_claim_id','ltc_claim_applications_slug', 'employee_slug', 'ltc_month', 'ltc_year', 'status')
         ->where('manager_slug', '=', $loginUserSlug)
-        ->groupBy('ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'date', 'status')
         ->get();
+    }
+
+    public function getLTCApplicationDetails($ltcappslug){
+
+        $result['ltc_claim_application'] = LtcClaimApplication::with(['employee:employee_slug,full_name'])
+        ->where('ltc_claim_applications_slug',$ltcappslug)
+        ->select('ltc_claim_id','employee_slug','ltc_month','ltc_year','status')
+        ->first();
+
+        $result['ltc_claim'] = LtcClaim::with(['employee:employee_slug,full_name'])
+        ->where('ltc_claim_applications_slug',$ltcappslug)
+        ->get('date','mode_of_transport','opening_meter','closing_meter','total_km','place_visited','claim_amount','lunch_exp','fuel_exp','toll_charge','status');
+
+        $result['ltc_claim_misc'] = LtcMiscellaneousExp::with(['employee:employee_slug,full_name'])
+        ->where('ltc_claim_applications_slug',$ltcappslug)
+        ->get('courier_bill','xerox_stationary','office_expense','monthly_mobile_bills','remarks','status');
+
+        return $result;
     }
 
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
@@ -167,17 +185,26 @@ class TravelManagementService{
                 $teamManager = count($teamDetails)>0 ? $teamDetails[0]->team_owner : null ;
 
                 $date = $request->post("date");
+                $ltcappslug = Str::slug(rand().rand());
+                $ltcClaimapp = new LtcClaimApplication([
+                    'ltc_claim_applications_slug' =>  $ltcappslug,
+                    'ltc_claim_id' => $ltc_id,
+                    'employee_slug' => $employeeSlug,
+                    'ltc_month' => Carbon::parse($request->ltc_month)->month,
+                    'ltc_year' => $request->ltc_year,
+                    'manager_slug' => $teamManager,
+                ]);
+
+                $ltcClaimapp->save();
               
                 $ltcClaimData = [];
 
                 foreach ($date as $index => $dateData) {
                     $ltcClaimData[] = [
-
                         'ltc_claim_slug' => Str::slug(rand().rand()),
-                        'employee_slug' => $employeeSlug,
+                        'ltc_claim_applications_slug' =>  $ltcappslug,
                         'ltc_claim_id' => $ltc_id,
-                        'ltc_month' => Carbon::parse($request->ltc_month)->month,
-                        'ltc_year' => $request->ltc_year,
+                        'employee_slug' => $employeeSlug,
                         'date' => $request->date[$index],
                         'mode_of_transport' =>$request->mode_of_transport[$index],
                         'opening_meter' => $request->opening_meter[$index],
@@ -188,7 +215,6 @@ class TravelManagementService{
                         'lunch_exp' => $request->lunch_exp[$index],
                         'fuel_exp' => $request->fuel_exp[$index],
                         'toll_charge' => $request->toll_charge[$index],
-                        'manager_slug' => $teamManager,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
 
@@ -201,7 +227,9 @@ class TravelManagementService{
 
                 $ltcMiscellaneousExp = new LtcMiscellaneousExp([
                     'ltc_miscellaneous_slug' => Str::slug(rand().rand()),
+                    'ltc_claim_applications_slug' => $ltcappslug,  // Add this back
                     'ltc_claim_id' => $ltc_id,
+                    'employee_slug' => $employeeSlug,
                     'courier_bill' =>  $request->courier_bill,
                     'xerox_stationary' => $request->xerox_stationary,
                     'office_expense' => $request->office_expense,

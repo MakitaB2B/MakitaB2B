@@ -15,6 +15,6 @@ class LtcClaim extends Model
 
 
     public function employee(){
-        return $this->belongsTo('App\Models\Admin\Employee','employee_slug','employee_slug');
+        return $this->belongsTo('App\Models\Admin\Employee','employee_slug','full_name','employee_slug');
     }
 }

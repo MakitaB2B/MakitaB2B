@@ -60,7 +60,7 @@
                                             {{-- <th>Number of Days</th>
                                             <th>Place of Visit</th>
                                             <th>Purpuse of Visit</th> --}}
-                                            <th>Date</th>
+                                            {{-- <th>Date</th> --}}
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -73,7 +73,7 @@
                                                 <td>{{ $list->employee->full_name }}</td>
                                                 <td>{{ $list->ltc_month }}</td>
                                                 <td>{{ $list->ltc_year }}</td>
-                                                <td>{{ $list->date }}</td>
+                                                {{-- <td>{{ $list->date }}</td> --}}
                                                 <td>{{ $list->status == 0 ? 'In-Review' : ($list->status == 1 ? 'Approved' : 'Rejected')}}
 
                                                     {{-- @if ($list->status == 0)
@@ -94,10 +94,11 @@
                                                     <p style="color:red">Rejected</p>
                                                     @endif --}}
                                                 </td>
-                                                <td>Action</td>
-                                                {{-- <td><a href="{{ url('admin/city/manage-city/') }}/{{ Crypt::encrypt($list->city_slug) }}"
-                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td>
-                                                <input type="hidden" class="btaslug" value="{{$list->bta_slug }}" /> --}}
+                                                {{-- <td>Action</td> --}}
+                                                <td><a href="{{ url('admin/travelmanagement/ltc-application-details') }}/{{ Crypt::encrypt($list->ltc_claim_applications_slug) }}"
+                                                        title="View"><i class="nav-icon fas fa-eye" aria-hidden="true"></i>
+                                                    </a></td>
+                                                {{-- <input type="hidden" class="ltcappslug" value="{{$list->bta_slug }}" /> --}}
                                             </tr>
                                         @endforeach
 
@@ -109,7 +110,7 @@
                                             <th>Applied By</th>
                                             <th>Ltc Month</th>
                                             <th>Ltc Year</th>
-                                            <th>Date</th>
+                                            {{-- <th>Date</th> --}}
                                             <th>Status</th>
                                             {{-- <th>Applied By</th>
                                             <th>Start Date</th>
