@@ -83,6 +83,7 @@ class TravelManagementController extends Controller
 
         $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
 
+
         return view('Admin.ltc_application_details',compact('result'));
 
     }    

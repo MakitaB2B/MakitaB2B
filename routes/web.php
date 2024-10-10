@@ -209,6 +209,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/travelmanagement/create-ltc-claim-application',[TravelManagementController::class,'createLtcClaimApplication'])->name('travelmanagement.create-ltc-claim-application');
     Route::get('/travelmanagement/ltc-request-managers',[TravelManagementController::class,'ltcRequestManagers'])->name('travelmanagement.ltc-request-managers');
     Route::get('/travelmanagement/ltc-application-details/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetails'])->name('travelmanagement.ltc-application-details');
+    Route::post('/travelmanagement/ltc-application-details/change-status', [TravelManagementController::class, 'ltcApplicationStatus'])->name('travelmanagement.ltc-application-status');
 
     Route::get('/promotions',[PromotionController::class,'index'])->name('promo');
     Route::get('/promotions/promotion-creation',[PromotionController::class,'promotionCreation'])->name('admin.promotions.promotion-creation');

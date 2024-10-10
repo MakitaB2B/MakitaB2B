@@ -158,20 +158,32 @@ class TravelManagementService{
 
     public function getLTCApplicationDetails($ltcappslug){
 
-        $result['ltc_claim_application'] = LtcClaimApplication::with(['employee:employee_slug,full_name'])
-        ->where('ltc_claim_applications_slug',$ltcappslug)
-        ->select('ltc_claim_id','employee_slug','ltc_month','ltc_year','status')
+        // $result['ltc_claim_application'] = LtcClaimApplication::with(['employee:employee_slug,full_name'])
+        // ->where('ltc_claim_applications_slug',$ltcappslug)
+        // ->select('ltc_claim_id','employee_slug','ltc_month','ltc_year','status')
+        // ->first();
+
+        // $result['ltc_claim'] = LtcClaim::with(['employee:employee_slug,full_name'])
+        // ->where('ltc_claim_applications_slug',$ltcappslug)
+        // ->select('date','mode_of_transport','opening_meter','closing_meter','total_km','place_visited','claim_amount','lunch_exp','fuel_exp','toll_charge','status')
+        // ->get();
+
+        // $result['ltc_claim_misc'] = LtcMiscellaneousExp::with(['employee:employee_slug,full_name'])
+        // ->where('ltc_claim_applications_slug',$ltcappslug)
+        // ->select('courier_bill','xerox_stationary','office_expense','monthly_mobile_bills','remarks','status')
+        // ->get();
+
+        $result = LtcClaimApplication::with([
+            'employee:employee_slug,full_name',
+            'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status',
+            'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,courier_bill,xerox_stationary,office_expense,monthly_mobile_bills,remarks,status'
+        ])
+        ->where('ltc_claim_applications_slug', $ltcappslug)
+        ->select('ltc_claim_applications_slug', 'ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'status') // Specify the columns you want
         ->first();
-
-        $result['ltc_claim'] = LtcClaim::with(['employee:employee_slug,full_name'])
-        ->where('ltc_claim_applications_slug',$ltcappslug)
-        ->get('date','mode_of_transport','opening_meter','closing_meter','total_km','place_visited','claim_amount','lunch_exp','fuel_exp','toll_charge','status');
-
-        $result['ltc_claim_misc'] = LtcMiscellaneousExp::with(['employee:employee_slug,full_name'])
-        ->where('ltc_claim_applications_slug',$ltcappslug)
-        ->get('courier_bill','xerox_stationary','office_expense','monthly_mobile_bills','remarks','status');
-
+       
         return $result;
+
     }
 
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
