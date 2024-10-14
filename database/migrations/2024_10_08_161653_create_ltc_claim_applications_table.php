@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('manager_approved_by')->nullable();
             $table->string('hr_approved_by')->nullable();
             $table->string('payment_by')->nullable();
-            $table->enum('status', [0, 1, 2])->default(0); // 0 - not reviewed, 1 - paid , 2 - rejected
-            $table->string('operated_by')->nullable()->change();
+            $table->enum('status', [0, 1, 2,3 ,4 , 5, 6,7,8,9])->default(0); // 0 - not reviewed, 1 - paid , 2 - rejected
+            $table->string('operated_by')->nullable();
             $table->timestamps();
         });
     }

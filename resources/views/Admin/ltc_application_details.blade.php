@@ -54,7 +54,7 @@
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Over All Status</label>
-                                        <input type="text"  class="form-control" value="{{ $result['status'] == 0 ? 'In-Review' : ($result['ltc_claim_application']['status'] == 1 ? 'Approved' : 'Rejected')}}" disabled>
+                                        <input type="text"  class="form-control" value="{{ $result['status'] == 0 ? 'In-Review' : ($result['status'] == 4 ? 'Approved By Manager' : 'Rejected')}}" disabled>
                                     </div>
 
                                     {{-- <div class="form-group col-md-1">
@@ -70,7 +70,7 @@
                     </div>
                     <!--/.col (left) -->
                 </div>
-                 
+
                 <div class="row">
                     <div class="col-md-12">
       
@@ -78,6 +78,7 @@
                           <div class="card-header" style="background-color: #008290 !important;">
                               <h3 class="card-title">LTC Expenses Breakup</h3>
                           </div>
+
                           @foreach ($result['ltcClaims'] as $Data)
                             <div class="card-body">
                                 <div class="row">
@@ -125,7 +126,7 @@
 
 
                                     <div class="form-group col-md-2">
-                                        @if($Data['status'] == 0)
+                                        {{-- @if($Data['status'] == 0) --}}
                                         <label for="exampleInputToDate">Status *</label>
                                         <select class="ltcappstatus form-control" style="border-color: orange;" data-id="{{ $Data['ltc_claim_slug'].'-'.'ltc' }}">
                                             <option value="in-review"
@@ -138,11 +139,13 @@
                                                 {{ $Data['status'] == '2' ? 'selected' : '' }}>
                                                 Rejected</option>
                                         </select>
-                                        @elseif ($Data['status'] == 1)
+                                        <span id="ltcappstatustxt{{$Data['ltc_claim_slug'].'-'.'ltc'}}"></span>
+                                        <input type="hidden" class="ltcappslug" value="{{$Data['ltc_claim_applications_slug']}}" />
+                                        {{-- @elseif ($Data['status'] == 1)
                                         <p style="color:green">Approved</p>
                                         @elseif ($Data['status'] == 2)
                                         <p style="color:red">Rejected</p>
-                                        @endif
+                                        @endif --}}
                                     </div>
 
                                </div>
@@ -193,9 +196,9 @@
                                     </div>
 
                                     <div class="form-group col-md-2">
-                                            @if($result['ltcMiscellaneousExp']['status'] == 0)
+                                            {{-- @if($result['ltcMiscellaneousExp']['status'] == 0) --}}
                                             <label for="exampleInputToDate">Status*</label>
-                                            <select class="ltcappstatus form-control" data-id="{{ $result['ltcMiscellaneousExp']['ltc_miscellaneous_slug'].'-'.'misc' }}" style="border-color: orange;">
+                                            <select class="ltcappstatus form-control" data-id="{{ $result['ltcMiscellaneousExp']['ltc_miscellaneous_slug'].'-'.'ltcmis' }}" style="border-color: orange;">
                                                 <option value="in-review"
                                                     {{ $result['ltcMiscellaneousExp']['status'] == 0 ? 'selected' : '' }}>
                                                     In-Review</option>
@@ -206,11 +209,13 @@
                                                     {{ $result['ltcMiscellaneousExp']['status'] == '2' ? 'selected' : '' }}>
                                                     Rejected</option>
                                             </select>
-                                            @elseif ($result['ltcMiscellaneousExp']['status'] == 1)
+                                            <span id="ltcappstatustxt{{$Data['ltc_miscellaneous_slug'].'-'.'ltcmis'}}"></span>
+                                            <input type="hidden" class="ltcappslug" value="{{$Data['ltc_claim_applications_slug']}}" />
+                                            {{-- @elseif ($result['ltcMiscellaneousExp']['status'] == 1)
                                             <p style="color:green">Approved</p>
                                             @elseif ($result['ltcMiscellaneousExp']['status'] == 2)
                                             <p style="color:red">Rejected</p>
-                                            @endif
+                                            @endif --}}
                                     </div>
                               </div>
                             </div>
@@ -229,20 +234,20 @@
         <!-- Page specific script -->
         <script>
 
-            function debounce(func, wait, immediate) {
-                var timeout;
-                return function() {
-                    var context = this, args = arguments;
-                    var later = function() {
-                        timeout = null;
-                        if (!immediate) func.apply(context, args);
-                    };
-                    var callNow = immediate && !timeout;
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                    if (callNow) func.apply(context, args);
-                };
-            };
+            // function debounce(func, wait, immediate) {
+            //     var timeout;
+            //     return function() {
+            //         var context = this, args = arguments;
+            //         var later = function() {
+            //             timeout = null;
+            //             if (!immediate) func.apply(context, args);
+            //         };
+            //         var callNow = immediate && !timeout;
+            //         clearTimeout(timeout);
+            //         timeout = setTimeout(later, wait);
+            //         if (callNow) func.apply(context, args);
+            //     };
+            // };
 
             $(document).ready(function() {
 
@@ -250,36 +255,33 @@
                     let status = $(this).val();
                     let $this = $(this);
                     let dataId = $this.data('id'); 
-                     console.log(dataId);
+                    let ltcappslug = $('.ltcappslug').val();
+                    console.log(status);
                      if (status == 1 || status == 2) {
                         if (confirm("Are you sure you want to change this?")) {
-                           
-                                let $statusCell = $this.closest('tr').find('td:nth-child(8)');
-                                // Show "Please Wait" message
-                                $statusCell.html('<p style="color:green">Please Wait &#9995; ...</p>');
+
+                            $("#ltcappstatustxt"+dataId).html('<p style="color:green">Please Wait &#9995; ...</p>');
 
                                 $.ajax({
-                                    url: '/admin/travelmanagement/change-bta-applications-status-manager-approval',
+                                    url: '/admin/travelmanagement/ltc-application-details/change-status',
                                     type: 'post',
                                     data: {
                                         status: status,
-                                        btaSlug: btaSlug,
+                                        ltcSlug: dataId,
+                                        ltcappslug:ltcappslug,
                                         _token: '{{ csrf_token() }}'
                                     },
                                     success: function(result) {
-                                        // console.log(result);
-                                        // Replace "Please Wait" with final status
                                         if (status == 1) {
-                                            $statusCell.html('<p style="color:green">Accepted &#128077;</p>');
+                                            $("#ltcappstatustxt"+dataId).html('<p style="color:green">Accepted &#128077;</p>');
+                                           
                                         } else if (status == 2) {
-                                            $statusCell.html('<p style="color:red">Rejected  &#128078;</p>');
+                                            $("#ltcappstatustxt"+dataId).html('<p style="color:red">Rejected  &#128078;</p>');
                                         }
                                     },
                                     error: function(err) {
                                         alert('Error in updating status.');
-                                        console.error(err);
-                                        // Optionally hide the "Please Wait" message on error
-                                        $statusCell.html('<p style="color:red">Failed to update. Try again.</p>');
+                                        $("#ltcappstatustxt"+dataId).html('<p style="color:red">Failed to update. Try again.</p>');
                                     }
                                 });
                             } else {

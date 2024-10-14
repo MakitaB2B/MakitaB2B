@@ -86,6 +86,22 @@ class TravelManagementController extends Controller
 
         return view('Admin.ltc_application_details',compact('result'));
 
-    }    
+    }   
+    
+    public function ltcApplicationStatus(Request $request){
+       
+        $status=$request->status;
+        $ltcSlug=$request->ltcSlug;
+        $ltcAppSlug=$request->ltcappslug;
+        $checkStatus=$this->travelManagementService->checkLTCManagerApprovalStatus($ltcAppSlug);
+
+        // if($checkStatus[0]['status'] == 0){
+            $result=$this->travelManagementService->changeLTCStatusToManagerApprovRejectService($status,$ltcSlug,$ltcAppSlug);
+        //     echo "Sucess";
+        // }else{
+        //     echo "Alredy Inserted Before";
+        // }
+
+    }
 
 }
