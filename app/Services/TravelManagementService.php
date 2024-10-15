@@ -158,31 +158,42 @@ class TravelManagementService{
 
     public function getLTCApplicationDetails($ltcappslug){
 
-        // $result['ltc_claim_application'] = LtcClaimApplication::with(['employee:employee_slug,full_name'])
-        // ->where('ltc_claim_applications_slug',$ltcappslug)
-        // ->select('ltc_claim_id','employee_slug','ltc_month','ltc_year','status')
-        // ->first();
-
-        // $result['ltc_claim'] = LtcClaim::with(['employee:employee_slug,full_name'])
-        // ->where('ltc_claim_applications_slug',$ltcappslug)
-        // ->select('date','mode_of_transport','opening_meter','closing_meter','total_km','place_visited','claim_amount','lunch_exp','fuel_exp','toll_charge','status')
-        // ->get();
-
-        // $result['ltc_claim_misc'] = LtcMiscellaneousExp::with(['employee:employee_slug,full_name'])
-        // ->where('ltc_claim_applications_slug',$ltcappslug)
-        // ->select('courier_bill','xerox_stationary','office_expense','monthly_mobile_bills','remarks','status')
-        // ->get();
-
         $result = LtcClaimApplication::with([
             'employee:employee_slug,full_name',
             'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status',
-            'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,courier_bill,xerox_stationary,office_expense,monthly_mobile_bills,remarks,status'
+            'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,courier_bill,xerox_stationary,office_expense,monthly_mobile_bills,remarks,status',
+            'manager_name:employee_slug,full_name',
         ])
         ->where('ltc_claim_applications_slug', $ltcappslug)
-        ->select('ltc_claim_applications_slug', 'ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'status') // Specify the columns you want
+        ->select('ltc_claim_applications_slug', 'ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by',
+        ) 
         ->first();
-       
-        return $result;
+
+        $totalClaimExpenses = $result->ltcClaims->reduce(function ($carry, $claim) {
+            return $carry + 
+                (float)($claim->claim_amount ?? 0) + 
+                (float)($claim->lunch_exp ?? 0) + 
+                (float)($claim->fuel_exp ?? 0) + 
+                (float)($claim->toll_charge ?? 0);
+        }, 0);
+    
+        $totalMiscellaneousExpenses = 0;
+        if ($result->ltcMiscellaneousExp) {
+            $totalMiscellaneousExpenses = 
+                (float)($result->ltcMiscellaneousExp->courier_bill ?? 0) + 
+                (float)($result->ltcMiscellaneousExp->xerox_stationary ?? 0) + 
+                (float)($result->ltcMiscellaneousExp->office_expense ?? 0) + 
+                (float)($result->ltcMiscellaneousExp->monthly_mobile_bills ?? 0);
+        }
+    
+        $totalExpense = $totalClaimExpenses + $totalMiscellaneousExpenses;
+
+        return [
+            'result' => $result,
+            'total_expense' => $totalExpense,
+            // 'individual_claims' => $totalClaimExpenses,
+            // 'individual_miscellaneous' => $totalMiscellaneousExpenses,
+        ];
 
     }
 
@@ -282,52 +293,45 @@ class TravelManagementService{
         }elseif($ltcslugarray[1]=='ltcmis'){
             $updateStatus= LtcMiscellaneousExp::where('ltc_miscellaneous_slug', $ltcslugarray[0])->update(['status' => $status]);
         }    
-        
-        // $result = LtcClaimApplication::leftJoin('ltc_claims', 'ltc_claim_applications.ltc_claim_applications_slug', '=', 'ltc_claims.ltc_claim_applications_slug')
-        //         ->leftJoin('ltc_miscellaneous_exps', 'ltc_claim_applications.ltc_claim_applications_slug', '=', 'ltc_miscellaneous_exps.ltc_claim_applications_slug')
-        //         ->select(DB::raw("
-        //             SUM(CASE WHEN ltc_claims.status = 1 THEN 1 ELSE 0 END) as valid_claims_status_1,
-        //             SUM(CASE WHEN ltc_claims.status = 2 THEN 1 ELSE 0 END) as valid_claims_status_2,
-        //             COUNT(ltc_claims.ltc_claim_applications_slug) as total_claims,
-        //             MAX(ltc_miscellaneous_exps.status) as exp_status
-        //         "))
-        //         ->where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
-        //         ->groupBy('ltc_claim_applications.ltc_claim_applications_slug')
-                // ->groupBy('ltc_claim_applications.ltc_claim_applications_slug','ltc_claims.status')
-                // ->get();
 
-                $result = LtcClaimApplication::leftJoin('ltc_claims', 'ltc_claim_applications.ltc_claim_applications_slug', '=', 'ltc_claims.ltc_claim_applications_slug')
-                        ->leftJoin('ltc_miscellaneous_exps', 'ltc_claim_applications.ltc_claim_applications_slug', '=', 'ltc_miscellaneous_exps.ltc_claim_applications_slug')
-                        ->select(DB::raw("
-                            COUNT(DISTINCT ltc_claims.ltc_claim_slug) as total_claims,
-                            COUNT(CASE WHEN ltc_claims.status = 1 THEN ltc_claims.status END) as claims_status_1,
-                            COUNT(CASE WHEN ltc_claims.status = 2 THEN ltc_claims.status END) as claims_status_2,
-                            MAX(ltc_miscellaneous_exps.status) as exp_status
-                        "))
-                        ->where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
-                        ->groupBy('ltc_claim_applications.ltc_claim_applications_slug')
-                        ->toSql();
-dd($result);
-        if ($result && $result->total_claims == $result->valid_claims_status_1 && $result->exp_status == 1) {
-            dd('if');
-               $abc = LtcClaimApplication::where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)->get();
-               dd($abc);
-            // ->update(['status' => (int) 4,
-            // 'manager_approved_by'=>$empSlug]);
-        }else if($result && $result->total_claims == $result->valid_claims_status_2 && $result->exp_status == 2){
-            dd('else if');
-            LtcClaimApplication::where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
-            ->update(['status' => (int) 5,
-            'manager_approved_by'=>$empSlug]);
-        }else{
-            dd('else');
-            LtcClaimApplication::where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
-            ->update(['status' => (int) 0,
-            'manager_approved_by'=>null]);
-        }
+        $result = LtcClaimApplication::leftJoin('ltc_claims', 'ltc_claim_applications.ltc_claim_applications_slug', '=', 'ltc_claims.ltc_claim_applications_slug')
+                ->leftJoin('ltc_miscellaneous_exps', 'ltc_claim_applications.ltc_claim_applications_slug', '=', 'ltc_miscellaneous_exps.ltc_claim_applications_slug')
+                ->select(DB::raw("
+                    COUNT(DISTINCT ltc_claims.ltc_claim_slug) as total_claims,
+                    COUNT(CASE WHEN ltc_claims.status = '1' THEN ltc_claims.status END) as claims_status_1,
+                    COUNT(CASE WHEN ltc_claims.status = '2' THEN ltc_claims.status END) as claims_status_2,
+                    MAX(ltc_miscellaneous_exps.status) as exp_status
+                "))
+                ->where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
+                ->groupBy('ltc_claim_applications.ltc_claim_applications_slug')
+                ->get();
+                   
+        if ($result) {
+               $status = '0'; 
+                
+               if ($result[0]['total_claims'] == $result[0]['claims_status_1'] && $result[0]['exp_status'] == 1) {
+              
+                        $status = '4'; 
+                } elseif ($result[0]['total_claims'] == $result[0]['claims_status_2'] && $result[0]['exp_status'] == 2) {
+                    
+                        $status = '5';
+                } else {
+               
+                        $status = '0'; 
+                }
+              
+                LtcClaimApplication::where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
+                ->update(['status' => $status, 'manager_approved_by' => $status === '0' ? null : $empSlug]);
+
+                $overallstatus = LtcClaimApplication::with([
+                    'manager_name:employee_slug,full_name'
+                ])->where('ltc_claim_applications_slug', $ltcAppSlug)
+                ->select('status', 'manager_approved_by')
+                ->get(); 
+            }
 
         if($updateStatus){
-            return true;
+            return $overallstatus;
         }
     }
 

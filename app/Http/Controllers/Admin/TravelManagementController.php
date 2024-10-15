@@ -83,8 +83,11 @@ class TravelManagementController extends Controller
 
         $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
 
-
-        return view('Admin.ltc_application_details',compact('result'));
+        // return view('Admin.ltc_application_details',['result' => $result['result'],'total_expense' => $result['total_expense']);
+        return view('Admin.ltc_application_details', [
+            'result' => $result['result'],
+            'total_expense' => $result['total_expense']
+        ]);
 
     }   
     
@@ -94,14 +97,12 @@ class TravelManagementController extends Controller
         $ltcSlug=$request->ltcSlug;
         $ltcAppSlug=$request->ltcappslug;
         $checkStatus=$this->travelManagementService->checkLTCManagerApprovalStatus($ltcAppSlug);
-
-        // if($checkStatus[0]['status'] == 0){
-            $result=$this->travelManagementService->changeLTCStatusToManagerApprovRejectService($status,$ltcSlug,$ltcAppSlug);
-        //     echo "Sucess";
-        // }else{
-        //     echo "Alredy Inserted Before";
-        // }
-
+        $result=$this->travelManagementService->changeLTCStatusToManagerApprovRejectService($status,$ltcSlug,$ltcAppSlug);
+           if($result){
+            return $result;
+           }
+       
+    
     }
 
 }
