@@ -2,7 +2,12 @@
 @section('page_title', 'Business Trips Requests Mangers Panel | MAKITA')
 @section('travelmanagement-expandable','menu-open')
 @section('travelmanagement-expandable','active')
+@if(!isset($page))
 @section('ltcmanager-trips-select','active')
+@elseif(isset($page) && $page=='hr')
+@section('ltchr-trips-select','active')
+@endif
+
 @section('container')
     <div class="content-wrapper">
         @push('styles')
@@ -17,12 +22,20 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
+                        @if(!isset($page))
                         <h1>LTC Requests For Manger`s Approval</h1>
+                        @elseif(isset($page) && $page=='hr')
+                        <h1>LTC Requests For HR`s Approval</h1>
+                        @endif
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Home</a></li>
+                            @if(!isset($page))
                             <li class="breadcrumb-item active">LTC Request For Manager Approval</li>
+                            @elseif(isset($page) && $page=='hr')
+                            <li class="breadcrumb-item active">LTC Request For HR Approval</li>
+                            @endif
                         </ol>
                     </div>
                 </div>
@@ -57,6 +70,8 @@
                                             <th>Applied By</th>
                                             <th>Ltc Month</th>
                                             <th>Ltc Year</th>
+                                            <th>Claim Amount</th>
+                                            <th>Payed Amount</th>
                                             {{-- <th>Number of Days</th>
                                             <th>Place of Visit</th>
                                             <th>Purpuse of Visit</th> --}}
@@ -73,32 +88,22 @@
                                                 <td>{{ $list->employee->full_name }}</td>
                                                 <td>{{ $list->ltc_month }}</td>
                                                 <td>{{ $list->ltc_year }}</td>
-                                                {{-- <td>{{ $list->date }}</td> --}}
-                                                <td>{{ $list->status == 0 ? 'In-Review' : ($list->status == 1 ? 'Approved' : 'Rejected')}}
-
-                                                    {{-- @if ($list->status == 0)
-                                                    <select class="btappstatus">
-                                                        <option value="in-review"
-                                                            {{ $list->status == 0 ? 'selected' : '' }}>
-                                                            In-Review</option>
-                                                        <option value="1"
-                                                            {{ $list->status == 1 ? 'selected' : '' }}>
-                                                            Approved</option>
-                                                        <option value="2"
-                                                            {{ $list->application_status == '2' ? 'selected' : '' }}>
-                                                            Rejected</option>
-                                                    </select>
-                                                    @elseif ($list->status == 1)
-                                                    <p style="color:green">Approved</p>
-                                                    @elseif ($list->status == 2)
-                                                    <p style="color:red">Rejected</p>
-                                                    @endif --}}
-                                                </td>
-                                                {{-- <td>Action</td> --}}
+                                                <td>{{ $list->total_claim_amount }}</td>
+                                                <td>{{ $list->payed_amount }}</td>
+                                                @if(!isset($page))
+                                                <td>{{ $list->status == 0 ? 'In-Review' : ($list->status == 4 ? 'Approved' : 'Rejected')}}</td>
+                                                @elseif(isset($page) && $page=='hr')
+                                                <td>{{ $list->status == 4 ? 'In-Review' : ($list->status == 6 ? 'Approved' : 'Rejected')}}</td>
+                                                @endif
+                                                @if(!isset($page))
                                                 <td><a href="{{ url('admin/travelmanagement/ltc-application-details') }}/{{ Crypt::encrypt($list->ltc_claim_applications_slug) }}"
                                                         title="View"><i class="nav-icon fas fa-eye" aria-hidden="true"></i>
                                                     </a></td>
-                                                {{-- <input type="hidden" class="ltcappslug" value="{{$list->bta_slug }}" /> --}}
+                                                @elseif(isset($page) && $page=='hr')
+                                                <td><a href="{{ url('admin/travelmanagement/ltc-application-details-hr') }}/{{ Crypt::encrypt($list->ltc_claim_applications_slug) }}"
+                                                    title="View"><i class="nav-icon fas fa-eye" aria-hidden="true"></i>
+                                                    </a></td>
+                                                @endif
                                             </tr>
                                         @endforeach
 
@@ -110,6 +115,8 @@
                                             <th>Applied By</th>
                                             <th>Ltc Month</th>
                                             <th>Ltc Year</th>
+                                            <th>Claim Amount</th>
+                                            <th>Payed Amount</th>
                                             {{-- <th>Date</th> --}}
                                             <th>Status</th>
                                             {{-- <th>Applied By</th>

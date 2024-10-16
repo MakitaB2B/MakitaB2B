@@ -28,8 +28,9 @@ return new class extends Migration
             $table->unsignedDecimal('lunch_exp', 21, 4);
             $table->unsignedDecimal('fuel_exp', 21, 4);
             $table->unsignedDecimal('toll_charge', 21, 4);
-            $table->enum('status', [0, 1, 2])->default(0);
-            $table->timestamps();
+            // $table->enum('status', [0, 1, 2])->default(0);
+            $table->tinyInteger('status')->default(0)->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 -  Case closed , 8 - Rejected By Account');
+            // $table->timestamps();
 
             // $table->tinyInteger('ltc_month')->unsigned()->check('ltc_month >= 1 AND ltc_month <= 12');
             // $table->smallInteger('ltc_year')->change();

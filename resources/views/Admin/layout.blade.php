@@ -557,13 +557,30 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ url('admin/travelmanagement/ltc-request-managers') }}" class="nav-link @yield('ltcmanager-trips-select')">
-                                        <i class="fa fa-motorcycle" aria-hidden="true"></i>
+                                        {{-- <i class="fa fa-motorcycle" aria-hidden="true"></i> --}}
+                                        <i class="fa fa-user-tie" aria-hidden="true"></i>
                                         <p>Ltc Request For Managers</p>
                                     </a>
                                 </li>
                             </ul>
 
-                            
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/travelmanagement/ltc-request-hr') }}" class="nav-link @yield('ltchr-trips-select')">
+                                        <i class="fa fa-suitcase-rolling" aria-hidden="true"></i>
+                                        <p>Ltc Request For HR</p>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/travelmanagement/ltc-request-accounts') }}" class="nav-link @yield('ltcaccount-trips-select')">
+                                        <i class="fa fa-suitcase" aria-hidden="true"></i>
+                                        <p>Ltc Request For Accounts</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                       
 

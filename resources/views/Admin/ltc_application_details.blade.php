@@ -54,7 +54,7 @@
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Claim Amount</label>
-                                        <input type="text" id='claimamount'  class="form-control" value="{{$total_expense}}" disabled>
+                                        <input type="text" id='claimamount'  class="form-control" value="{{$result['total_claim_amount']}}" disabled>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Over All Status</label>

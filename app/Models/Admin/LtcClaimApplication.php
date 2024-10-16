@@ -16,7 +16,8 @@ class LtcClaimApplication extends Model
     'ltc_month',
     'ltc_year',
     'manager_slug',
-    'claim_amount'
+    'claim_amount',
+    'total_claim_amount'
 
     ];
     // ltc_claim_applications_slug

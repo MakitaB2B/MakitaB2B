@@ -77,6 +77,20 @@ class TravelManagementController extends Controller
         return view('Admin.ltc_trips_requests_mangers',compact('result'));
     }
 
+    public function ltcRequestHr(){
+        $page='hr';
+        $result=$this->travelManagementService->getAllLTCRequestsForHr();
+
+        return view('Admin.ltc_trips_requests_mangers',compact('result','page'));
+    }
+
+    public function ltcRequestAccounts(){
+        $page='accounts';
+        $result=$this->travelManagementService->getAllLTCRequestsForAccount();
+
+        return view('Admin.ltc_trips_requests_mangers',compact('result','page')); 
+    }
+
     public function ltcApplicationDetails($id,Request $request){
 
         $ltcappslug = Crypt::decrypt($id);
@@ -85,12 +99,17 @@ class TravelManagementController extends Controller
 
         // return view('Admin.ltc_application_details',['result' => $result['result'],'total_expense' => $result['total_expense']);
         return view('Admin.ltc_application_details', [
-            'result' => $result['result'],
-            'total_expense' => $result['total_expense']
+            'result' => $result['result'] //,
+            // 'total_expense' => $result['total_expense']
         ]);
 
-    }   
+    }  
     
+    public function ltcApplicationDetailsHr(Request $request){
+    
+    
+    }
+        
     public function ltcApplicationStatus(Request $request){
        
         $status=$request->status;
@@ -101,8 +120,7 @@ class TravelManagementController extends Controller
            if($result){
             return $result;
            }
-       
-    
+
     }
 
 }

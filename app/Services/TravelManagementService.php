@@ -15,8 +15,6 @@ use Exception;
 use Auth;
 
 
-
-
 class TravelManagementService{
 
      public function ltc_claim_id(){
@@ -25,7 +23,7 @@ class TravelManagementService{
 
         do {
 
-            $ltcId = 'ltc'.rand();
+            $ltcId = 'ltc'.str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT); //'ltc'.rand();  
     
         } while (in_array($ltcId,$ltcIdExists ));
     
@@ -151,9 +149,28 @@ class TravelManagementService{
     public function getAllLTCRequestsForMangers(){
         $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
         return LtcClaimApplication::with(['employee:employee_slug,full_name'])
-        ->select('ltc_claim_id','ltc_claim_applications_slug', 'employee_slug', 'ltc_month', 'ltc_year', 'status')
+        ->select('ltc_claim_id','ltc_claim_applications_slug', 'employee_slug','total_claim_amount','payed_amount','ltc_month', 'ltc_year', 'status')
         ->where('manager_slug', '=', $loginUserSlug)
         ->get();
+    }
+
+    public function getAllLTCRequestsForHr(){
+
+        $loginUserSlug = Auth::guard('admin')->user()->employee_slug;
+
+        return LtcClaimApplication::with(['employee:employee_slug,full_name']) 
+            ->select('ltc_claim_id', 'ltc_claim_applications_slug', 'employee_slug', 'total_claim_amount', 'payed_amount', 'ltc_month', 'ltc_year', 'status')
+            ->whereNotNull('manager_approved_by')
+            ->where('status', '4')
+            ->get();
+    }
+
+    public function getAllLTCRequestsForAccount(){
+        // $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
+        // return LtcClaimApplication::with(['employee:employee_slug,full_name'])
+        // ->select('ltc_claim_id','ltc_claim_applications_slug', 'employee_slug','total_claim_amount','payed_amount','ltc_month', 'ltc_year', 'status')
+        // ->where('manager_slug', '=', $loginUserSlug)
+        // ->get();
     }
 
     public function getLTCApplicationDetails($ltcappslug){
@@ -165,32 +182,32 @@ class TravelManagementService{
             'manager_name:employee_slug,full_name',
         ])
         ->where('ltc_claim_applications_slug', $ltcappslug)
-        ->select('ltc_claim_applications_slug', 'ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by',
+        ->select('ltc_claim_applications_slug', 'ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by','total_claim_amount'
         ) 
         ->first();
 
-        $totalClaimExpenses = $result->ltcClaims->reduce(function ($carry, $claim) {
-            return $carry + 
-                (float)($claim->claim_amount ?? 0) + 
-                (float)($claim->lunch_exp ?? 0) + 
-                (float)($claim->fuel_exp ?? 0) + 
-                (float)($claim->toll_charge ?? 0);
-        }, 0);
+        // $totalClaimExpenses = $result->ltcClaims->reduce(function ($carry, $claim) {
+        //     return $carry + 
+        //         (float)($claim->claim_amount ?? 0) + 
+        //         (float)($claim->lunch_exp ?? 0) + 
+        //         (float)($claim->fuel_exp ?? 0) + 
+        //         (float)($claim->toll_charge ?? 0);
+        // }, 0);
     
-        $totalMiscellaneousExpenses = 0;
-        if ($result->ltcMiscellaneousExp) {
-            $totalMiscellaneousExpenses = 
-                (float)($result->ltcMiscellaneousExp->courier_bill ?? 0) + 
-                (float)($result->ltcMiscellaneousExp->xerox_stationary ?? 0) + 
-                (float)($result->ltcMiscellaneousExp->office_expense ?? 0) + 
-                (float)($result->ltcMiscellaneousExp->monthly_mobile_bills ?? 0);
-        }
+        // $totalMiscellaneousExpenses = 0;
+        // if ($result->ltcMiscellaneousExp) {
+        //     $totalMiscellaneousExpenses = 
+        //         (float)($result->ltcMiscellaneousExp->courier_bill ?? 0) + 
+        //         (float)($result->ltcMiscellaneousExp->xerox_stationary ?? 0) + 
+        //         (float)($result->ltcMiscellaneousExp->office_expense ?? 0) + 
+        //         (float)($result->ltcMiscellaneousExp->monthly_mobile_bills ?? 0);
+        // }
     
-        $totalExpense = $totalClaimExpenses + $totalMiscellaneousExpenses;
+        // $totalExpense = $totalClaimExpenses + $totalMiscellaneousExpenses;
 
         return [
             'result' => $result,
-            'total_expense' => $totalExpense,
+            // 'total_expense' => $totalExpense,
             // 'individual_claims' => $totalClaimExpenses,
             // 'individual_miscellaneous' => $totalMiscellaneousExpenses,
         ];
@@ -209,6 +226,16 @@ class TravelManagementService{
 
                 $date = $request->post("date");
                 $ltcappslug = Str::slug(rand().rand());
+
+                $total_claim_amount=array_sum($request['claim_amount'] ?? []) +
+                array_sum($request['lunch_exp'] ?? []) +
+                array_sum($request['fuel_exp'] ?? []) +
+                array_sum($request['toll_charge'] ?? []) +
+                ($request['courier_bill'] ?? 0) +
+                ($request['xerox_stationary'] ?? 0) +
+                ($request['office_expense'] ?? 0) +
+                ($request['monthly_mobile_bill'] ?? 0);
+
                 $ltcClaimapp = new LtcClaimApplication([
                     'ltc_claim_applications_slug' =>  $ltcappslug,
                     'ltc_claim_id' => $ltc_id,
@@ -216,6 +243,7 @@ class TravelManagementService{
                     'ltc_month' => Carbon::parse($request->ltc_month)->month,
                     'ltc_year' => $request->ltc_year,
                     'manager_slug' => $teamManager,
+                    'total_claim_amount' => $total_claim_amount
                 ]);
 
                 $ltcClaimapp->save();
@@ -273,16 +301,10 @@ class TravelManagementService{
 
     public function checkLTCManagerApprovalStatus($ltcAppSlug){
         
-        // $ltcslugarray=explode("-", $ltcSlug);
-        // if($ltcslugarray[1]=='ltc'){
-            return LtcClaimApplication::where(['ltc_claim_applications_slug'=>$ltcAppSlug])
-            ->select('status','manager_approved_by')
-            ->get();
-        // }
+       return LtcClaimApplication::where(['ltc_claim_applications_slug'=>$ltcAppSlug])
+              ->select('status','manager_approved_by')
+              ->get();
         
-        // elseif($ltcslugarray[1]=='ltcmis'){
-        //     return LtcMiscellaneousExp::where(['ltc_miscellaneous_slug'=>$ltcslugarray[0]])->get(['status','mannager_approved_by']);
-        // }    
     }
 
     public function changeLTCStatusToManagerApprovRejectService($status,$ltcSlug,$ltcAppSlug){
