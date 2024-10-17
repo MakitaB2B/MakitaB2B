@@ -105,9 +105,10 @@ class TravelManagementController extends Controller
 
     }  
     
-    public function ltcApplicationDetailsHr(Request $request){
+    public function ltcApplicationDetailsHr($id,Request $request){
     
-    
+        $ltcappslug = Crypt::decrypt($id);
+        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
     }
         
     public function ltcApplicationStatus(Request $request){
