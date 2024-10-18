@@ -5,11 +5,11 @@ namespace App\Models\Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TeamMembers extends Model
+class TransactionEmail extends Model
 {
     use HasFactory;
 
-    public function employee(){
-        return $this->hasOne('App\Models\Admin\Employee','employee_slug','team_owner');
+    public function sales_name(){
+        return $this->hasOne('App\Models\Admin\Employee','employee_slug','sales_slug');
     }
 }

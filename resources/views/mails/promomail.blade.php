@@ -78,7 +78,7 @@
         <i class="fas fa-link mr-1"></i> Promotion Preview
       </a>
     </p>
-    <p>PROMO NO - {{ $details['offerproduct'][0]->promo_code }}</p> 
+    <p style="color:orange;">PROMO NO - {{ $details['offerproduct'][0]->promo_code }}</p> 
    
 
     <h3 class="table-heading">Offer Product(s)</h3>

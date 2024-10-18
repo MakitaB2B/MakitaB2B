@@ -97,12 +97,31 @@
                                                 </div>
                                             @enderror
                                         </div> --}}
-
+                                        {{-- Auth::guard('admin')->user()->employee->full_name --}}
                                         <div class="form-group col-md-2">
                                             <label for="exampleRmname">Regional Manager Name*</label>
                                             <input type="text" class="form-control" name="rm_name"
-                                                value="{{Auth::guard('admin')->user()->employee->full_name}}" required id="exampleRmname"
+                                                value="{{$regional_manager->employee->full_name}}" required id="exampleRmname"
                                                 placeholder="Enter Model" >
+                                            @error('rm_name')
+                                                <div
+                                                    class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                                    {{ $message }}
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                            @enderror
+                                        </div>
+                    
+                                        <div class="form-group col-md-2">
+                                            <label for="exampleRmname">Regional Manager Region*</label>
+                                            <select class="custom-select select2" name="rm_region" required id="exampleRmregion">
+                                                @foreach ($transaction_email as $item)
+                                                <option value="{{$item->region}}-{{$item['sales_name']['employee_slug']}}">{{$item->region}}-{{$item['sales_name']['full_name']}}</option>
+                                                @endforeach
+                                            </select>
                                             @error('rm_name')
                                                 <div
                                                     class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
@@ -134,7 +153,7 @@
                                                 </div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-2">
                                             <label for="exampleDealerName">Dealer Name*</label>
                                             <input type="text" class="form-control" name="dealername"
                                                 value="" required id="exampleDealerName"
@@ -182,7 +201,7 @@
                                                 </div>
                                             @enderror
                                         </div> --}}
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-2">
                                             <label for="exampleTotalPrice">TotalPrice*</label>
                                             <input type="text" class="form-control" name="modeltotalprice"
                                                 value="" required id="exampleTotalPrice"

@@ -53,6 +53,14 @@ return new class extends Migration
                 $table->integer('billed_qty')->nullable()->after('order_date');
             }
 
+            if (!Schema::hasColumn('transactions', 'region')) {
+                $table->string('region')->nullable()->after('ordered_by');
+            }
+
+            if (!Schema::hasColumn('transactions', 'sales_slug')) {
+                $table->string('sales_slug')->nullable()->after('region');
+            }
+
             if (!Schema::hasColumn('transactions', 'id')) {
             $table->timestamp('created_at')->default(date('Y-m-d H:i:s')); //->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(date('Y-m-d H:i:s')); //->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));

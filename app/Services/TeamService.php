@@ -73,5 +73,11 @@ class TeamService{
         return true;
     }
 
+    public function getTeamOwner($teamMember){
+
+        return TeamMembers::with(['employee:employee_slug,full_name,employee_no'])->where('team_member',$teamMember)->select('team_owner')->first();
+
+    }
+
 }
 ?>
