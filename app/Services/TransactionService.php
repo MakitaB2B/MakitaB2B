@@ -151,7 +151,7 @@ class TransactionService{
     public function getTransactionDetails($orderid){
 
         return Transaction::join('branch_stocks', 'branch_stocks.item', '=', 'transactions.model_no')->where('order_id',$orderid)
-        ->select('branch_stocks.description','order_id','transactions.created_at','promo_code','product_type','model_no','price_type','offer_type','order_qty','offer_price','promo_code','rm_name','dealer_code','dealer_name','product_type','model_no','order_price','order_id','status','stock','transactions.billed_qty')
+        ->select('branch_stocks.description','order_id','transactions.created_at','promo_code','product_type','model_no','price_type','offer_type','order_qty','offer_price','promo_code','rm_name','dealer_code','dealer_name','product_type','model_no','order_price','order_id','status','stock','transactions.billed_qty','region','sales_slug')
         ->get();
 
     }

@@ -9,24 +9,31 @@ use App\Services\TransactionService;
 use App\Services\EmployeeService;
 use App\Services\DealerService;
 use App\Services\DealerCancelledService;
+use App\Services\TeamService;
+use App\Services\TransactionEmailService;
 use App\Models\Admin\BranchStocks;
 use Auth;
 use Carbon\Carbon;
 use App\Models\Admin\Transaction;
+use App\Models\Admin\TransactionEmail;
 use Illuminate\Support\Facades\Crypt;
 use App\Jobs\PromoJob;
 use App\Jobs\TransactionJob;
+
+
 class PromotionController extends Controller
 {
     protected $promotionService;
     protected $transactionService;
 
-    public function __construct(PromotionService $promotionService,TransactionService $transactionService,EmployeeService $employeeService,DealerService $dealerService,DealerCancelledService $dealerCancelledService){
+    public function __construct(PromotionService $promotionService,TransactionService $transactionService,EmployeeService $employeeService,DealerService $dealerService,DealerCancelledService $dealerCancelledService,TeamService $teamService,TransactionEmailService $transactionEmailService){
       $this->promotionService=$promotionService;
       $this->transactionService=$transactionService;
       $this->employeeService=$employeeService;
       $this->dealerService=$dealerService;
       $this->dealerCancelledService=$dealerCancelledService;
+      $this->teamService=$teamService;
+      $this->transactionEmailService=$transactionEmailService;
     }
 
     public function index(){
@@ -165,11 +172,14 @@ class PromotionController extends Controller
         return response()->json(['data' => $result]);
     }
     public function transactionCreation(){
-      $designation='regional manager';
-      $department='sales';
+      // $designation='regional manager';
+      // $department='sales';
       $result['promo_code']=$this->promotionService->activePromotion();
-      $result['regional_manager']= $this->employeeService->getEmployeeByDesignation($designation,$department);  //$this->regionalManager->rmNames();
-      $result['dealer_master']=$this->dealerService->getDealers();
+      // $result['regional_manager']= $this->employeeService->getEmployeeByDesignation($designation,$department);  //$this->regionalManager->rmNames();
+      $loggedIn = Auth::guard('admin')->user()->employee_slug;
+      $result['regional_manager'] = $this->teamService->getTeamOwner($loggedIn);
+      $result['transaction_email'] = $this->transactionEmailService->getTransactionDetails($result['regional_manager']->team_owner);
+      $result['dealer_master']= $this->dealerService->getDealers();
 
       return view('Admin.promotion_transaction',$result);
     }
@@ -292,6 +302,7 @@ class PromotionController extends Controller
         $model_qty=array_intersect_key($model, $qty);
         $model_offer_qty_array=array_combine($model_qty, $model_offer_qty);
         $model_qty_array=array_combine($model_qty, $qty);
+        $region=explode("-",$request->rm_region) ?? $request->rm_region;
       
         $order_id = $this->transactionService->order_id();
         
@@ -336,7 +347,7 @@ class PromotionController extends Controller
         }
       
         try {
-              $mapped = $promodata->map(function($value) use ($offer_type,$combinedata, $qtytomultiply,$rm_name,$dealer_code,$order_id,$filteredbyoffer) {
+              $mapped = $promodata->map(function($value) use ($region,$offer_type,$combinedata, $qtytomultiply,$rm_name,$dealer_code,$order_id,$filteredbyoffer) {
 
                   $singlemodel = $this->filter_data_by_model($combinedata, $value->model_no);
                   $userInputQty = $singlemodel[0]["offer_qty"] * $qtytomultiply;
@@ -376,6 +387,8 @@ class PromotionController extends Controller
                   $value->offer_price =  $value->price;
                   $value->order_price =  $value->price * $userInputQty;
                   $value->order_date = date('Y-m-d H:i:s');
+                  $value->region=$region[0];
+                  $value->sales_slug=$region[1];
                   // $value->created_at =  Carbon::parse($formattedDate)->format('Y-m-d H:i:s');
                   // $value->updated_at = $formattedDate;
                   unset($value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc,$value->total_order_qty);      
@@ -429,8 +442,13 @@ class PromotionController extends Controller
       $details['offerproduct'] = $transaction->where('product_type','Offer Product')->values();
       // $details['offerproductStock'] =  $this->transactionService->getTransactionWithStock($details['offerproduct'][0]["model_no"],$order_id);
       $details['email'] = PROMO_TRANSACTION_TO_EMAILS;
-      $details['cc'] = PROMO_TRANSACTION_CC_EMAILS;
       $details['bcc'] =PROMO_TRANSACTION_BCC;
+      $sales_mail=$this->transactionEmailService->getEmailId($transaction[0]['sales_slug']);
+      $rm_name=$this->employeeService->getOfficialMailByName($transaction[0]['rm_name']);
+      $promo_transaction_cc_emails = PROMO_TRANSACTION_CC_EMAILS;
+      array_push($promo_transaction_cc_emails,$sales_mail,$rm_name);
+      $details['cc'] = $promo_transaction_cc_emails;
+
       try {
         $transactionjob = TransactionJob::dispatch($details);
       } catch (\Exception $e) {

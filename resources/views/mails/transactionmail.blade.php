@@ -34,7 +34,9 @@
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 10px;
+            /* padding: 10px; */
+            padding: 2px; /* Reduced padding for smaller spacing */
+            font-size: 12px; /* Slightly reduced font size for compactness */
             text-align: left;
         }
         th {
@@ -73,17 +75,21 @@
         <thead>
           <tr>
             <th>Promo Code</th>
+            <th>RM Name</th>
             <th>Dealer Code</th>
             <th>Dealer Name</th>
+            <th>Region</th>
             <th>Transaction ID</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>{{ $details['offerproduct'][0]['promo_code'] }}</td>
+            <td style="color:orange;">{{ $details['offerproduct'][0]['promo_code'] }}</td>
+            <td style="color:orange;">{{ $details['offerproduct'][0]['rm_name'] }}</td>
             <td>{{ $details['offerproduct'][0]['dealer_code'] }}</td>
             <td>{{ $details['offerproduct'][0]['dealer_name'] }}</td>
-            <td>{{ $details['offerproduct'][0]['order_id'] }}</td>
+            <td style="color:orange;">{{ $details['offerproduct'][0]['region'] }}</td>
+            <td style="color:orange;">{{ $details['offerproduct'][0]['order_id'] }}</td>
           </tr>
         </tbody>
     </table>

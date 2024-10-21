@@ -55,5 +55,9 @@ class EmployeeService{
 
     }
 
+    public function getOfficialMailByName($full_name){
+      return Employee::where('full_name',$full_name)->value('official_email');
+    }
+
 }
 ?>

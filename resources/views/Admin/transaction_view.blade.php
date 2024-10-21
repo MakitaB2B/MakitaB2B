@@ -102,6 +102,10 @@
                         <input type="text" id="inputName" class="form-control" value="{{ $offer->rm_name }}" readonly>
                       </div>
                       <div class="form-group col-md-6">
+                        <label for="inputName">Region</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->region }}" readonly>
+                      </div>
+                      <div class="form-group col-md-6">
                         <label for="inputName">Dealer Code</label>
                         <input type="text" id="inputName" class="form-control" value="{{ $offer->dealer_code }}" readonly>
                       </div>
@@ -172,6 +176,10 @@
                       <div class="form-group col-md-6">
                         <label for="inputName">RM Name</label>
                         <input type="text" id="inputName" class="form-control" value="{{ $offer->rm_name }}" readonly>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Region</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->region }}" readonly>
                       </div>
                       <div class="form-group col-md-6">
                         <label for="inputName">Dealer Code</label>

@@ -114,38 +114,7 @@ class PromotionService{
       //     return $item;
       // });
 
-
-      return Promotion::with('reservedStock:id,item,reserved')
-      ->join('item_prices', 'promotions.model_no', '=', 'item_prices.Item')
-      ->join('branch_stocks', 'promotions.model_no', '=', 'branch_stocks.item')
-      ->leftJoin(DB::raw('(SELECT model_no, IFNULL(SUM(order_qty), 0) as total_order_qty FROM transactions GROUP BY model_no) as t'), function ($join) {
-          $join->on('promotions.model_no', '=', 't.model_no');
-      })
-      ->where('promotions.promo_code', $promocode)
-      ->orderBy('promotions.product_type','asc')
-      ->select(
-          'promotions.from_date', 'promotions.promo_code', 'promotions.to_date', 'promotions.product_type',
-          'promotions.model_no', 'promotions.model_desc', 'promotions.price_type', 'promotions.offer_type',
-          'item_prices.mrp', 'item_prices.dlp', 'promotions.qty', 'promotions.price'
-      )
-      ->addSelect(DB::raw('
-          (branch_stocks.cb01 + branch_stocks.dl01 + branch_stocks.gh01 + branch_stocks.gj01 + branch_stocks.id01 +
-           branch_stocks.jm01 + branch_stocks.ka01 + branch_stocks.kl01 + branch_stocks.mh01 + branch_stocks.pn01 +
-           branch_stocks.py01 + branch_stocks.rd01 + branch_stocks.tn01 + branch_stocks.vd01 + branch_stocks.wb01) as total_stock'
-      ))
-      ->addSelect('t.total_order_qty')
-      ->get()
-      ->map(function ($item) {
-          $item->total_reserved = $item->reservedStock->sum('reserved');
-          $item->stock = $item->total_stock - $item->total_reserved - $item->total_order_qty;
-          return $item;
-      });
-
-
-
-
-
-
+      
       //-------------------working code---------
 
       // return Promotion::with('reservedStock:id,item,reserved')
@@ -182,7 +151,7 @@ class PromotionService{
       // });
   
 
-
+ //-------------------working code---------
 
       // $promo = Promotion::with('reservedStock:id,item,reserved')
       // ->join('item_prices', 'promotions.model_no', '=', 'item_prices.Item')
@@ -218,6 +187,64 @@ class PromotionService{
       // });
 
       // dd($promo);
+    //-------------------------------
+    //-----------worked on test server for many days only adding cancelled order stock substract condition
+
+      // return Promotion::with('reservedStock:id,item,reserved')
+      // ->join('item_prices', 'promotions.model_no', '=', 'item_prices.Item')
+      // ->join('branch_stocks', 'promotions.model_no', '=', 'branch_stocks.item')
+      // ->leftJoin(DB::raw('(SELECT model_no, IFNULL(SUM(order_qty), 0) as total_order_qty FROM transactions GROUP BY model_no) as t'), function ($join) {
+      //     $join->on('promotions.model_no', '=', 't.model_no');
+      // })
+      // ->where('promotions.promo_code', $promocode)
+      // ->orderBy('promotions.product_type','asc')
+      // ->select(
+      //     'promotions.from_date', 'promotions.promo_code', 'promotions.to_date', 'promotions.product_type',
+      //     'promotions.model_no', 'promotions.model_desc', 'promotions.price_type', 'promotions.offer_type',
+      //     'item_prices.mrp', 'item_prices.dlp', 'promotions.qty', 'promotions.price'
+      // )
+      // ->addSelect(DB::raw('
+      //     (branch_stocks.cb01 + branch_stocks.dl01 + branch_stocks.gh01 + branch_stocks.gj01 + branch_stocks.id01 +
+      //      branch_stocks.jm01 + branch_stocks.ka01 + branch_stocks.kl01 + branch_stocks.mh01 + branch_stocks.pn01 +
+      //      branch_stocks.py01 + branch_stocks.rd01 + branch_stocks.tn01 + branch_stocks.vd01 + branch_stocks.wb01) as total_stock'
+      // ))
+      // ->addSelect('t.total_order_qty')
+      // ->get()
+      // ->map(function ($item) {
+      //     $item->total_reserved = $item->reservedStock->sum('reserved');
+      //     $item->stock = $item->total_stock - $item->total_reserved - $item->total_order_qty;
+      //     return $item;
+      // });
+    //-----------worked on test server for many days only adding  cancelled order stock substract condition
+
+      return Promotion::with('reservedStock:id,item,reserved')
+      ->join('item_prices', 'promotions.model_no', '=', 'item_prices.Item')
+      ->join('branch_stocks', 'promotions.model_no', '=', 'branch_stocks.item')
+      ->leftJoin(DB::raw('(SELECT model_no, IFNULL(SUM(order_qty), 0) as total_order_qty FROM transactions WHERE status != "cancel" GROUP BY model_no) as t'), function ($join) {
+          $join->on('promotions.model_no', '=', 't.model_no');
+      })
+      ->where('promotions.promo_code', $promocode)
+      ->orderBy('promotions.product_type','asc')
+      ->select(
+          'promotions.from_date', 'promotions.promo_code', 'promotions.to_date', 'promotions.product_type',
+          'promotions.model_no', 'promotions.model_desc', 'promotions.price_type', 'promotions.offer_type',
+          'item_prices.mrp', 'item_prices.dlp', 'promotions.qty', 'promotions.price'
+      )
+      ->addSelect(DB::raw('
+          (branch_stocks.cb01 + branch_stocks.dl01 + branch_stocks.gh01 + branch_stocks.gj01 + branch_stocks.id01 +
+           branch_stocks.jm01 + branch_stocks.ka01 + branch_stocks.kl01 + branch_stocks.mh01 + branch_stocks.pn01 +
+           branch_stocks.py01 + branch_stocks.rd01 + branch_stocks.tn01 + branch_stocks.vd01 + branch_stocks.wb01) as total_stock'
+      ))
+      ->addSelect('t.total_order_qty')
+      ->get()
+      ->map(function ($item) {
+          $item->total_reserved = $item->reservedStock->sum('reserved');
+          $item->stock = $item->total_stock - $item->total_reserved - $item->total_order_qty;
+          return $item;
+      });
+
+
+
     }
 
     public function getPromoDeatilsWithStock($promocode){
