@@ -1,18 +1,17 @@
 <?php
 namespace App\Services;
-use App\Models\Admin\BtaApplication;
-use App\Models\Admin\BtaExpensesBreakups;
-use App\Models\Admin\BtaGroupBt;
-use App\Models\Admin\TeamMembers;
-use App\Models\Admin\LtcClaim;
-use App\Models\Admin\LtcClaimApplication;
-use App\Models\Admin\LtcMiscellaneousExp;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Str;
+use App\Models\Admin\{
+    BtaApplication,
+    BtaExpensesBreakups,
+    BtaGroupBt,
+    TeamMembers,
+    LtcClaim,
+    LtcClaimApplication,
+    LtcMiscellaneousExp
+};
+use Illuminate\Support\{Facades\DB, Facades\Auth, Str};
 use Carbon\Carbon;
 use Exception;
-use Auth;
 
 
 class TravelManagementService{
@@ -150,18 +149,16 @@ class TravelManagementService{
         $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
         return LtcClaimApplication::with(['employee:employee_slug,full_name'])
         ->select('ltc_claim_id','ltc_claim_applications_slug', 'employee_slug','total_claim_amount','payed_amount','ltc_month', 'ltc_year', 'status')
-        ->where('manager_slug', '=', $loginUserSlug)
+        ->where('manager_slug', '=', $loginUserSlug)->whereIn('status',[0,1,2])
         ->get();
     }
 
     public function getAllLTCRequestsForHr(){
 
-        $loginUserSlug = Auth::guard('admin')->user()->employee_slug;
-
         return LtcClaimApplication::with(['employee:employee_slug,full_name']) 
             ->select('ltc_claim_id', 'ltc_claim_applications_slug', 'employee_slug', 'total_claim_amount', 'payed_amount', 'ltc_month', 'ltc_year', 'status')
             ->whereNotNull('manager_approved_by')
-            ->where('status', '4')
+            ->whereIn('status',[1,4,5])
             ->get();
     }
 
@@ -299,15 +296,15 @@ class TravelManagementService{
        
     }
 
-    public function checkLTCManagerApprovalStatus($ltcAppSlug){
+    // public function checkLTCManagerApprovalStatus($ltcAppSlug){
         
-       return LtcClaimApplication::where(['ltc_claim_applications_slug'=>$ltcAppSlug])
-              ->select('status','manager_approved_by')
-              ->get();
+    //    return LtcClaimApplication::where(['ltc_claim_applications_slug'=>$ltcAppSlug])
+    //           ->select('status','manager_approved_by')
+    //           ->get();
         
-    }
+    // }
 
-    public function changeLTCStatusToManagerApprovRejectService($status,$ltcSlug,$ltcAppSlug){
+    public function changeLTCStatusToManagerApprovRejectService($status,$ltcSlug,$ltcAppSlug,$page){
             $empSlug=Auth::guard('admin')->user()->employee_slug;      
             $ltcslugarray=explode("-", $ltcSlug);
         if($ltcslugarray[1]=='ltc'){
@@ -322,28 +319,43 @@ class TravelManagementService{
                     COUNT(DISTINCT ltc_claims.ltc_claim_slug) as total_claims,
                     COUNT(CASE WHEN ltc_claims.status = '1' THEN ltc_claims.status END) as claims_status_1,
                     COUNT(CASE WHEN ltc_claims.status = '2' THEN ltc_claims.status END) as claims_status_2,
+                    COUNT(CASE WHEN ltc_claims.status = '4' THEN ltc_claims.status END) as claims_status_4,
+                    COUNT(CASE WHEN ltc_claims.status = '5' THEN ltc_claims.status END) as claims_status_5,
                     MAX(ltc_miscellaneous_exps.status) as exp_status
                 "))
                 ->where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
                 ->groupBy('ltc_claim_applications.ltc_claim_applications_slug')
                 ->get();
+
+        $ltcClaimApp=LtcClaimApplication::where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug);
                    
         if ($result) {
-               $status = '0'; 
+               $status = 0; 
                 
                if ($result[0]['total_claims'] == $result[0]['claims_status_1'] && $result[0]['exp_status'] == 1) {
               
-                        $status = '4'; 
+                    $status = 1; 
+                    $ltcClaimApp->update(['status' => $status, 'manager_approved_by' => $empSlug]);
                 } elseif ($result[0]['total_claims'] == $result[0]['claims_status_2'] && $result[0]['exp_status'] == 2) {
                     
-                        $status = '5';
+                        $status = 2;
+                        $ltcClaimApp->update(['status' => $status, 'manager_approved_by' => $empSlug]);
+                } elseif ($result[0]['total_claims'] == $result[0]['claims_status_4'] && $result[0]['exp_status'] == 4) {
+                    
+                    $status = 4;
+                    $ltcClaimApp->update(['status' => $status, 'hr_approved_by' => $empSlug]);
+                } elseif ($result[0]['total_claims'] == $result[0]['claims_status_5'] && $result[0]['exp_status'] == 5) {
+                    
+                $status = 5;
+                    $ltcClaimApp->update(['status' => $status, 'hr_approved_by' => $empSlug]);
                 } else {
                
-                        $status = '0'; 
+                        $status = 0; 
                 }
               
-                LtcClaimApplication::where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
-                ->update(['status' => $status, 'manager_approved_by' => $status === '0' ? null : $empSlug]);
+                // LtcClaimApplication::where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
+                // ->update(['status' => $status, 'manager_approved_by' => $status === 0 && $page == 'manager'? null : $empSlug,
+                //    'hr_approved_by' =>$status === 4 && $page == 'hr'? null : $empSlug,]);
 
                 $overallstatus = LtcClaimApplication::with([
                     'manager_name:employee_slug,full_name'

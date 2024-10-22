@@ -44,11 +44,11 @@
                                         <label for="exampleInputToDate">Employee</label>
                                         <input type="text" name="to_date" class="form-control" value="{{$result['employee']['full_name']}}" disabled>
                                     </div>
-                                    <div class="form-group col-md-2">
+                                    <div class="form-group col-md-1">
                                         <label for="exampleInputfromDate">For The Month</label>
                                         <input type="text" name="from_date" class="form-control" value="{{$result['ltc_month']}}" disabled>
                                     </div>
-                                    <div class="form-group col-md-2">
+                                    <div class="form-group col-md-1">
                                         <label for="exampleInputToDate">For The Year</label>
                                         <input type="text"  class="form-control" value="{{$result['ltc_year']}}" disabled>
                                     </div>
@@ -56,21 +56,24 @@
                                         <label for="exampleInputToDate">Claim Amount</label>
                                         <input type="text" id='claimamount'  class="form-control" value="{{$result['total_claim_amount']}}" disabled>
                                     </div>
-                                    <div class="form-group col-md-2">
+                                    @php
+                                    $status = match ($result['status']) {
+                                    0 => 'Not Yet Reviewed By Manager',
+                                    1 => 'Accepted By Manager ' . (isset($result['manager_name']['full_name']) ? $result['manager_name']['full_name'] : ''),
+                                    2 => 'Rejected By Manager',
+                                    3 => 'Amount Paid',
+                                    4 => 'Approved By HR & In Review for Accounts',
+                                    5 => 'Rejected By HR',
+                                    6 => 'Case Clear By Accounts',
+                                    7 => 'Case Closed',
+                                    8 => 'Rejected By Accounts',
+                                    default => 'Something Wrong',
+                                    };
+                                    @endphp
+                                    <div class="form-group col-md-4">
                                         <label for="exampleInputToDate">Over All Status</label>
-                                        {{-- <input type="text" id='overallstatus'  class="form-control" value="{{ $result['status'] == 0 ? 'In-Review' : ($result['status'] == 4 ? 'Approved By'.$result['manager_name']['full_name'] : 'Rejected By'.$result['manager_name']['full_name'])}}" disabled> --}}
-                                        <input type="text" id="overallstatus" class="form-control" value="{{ 
-                                            $result['status'] == 0 
-                                                ? 'In-Review' 
-                                                : ($result['status'] == 4 
-                                                    ? 'Approved By ' . (isset($result['manager_name']['full_name']) ? $result['manager_name']['full_name'] : '') 
-                                                    : 'Rejected By ' . (isset($result['manager_name']['full_name']) ? $result['manager_name']['full_name'] : '')
-                                                ) 
-                                        }}" disabled>
-                                        
+                                        <input type="text" id="overallstatus" class="form-control" value="{{$status}}" disabled>
                                     </div>
-
-                                   
 
                                     {{-- <div class="form-group col-md-1">
                                         <label for="exampleInputSubmitBtn" style="color: #fff">.</label>
@@ -138,25 +141,33 @@
                                         <label for="exampleInputToDate">Toll Charge (Rs)*</label>
                                         <input type="text" class="form-control" value="{{$Data['toll_charge']}}"> 
                                     </div>
-
+                                    @php
+                                    $statusOptions = match ($page) {
+                                        'manager' => '
+                                            <option value="0" ' . ($Data["status"] == 0 ? "selected" : "") . '>In-Review</option>
+                                            <option value="1" ' . ($Data["status"] == 1 ? "selected" : "") . '>Approved By Manager, In Review By HR</option>
+                                            <option value="2" ' . ($Data["status"] == 2 ? "selected" : "") . '>Rejected By Manager</option>',
+                                        'hr' => '
+                                            <option value="1" ' . ($Data["status"] == 1 ? "selected" : "") . '>Approved By Manager, In Review By HR</option>
+                                            <option value="4" ' . ($Data["status"] == 4 ? "selected" : "") . '>Approved By HR, In Review By Accounts</option>
+                                            <option value="5" ' . ($Data["status"] == 5 ? "selected" : "") . '>Rejected By HR</option>',
+                                        'account' => '
+                                            <option value="4" ' . ($Data["status"] == 4 ? "selected" : "") . '>Approved By HR, In Review By Accounts</option>
+                                            <option value="6" ' . ($Data["status"] == 6 ? "selected" : "") . '>Approved By Accounts</option>
+                                            <option value="7" ' . ($Data["status"] == 7 ? "selected" : "") . '>Closed By Accounts</option>
+                                            <option value="8" ' . ($Data["status"] == 8 ? "selected" : "") . '>Rejected</option>',
+                                        default => '<option value="error">Something Wrong</option>',
+                                    };
+                                    @endphp
 
                                     <div class="form-group col-md-2">
-                                      
                                         <label for="exampleInputToDate">Status *</label>
                                         <select class="ltcappstatus form-control" style="border-color: orange;" data-id="{{ $Data['ltc_claim_slug'].'-'.'ltc' }}">
-                                            <option value="in-review"
-                                                {{ $Data['status'] == 0 ? 'selected' : '' }}>
-                                                In-Review</option>
-                                            <option value="1"
-                                                {{ $Data['status'] == 1 ? 'selected' : '' }}>
-                                                Approved</option>
-                                            <option value="2"
-                                                {{ $Data['status'] == '2' ? 'selected' : '' }}>
-                                                Rejected</option>
+                                            {!! $statusOptions !!}
                                         </select>
                                         <span id="ltcappstatustxt{{$Data['ltc_claim_slug'].'-'.'ltc'}}"></span>
                                         <input type="hidden" class="ltcappslug" value="{{$Data['ltc_claim_applications_slug']}}" />
-                                        
+                                        <input type="hidden" class="page" value="{{$page}}" />
                                     </div>
 
                                </div>
@@ -207,22 +218,14 @@
                                     </div>
 
                                     <div class="form-group col-md-2">
-                                      
-                                            <label for="exampleInputToDate">Status*</label>
-                                            <select class="ltcappstatus form-control" data-id="{{ $result['ltcMiscellaneousExp']['ltc_miscellaneous_slug'].'-'.'ltcmis' }}" style="border-color: orange;">
-                                                <option value="in-review"
-                                                    {{ $result['ltcMiscellaneousExp']['status'] == 0 ? 'selected' : '' }}>
-                                                    In-Review</option>
-                                                <option value="1"
-                                                    {{ $result['ltcMiscellaneousExp']['status'] == 1 ? 'selected' : '' }}>
-                                                    Approved</option>
-                                                <option value="2"
-                                                    {{ $result['ltcMiscellaneousExp']['status'] == '2' ? 'selected' : '' }}>
-                                                    Rejected</option>
-                                            </select>
-                                            <span id="ltcappstatustxt{{$Data['ltc_miscellaneous_slug'].'-'.'ltcmis'}}"></span>
-                                            <input type="hidden" class="ltcappslug" value="{{$Data['ltc_claim_applications_slug']}}" />
-                                          
+                                        <label for="exampleInputToDate">Status*</label>
+                                        <select class="ltcappstatus form-control" data-id="{{ $result['ltcMiscellaneousExp']['ltc_miscellaneous_slug'].'-'.'ltcmis' }}" style="border-color: orange;">
+                                                <option value="1" {{ $result['ltcMiscellaneousExp']['status'] == 1 ? 'selected' : '' }}>Approve By Manager, In Review By HR</option>
+                                                <option value="4" {{ $result['ltcMiscellaneousExp']['status'] == 4 ? 'selected' : '' }}>Approve By HR, In Review By Accounts</option>
+                                                <option value="5" {{ $result['ltcMiscellaneousExp']['status'] == 5 ? 'selected' : '' }}>Rejected By HR</option>
+                                        </select>
+                                        <span id="ltcappstatustxt{{$Data['ltc_miscellaneous_slug'].'-'.'ltcmis'}}"></span>
+                                        <input type="hidden" class="ltcappslug" value="{{$Data['ltc_claim_applications_slug']}}" />
                                     </div>
                               </div>
                             </div>
@@ -249,8 +252,9 @@
                     let $this = $(this);
                     let dataId = $this.data('id'); 
                     let ltcappslug = $('.ltcappslug').val();
+                    let page = $('.page').val();
                  
-                     if (status == 1 || status == 2) {
+                    //  if (status == 1 || status == 2) {
                         if (confirm("Are you sure you want to change this?")) {
 
                             $("#ltcappstatustxt"+dataId).html('<p style="color:green">Please Wait &#9995; ...</p>');
@@ -262,15 +266,16 @@
                                         status: status,
                                         ltcSlug: dataId,
                                         ltcappslug:ltcappslug,
+                                        page:page,
                                         _token: '{{ csrf_token() }}'
                                     },
                                     success: function(result) {
 
                                         // $("#overallstatus").val(result == 0 ? 'In-Review' : (result == 4 ? 'Approved By Manager' : 'Rejected'));
                                         $("#overallstatus").val(
-                                            result[0].status == '0' 
+                                            result[0].status == 0 
                                                 ? 'In-Review' 
-                                                : (result[0].status == '4' 
+                                                : (result[0].status == 1 
                                                     ? 'Approved By ' + (result[0].manager_name.full_name ? result[0].manager_name.full_name : '') 
                                                     : 'Rejected By ' + (result[0].manager_name.full_name ? result[0].manager_name.full_name : '')
                                                 )
@@ -292,9 +297,9 @@
                             } else {
                                 return false;
                             }
-                        } else {
-                            alert('Please Select A Correct Value');
-                        }
+                        // } else {
+                        //     alert('Please Select A Correct Value');
+                        // }
                     });
             });
 

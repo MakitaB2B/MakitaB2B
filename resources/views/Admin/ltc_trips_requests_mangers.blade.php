@@ -1,12 +1,18 @@
 @extends('Admin/layout')
-@section('page_title', 'Business Trips Requests Mangers Panel | MAKITA')
+
+@php
+$status = match ($page) {
+'hr' => 'ltchr-trips-select',
+'manager' => 'ltcmanager-trips-select',
+'accounts' => 'ltcaccount-trips-select',
+default => 'ltcmanager-trips-select',
+};
+@endphp
+
+@section('page_title', 'Business Trips Requests '.ucwords($page).' Panel | MAKITA')
 @section('travelmanagement-expandable','menu-open')
 @section('travelmanagement-expandable','active')
-@if(!isset($page))
-@section('ltcmanager-trips-select','active')
-@elseif(isset($page) && $page=='hr')
-@section('ltchr-trips-select','active')
-@endif
+@section($status,'active')
 
 @section('container')
     <div class="content-wrapper">
@@ -22,20 +28,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        @if(!isset($page))
-                        <h1>LTC Requests For Manger`s Approval</h1>
-                        @elseif(isset($page) && $page=='hr')
-                        <h1>LTC Requests For HR`s Approval</h1>
-                        @endif
+                        <h1>LTC Requests For {{ucwords($page)}}`s Approval</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Home</a></li>
-                            @if(!isset($page))
-                            <li class="breadcrumb-item active">LTC Request For Manager Approval</li>
-                            @elseif(isset($page) && $page=='hr')
-                            <li class="breadcrumb-item active">LTC Request For HR Approval</li>
-                            @endif
+                            <li class="breadcrumb-item active">LTC Request For {{ucwords($page)}} Approval</li>
                         </ol>
                     </div>
                 </div>
@@ -72,10 +70,6 @@
                                             <th>Ltc Year</th>
                                             <th>Claim Amount</th>
                                             <th>Payed Amount</th>
-                                            {{-- <th>Number of Days</th>
-                                            <th>Place of Visit</th>
-                                            <th>Purpuse of Visit</th> --}}
-                                            {{-- <th>Date</th> --}}
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -90,20 +84,24 @@
                                                 <td>{{ $list->ltc_year }}</td>
                                                 <td>{{ $list->total_claim_amount }}</td>
                                                 <td>{{ $list->payed_amount }}</td>
-                                                @if(!isset($page))
-                                                <td>{{ $list->status == 0 ? 'In-Review' : ($list->status == 4 ? 'Approved' : 'Rejected')}}</td>
-                                                @elseif(isset($page) && $page=='hr')
-                                                <td>{{ $list->status == 4 ? 'In-Review' : ($list->status == 6 ? 'Approved' : 'Rejected')}}</td>
-                                                @endif
-                                                @if(!isset($page))
-                                                <td><a href="{{ url('admin/travelmanagement/ltc-application-details') }}/{{ Crypt::encrypt($list->ltc_claim_applications_slug) }}"
+                                                @php
+                                                $status = match ($list->status) {
+                                                0 => 'Not Yet Reviewed By Manager',
+                                                1 => 'Accepted By Manager & In Review for HR',
+                                                2 => 'Rejected By Manager',
+                                                3 => 'Amount Paid',
+                                                4 => 'Approved By HR & In Review for Accounts',
+                                                5 => 'Rejected By HR',
+                                                6 => 'Case Clear By Accounts',
+                                                7 => 'Case Closed',
+                                                8 => 'Rejected By Accounts',
+                                                default => 'Something Wrong',
+                                                };
+                                                @endphp
+                                                <td>{{ $status}}</td>
+                                                <td><a href="{{ url('admin/travelmanagement/ltc-application-details-'.$page) }}/{{ Crypt::encrypt($list->ltc_claim_applications_slug) }}"
                                                         title="View"><i class="nav-icon fas fa-eye" aria-hidden="true"></i>
                                                     </a></td>
-                                                @elseif(isset($page) && $page=='hr')
-                                                <td><a href="{{ url('admin/travelmanagement/ltc-application-details-hr') }}/{{ Crypt::encrypt($list->ltc_claim_applications_slug) }}"
-                                                    title="View"><i class="nav-icon fas fa-eye" aria-hidden="true"></i>
-                                                    </a></td>
-                                                @endif
                                             </tr>
                                         @endforeach
 

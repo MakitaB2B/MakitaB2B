@@ -71,10 +71,10 @@ class TravelManagementController extends Controller
     }
 
     public function ltcRequestManagers(){
-
+        $page ='manager';
         $result=$this->travelManagementService->getAllLTCRequestsForMangers();
 
-        return view('Admin.ltc_trips_requests_mangers',compact('result'));
+        return view('Admin.ltc_trips_requests_mangers',compact('result','page'));
     }
 
     public function ltcRequestHr(){
@@ -85,7 +85,7 @@ class TravelManagementController extends Controller
     }
 
     public function ltcRequestAccounts(){
-        $page='accounts';
+        $page='account';
         $result=$this->travelManagementService->getAllLTCRequestsForAccount();
 
         return view('Admin.ltc_trips_requests_mangers',compact('result','page')); 
@@ -94,12 +94,13 @@ class TravelManagementController extends Controller
     public function ltcApplicationDetails($id,Request $request){
 
         $ltcappslug = Crypt::decrypt($id);
-
         $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
+        $page = 'manager';
 
         // return view('Admin.ltc_application_details',['result' => $result['result'],'total_expense' => $result['total_expense']);
         return view('Admin.ltc_application_details', [
-            'result' => $result['result'] //,
+            'result' => $result['result'],
+            'page' => $page
             // 'total_expense' => $result['total_expense']
         ]);
 
@@ -109,6 +110,12 @@ class TravelManagementController extends Controller
     
         $ltcappslug = Crypt::decrypt($id);
         $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
+        $page = 'hr';
+        return view('Admin.ltc_application_details', [
+            'result' => $result['result'],
+            'page' => $page
+            // 'total_expense' => $result['total_expense']
+        ]);
     }
         
     public function ltcApplicationStatus(Request $request){
@@ -116,8 +123,9 @@ class TravelManagementController extends Controller
         $status=$request->status;
         $ltcSlug=$request->ltcSlug;
         $ltcAppSlug=$request->ltcappslug;
-        $checkStatus=$this->travelManagementService->checkLTCManagerApprovalStatus($ltcAppSlug);
-        $result=$this->travelManagementService->changeLTCStatusToManagerApprovRejectService($status,$ltcSlug,$ltcAppSlug);
+        $page=$request->page;
+        // $checkStatus=$this->travelManagementService->checkLTCManagerApprovalStatus($ltcAppSlug);
+        $result=$this->travelManagementService->changeLTCStatusToManagerApprovRejectService($status,$ltcSlug,$ltcAppSlug,$page);
            if($result){
             return $result;
            }

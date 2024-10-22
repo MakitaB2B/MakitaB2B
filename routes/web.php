@@ -208,7 +208,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/travelmanagement/create-travel-management-applications',[TravelManagementController::class,'createTravelMangmentApplication'])->name('travelmanagement.create-travel-management-applications');
     Route::post('/travelmanagement/create-ltc-claim-application',[TravelManagementController::class,'createLtcClaimApplication'])->name('travelmanagement.create-ltc-claim-application');
     Route::get('/travelmanagement/ltc-request-managers',[TravelManagementController::class,'ltcRequestManagers'])->name('travelmanagement.ltc-request-managers');
-    Route::get('/travelmanagement/ltc-application-details/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetails'])->name('travelmanagement.ltc-application-details');
+    Route::get('/travelmanagement/ltc-application-details-manager/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetails'])->name('travelmanagement.ltc-application-details');
     Route::post('/travelmanagement/ltc-application-details/change-status', [TravelManagementController::class, 'ltcApplicationStatus'])->name('travelmanagement.ltc-application-status');
 
     Route::get('/travelmanagement/ltc-request-hr',[TravelManagementController::class,'ltcRequestHr'])->name('travelmanagement.ltc-request-hr');
