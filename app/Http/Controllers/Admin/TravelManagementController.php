@@ -114,7 +114,16 @@ class TravelManagementController extends Controller
         return view('Admin.ltc_application_details', [
             'result' => $result['result'],
             'page' => $page
-            // 'total_expense' => $result['total_expense']
+        ]);
+    }
+
+    public function ltcApplicationDetailsAccount($id,Request $request){
+        $ltcappslug = Crypt::decrypt($id);
+        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
+        $page = 'account';
+        return view('Admin.ltc_application_details', [
+            'result' => $result['result'],
+            'page' => $page
         ]);
     }
         

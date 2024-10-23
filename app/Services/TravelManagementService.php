@@ -163,11 +163,11 @@ class TravelManagementService{
     }
 
     public function getAllLTCRequestsForAccount(){
-        // $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
-        // return LtcClaimApplication::with(['employee:employee_slug,full_name'])
-        // ->select('ltc_claim_id','ltc_claim_applications_slug', 'employee_slug','total_claim_amount','payed_amount','ltc_month', 'ltc_year', 'status')
-        // ->where('manager_slug', '=', $loginUserSlug)
-        // ->get();
+        return LtcClaimApplication::with(['employee:employee_slug,full_name']) 
+        ->select('ltc_claim_id', 'ltc_claim_applications_slug', 'employee_slug', 'total_claim_amount', 'payed_amount', 'ltc_month', 'ltc_year', 'status')
+        ->whereNotNull('manager_approved_by')->whereNotNull('hr_approved_by')
+        ->whereIn('status',[4,6,7,8])
+        ->get();
     }
 
     public function getLTCApplicationDetails($ltcappslug){
@@ -177,9 +177,10 @@ class TravelManagementService{
             'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status',
             'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,courier_bill,xerox_stationary,office_expense,monthly_mobile_bills,remarks,status',
             'manager_name:employee_slug,full_name',
+            'hr_name:employee_slug,full_name',
         ])
         ->where('ltc_claim_applications_slug', $ltcappslug)
-        ->select('ltc_claim_applications_slug', 'ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by','total_claim_amount'
+        ->select('ltc_claim_applications_slug', 'ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by','total_claim_amount','hr_approved_by'
         ) 
         ->first();
 
@@ -333,34 +334,34 @@ class TravelManagementService{
                $status = 0; 
                 
                if ($result[0]['total_claims'] == $result[0]['claims_status_1'] && $result[0]['exp_status'] == 1) {
-              
                     $status = 1; 
                     $ltcClaimApp->update(['status' => $status, 'manager_approved_by' => $empSlug]);
-                } elseif ($result[0]['total_claims'] == $result[0]['claims_status_2'] && $result[0]['exp_status'] == 2) {
-                    
-                        $status = 2;
-                        $ltcClaimApp->update(['status' => $status, 'manager_approved_by' => $empSlug]);
-                } elseif ($result[0]['total_claims'] == $result[0]['claims_status_4'] && $result[0]['exp_status'] == 4) {
-                    
+                } elseif (($result[0]['total_claims'] == $result[0]['claims_status_2'] && $result[0]['exp_status'] == 2) || $result[0]['total_claims'] != $result[0]['claims_status_2'] && $result[0]['claims_status_2']!=0 || $result[0]['exp_status'] == 2 ||($result[0]['total_claims'] == $result[0]['claims_status_2'] && $result[0]['exp_status'] != 2)) {
+                    $status = 2;
+                    $ltcClaimApp->update(['status' => $status, 'manager_approved_by' => $empSlug]);
+                } 
+                elseif ($result[0]['total_claims'] == $result[0]['claims_status_4'] && $result[0]['exp_status'] == 4) {
                     $status = 4;
                     $ltcClaimApp->update(['status' => $status, 'hr_approved_by' => $empSlug]);
-                } elseif ($result[0]['total_claims'] == $result[0]['claims_status_5'] && $result[0]['exp_status'] == 5) {
+                } elseif (($result[0]['total_claims'] == $result[0]['claims_status_5'] && $result[0]['exp_status'] == 5) || $result[0]['total_claims'] != $result[0]['claims_status_5'] && $result[0]['claims_status_5']!=0 || $result[0]['exp_status'] == 5||($result[0]['total_claims'] == $result[0]['claims_status_5'] && $result[0]['exp_status'] != 5)){
                     
-                $status = 5;
+                    $status = 5;
                     $ltcClaimApp->update(['status' => $status, 'hr_approved_by' => $empSlug]);
-                } else {
-               
-                        $status = 0; 
-                }
+                } 
+                // else {
+                //     $status = 0; 
+                //     $ltcClaimApp->update(['status' => $status,$page.'_approved_by' => null]);
+                // }
               
                 // LtcClaimApplication::where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
                 // ->update(['status' => $status, 'manager_approved_by' => $status === 0 && $page == 'manager'? null : $empSlug,
                 //    'hr_approved_by' =>$status === 4 && $page == 'hr'? null : $empSlug,]);
 
                 $overallstatus = LtcClaimApplication::with([
-                    'manager_name:employee_slug,full_name'
+                    'manager_name:employee_slug,full_name',
+                    'hr_name:employee_slug,full_name',
                 ])->where('ltc_claim_applications_slug', $ltcAppSlug)
-                ->select('status', 'manager_approved_by')
+                ->select('status', 'manager_approved_by','hr_approved_by')
                 ->get(); 
             }
 

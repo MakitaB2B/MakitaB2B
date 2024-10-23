@@ -115,16 +115,7 @@ default => 'ltcmanager-trips-select',
                                             <th>Ltc Year</th>
                                             <th>Claim Amount</th>
                                             <th>Payed Amount</th>
-                                            {{-- <th>Date</th> --}}
                                             <th>Status</th>
-                                            {{-- <th>Applied By</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Number of Days</th>
-                                            <th>Place of Visit</th>
-                                            <th>Purpuse of Visit</th>
-                                            <th>Status</th>
-                                            --}}
                                             <th>Action</th> 
                                         </tr>
                                     </tfoot>
