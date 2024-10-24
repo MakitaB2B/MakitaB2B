@@ -150,6 +150,7 @@ class TravelManagementService{
         return LtcClaimApplication::with(['employee:employee_slug,full_name'])
         ->select('ltc_claim_id','ltc_claim_applications_slug', 'employee_slug','total_claim_amount','payed_amount','ltc_month', 'ltc_year', 'status')
         ->where('manager_slug', '=', $loginUserSlug)->whereIn('status',[0,1,2])
+        ->orderByRaw("FIELD(status, 0, 2, 1)")
         ->get();
     }
 
@@ -159,6 +160,7 @@ class TravelManagementService{
             ->select('ltc_claim_id', 'ltc_claim_applications_slug', 'employee_slug', 'total_claim_amount', 'payed_amount', 'ltc_month', 'ltc_year', 'status')
             ->whereNotNull('manager_approved_by')
             ->whereIn('status',[1,4,5])
+            ->orderByRaw("FIELD(status, 1, 5, 4)")
             ->get();
     }
 
@@ -166,7 +168,8 @@ class TravelManagementService{
         return LtcClaimApplication::with(['employee:employee_slug,full_name']) 
         ->select('ltc_claim_id', 'ltc_claim_applications_slug', 'employee_slug', 'total_claim_amount', 'payed_amount', 'ltc_month', 'ltc_year', 'status')
         ->whereNotNull('manager_approved_by')->whereNotNull('hr_approved_by')
-        ->whereIn('status',[4,6,7,8])
+        ->whereIn('status',[4,6,7,8,3])
+        ->orderByRaw("FIELD(status, 4, 8, 6, 7, 3)")
         ->get();
     }
 
@@ -178,9 +181,10 @@ class TravelManagementService{
             'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,courier_bill,xerox_stationary,office_expense,monthly_mobile_bills,remarks,status',
             'manager_name:employee_slug,full_name',
             'hr_name:employee_slug,full_name',
+            'payed_by:employee_slug,full_name',
         ])
         ->where('ltc_claim_applications_slug', $ltcappslug)
-        ->select('ltc_claim_applications_slug', 'ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by','total_claim_amount','hr_approved_by'
+        ->select('ltc_claim_applications_slug', 'ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by','total_claim_amount','hr_approved_by','payment_by'
         ) 
         ->first();
 
@@ -322,6 +326,7 @@ class TravelManagementService{
                     COUNT(CASE WHEN ltc_claims.status = '2' THEN ltc_claims.status END) as claims_status_2,
                     COUNT(CASE WHEN ltc_claims.status = '4' THEN ltc_claims.status END) as claims_status_4,
                     COUNT(CASE WHEN ltc_claims.status = '5' THEN ltc_claims.status END) as claims_status_5,
+                    COUNT(CASE WHEN ltc_claims.status = '8' THEN ltc_claims.status END) as claims_status_8,
                     MAX(ltc_miscellaneous_exps.status) as exp_status
                 "))
                 ->where('ltc_claim_applications.ltc_claim_applications_slug', $ltcAppSlug)
@@ -347,7 +352,10 @@ class TravelManagementService{
                     
                     $status = 5;
                     $ltcClaimApp->update(['status' => $status, 'hr_approved_by' => $empSlug]);
-                } 
+                } elseif (($result[0]['total_claims'] == $result[0]['claims_status_8'] && $result[0]['exp_status'] == 8) || $result[0]['total_claims'] != $result[0]['claims_status_8'] && $result[0]['claims_status_8']!=0 || $result[0]['exp_status'] == 8||($result[0]['total_claims'] == $result[0]['claims_status_8'] && $result[0]['exp_status'] != 8)){
+                    $status = 8;
+                    $ltcClaimApp->update(['status' => $status, 'accountdep_approved_by' => $empSlug]);
+                }
                 // else {
                 //     $status = 0; 
                 //     $ltcClaimApp->update(['status' => $status,$page.'_approved_by' => null]);
@@ -370,5 +378,24 @@ class TravelManagementService{
         }
     }
 
+    public function changeStatusToPayed($status,$ltcappslug){
+
+        $empSlug=Auth::guard('admin')->user()->employee_slug;
+
+        DB::transaction(function () use ($status,$ltcappslug,$empSlug) {
+            
+        LtcClaim::where('ltc_claim_id',$ltcappslug)->update(['status' => $status]);
+
+        LtcMiscellaneousExp::where('ltc_claim_id',$ltcappslug)->update(['status' => $status]);
+
+        LtcClaimApplication::where('ltc_claim_id',$ltcappslug)->update(['status' => $status,'payment_by'=> $empSlug]);
+
+         });
+
+        $ltcapp = LtcClaimApplication::where('ltc_claim_id',$ltcappslug)
+         ->first();
+          
+       return $ltcapp;
+    }
 }
 ?>

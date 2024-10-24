@@ -32,6 +32,11 @@ class LtcClaimApplication extends Model
     public function hr_name(){
         return $this->belongsTo('App\Models\Admin\Employee','hr_approved_by','employee_slug');
     }
+
+    public function payed_by(){
+        return $this->belongsTo('App\Models\Admin\Employee','payment_by','employee_slug');
+    }
+    
     public function ltcClaims(){
         return $this->hasMany('App\Models\Admin\LtcClaim', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
     }

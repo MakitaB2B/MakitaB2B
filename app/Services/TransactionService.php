@@ -162,7 +162,5 @@ class TransactionService{
         return Transaction::where('order_id',$orderid) ->groupBy('order_id', 'status')->get(['order_id', 'status']);
        
     }
-  
-
 }
 ?>

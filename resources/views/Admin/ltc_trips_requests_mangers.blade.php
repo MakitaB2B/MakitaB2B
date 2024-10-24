@@ -69,7 +69,7 @@ default => 'ltcmanager-trips-select',
                                             <th>Ltc Month</th>
                                             <th>Ltc Year</th>
                                             <th>Claim Amount</th>
-                                            <th>Payed Amount</th>
+                                            {{-- <th>Payed Amount</th> --}}
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -83,7 +83,7 @@ default => 'ltcmanager-trips-select',
                                                 <td>{{ $list->ltc_month }}</td>
                                                 <td>{{ $list->ltc_year }}</td>
                                                 <td>{{ $list->total_claim_amount }}</td>
-                                                <td>{{ $list->payed_amount }}</td>
+                                                {{-- <td>{{ $list->payed_amount }}</td> --}}
                                                 @php
                                                 $status = match ($list->status) {
                                                 0 => 'Not Yet Reviewed By Manager',
@@ -114,7 +114,7 @@ default => 'ltcmanager-trips-select',
                                             <th>Ltc Month</th>
                                             <th>Ltc Year</th>
                                             <th>Claim Amount</th>
-                                            <th>Payed Amount</th>
+                                            {{-- <th>Payed Amount</th> --}}
                                             <th>Status</th>
                                             <th>Action</th> 
                                         </tr>

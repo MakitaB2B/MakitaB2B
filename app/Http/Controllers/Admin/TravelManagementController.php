@@ -138,6 +138,14 @@ class TravelManagementController extends Controller
            if($result){
             return $result;
            }
+    }
+
+    public function ltcApplicationPaymentStatus(Request $request){
+
+        $status=$request->status;
+        $ltcappslug=$request->ltcappslug;
+        $result=$this->travelManagementService->changeStatusToPayed($status,$ltcappslug);
+        return $result;
 
     }
 
