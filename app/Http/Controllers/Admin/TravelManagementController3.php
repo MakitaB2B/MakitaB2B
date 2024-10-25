@@ -16,12 +16,10 @@ class TravelManagementController extends Controller
     public function __construct(TravelManagementService $travelManagementService){
         $this->travelManagementService=$travelManagementService;
     }
-
     public function getAllBTAppliedByLoggedInEmployee(){
         $result=$this->travelManagementService->getAllBTAppliedByLoggedInEmployeeService();
         return view('Admin.business_travel_list',compact('result'));
-    }
-
+     }
     public function createTravelMangmentApplication(Request $request){
         $applicantSlug=Auth::guard('admin')->user()->employee_slug;
         $btaSlug=Str::slug(rand().rand());
@@ -41,12 +39,10 @@ class TravelManagementController extends Controller
         }
 
      }
-
      public function getAllBTRequestsForMangersTeam(){
         $result=$this->travelManagementService->getAllBTRequestsForMangersTeamService();
         return view('Admin.bt_trips_requests_mangers',compact('result'));
      }
-
      public function changeBTAStatusToManagerApprovReject(Request $request){
         $status=$request->status;
         $btaSlug=$request->btaSlug;
@@ -60,12 +56,10 @@ class TravelManagementController extends Controller
             echo "Alredy Inserted Before";
         }
     }
-
     public function getAllBTAdvanceRequestsForAccountDept(){
         $result=$this->travelManagementService->getAllBTAdvanceRequestsForAccountDeptService();
         return view('Admin.bt_trips_advancerequests_accountdep',compact('result'));
     }
-
     public function getSpecificBTADetailsForAccountDepertment($btaSlug){
         $decreptedBtaSlug=Crypt::decrypt($btaSlug);
         $result['btaParentData']=$this->travelManagementService->getSpecificBTADetailsService($decreptedBtaSlug);
@@ -76,7 +70,6 @@ class TravelManagementController extends Controller
         }
         return view('Admin.bta_application_details_account_dep',$result);
     }
-
     public function getSpecificBTADetails($btaSlug){
         $decreptedBtaSlug=Crypt::decrypt($btaSlug);
         $result['btaParentData']=$this->travelManagementService->getSpecificBTADetailsService($decreptedBtaSlug);
@@ -87,7 +80,6 @@ class TravelManagementController extends Controller
         }
         return view('Admin.bta_application_details',$result);
     }
-
     public function insertBtAccountLedger(Request $request){
         $btaAmountPaying=$request->btaAmountPaying;
         $btaSlug=Crypt::decrypt($request->btaSlug);
@@ -106,7 +98,6 @@ class TravelManagementController extends Controller
             return 2;
         }
     }
-
     public function btaApplicationRecordStatusUpdate(Request $request){
 
         $status=$request->recordStatus;
@@ -118,13 +109,11 @@ class TravelManagementController extends Controller
         }
 
     }
-
     public function getAllBTRequestsForHRTeam(){
         $result=$this->travelManagementService->getAllBTRequestsForHRTeamService();
         return view('Admin.bt_trips_requests_hr',compact('result'));
     }
-
-    public function getSpecificBTADetailsForHRProcess($btaSlug){
+     public function getSpecificBTADetailsForHRProcess($btaSlug){
         $decreptedBtaSlug=Crypt::decrypt($btaSlug);
         $result['btaParentData']=$this->travelManagementService->getSpecificBTADetailsService($decreptedBtaSlug);
         $result['btaExpensesBreakup']=$this->travelManagementService->getBtaExpensesBreakUpByBtaSlug($result['btaParentData'][0]->bta_slug);
@@ -134,7 +123,6 @@ class TravelManagementController extends Controller
         }
         return view('Admin.bta_application_details_hr_process',$result);
     }
-
     public function btaApplicationClaimByApplicant(Request $request){
 
         $createUpdateAction=$this->travelManagementService->btaApplicationClaimByApplicantService($request);
@@ -150,101 +138,5 @@ class TravelManagementController extends Controller
         }
 
      }
-
-    public function createLtcClaimApplication(Request $request){
-
-        $employeeSlug=Auth::guard('admin')->user()->employee_slug;
-
-        $ltc_id = $this->travelManagementService->ltc_claim_id();
-        $status=0;
-
-        $createUpdateAction=$this->travelManagementService->createLtcClaim($request,$employeeSlug,$ltc_id,$status);
-
-        $msg = $createUpdateAction ? 'Yes! You Have Sucessfully Applied for LTC' : 'Error! LTC Application Not Executed';
-        
-        $request->session()->flash('message',$msg);
-            
-        return redirect('admin/travelmanagement/applyviewclaimtravelexpenses');
-      
-    }
-
-    public function ltcRequestManagers(){
-        $page ='manager';
-        $result=$this->travelManagementService->getAllLTCRequestsForMangers();
-
-        return view('Admin.ltc_trips_requests_mangers',compact('result','page'));
-    }
-
-    public function ltcRequestHr(){
-        $page='hr';
-        $result=$this->travelManagementService->getAllLTCRequestsForHr();
-
-        return view('Admin.ltc_trips_requests_mangers',compact('result','page'));
-    }
-
-    public function ltcRequestAccounts(){
-        $page='account';
-        $result=$this->travelManagementService->getAllLTCRequestsForAccount();
-
-        return view('Admin.ltc_trips_requests_mangers',compact('result','page')); 
-    }
-
-    public function ltcApplicationDetails($id,Request $request){
-
-        $ltcappslug = Crypt::decrypt($id);
-        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
-        $page = 'manager';
-
-        // return view('Admin.ltc_application_details',['result' => $result['result'],'total_expense' => $result['total_expense']);
-        return view('Admin.ltc_application_details', [
-            'result' => $result['result'],
-            'page' => $page
-            // 'total_expense' => $result['total_expense']
-        ]);
-
-    }  
-    
-    public function ltcApplicationDetailsHr($id,Request $request){
-    
-        $ltcappslug = Crypt::decrypt($id);
-        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
-        $page = 'hr';
-        return view('Admin.ltc_application_details', [
-            'result' => $result['result'],
-            'page' => $page
-        ]);
-    }
-
-    public function ltcApplicationDetailsAccount($id,Request $request){
-        $ltcappslug = Crypt::decrypt($id);
-        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
-        $page = 'account';
-        return view('Admin.ltc_application_details', [
-            'result' => $result['result'],
-            'page' => $page
-        ]);
-    }
-        
-    public function ltcApplicationStatus(Request $request){
-       
-        $status=$request->status;
-        $ltcSlug=$request->ltcSlug;
-        $ltcAppSlug=$request->ltcappslug;
-        $page=$request->page;
-        // $checkStatus=$this->travelManagementService->checkLTCManagerApprovalStatus($ltcAppSlug);
-        $result=$this->travelManagementService->changeLTCStatusToManagerApprovRejectService($status,$ltcSlug,$ltcAppSlug,$page);
-           if($result){
-            return $result;
-           }
-    }
-
-    public function ltcApplicationPaymentStatus(Request $request){
-
-        $status=$request->status;
-        $ltcappslug=$request->ltcappslug;
-        $result=$this->travelManagementService->changeStatusToPayed($status,$ltcappslug);
-        return $result;
-
-    }
 
 }

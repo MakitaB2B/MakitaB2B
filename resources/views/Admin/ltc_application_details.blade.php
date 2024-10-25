@@ -245,7 +245,7 @@
         function toggleSelectBox() {
             let currentPage = "{{ $page }}"; 
             let selectedValue = $("#overallstatusval").val(); 
-           
+
             if (currentPage === 'manager' && !['0', '1', '2'].includes(selectedValue)) {
                 $(".ltcappstatus").prop('disabled', true);
             } else if(currentPage === 'hr' && !['1', '4', '5'].includes(selectedValue)){
@@ -335,18 +335,16 @@
                            
                             let statusMessage = statusMap[result.status] || 'Something Wrong';
                             $("#overallstatus").val(statusMessage);
-
                             $(".ltcappstatus").val(3); 
                             $("#overallstatusval").val(3); 
-
+                            toggleSelectBox();
                         },
                         error: function(err) {
                             alert('Error in updating status.');
                         }
                     });
                     $("#makepayment").prop('disabled', true);
-                    $('#makepaymen').text('Processed'); 
-                    toggleSelectBox();
+                    $('#makepayment').text('Processed'); 
                    
                 });
                     

@@ -201,9 +201,11 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/employee/manage-leave-application-process',[EmployeeLeaveApplicationController::class,'createOrUpdateLeaveApllication'])->name('employee.manage-leave-appllication-process');
     Route::post('/employee/change-leave-applications-status',[EmployeeLeaveApplicationController::class,'changeLeaveApplicationStatus'])->name('employee.change-leave-applications-status');
 
-    Route::get('/travelmanagement/applyviewclaimtravelexpenses',function(){
-        return view('Admin/business_travel_list');
-    })->name('travelmanagement.applyviewclaimtravelexpenses');
+    // Route::get('/travelmanagement/applyviewclaimtravelexpenses',function(){
+    //     return view('Admin/business_travel_list1');
+    // })->name('travelmanagement.applyviewclaimtravelexpenses');
+
+    Route::get('/travelmanagement/applyviewclaimtravelexpenses',[TravelManagementController::class,'getAllBTAppliedByLoggedInEmployee']);
 
     Route::post('/travelmanagement/create-travel-management-applications',[TravelManagementController::class,'createTravelMangmentApplication'])->name('travelmanagement.create-travel-management-applications');
     Route::post('/travelmanagement/create-ltc-claim-application',[TravelManagementController::class,'createLtcClaimApplication'])->name('travelmanagement.create-ltc-claim-application');

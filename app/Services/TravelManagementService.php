@@ -1,15 +1,20 @@
 <?php
 namespace App\Services;
-use App\Models\Admin\{
-    BtaApplication,
-    BtaExpensesBreakups,
-    BtaGroupBt,
-    TeamMembers,
-    LtcClaim,
-    LtcClaimApplication,
-    LtcMiscellaneousExp
-};
-use Illuminate\Support\{Facades\DB, Facades\Auth, Str};
+
+use App\Models\Admin\BtaApplication;
+use App\Models\Admin\BtaExpensesBreakups;
+use App\Models\Admin\BtaGroupBt;
+use App\Models\Admin\TeamMembers;
+use App\Models\Admin\LtcClaim;
+use App\Models\Admin\LtcClaimApplication;
+use App\Models\Admin\LtcMiscellaneousExp;
+use App\Models\Admin\BtAccountLedger;
+use App\Models\Admin\BtaDcEntertainmentExpenses;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Exception;
 
@@ -33,7 +38,7 @@ class TravelManagementService{
      public function createBTAApplication($request,$btaSlug,$applicantSlug,$travelID,$status){
 
         try {
-            DB::transaction(function () use ($request, $applicantSlug, $btaSlug, $status) {
+           DB::transaction(function () use ($request, $applicantSlug, $btaSlug, $status) {
 
                 $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
                 $teamDetails = TeamMembers::WHERE('team_member','=',$loginUserSlug)->get(['team_owner']);
@@ -45,6 +50,7 @@ class TravelManagementService{
 
                 // Step 1: Create and save the BtaApplication
                 $btaApplication = new BtaApplication([
+                    'bta_application_id' => 'bta'.str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT),
                     'emp_slug' => $applicantSlug,
                     'starting_date_time' => Carbon::createFromFormat('m/d/Y h:i A', $request->starting_date_time),
                     'ending_date_time' => Carbon::createFromFormat('m/d/Y h:i A', $request->bta_ending_datetime),
@@ -54,7 +60,7 @@ class TravelManagementService{
                     'total_expenses' => 5000,  // Adjust as needed
                     'bta_slug' => $btaSlug,
                     'status' => $status,
-                    'mannager_slug' => $teamManager,
+                    'manager_slug' => $teamManager,
                     'created_by' => $applicantSlug,
                 ]);
 
@@ -122,18 +128,58 @@ class TravelManagementService{
 
             // If successful
             // return response()->json(['message' => 'Data inserted successfully'], 200);
-            return true;
+            // return true;
 
         } catch (Exception $e) {
             // Handle the exception and return an error response
             // return response()->json(['message' => 'Failed to insert data', 'error' => $e->getMessage()], 500);
-            return false;
+        //     return false;
         }
     }
+
+    public function getAllBTAppliedByLoggedInEmployeeService(){
+        $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
+
+        $ltcApplications = LtcClaimApplication::where('employee_slug', '=', $loginUserSlug)
+        ->get(['employee_slug', 'ltc_month', 'ltc_year', 'status', 'ltc_claim_applications_slug', 'ltc_claim_id', 'total_claim_amount'])
+        ->map(function ($item) {
+            return [
+                'application_type' => 'LTC',
+                'application_id' => $item->ltc_claim_id,
+                'start_date' => $item->ltc_month . ' ' . $item->ltc_year,
+                'end_date' => null, // No end date for LTC applications
+                'place_of_visit' => null, // Not applicable for LTC
+                'total_expenses' => $item->total_claim_amount,
+                'status' => $item->status,
+                'slug' => $item->ltc_claim_applications_slug,
+            ];
+        });
+    
+        $btaApplications = BtaApplication::where('emp_slug', '=', $loginUserSlug)
+            ->get(['emp_slug', 'starting_date_time', 'ending_date_time', 'number_of_days', 'place_of_visit', 'status', 'bta_slug', 'bta_application_id', 'total_expenses'])
+            ->map(function ($item) {
+                return [
+                    'application_type' => 'BTA',
+                    'application_id' => $item->bta_application_id,
+                    'start_date' => $item->starting_date_time,
+                    'end_date' => $item->ending_date_time,
+                    'place_of_visit' => $item->place_of_visit,
+                    'total_expenses' => $item->total_expenses,
+                    'status' => $item->status,
+                    'slug' => $item->bta_slug,
+                ];
+        });
+    
+       $allApplications = $ltcApplications->merge($btaApplications);
+
+       return $allApplications;
+    }
+
     public function getAllBTRequestsForMangersTeamService(){
         $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
         return BtaApplication::with(['employee:employee_slug,full_name'])->WHERE('mannager_slug','=',$loginUserSlug)->get(['emp_slug','starting_date_time','ending_date_time','number_of_days','place_of_visit','purpose_of_visit','status','bta_slug']);
     }
+
     public function changeBTAStatusToManagerApprovRejectService($status,$btaSlug){
         $empSlug=Auth::guard('admin')->user()->employee_slug;
         $updateStatus= BtaApplication::where('bta_slug', $btaSlug)->update(['status' => $status,'mannager_approved_by'=>$empSlug]);
@@ -141,9 +187,103 @@ class TravelManagementService{
             return true;
         }
     }
+
     public function checkBTAManagerApprovalStatus($btaSlug){
         return BtaApplication::where(['bta_slug'=>$btaSlug])->get(['status','mannager_approved_by']);
     }
+
+    public function getAllBTAdvanceRequestsForAccountDeptService(){
+        return BtaApplication::with(['employee:employee_slug,full_name'])->WHERE('status','=',1)->get(['emp_slug','starting_date_time','ending_date_time','number_of_days','place_of_visit','purpose_of_visit','status','bta_slug','total_expenses']);
+    }
+
+    public function getSpecificBTADetailsService($decreptedBtaSlug){
+        return BtaApplication::with(['employee:employee_slug,full_name'])->WHERE(['bta_slug'=>$decreptedBtaSlug])->get(['emp_slug','starting_date_time','ending_date_time','number_of_days','place_of_visit','purpose_of_visit','status','bta_slug','total_expenses','is_group_bt','bta_application_id']);
+    }
+
+    public function getOnlySpecificBTADetailsService(){
+        return BtaApplication::get(['emp_slug','starting_date_time','ending_date_time','number_of_days','place_of_visit','purpose_of_visit','status','bta_slug','total_expenses','is_group_bt']);
+    }
+
+    public function getBtaExpensesBreakUpByBtaSlug($btaSlug){
+        return BtaExpensesBreakups::where(['bta_slug'=>$btaSlug])->get(['date','place_to_visit','journey_fare','accomodation','conveyance','amount','btaexpbreakup_slug','approval_status','bta_slug','journey_fare_bill_image','accommodation_bill_image']);
+    }
+
+    public function getBtaGroupBTByBtaSlug($btaSlug){
+        return BtaGroupBt::with(['employee:employee_no,full_name'])->where(['bta_slug'=>$btaSlug])->get(['vehicle_type','vehicle_number','fuel_expenses','emp_code']);
+    }
+
+    public function insertBtAccountLedgerService($totalBTExpenses,$advanced90percent,$btaSlug,$empSlug,$btaalSlug,$btType){
+
+        $amountPaidBy=Auth::guard('admin')->user()->employee_slug;
+
+
+        try {
+            DB::transaction(function () use ($totalBTExpenses,$advanced90percent,$btaSlug,$empSlug,$btaalSlug,$btType,$amountPaidBy) {
+
+                $insertBTAcLedger = new BtAccountLedger([
+                    'bt_type' => $btType,
+                    'bt_slug' => $btaSlug,
+                    'account_holder_emp_slug' => $empSlug,
+                    'total_expenses_amount' => $totalBTExpenses,
+                    'paid_amount' => $advanced90percent,
+                    'amount_paid_by' => $amountPaidBy,
+                    'btaal_slug' => $btaalSlug,
+                ]);
+                $insertBTAcLedger->save();
+
+                $updateStatus= BtaApplication::where('bta_slug', $btaSlug)->update(['status' => 3,'advanced_paid_by'=>$amountPaidBy]);
+
+
+
+            });
+
+            // If successful
+            return true;
+
+        } catch (Exception $e) {
+            // Handle the exception and return an error response
+            return false;
+        }
+    }
+
+    public function checkSpecBTAccountDataByBTASlugService($btaSlug){
+        return BtAccountLedger::where(['bt_slug'=>$btaSlug])->get(['total_expenses_amount','paid_amount']);
+    }
+
+    public function btaApplicationRecordStatusUpdateService($status,$btabsSlug,$btSlugValue){
+
+        try {
+            DB::transaction(function () use ($status,$btabsSlug,$btSlugValue) {
+            $updateStatus= BtaExpensesBreakups::where('btaexpbreakup_slug', $btabsSlug)->update(['approval_status' => $status]);
+            if($updateStatus){
+                $acceptedByHRRecords = BtaExpensesBreakups::where('bta_slug', $btSlugValue)->where('approval_status', 3)->count();
+                $totalRecords = BtaExpensesBreakups::where('bta_slug', $btSlugValue)->count();
+
+                if ($totalRecords === $acceptedByHRRecords) {
+                    // All records have status 3
+                    $updateStatus= BtaApplication::where('bta_slug', $btSlugValue)->update(['status' => 4]);
+                } else {
+                    // Not all records have status 3
+                    $allAcceptedByHR = false;
+                }
+            }
+            });
+
+            return true;
+        } catch (Exception $e) {
+            // Handle the exception and return an error response
+            return false;
+        }
+
+    }
+
+    public function getAllBTRequestsForHRTeamService(){
+        return BtaApplication::with(['employee:employee_slug,full_name'])->WHERE('status','=',3)->get(['emp_slug','starting_date_time','ending_date_time','number_of_days','place_of_visit','purpose_of_visit','status','bta_slug']);
+    }
+
+    public function btaApplicationClaimByApplicantService($request){
+    
+    }    
 
     public function getAllLTCRequestsForMangers(){
         $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
