@@ -247,4 +247,14 @@ class TravelManagementController extends Controller
 
     }
 
+    public function ltcApplicationDetailsEdit($id,Request $request){
+
+        $ltcappslug = Crypt::decrypt($id);
+        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
+        return view('Admin.edit_ltc_application_details', [   
+            'result' => $result['result']
+        ]);
+
+    }
+
 }

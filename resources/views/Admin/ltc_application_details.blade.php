@@ -99,8 +99,9 @@
                               <h3 class="card-title">LTC Expenses Breakup</h3>
                           </div>
 
-                          @foreach ($result['ltcClaims'] as $Data)
+                          
                             <div class="card-body">
+                                @foreach ($result['ltcClaims'] as $Data)
                                 <div class="row">
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputName">Date*</label>
@@ -160,10 +161,10 @@
                                         <input type="hidden" class="ltcappslug" value="{{$Data['ltc_claim_applications_slug']}}" />
                                         <input type="hidden" class="page" value="{{$page}}" />
                                     </div>
-
                                </div>
+                               @endforeach
                             </div>
-                            @endforeach
+                           
                         </div>
                     </div>
                 </div>

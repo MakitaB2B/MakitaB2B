@@ -314,7 +314,7 @@ class TravelManagementService{
     }
 
     public function getLTCApplicationDetails($ltcappslug){
-
+       
         $result = LtcClaimApplication::with([
             'employee:employee_slug,full_name',
             'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status',
@@ -358,9 +358,9 @@ class TravelManagementService{
 
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
   
-        try {
+        // try {
 
-            DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
+            // DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
 
                 $teamDetails = TeamMembers::WHERE('team_member','=',$employeeSlug)->get(['team_owner']);
 
@@ -432,12 +432,12 @@ class TravelManagementService{
 
                 $ltcMiscellaneousExp->save();
 
-            });
+            // });
 
-            return true;
-        } catch (Exception $e) {
-            return false;
-        }
+        //     return true;
+        // } catch (Exception $e) {
+        //     return false;
+        // }
        
     }
 
