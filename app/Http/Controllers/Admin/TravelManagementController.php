@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Auth;
 
+
 class TravelManagementController extends Controller
 {
     protected $travelManagementService;
@@ -255,6 +256,16 @@ class TravelManagementController extends Controller
             'result' => $result['result']
         ]);
 
+    }
+
+    public function ltcApplicationDetailsUpdate(Request $request){
+       
+        $ltcappslug =  Crypt::encrypt($request->input('ltc_claim_applications_slug')) ;
+
+        $result = $this->travelManagementService->ltcAppUpdate($request);
+
+        return redirect('/admin/travelmanagement/ltc-application-details/'. $ltcappslug);
+    
     }
 
 }

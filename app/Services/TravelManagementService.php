@@ -537,5 +537,49 @@ class TravelManagementService{
           
        return $ltcapp;
     }
+
+     public function ltcAppUpdate($request){
+    foreach ($request->input('date', []) as $index => $date) {
+ 
+        LtcClaim::where('ltc_claim_slug', $request->input('ltc_claim_slug')[$index])->update([
+            'date' => $date,
+            'mode_of_transport' => $request->input('mode_of_transport')[$index],
+            'opening_meter' => $request->input('opening_meter')[$index],
+            'closing_meter' => $request->input('closing_meter')[$index],
+            'total_km' => $request->input('total_km')[$index],
+            'place_visited' => $request->input('place_visited')[$index],
+            'claim_amount' => $request->input('claim_amount')[$index],
+            'lunch_exp' => $request->input('lunch_exp')[$index],
+            'fuel_exp' => $request->input('fuel_exp')[$index],
+            'toll_charge' => $request->input('toll_charge')[$index],
+            'modified'=> 1,
+        ]);
+   
+       }
+
+       if($request->input('ltc_miscellaneous_slug')){
+        LtcMiscellaneousExp::where('ltc_miscellaneous_slug', $request->input('ltc_miscellaneous_slug'))->update([
+            'courier_bill' => $request->input('courier_bill'),
+            'xerox_stationary' => $request->input('xerox_stationary'),
+            'office_expense' => $request->input('office_expense'),
+            'monthly_mobile_bills' => $request->input('monthly_mobile_bills'),
+            'modified'=> 1,
+            'remarks' => $request->input('remarks'),
+           ]);
+       }
+
+       $totalClaims = LtcClaim::whereIn('ltc_claim_applications_slug', [$request->input('ltc_claim_applications_slug')])
+       ->sum(\DB::raw('claim_amount + lunch_exp + fuel_exp + toll_charge'));
+
+       $totalMiscellaneous = LtcMiscellaneousExp::where('ltc_claim_applications_slug', $request->input('ltc_claim_applications_slug'))
+            ->sum(\DB::raw('courier_bill + xerox_stationary + office_expense + monthly_mobile_bills'));
+
+       $ltcClaimApplication = LtcClaimApplication::where('ltc_claim_applications_slug',$request->input('ltc_claim_applications_slug'));
+     
+        $ltcClaimApplication->update([
+            'total_claim_amount' => $totalClaims + $totalMiscellaneous,
+        ]);
+
+    }
 }
 ?>

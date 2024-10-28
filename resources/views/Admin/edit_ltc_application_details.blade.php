@@ -79,7 +79,7 @@
                     </div>
                     <!--/.col (left) -->
                 </div>
-
+        
                 <div class="row">
                     <div class="col-md-12">
       
@@ -87,50 +87,51 @@
                           <div class="card-header" style="background-color: #008290 !important;">
                               <h3 class="card-title">LTC Expenses Breakup</h3>
                           </div>
-
+                          <form action="{{ route('travelmanagement.ltc-application-details-update') }}" method="POST">
+                            @csrf
                             <div class="card-body">
                                 @foreach ($result['ltcClaims'] as $Data)
                                 <div class="row">
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputName">Date*</label>
-                                        <input type="text" class="form-control" value="{{$Data['date']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}>
+                                        <input type="text" class="form-control" name="date[]"  value="{{$Data['date']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputfromDate">Mode Of Transport*</label>
-                                        <input type="text" class="form-control" value="{{$Data['mode_of_transport']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}>
+                                        <input type="text" class="form-control" name="mode_of_transport[]" value="{{$Data['mode_of_transport']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Opening Meter*</label>
-                                        <input type="text" class="form-control" value="{{$Data['opening_meter']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}>
+                                        <input type="text" class="form-control" name="opening_meter[]" value="{{$Data['opening_meter']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Closing Meter*</label>
-                                        <input type="text"  class="form-control" value="{{$Data['closing_meter']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}>
+                                        <input type="text"  class="form-control" name="closing_meter[]" value="{{$Data['closing_meter']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Total Km*</label>
-                                        <input type="text" class="form-control" value="{{$Data['total_km']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}>
+                                        <input type="text" class="form-control" name="total_km[]" value="{{$Data['total_km']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Place Visited*</label>
-                                        <input type="text" class="form-control" value="{{$Data['place_visited']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}> 
+                                        <input type="text" class="form-control" name="place_visited[]" value="{{$Data['place_visited']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}> 
                                     </div>
 
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Claim Amount*</label>
-                                        <input type="text" class="form-control" value="{{$Data['claim_amount']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}> 
+                                        <input type="text" class="form-control" name="claim_amount[]"  value="{{$Data['claim_amount']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}> 
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Lunch Exp*</label>
-                                        <input type="text" class="form-control" value="{{$Data['lunch_exp']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}> 
+                                        <input type="text" class="form-control" name="lunch_exp[]" value="{{$Data['lunch_exp']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : ''}}> 
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Fuel Exp (Rs)*</label>
-                                        <input type="text" class="form-control" value="{{$Data['fuel_exp']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : '' }}> 
+                                        <input type="text" class="form-control" name="fuel_exp[]" value="{{$Data['fuel_exp']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : '' }}> 
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Toll Charge (Rs)*</label>
-                                        <input type="text" class="form-control" value="{{$Data['toll_charge']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : '' }}> 
+                                        <input type="text" class="form-control" name="toll_charge[]" value="{{$Data['toll_charge']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : '' }}> 
                                     </div>
                                     @php
                                     $status = match ($Data["status"]) {
@@ -161,16 +162,19 @@
                                                <option value="8"   {{$Data["status"] == 8 ? "selected" : ""}}>Rejected By Accounts</option>
                                         </select> --}}
                                         <span id="ltcappstatustxt{{$Data['ltc_claim_slug'].'-'.'ltc'}}"></span>
-                                        <input type="hidden" class="ltcappslug" value="{{$Data['ltc_claim_applications_slug']}}" />
-                                        {{-- <input type="hidden" class="page" value="{{$page}}" /> --}}
+                                        <input type="hidden" class="ltc_claim_slug" name="ltc_claim_slug[]" value="{{$Data['ltc_claim_slug']}}" {{ $Data['status'] != 2 && $Data['status'] != 5 && $Data['status'] != 8  ? 'disabled' : '' }}/>
+                                        <input type="hidden" class="ltc_claim_applications_slug" name="ltc_claim_applications_slug" value="{{$Data['ltc_claim_applications_slug']}}"/>
+
+                                        
                                     </div>
 
                                </div>
                                  @endforeach
                             </div>
                             <div class="card-footer">
-                                <button type="button" class="btn btn-primary float-right" style="background-color: #008290 !important; border-color: #52eeff;" id=""    {{ $result['status'] != 2 && $result['status'] != 5 && $result['status'] != 8  ? 'disabled' : '' }}>Update</button>
+                                <button type="submit" class="btn btn-primary float-right" style="background-color: #008290 !important; border-color: #52eeff;" id=""    {{ $result['status'] != 2 && $result['status'] != 5 && $result['status'] != 8  ? 'disabled' : '' }}>Update</button>
                             </div>
+                          </form>
                         </div>
                     </div>
                 </div>
@@ -187,28 +191,29 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form action="{{ route('upload-billed-transaction') }}" method="POST">
+                            <form action="{{ route('travelmanagement.ltc-application-details-update') }}" method="POST">
+                            @csrf
                             <div class="card-body">
                                 <div class="row">
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputName">Courier Bill*</label>
-                                        <input type="text" class="form-control" name="name" required
+                                        <input type="text" class="form-control"  name="courier_bill" required
                                             id="exampleInputName" placeholder="Enter name" value="{{$result['ltcMiscellaneousExp']['courier_bill']}}" {{ $result['ltcMiscellaneousExp']['status'] != 2 && $result['ltcMiscellaneousExp']['status'] != 5 && $result['ltcMiscellaneousExp']['status'] != 8  ? 'disabled' : '' }}>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputfromDate">Xerox Stationary*</label>
                                         <input type="text" name="from_date" class="form-control" required
-                                            id="exampleInputfromDate" placeholder="Enter From Date" value="{{$result['ltcMiscellaneousExp']['xerox_stationary']}}" {{ $result['ltcMiscellaneousExp']['status'] != 2 && $result['ltcMiscellaneousExp']['status'] != 5 && $result['ltcMiscellaneousExp']['status'] != 8  ? 'disabled' : '' }}>
+                                            id="exampleInputfromDate" placeholder="Enter From Date" name="xerox_stationary" value="{{$result['ltcMiscellaneousExp']['xerox_stationary']}}" {{ $result['ltcMiscellaneousExp']['status'] != 2 && $result['ltcMiscellaneousExp']['status'] != 5 && $result['ltcMiscellaneousExp']['status'] != 8  ? 'disabled' : '' }}>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Office Expense*</label>
                                         <input type="text" name="to_date" class="form-control" required
-                                            id="exampleInputToDate" placeholder="Enter To-date" value="{{$result['ltcMiscellaneousExp']['office_expense']}}" {{ $result['ltcMiscellaneousExp']['status'] != 2 && $result['ltcMiscellaneousExp']['status'] != 5 && $result['ltcMiscellaneousExp']['status'] != 8  ? 'disabled' : '' }}>  
+                                            id="exampleInputToDate" placeholder="Enter To-date" name="office_expense" value="{{$result['ltcMiscellaneousExp']['office_expense']}}" {{ $result['ltcMiscellaneousExp']['status'] != 2 && $result['ltcMiscellaneousExp']['status'] != 5 && $result['ltcMiscellaneousExp']['status'] != 8  ? 'disabled' : '' }}>  
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Monthly Mobile Bills*</label>
                                         <input type="text" name="to_date" class="form-control" required
-                                            id="exampleInputToDate" placeholder="Enter To-date" value="{{$result['ltcMiscellaneousExp']['monthly_mobile_bills']}}" {{ $result['ltcMiscellaneousExp']['status'] != 2 && $result['ltcMiscellaneousExp']['status'] != 5 && $result['ltcMiscellaneousExp']['status'] != 8  ? 'disabled' : '' }}>
+                                            id="exampleInputToDate" placeholder="Enter To-date" name="monthly_mobile_bill" value="{{$result['ltcMiscellaneousExp']['monthly_mobile_bills']}}" {{ $result['ltcMiscellaneousExp']['status'] != 2 && $result['ltcMiscellaneousExp']['status'] != 5 && $result['ltcMiscellaneousExp']['status'] != 8  ? 'disabled' : '' }}>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="exampleInputToDate">Remarks*</label>
@@ -246,13 +251,14 @@
 
                                         <input value="{{$status}}" class="form-control" {{ $result['ltcMiscellaneousExp']['status'] != 2 && $result['ltcMiscellaneousExp']['status'] != 5 && $result['ltcMiscellaneousExp']['status'] != 8  ? 'disabled' : '' }} />
                                         <span id="ltcappstatustxt{{$result['ltcMiscellaneousExp']['ltc_miscellaneous_slug'].'-'.'ltcmis'}}"></span>
-                                        <input type="hidden" class="ltcappslug" value="{{$result['ltcMiscellaneousExp']['ltc_claim_applications_slug']}}" />
+                                        <input type="hidden" class="ltc_miscellaneous_slug" name="ltc_miscellaneous_slug" value="{{$result['ltcMiscellaneousExp']['ltc_miscellaneous_slug']}}"  {{ $result['ltcMiscellaneousExp']['ltc_miscellaneous_slug'] != 2 && $result['ltcMiscellaneousExp']['ltc_miscellaneous_slug'] != 5 && $result['ltcMiscellaneousExp']['ltc_miscellaneous_slug'] != 8  ? 'disabled' : '' }} />
+                                        <input type="hidden" class="ltc_claim_applications_slug" name="ltc_claim_applications_slug" value="{{$result['ltcMiscellaneousExp']['ltc_claim_applications_slug']}}"/>
                                     </div>
                               </div>
                             </div>
                             <div class="card-footer">
                                
-                             <button type="button" class="btn btn-primary float-right" style="background-color: #008290 !important; border-color: #52eeff;" id="" {{ $result['status'] != 2 && $result['status'] != 5 && $result['status'] != 8  ? 'disabled' : '' }}>Update</button>
+                             <button type="submit" class="btn btn-primary float-right" style="background-color: #008290 !important; border-color: #52eeff;" id="" {{ $result['status'] != 2 && $result['status'] != 5 && $result['status'] != 8  ? 'disabled' : '' }}>Update</button>
                             
                             </div>
                         </form>

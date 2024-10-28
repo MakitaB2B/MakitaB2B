@@ -161,6 +161,28 @@
                                         <input type="hidden" class="ltcappslug" value="{{$Data['ltc_claim_applications_slug']}}" />
                                         <input type="hidden" class="page" value="{{$page}}" />
                                     </div>
+                                    {{-- <div class="form-group col-md-2">
+                                        <label>&nbsp;</label>
+                                    <span id="modified" class="form-control"><p>hghghyf</p</span>
+                                    </div> --}}
+
+                                    {{-- <div class="form-group col-md-2">
+                                        <label>&nbsp;</label> 
+                                        <span id="modified" class="form-control d-flex align-items-center" style="height: auto;"><p>hghghyf</p></span>
+                                    </div> --}}
+
+                                    {{-- <div class="form-group col-md-2">
+                                        <label>&nbsp;</label>
+                                        <span id="modified" class="form-control d-flex align-items-center" style="height: auto; min-height: 38px;">
+                                            <p class="mb-0">hghghyf</p>
+                                        </span>
+                                    </div> --}}
+                                    <div class="form-group col-md-2">
+                                        <label>&nbsp;</label>
+                                        <span id="modified" class="d-flex align-items-center" style="height: auto; min-height: 38px;">
+                                            <p class="mb-0">hghghyf</p>
+                                        </span>
+                                    </div>
                                </div>
                                @endforeach
                             </div>

@@ -28,12 +28,16 @@ return new class extends Migration
 
             // if (!Schema::hasColumn('ltc_miscellaneous_exps', 'status')) {
 
-                $table->tinyInteger('status')
-                ->default(0)
-                ->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 - Case closed, 8 - Rejected By Account')
-                ->after('remarks')->change();
+                // $table->tinyInteger('status')
+                // ->default(0)
+                // ->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 - Case closed, 8 - Rejected By Account')
+                // ->after('remarks')->change();
                 // $table->string('Extended Price')->after('Price')->nullable();
                 // }
+
+            if (!Schema::hasColumn('ltc_miscellaneous_exps', 'modified')) {
+                $table->tinyInteger('modified')->default(0)->comment('0 - Not Recently Update, 1 - Recently Update')->after('status');
+            }
         });
     }
 

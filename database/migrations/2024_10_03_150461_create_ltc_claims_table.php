@@ -34,19 +34,21 @@ return new class extends Migration
             
 
 
-            if (!Schema::hasColumn('ltc_claims', 'status')) {
+            // if (!Schema::hasColumn('ltc_claims', 'status')) {
 
-                $table->tinyInteger('status')
-                ->default(0)
-                ->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 - Case closed, 8 - Rejected By Account')
-                ->after('toll_charge');
+            //     $table->tinyInteger('status')
+            //     ->default(0)
+            //     ->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 - Case closed, 8 - Rejected By Account')
+            //     ->after('toll_charge');
                 // $table->string('Extended Price')->after('Price')->nullable();
-                }
+                // }
            
             
             // $table->timestamps();
 
-
+            if (!Schema::hasColumn('ltc_claims', 'modified')) {
+                $table->tinyInteger('modified')->default(0)->comment('0 - Not Recently Update, 1 - Recently Update')->after('status');
+            }
 
             //-----------------------
 
