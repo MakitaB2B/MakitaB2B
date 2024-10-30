@@ -317,8 +317,8 @@ class TravelManagementService{
        
         $result = LtcClaimApplication::with([
             'employee:employee_slug,full_name',
-            'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status',
-            'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,courier_bill,xerox_stationary,office_expense,monthly_mobile_bills,remarks,status',
+            'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status,modified',
+            'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,courier_bill,xerox_stationary,office_expense,monthly_mobile_bills,remarks,status,modified',
             'manager_name:employee_slug,full_name',
             'hr_name:employee_slug,full_name',
             'payed_by:employee_slug,full_name',
@@ -453,9 +453,9 @@ class TravelManagementService{
             $empSlug=Auth::guard('admin')->user()->employee_slug;      
             $ltcslugarray=explode("-", $ltcSlug);
         if($ltcslugarray[1]=='ltc'){
-            $updateStatus= LtcClaim::where('ltc_claim_slug', $ltcslugarray[0])->update(['status' => $status]);
+            $updateStatus= LtcClaim::where('ltc_claim_slug', $ltcslugarray[0])->update(['status' => $status,'modified'=>0]);
         }elseif($ltcslugarray[1]=='ltcmis'){
-            $updateStatus= LtcMiscellaneousExp::where('ltc_miscellaneous_slug', $ltcslugarray[0])->update(['status' => $status]);
+            $updateStatus= LtcMiscellaneousExp::where('ltc_miscellaneous_slug', $ltcslugarray[0])->update(['status' => $status,'modified'=>0]);
         }    
 
         $result = LtcClaimApplication::leftJoin('ltc_claims', 'ltc_claim_applications.ltc_claim_applications_slug', '=', 'ltc_claims.ltc_claim_applications_slug')

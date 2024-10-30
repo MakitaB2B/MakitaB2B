@@ -161,26 +161,12 @@
                                         <input type="hidden" class="ltcappslug" value="{{$Data['ltc_claim_applications_slug']}}" />
                                         <input type="hidden" class="page" value="{{$page}}" />
                                     </div>
-                                    {{-- <div class="form-group col-md-2">
-                                        <label>&nbsp;</label>
-                                    <span id="modified" class="form-control"><p>hghghyf</p</span>
-                                    </div> --}}
-
-                                    {{-- <div class="form-group col-md-2">
-                                        <label>&nbsp;</label> 
-                                        <span id="modified" class="form-control d-flex align-items-center" style="height: auto;"><p>hghghyf</p></span>
-                                    </div> --}}
-
-                                    {{-- <div class="form-group col-md-2">
-                                        <label>&nbsp;</label>
-                                        <span id="modified" class="form-control d-flex align-items-center" style="height: auto; min-height: 38px;">
-                                            <p class="mb-0">hghghyf</p>
-                                        </span>
-                                    </div> --}}
                                     <div class="form-group col-md-2">
                                         <label>&nbsp;</label>
-                                        <span id="modified" class="d-flex align-items-center" style="height: auto; min-height: 38px;">
-                                            <p class="mb-0">hghghyf</p>
+                                        <span id="modified{{$Data['ltc_claim_slug'].'-'.'ltc'}}" class="d-flex align-items-center" style="height: auto; min-height: 38px;">
+                                            @if($Data["modified"] == 1)
+                                            <p class="mb-0" style="color:green">Data Updated Please Review</p>
+                                            @endif
                                         </span>
                                     </div>
                                </div>
@@ -245,6 +231,11 @@
                                         </select>
                                         <span id="ltcappstatustxt{{$result['ltcMiscellaneousExp']['ltc_miscellaneous_slug'].'-'.'ltcmis'}}"></span>
                                         <input type="hidden" class="ltcappslug" value="{{$result['ltcMiscellaneousExp']['ltc_claim_applications_slug']}}" />
+                                        @if($result['ltcMiscellaneousExp']["modified"] == 1)
+                                        <span id="modified{{$result['ltcMiscellaneousExp']['ltc_miscellaneous_slug'].'-'.'ltcmis'}}" class="d-flex align-items-center" style="height: auto; color:green;min-height: 38px;">
+                                            Data Updated Please Review
+                                        </span>
+                                        @endif
                                     </div>
                               </div>
                             </div>
@@ -319,7 +310,7 @@
 
                     let statusMessage = statusMap[result[0].status] || 'Something Wrong';
                     $("#overallstatus").val(statusMessage);
-
+                    $("#modified"+dataId).empty();
                     
                     if (status == 1 || status == 4) {
                         $("#ltcappstatustxt"+dataId).html('<p style="color:green">Accepted &#128077;</p>');
