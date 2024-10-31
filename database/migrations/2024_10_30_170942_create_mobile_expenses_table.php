@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lodging_boardings', function (Blueprint $table) {
+        Schema::create('mobile_expenses', function (Blueprint $table) {
             $table->id();
+            $table->string('mobile_expenses_slug',50)->unique();
+            $table->string('grade', 3);
+            $table->decimal('expense', 10, 2); 
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lodging_boardings');
+        Schema::dropIfExists('mobile_expenses');
     }
 };

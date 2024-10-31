@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mobile_expenses', function (Blueprint $table) {
+        Schema::create('city_categories', function (Blueprint $table) {
             $table->id();
+            $table->string('city_categories_slug',50)->unique();
+            $table->enum('city_category', ['A', 'B', 'C', 'D']);
+            $table->string('city',50);
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mobile_expenses');
+        Schema::dropIfExists('city_categories');
     }
 };
