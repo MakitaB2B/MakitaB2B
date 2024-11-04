@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::table('local_conveyances', function (Blueprint $table) {
             // $table->id();
-            $table->string('local_conveyance_slug',50)->unique()->nullable()->change();
+            // $table->string('local_conveyance_slug',50)->unique()->nullable()->change();
             // $table->string('grade', 3); 
             // $table->enum('conveyance_type', ['Company Vehicle', 'Own Vehicle']); 
-            // $table->enum('conveyance', ['Taxi', 'Auto', '2-Wheeler', '4-Wheeler']);
+            $table->enum('conveyance', ['Taxi', 'Auto','Bus','2-Wheeler', '4-Wheeler'])->change();
             // $table->timestamps();
         });
     }

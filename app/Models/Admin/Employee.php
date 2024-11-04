@@ -26,4 +26,15 @@ class Employee extends Model
         'posting_state','posting_city','employee_slug','status','crated_by'
     ];
 
+
+    public function designation_department()
+    {
+        return $this->hasOne('App\Models\Admin\Designation', 'id', 'designation_id');
+    }
+
+    public function department()
+    {
+        return $this->hasOne('App\Models\Admin\Department','id','department_id');
+    }
+
 }

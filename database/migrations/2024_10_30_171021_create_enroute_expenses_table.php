@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('enroute_expenses', function (Blueprint $table) {
-            $table->id();
-            $table->string('enroute_expenses_slug',50)->unique();
-            $table->string('grade', 3)->index();
-            $table->string('enroute_type', 30)->index();
-            $table->enum('bill_type', ['WB', 'WOB']);
-            $table->decimal('amount', 10, 2);
-            // $table->time('from_time'); 
-            // $table->time('to_time');   
+        Schema::table('enroute_expenses', function (Blueprint $table) {
+            // $table->id();
+            $table->string('enroute_expenses_slug',50)->unique()->nullable()->change();
+            // $table->string('grade', 3)->index();
+            // $table->string('enroute_type', 30)->index();
+            // $table->enum('bill_type', ['WB', 'WOB']);
+            // $table->decimal('amount', 10, 2);
+             
            
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 
@@ -34,6 +33,8 @@ return new class extends Migration
     }
 };
 
+ // $table->time('from_time'); 
+ // $table->time('to_time'); 
 
 //M1 - Breakfast -  WB  - 100 - 6:00 - 12:00 
 //M1 - Breakfast -  WOB - 100 - 6:00 - 12:00 

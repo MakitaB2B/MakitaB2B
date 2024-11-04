@@ -10,6 +10,8 @@ use App\Models\Admin\LtcClaimApplication;
 use App\Models\Admin\LtcMiscellaneousExp;
 use App\Models\Admin\BtAccountLedger;
 use App\Models\Admin\BtaDcEntertainmentExpenses;
+use App\Models\Admin\Employee;
+use App\Models\Admin\Grade;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
@@ -538,7 +540,7 @@ class TravelManagementService{
        return $ltcapp;
     }
 
-     public function ltcAppUpdate($request){
+    public function ltcAppUpdate($request){
     foreach ($request->input('date', []) as $index => $date) {
  
         LtcClaim::where('ltc_claim_slug', $request->input('ltc_claim_slug')[$index])->update([
@@ -580,6 +582,15 @@ class TravelManagementService{
             'total_claim_amount' => $totalClaims + $totalMiscellaneous,
         ]);
 
+    }
+
+    public function fetchGrade($employeeSlug){
+
+        $designation = Employee::with(['designation_department','department'])->where('employee_slug',$employeeSlug)->first();
+     
+        $grade = Grade::where('department',$designation["department"]->name)->where('designation',$designation["designation_department"]->designation_name)->select('grade')->first();
+
+       return $grade;
     }
 }
 ?>

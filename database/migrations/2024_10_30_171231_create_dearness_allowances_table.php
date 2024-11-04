@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dearness_allowances', function (Blueprint $table) {
-            $table->id();
-            $table->string('dearness_allowances_slug',50)->unique();
-            $table->string('grade', 3)->index();
-            $table->decimal('amount', 10, 2);
-            $table->timestamps();
+        Schema::table('dearness_allowances', function (Blueprint $table) {
+            // $table->id();
+            $table->string('dearness_allowances_slug',50)->unique()->nullable()->change();
+            // $table->string('grade', 3)->index();
+            // $table->decimal('amount', 10, 2);
+            // $table->timestamps();
         });
     }
 

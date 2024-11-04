@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mobile_expenses', function (Blueprint $table) {
-            $table->id();
-            $table->string('mobile_expenses_slug',50)->unique();
-            $table->string('grade', 3);
-            $table->decimal('expense', 10, 2); 
-            $table->timestamps();
+        Schema::table('mobile_expenses', function (Blueprint $table) {
+            // $table->id();
+            $table->string('mobile_expenses_slug',50)->unique()->nullable()->change();
+            // $table->string('grade', 3);
+            // $table->decimal('expense', 10, 2); 
+            // $table->timestamps();
         });
     }
 

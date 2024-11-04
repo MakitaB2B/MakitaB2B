@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('city_categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('city_categories_slug',50)->unique();
-            $table->enum('city_category', ['A', 'B', 'C', 'D']);
-            $table->string('city',50);
-            $table->timestamps();
+        Schema::table('city_categories', function (Blueprint $table) {
+            // $table->id();
+            $table->string('city_categories_slug',50)->unique()->nullable()->change();
+            // $table->enum('city_category', ['A', 'B', 'C', 'D']);
+            // $table->string('city',50);
+            // $table->timestamps();
         });
     }
 

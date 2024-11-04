@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Auth;
 
-
 class TravelManagementController extends Controller
 {
     protected $travelManagementService;
@@ -19,8 +18,13 @@ class TravelManagementController extends Controller
     }
 
     public function getAllBTAppliedByLoggedInEmployee(){
+        $employeeSlug=Auth::guard('admin')->user()->employee_slug;
+
         $result=$this->travelManagementService->getAllBTAppliedByLoggedInEmployeeService();
-        return view('Admin.business_travel_list',compact('result'));
+
+        $grade=$this->travelManagementService->fetchGrade($employeeSlug);
+        
+        return view('Admin.business_travel_list',compact('result','grade'));
     }
 
     public function createTravelMangmentApplication(Request $request){
