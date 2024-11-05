@@ -12,6 +12,7 @@ use App\Models\Admin\BtAccountLedger;
 use App\Models\Admin\BtaDcEntertainmentExpenses;
 use App\Models\Admin\Employee;
 use App\Models\Admin\Grade;
+use App\Models\Admin\LocalConveyance;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
@@ -591,6 +592,13 @@ class TravelManagementService{
         $grade = Grade::where('department',$designation["department"]->name)->where('designation',$designation["designation_department"]->designation_name)->select('grade')->first();
 
        return $grade;
+    }
+
+    public function modeOfTransport($grade){
+
+       $modeoftravel = LocalConveyance::where('grade',$grade)->select('conveyance_type','conveyance')->get();
+       return $modeoftravel;
+        
     }
 }
 ?>

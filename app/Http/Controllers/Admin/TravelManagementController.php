@@ -18,13 +18,16 @@ class TravelManagementController extends Controller
     }
 
     public function getAllBTAppliedByLoggedInEmployee(){
+        
         $employeeSlug=Auth::guard('admin')->user()->employee_slug;
 
         $result=$this->travelManagementService->getAllBTAppliedByLoggedInEmployeeService();
 
-        $grade=$this->travelManagementService->fetchGrade($employeeSlug);
+        $ltcform['grade'] = $this->travelManagementService->fetchGrade($employeeSlug);
+
+        $ltcform['mode_of_transport'] = $this->travelManagementService->modeOfTransport($ltcform['grade']->grade);
         
-        return view('Admin.business_travel_list',compact('result','grade'));
+       return view('Admin.business_travel_list',compact('result','ltcform'));
     }
 
     public function createTravelMangmentApplication(Request $request){

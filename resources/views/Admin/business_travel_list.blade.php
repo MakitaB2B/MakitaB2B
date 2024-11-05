@@ -465,48 +465,56 @@
                             <hr>
                             <div class="row" id="ltc_expenses">
                                 <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Date*</label>
-                                    <input type="date" class="form-control" name="date[]" required
-                                        id="exampleInputCostEstimation">
+                                    <label for="date0">Date*</label>
+                                    <input type="date" class="form-control" name="date[]" required id="date0">
                                 </div>
-                                <div class="form-group col-md-4">
+                                {{-- <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Mode of Transport*</label>
                                     <input type="text" class="form-control" name="mode_of_transport[]" required
                                         id="exampleInputCostEstimation" placeholder="Mode of Transport">
+                                </div> --}}
+                                <div class="form-group col-md-4" id="divmodeOfTransport0">
+                                    <label for="exampleModeOfTransport">Mode of Transport*</label>
+                                    <select class="custom-select form-control-border" id="modeOfTransport0" name="mode_of_transport[]" placeholder="Mode of Transport" onchange="toggleVehicleInputs('0')">
+                                        @foreach($ltcform['mode_of_transport'] as $transport)
+                                                <option value="{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>
+                                        @endforeach
+                                                <option value="Demo Van">Demo Van</option>
+                                    </select>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4"  id="divopeningMeter0">
                                     <label for="exampleServiceCost">Opening Meter*</label>
                                     <input type="text" class="form-control" name="opening_meter[]" required
-                                        id="exampleInputCostEstimation" placeholder="Opening Meter">
+                                        id="openingMeter0" placeholder="Opening Meter">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4"  id="divclosingMeter0">
                                     <label for="exampleServiceCost">Closing Meter*</label>
                                     <input type="text" class="form-control" name="closing_meter[]" required
-                                        id="exampleInputCostEstimation" placeholder="Closing Meter">
+                                        id="closingMeter0" placeholder="Closing Meter">
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Total KM*</label>
+                                <div class="form-group col-md-4"  id="divtotalKm0">
+                                    <label for="totalKm0">Total KM*</label>
                                     <input type="text" class="form-control" name="total_km[]" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Total KM">
+                                        id="totalKm0" placeholder="Enter Total KM" disabled>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4" id="divplacesVisited0">
                                     <label for="exampleServiceCost">Places Visited*</label>
-                                    <input type="text" class="form-control" name="place_visited[]" required
+                                    <input type="text"  id="placesVisited0" class="form-control" name="place_visited[]" required
                                         placeholder="Enter Places Visited">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4" id="divclaimAmount0">
                                     <label for="exampleServiceCost">Claim Amount*</label>
-                                    <input type="text" class="form-control" name="claim_amount[]" required
+                                    <input type="text" id="claimAmount0" class="form-control" name="claim_amount[]" required
                                         placeholder="Enter Claim Amount">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4" id="divlunchExp0">
                                     <label for="exampleServiceCost">Lunch Exp.*</label>
-                                    <input type="text" class="form-control" name="lunch_exp[]" required
+                                    <input type="text" id="lunchExp0" class="form-control" name="lunch_exp[]" required
                                         placeholder="Enter Lunch Exp.">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4" id="divfuelExpenses0">
                                     <label for="exampleServiceCost">Fuel Expenses*</label>
-                                    <input type="text" class="form-control" name="fuel_exp[]" required
+                                    <input type="text" id="fuelExpenses0" class="form-control" name="fuel_exp[]" required
                                         placeholder="Fuel Expenses">
                                 </div>
                                 <div class="form-group col-md-4">
@@ -514,7 +522,7 @@
                                     <input type="text" class="form-control" name="toll_charge[]" required
                                         placeholder="Toll Charges">
                                 </div>
-                                <div class="form-group col-md-4" style="margin-top: 30px;">
+                                <div class="form-group col-md-4" style="margin-top: 30px;" id="addbuttonltc">
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <button type="button" class="btn btn-success"
@@ -894,41 +902,86 @@
             }
 
             // LTC
+
             function add_more_ltcexpenses() {
                 loop_count++;
+                jQuery("#ltc_expenses #addbuttonltc").remove(); 
+                // jQuery("#ltc_expenses .btn-success").remove(); 
+                
                 var html = '<input name="" type="hidden"><div class="row" id="ltcexpense_' + loop_count +
                    '" style="margin-top:20px">';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="date[]" required value="" id="exampleCompanyName" ></div>';
+                    '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="date[]" required value="" id="exampleDate'+loop_count +'" ></div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlPlaceofVisit">Mode of Transport*</label> <input type="text" class="form-control" required name="mode_of_transport[]" placeholder="Mode of Transport"> </div>';
+                    '<div class="form-group col-md-4" id="divmodeOfTransport'+loop_count +'"> <label for="exampleModeOfTransport">Mode of Transport*</label> <select class="custom-select form-control-border" id="modeOfTransport'+loop_count +'" name="mode_of_transport[]" placeholder="Mode of Transport" onchange="toggleVehicleInputs('+loop_count +')"> @foreach($ltcform['mode_of_transport'] as $transport) <option value="{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>@endforeach<option value="Demo Van">Demo Van</option></select></div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlJFt">Opening Meter*</label> <input type="text" class="form-control" required name="opening_meter[]" placeholder="Opening Meter"> </div>';
+                    '<div class="form-group col-md-4" id="divopeningMeter'+loop_count +'"> <label for="exampleInputBTADtlJFt">Opening Meter*</label> <input type="text" class="form-control" required name="opening_meter[]" id="openingMeter'+loop_count +'" placeholder="Opening Meter"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlAccomodation">Closing Meter*</label> <input type="text" class="form-control" required name="closing_meter[]" placeholder="Closing Meter"> </div>';
+                    '<div class="form-group col-md-4" id="divclosingMeter'+loop_count +'"> <label for="exampleInputBTADtlAccomodation">Closing Meter*</label> <input type="text" class="form-control" required name="closing_meter[]" id="closingMeter'+loop_count +'" placeholder="Closing Meter"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTAConviniance">Total KM*</label> <input type="text"  class="form-control" required name="total_km[]" placeholder="Total KM"> </div>';
+                    '<div class="form-group col-md-4" id="divtotalKm'+loop_count +'"> <label for="exampleInputBTAConviniance">Total KM*</label> <input type="text"  class="form-control" required name="total_km[]" id="totalKm'+loop_count +'" placeholder="Total KM" disabled> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTAConviniance">Places Visited*</label> <input type="text"  class="form-control" required name="place_visited[]" placeholder="Places Visited"> </div>';
+                    '<div class="form-group col-md-4" id="divplacesVisited'+loop_count +'"> <label for="exampleInputBTAConviniance">Places Visited*</label> <input type="text"  class="form-control" required name="place_visited[]" id="placesVisited'+loop_count +'" placeholder="Places Visited"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Claim Amount*</label> <input type="text" class="form-control" required name="claim_amount[]" placeholder="Claim Amount"> </div>';
+                    '<div class="form-group col-md-4" id="divclaimAmount'+loop_count +'"> <label for="exampleInputAmount">Claim Amount*</label> <input type="text" class="form-control" required name="claim_amount[]" placeholder="Claim Amount" id="claimAmount'+loop_count +'"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="lunch_exp[]" placeholder="Lunch Exp."> </div>';
+                    '<div class="form-group col-md-4" id="divlunchExp'+loop_count +'"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="lunch_exp[]" placeholder="Lunch Exp." id="lunchExp'+loop_count +'"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Fuel Expenses*</label> <input type="text" class="form-control" required name="fuel_exp[]" placeholder="Fuel Expenses"> </div>';
+                    '<div class="form-group col-md-4" id="divfuelExpenses'+loop_count +'"> <label for="exampleInputAmount">Fuel Expenses*</label> <input type="text" class="form-control" required name="fuel_exp[]" placeholder="Fuel Expenses" id="fuelExpenses'+loop_count +'"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Toll Charges*</label> <input type="text" class="form-control" required name="toll_charge[]" placeholder="Toll Charges"> </div>';
+                    '<div class="form-group col-md-4" id="divtollCharges'+loop_count +'"> <label for="exampleInputAmount">Toll Charges*</label> <input type="text" class="form-control" required name="toll_charge[]" placeholder="Toll Charges"> </div>';
                 html +=
-                    '<div class="form-group col-md-3"><br><button type="button" class="btn btn-danger btn-lg" onclick=remove_more_ltexpenses("' +
-                    loop_count + '")>Remove</button></div>';
+                    '<div class="form-group col-md-2 p-3"><button type="button" class="btn btn-danger" onclick=remove_more_ltexpenses("'+loop_count +'")>Remove</button></div>'
+                    
+                html+='<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>';
                 html += '</div>';
                 jQuery("#ltc_expenses").append(html);
+                toggleVehicleInputs(loop_count);
             }
 
             function remove_more_ltexpenses(loop_count) {
+                // jQuery('#ltcexpense_' + loop_count).remove();
+
                 jQuery('#ltcexpense_' + loop_count).remove();
+    
+                const lastRow = jQuery('#ltc_expenses .row').last();
+
+                console.log(lastRow.length);
+
+                if (lastRow.length) {
+
+                    lastRow.find('#addbuttonltc').remove();
+
+                    lastRow.append('<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>');
+                    
+                }
+
+                if (lastRow.length == 0) {
+                    lastRow.find('#addbuttonltc').remove();
+                    lastRow.append('<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>');
+                }
             }
 
+            
+            function toggleVehicleInputs(id) {
+
+                const modeOfTransport = document.getElementById('modeOfTransport'+id).value;
+                const isOwnVehicle = modeOfTransport.toLowerCase().includes('own vehicle');
+                const isDemoVan = modeOfTransport.toLowerCase().includes('demo van');
+
+                const openingMeterElement = document.getElementById('openingMeter' + id);
+                const closingMeterElement = document.getElementById('closingMeter' + id);
+               
+                openingMeterElement.disabled = !isOwnVehicle;
+                closingMeterElement.disabled = !isOwnVehicle;
+
+                document.getElementById('divopeningMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
+                document.getElementById('divclosingMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
+                document.getElementById('divtotalKm' + id).style.display = isOwnVehicle ? 'block' : 'none';
+                document.getElementById('divfuelExpenses' + id).style.display = isDemoVan ? 'block' : 'none';
+                document.getElementById('divclaimAmount' + id).style.display = !isDemoVan ? 'block' : 'none';
+                
+            }
 
             $(function() {
                 $("#example1").DataTable({
@@ -956,6 +1009,13 @@
                     $('.fvegbt').hide(1000);
                 }
             });
+
+            document.addEventListener("DOMContentLoaded", function() {
+                        $('#ltcModal').on('shown.bs.modal', function () {
+                            toggleVehicleInputs(0);
+                        });
+            });
+
             $(document).ready(function() {
                 $('#btavt').on('change', function() {
                     let vehicleType = $.trim($("#btavt").val());
@@ -1008,7 +1068,8 @@
                         time: 'far fa-clock'
                     }
                 });
-            });
+
+              });
         </script>
     @endpush
 @endsection
