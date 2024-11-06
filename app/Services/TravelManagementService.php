@@ -19,10 +19,16 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Models\Admin\MobileExpense;
 use Exception;
 
 
 class TravelManagementService{
+
+    private const TRANSPORT_RATES = [
+        'Own Vehicle-4-Wheeler' => 8.0,
+        'Own Vehicle-2-Wheeler' => 6.0
+    ];
 
      public function ltc_claim_id(){
         
@@ -381,6 +387,8 @@ class TravelManagementService{
                 ($request['office_expense'] ?? 0) +
                 ($request['monthly_mobile_bill'] ?? 0);
 
+                dd( $total_claim_amount);
+
                 $ltcClaimapp = new LtcClaimApplication([
                     'ltc_claim_applications_slug' =>  $ltcappslug,
                     'ltc_claim_id' => $ltc_id,
@@ -596,9 +604,39 @@ class TravelManagementService{
 
     public function modeOfTransport($grade){
 
-       $modeoftravel = LocalConveyance::where('grade',$grade)->select('conveyance_type','conveyance')->get();
+       $modeoftravel = LocalConveyance::where('grade',$grade)->select('id','conveyance_type','conveyance')->get();
        return $modeoftravel;
         
     }
+
+    public function calculateltcExpense($openingMeter,$closingMeter,$modeOfTransport){
+
+        $totalKm = $closingMeter - $openingMeter;
+
+        if ($totalKm < 0) {
+            return response()->json(['error' => 'Closing meter should be greater than opening meter'], 400);
+        }
+
+        $ratePerKm = $this->getTransportRate($modeOfTransport);
+
+        $claimAmount = $totalKm * $ratePerKm;
+
+        return response()->json([
+            'total_km' => $totalKm,
+            'claim_amount' => number_format($claimAmount, 2)
+        ]);
+
+    }
+
+    private function getTransportRate(string $modeOfTransport): float
+    {
+        return self::TRANSPORT_RATES[$modeOfTransport];
+    }
+
+    public function mobileBill($grade){
+
+        return MobileExpense::where('grade',$grade)->select('expense')->first();
+
+    }    
 }
 ?>

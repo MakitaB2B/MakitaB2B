@@ -216,10 +216,12 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/travelmanagement/ltc-request-hr',[TravelManagementController::class,'ltcRequestHr'])->name('travelmanagement.ltc-request-hr');
     Route::get('/travelmanagement/ltc-application-details-hr/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsHr'])->name('travelmanagement.ltc-application-details-hr');
     Route::get('/travelmanagement/ltc-request-accounts',[TravelManagementController::class,'ltcRequestAccounts'])->name('travelmanagement.ltc-request-accounts');
-    Route::get('/travelmanagement/ltc-application-details-account/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsAccount'])->name('travelmanagement.ltc-application-details-hr');
+    Route::get('/travelmanagement/ltc-application-details-account/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsAccount'])->name('travelmanagement.ltc-application-details-data');
     Route::post('/travelmanagement/ltc-application-details/payment-status',[TravelManagementController::class, 'ltcApplicationPaymentStatus'])->name('travelmanagement.ltc-application-paymentstatus');
-    Route::get('/travelmanagement/ltc-application-details/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsEdit'])->name('travelmanagement.ltc-application-details');
+    Route::get('/travelmanagement/ltc-application-details/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsEdit'])->name('travelmanagement.ltc-application-details-edit');
     Route::post('/travelmanagement/ltc-application-details/update', [TravelManagementController::class,'ltcApplicationDetailsUpdate'])->name('travelmanagement.ltc-application-details-update');
+    Route::post('/travelmanagement/ltc-application-details/calculate-expenses', [TravelManagementController::class, 'calculateExpenses'])->name('travelmanagement.calculate-expenses');
+
 
     Route::get('/promotions',[PromotionController::class,'index'])->name('promo');
     Route::get('/promotions/promotion-creation',[PromotionController::class,'promotionCreation'])->name('admin.promotions.promotion-creation');
@@ -240,7 +242,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/items-search',[ItemInfoController::class,'itemSearch'])->name('item-search');
     Route::post('/upload-daily-item',[ItemInfoController::class,'uploadDailyItem'])->name('upload-daily-item');
     Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
-    Route::post('/dealer-search',[DealerController::class,'dealerSearch'])->name('item-search');
+    Route::post('/dealer-search',[DealerController::class,'dealerSearch'])->name('dealer-search');
     Route::post('/upload-dealer',[DealerController::class,'uploadDealer'])->name('upload-dealer');
     Route::get('/billed-transactions',[BilledTransactionController::class,'index'])->name('billed-transactions');
     Route::post('/upload-billed-transaction',[BilledTransactionController::class,'uploadBilledTransaction'])->name('upload-billed-transaction');

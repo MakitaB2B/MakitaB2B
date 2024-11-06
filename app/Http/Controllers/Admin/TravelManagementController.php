@@ -26,6 +26,8 @@ class TravelManagementController extends Controller
         $ltcform['grade'] = $this->travelManagementService->fetchGrade($employeeSlug);
 
         $ltcform['mode_of_transport'] = $this->travelManagementService->modeOfTransport($ltcform['grade']->grade);
+       
+        $ltcform['mobile_bill'] = $this->travelManagementService->mobileBill($ltcform['grade']->grade);
         
        return view('Admin.business_travel_list',compact('result','ltcform'));
     }
@@ -273,6 +275,17 @@ class TravelManagementController extends Controller
 
         return redirect('/admin/travelmanagement/ltc-application-details/'. $ltcappslug);
     
+    }
+
+    public function calculateExpenses(Request $request){
+
+        $openingMeter = $request->input('opening_meter');
+        $closingMeter = $request->input('closing_meter');
+        $modeOfTransport = $request->input('mode_of_transport');
+        $transportMode = explode('|', $modeOfTransport);
+        $result = $this->travelManagementService->calculateltcExpense($openingMeter,$closingMeter,$transportMode[1]);
+
+        return $result;    
     }
 
 }

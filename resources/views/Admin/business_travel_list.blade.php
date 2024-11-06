@@ -477,20 +477,20 @@
                                     <label for="exampleModeOfTransport">Mode of Transport*</label>
                                     <select class="custom-select form-control-border" id="modeOfTransport0" name="mode_of_transport[]" placeholder="Mode of Transport" onchange="toggleVehicleInputs('0')">
                                         @foreach($ltcform['mode_of_transport'] as $transport)
-                                                <option value="{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>
+                                                <option value="{{$transport->id}}|{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>
                                         @endforeach
-                                                <option value="Demo Van">Demo Van</option>
+                                                {{-- <option value="Demo Van">Demo Van</option> --}}
                                     </select>
                                 </div>
                                 <div class="form-group col-md-4"  id="divopeningMeter0">
                                     <label for="exampleServiceCost">Opening Meter*</label>
                                     <input type="text" class="form-control" name="opening_meter[]" required
-                                        id="openingMeter0" placeholder="Opening Meter">
+                                        id="openingMeter0" placeholder="Opening Meter" onchange="calculateExpenses(0)">
                                 </div>
                                 <div class="form-group col-md-4"  id="divclosingMeter0">
                                     <label for="exampleServiceCost">Closing Meter*</label>
                                     <input type="text" class="form-control" name="closing_meter[]" required
-                                        id="closingMeter0" placeholder="Closing Meter">
+                                        id="closingMeter0" placeholder="Closing Meter" onchange="calculateExpenses(0)">
                                 </div>
                                 <div class="form-group col-md-4"  id="divtotalKm0">
                                     <label for="totalKm0">Total KM*</label>
@@ -509,8 +509,8 @@
                                 </div>
                                 <div class="form-group col-md-4" id="divlunchExp0">
                                     <label for="exampleServiceCost">Lunch Exp.*</label>
-                                    <input type="text" id="lunchExp0" class="form-control" name="lunch_exp[]" required
-                                        placeholder="Enter Lunch Exp.">
+                                    <input type="text" id="lunchExp0" class="form-control" name="lunch_exp[]" required value="100"
+                                        placeholder="Enter Lunch Exp." readonly>
                                 </div>
                                 <div class="form-group col-md-4" id="divfuelExpenses0">
                                     <label for="exampleServiceCost">Fuel Expenses*</label>
@@ -551,7 +551,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">Monthly Mobile Bills*</label>
-                                    <input type="text" class="form-control" name="monthly_mobile_bill" required
+                                    <input type="text" class="form-control" id="monthly_mobile_bill" name="monthly_mobile_bill" required
                                         placeholder="Enter Mobile Bills">
                                 </div>
                             </div>
@@ -913,11 +913,11 @@
                 html +=
                     '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="date[]" required value="" id="exampleDate'+loop_count +'" ></div>';
                 html +=
-                    '<div class="form-group col-md-4" id="divmodeOfTransport'+loop_count +'"> <label for="exampleModeOfTransport">Mode of Transport*</label> <select class="custom-select form-control-border" id="modeOfTransport'+loop_count +'" name="mode_of_transport[]" placeholder="Mode of Transport" onchange="toggleVehicleInputs('+loop_count +')"> @foreach($ltcform['mode_of_transport'] as $transport) <option value="{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>@endforeach<option value="Demo Van">Demo Van</option></select></div>';
+                    '<div class="form-group col-md-4" id="divmodeOfTransport'+loop_count +'"> <label for="exampleModeOfTransport">Mode of Transport*</label> <select class="custom-select form-control-border" id="modeOfTransport'+loop_count +'" name="mode_of_transport[]" placeholder="Mode of Transport" onchange="toggleVehicleInputs('+loop_count +')"> @foreach($ltcform['mode_of_transport'] as $transport) <option value="{{$transport->id}}|{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>@endforeach</select></div>';
                 html +=
-                    '<div class="form-group col-md-4" id="divopeningMeter'+loop_count +'"> <label for="exampleInputBTADtlJFt">Opening Meter*</label> <input type="text" class="form-control" required name="opening_meter[]" id="openingMeter'+loop_count +'" placeholder="Opening Meter"> </div>';
+                    '<div class="form-group col-md-4" id="divopeningMeter'+loop_count +'"> <label for="exampleInputBTADtlJFt">Opening Meter*</label> <input type="text" class="form-control" required name="opening_meter[]" id="openingMeter'+loop_count +'" placeholder="Opening Meter" onchange="calculateExpenses('+loop_count +')"> </div>';
                 html +=
-                    '<div class="form-group col-md-4" id="divclosingMeter'+loop_count +'"> <label for="exampleInputBTADtlAccomodation">Closing Meter*</label> <input type="text" class="form-control" required name="closing_meter[]" id="closingMeter'+loop_count +'" placeholder="Closing Meter"> </div>';
+                    '<div class="form-group col-md-4" id="divclosingMeter'+loop_count +'"> <label for="exampleInputBTADtlAccomodation">Closing Meter*</label> <input type="text" class="form-control" required name="closing_meter[]" id="closingMeter'+loop_count +'" placeholder="Closing Meter" onchange="calculateExpenses('+loop_count +')"> </div>';
                 html +=
                     '<div class="form-group col-md-4" id="divtotalKm'+loop_count +'"> <label for="exampleInputBTAConviniance">Total KM*</label> <input type="text"  class="form-control" required name="total_km[]" id="totalKm'+loop_count +'" placeholder="Total KM" disabled> </div>';
                 html +=
@@ -925,7 +925,7 @@
                 html +=
                     '<div class="form-group col-md-4" id="divclaimAmount'+loop_count +'"> <label for="exampleInputAmount">Claim Amount*</label> <input type="text" class="form-control" required name="claim_amount[]" placeholder="Claim Amount" id="claimAmount'+loop_count +'"> </div>';
                 html +=
-                    '<div class="form-group col-md-4" id="divlunchExp'+loop_count +'"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="lunch_exp[]" placeholder="Lunch Exp." id="lunchExp'+loop_count +'"> </div>';
+                    '<div class="form-group col-md-4" id="divlunchExp'+loop_count +'"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="lunch_exp[]" placeholder="Lunch Exp." value="100" readonly id="lunchExp'+loop_count +'"> </div>';
                 html +=
                     '<div class="form-group col-md-4" id="divfuelExpenses'+loop_count +'"> <label for="exampleInputAmount">Fuel Expenses*</label> <input type="text" class="form-control" required name="fuel_exp[]" placeholder="Fuel Expenses" id="fuelExpenses'+loop_count +'"> </div>';
                 html +=
@@ -940,13 +940,10 @@
             }
 
             function remove_more_ltexpenses(loop_count) {
-                // jQuery('#ltcexpense_' + loop_count).remove();
 
                 jQuery('#ltcexpense_' + loop_count).remove();
     
                 const lastRow = jQuery('#ltc_expenses .row').last();
-
-                console.log(lastRow.length);
 
                 if (lastRow.length) {
 
@@ -958,29 +955,79 @@
 
                 if (lastRow.length == 0) {
                     lastRow.find('#addbuttonltc').remove();
-                    lastRow.append('<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>');
+                    jQuery("#ltc_expenses").append('<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>');
                 }
             }
 
             
-            function toggleVehicleInputs(id) {
+            // function toggleVehicleInputs(id) {
 
-                const modeOfTransport = document.getElementById('modeOfTransport'+id).value;
-                const isOwnVehicle = modeOfTransport.toLowerCase().includes('own vehicle');
-                const isDemoVan = modeOfTransport.toLowerCase().includes('demo van');
+            //     const modeOfTransport = document.getElementById('modeOfTransport'+id).value;
+            //     const isOwnVehicle = modeOfTransport.toLowerCase().includes('own vehicle');
+            //     const isDemoVan = modeOfTransport.toLowerCase().includes('demo van');
+
+            //     const openingMeterElement = document.getElementById('openingMeter' + id);
+            //     const closingMeterElement = document.getElementById('closingMeter' + id);
+            //     const claimAmountElement = document.getElementById('claimAmount' + id);
+
+            //     openingMeterElement.disabled = !isOwnVehicle;
+            //     closingMeterElement.disabled = !isOwnVehicle;
+            //     claimAmountElement.disabled = isOwnVehicle;
+
+            //     document.getElementById('divopeningMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
+            //     document.getElementById('divclosingMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
+            //     document.getElementById('divtotalKm' + id).style.display = isOwnVehicle ? 'block' : 'none';
+            //     document.getElementById('divfuelExpenses' + id).style.display = isDemoVan ? 'block' : 'none';
+            //     document.getElementById('divclaimAmount' + id).style.display = !isDemoVan ? 'block' : 'none';
+
+            //     if ($('#fuelExpenses'+ id).is(':visible')) {
+            //         $('#fuelExpenses'+ id).attr('required', 'required');
+            //     } else {
+            //         $('#fuelExpenses'+ id).removeAttr('required');
+            //     }
+                
+
+            //     if ($('#claimAmount'+ id).is(':visible')) {
+            //         $('#claimAmount'+ id).attr('required', 'required');
+            //     } else {
+            //         $('#claimAmount'+ id).removeAttr('required');
+            //     }
+            // }
+
+            function toggleVehicleInputs(id) {
+                const modeOfTransport = document.getElementById('modeOfTransport' + id).value.toLowerCase();
+                const isOwnVehicle = modeOfTransport.includes('own vehicle');
+                const isDemoVan = modeOfTransport.includes('demo van');
 
                 const openingMeterElement = document.getElementById('openingMeter' + id);
                 const closingMeterElement = document.getElementById('closingMeter' + id);
-               
-                openingMeterElement.disabled = !isOwnVehicle;
-                closingMeterElement.disabled = !isOwnVehicle;
+                const claimAmountElement = document.getElementById('claimAmount' + id);
+                const fuelExpensesElement = document.getElementById('fuelExpenses' + id);
 
+                // Make inputs read-only instead of disabled
+                openingMeterElement.readOnly = !isOwnVehicle;
+                closingMeterElement.readOnly = !isOwnVehicle;
+                claimAmountElement.readOnly = isOwnVehicle;
+
+                // Show or hide sections using 'display' for layout stability
                 document.getElementById('divopeningMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
                 document.getElementById('divclosingMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
                 document.getElementById('divtotalKm' + id).style.display = isOwnVehicle ? 'block' : 'none';
                 document.getElementById('divfuelExpenses' + id).style.display = isDemoVan ? 'block' : 'none';
                 document.getElementById('divclaimAmount' + id).style.display = !isDemoVan ? 'block' : 'none';
-                
+
+                // Set or remove the 'required' attribute based on visibility and readability
+                if (fuelExpensesElement.style.display === 'block') {
+                    fuelExpensesElement.setAttribute('required', 'required');
+                } else {
+                    fuelExpensesElement.removeAttribute('required');
+                }
+
+                if (claimAmountElement.style.display === 'block') {
+                    claimAmountElement.setAttribute('required', 'required');
+                } else {
+                    claimAmountElement.removeAttribute('required');
+                }
             }
 
             $(function() {
@@ -1070,6 +1117,45 @@
                 });
 
               });
+
+                function calculateExpenses(index) {
+                    const openingMeter = document.getElementById(`openingMeter${index}`).value;
+                    const closingMeter = document.getElementById(`closingMeter${index}`).value;
+                    const modeOfTransport = document.getElementById(`modeOfTransport${index}`).value;
+
+                    $.ajax({
+                        url: '{{ route("travelmanagement.calculate-expenses") }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',  // Laravel CSRF token
+                            opening_meter: openingMeter,
+                            closing_meter: closingMeter,
+                            mode_of_transport: modeOfTransport
+                        },
+                        success: function(response) {
+                            document.getElementById(`totalKm${index}`).value = response.total_km;
+                            document.getElementById(`claimAmount${index}`).value = response.claim_amount;
+                        },
+                        error: function(xhr) {
+                            console.error("Error calculating expenses:", xhr);
+                            alert(xhr.responseJSON?.error || 'Error calculating expenses');
+                        }
+                    });
+                }
+
+
+                const maxBillAmount = {{ $ltcform['mobile_bill']->expense ?? 0 }};
+
+                document.getElementById('monthly_mobile_bill').addEventListener('input', function (e) {
+                    const input = e.target;
+                    let value = parseFloat(input.value);
+
+                    // Check if value exceeds max allowed
+                    if (value > maxBillAmount) {
+                        input.value = maxBillAmount;
+                    }
+                });
+
         </script>
     @endpush
 @endsection
