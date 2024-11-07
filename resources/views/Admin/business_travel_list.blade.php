@@ -482,6 +482,9 @@
                                                 {{-- <option value="Demo Van">Demo Van</option> --}}
                                     </select>
                                 </div>
+                                <div id="demoVanExtraInputs">
+
+                                </div>
                                 <div class="form-group col-md-4"  id="divopeningMeter0">
                                     <label for="exampleServiceCost">Opening Meter*</label>
                                     <input type="text" class="form-control" name="opening_meter[]" required
@@ -1028,6 +1031,39 @@
                 } else {
                     claimAmountElement.removeAttribute('required');
                 }
+
+                if (isDemoVan) {
+
+                    fetchExtraDropdownOptions(index);
+                } else {
+                
+                    document.getElementById('demoVanExtraInputs').innerHTML = '';
+                }
+            }
+
+            function fetchExtraDropdownOptions(index) {
+                $.ajax({
+                    url: '/admin/travelmanagement/ltc-demo-van', 
+                    method: 'GET',
+                    data: {
+                        index: index
+                    },
+                    success: function(response) {
+                    
+                        var extraDropdown = `
+                            <div class="form-group col-md-4" id="extraDropdown${index}">
+                                <label for="extraOption">Select Demo Van*</label>
+                                <select class="custom-select form-control-border" id="extraOption${index}" name="extra_option[]">
+                                    ${response.options} 
+                                </select>
+                            </div>
+                        `;
+                        document.getElementById('demoVanExtraInputs').innerHTML = extraDropdown;
+                    },
+                    error: function(error) {
+                        console.log("Error fetching extra dropdown:", error);
+                    }
+                });
             }
 
             $(function() {

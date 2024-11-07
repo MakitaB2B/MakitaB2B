@@ -104,13 +104,20 @@ class BranchStockController extends Controller
             $count=count($data);
             $lastRow=$count-1;
             $header=$data[0];
+            $header = array_map('strtolower', $header);
+            $header = array_map(function($value) {
+                return preg_replace('/^\x{FEFF}/u', '', $value);
+            }, $header);
+         
             unset($data[0],$data[$lastRow]);
             BranchStocks::truncate();
             foreach ($data as $value) {
                 set_time_limit(0);
                 // dd(array_combine($header,$value));
                 $stockData=array_combine($header,$value);
-                BranchStocks::create($stockData);
+                echo "<pre>";
+                 print_r(array_combine($header,$value));
+                BranchStocks::insert($stockData);
             }
             return redirect('admin/branch-stock');
         }else{

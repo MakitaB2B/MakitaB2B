@@ -288,4 +288,20 @@ class TravelManagementController extends Controller
         return $result;    
     }
 
+    public function ltcDemoVan(Request $request){
+
+ // Based on the index, you could fetch relevant data
+    // For simplicity, let's assume it's a static set of options
+    $options = '<option value="option1">Option 1</option>
+                <option value="option2">Option 2</option>
+                <option value="option3">Option 3</option>';
+
+    return response()->json([
+        'options' => $options
+    ]);
+    }
+
+
+
+
 }

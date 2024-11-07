@@ -387,8 +387,6 @@ class TravelManagementService{
                 ($request['office_expense'] ?? 0) +
                 ($request['monthly_mobile_bill'] ?? 0);
 
-                dd( $total_claim_amount);
-
                 $ltcClaimapp = new LtcClaimApplication([
                     'ltc_claim_applications_slug' =>  $ltcappslug,
                     'ltc_claim_id' => $ltc_id,
@@ -424,7 +422,7 @@ class TravelManagementService{
 
                     ];
                 }
-            
+               dd();
                 if (!empty($ltcClaimData)) {
                     LtcClaim::insert($ltcClaimData);
                 }

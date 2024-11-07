@@ -221,7 +221,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/travelmanagement/ltc-application-details/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsEdit'])->name('travelmanagement.ltc-application-details-edit');
     Route::post('/travelmanagement/ltc-application-details/update', [TravelManagementController::class,'ltcApplicationDetailsUpdate'])->name('travelmanagement.ltc-application-details-update');
     Route::post('/travelmanagement/ltc-application-details/calculate-expenses', [TravelManagementController::class, 'calculateExpenses'])->name('travelmanagement.calculate-expenses');
-
+    Route::get('/travelmanagement/ltc-demo-van', [TravelManagementController::class,'ltcDemoVan'])->name('travelmanagement.ltc-demovan');
 
     Route::get('/promotions',[PromotionController::class,'index'])->name('promo');
     Route::get('/promotions/promotion-creation',[PromotionController::class,'promotionCreation'])->name('admin.promotions.promotion-creation');
