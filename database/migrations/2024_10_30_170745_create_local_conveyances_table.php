@@ -16,7 +16,8 @@ return new class extends Migration
             // $table->string('local_conveyance_slug',50)->unique()->nullable()->change();
             // $table->string('grade', 3); 
             // $table->enum('conveyance_type', ['Company Vehicle', 'Own Vehicle']); 
-            $table->enum('conveyance', ['Taxi', 'Auto','Bus','2-Wheeler', '4-Wheeler','Demo Van'])->change();
+            // $table->enum('conveyance_type', ['Company Vehicle', 'Own Vehicle','Private Vehicle'])->change();
+            $table->enum('conveyance', ['Taxi', 'Auto','Bus','2-Wheeler', '4-Wheeler','Demo Van','Metro','Train'])->change();
             // $table->timestamps();
         });
     }

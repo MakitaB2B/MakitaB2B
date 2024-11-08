@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Admin\MobileExpense;
+use App\Models\Admin\DemoVan;
 use Exception;
 
 
@@ -367,9 +368,9 @@ class TravelManagementService{
 
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
   
-        // try {
+        try {
 
-            // DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
+            DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
 
                 $teamDetails = TeamMembers::WHERE('team_member','=',$employeeSlug)->get(['team_owner']);
 
@@ -409,20 +410,21 @@ class TravelManagementService{
                         'employee_slug' => $employeeSlug,
                         'date' => $request->date[$index],
                         'mode_of_transport' =>$request->mode_of_transport[$index],
-                        'opening_meter' => $request->opening_meter[$index],
-                        'closing_meter'=> $request->closing_meter[$index],
-                        'total_km' => $request->total_km[$index],
+                        'demo_van_no'=> ($request->extra_option[$index] == "null") ? null : $request->extra_option[$index],//$request->mode_of_transport[$index],
+                        'opening_meter' => $request->opening_meter[$index]?? 0,
+                        'closing_meter'=> $request->closing_meter[$index]?? 0,
+                        'total_km' => $request->total_km[$index] ?? 0,//$request->total_km[$index],//isset($request->total_km[$index]) ? $request->total_km[$index] : 0.0 ,//$request->total_km[$index],
                         'place_visited' => $request->place_visited[$index],
-                        'claim_amount' => $request->claim_amount[$index],
+                        'claim_amount' => $request->claim_amount[$index]?? 0,
                         'lunch_exp' => $request->lunch_exp[$index],
-                        'fuel_exp' => $request->fuel_exp[$index],
+                        'fuel_exp' => $request->fuel_exp[$index] ?? 0,
                         'toll_charge' => $request->toll_charge[$index],
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
 
                     ];
                 }
-               dd();
+           
                 if (!empty($ltcClaimData)) {
                     LtcClaim::insert($ltcClaimData);
                 }
@@ -441,12 +443,12 @@ class TravelManagementService{
 
                 $ltcMiscellaneousExp->save();
 
-            // });
+            });
 
-        //     return true;
-        // } catch (Exception $e) {
-        //     return false;
-        // }
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
        
     }
 
@@ -635,6 +637,10 @@ class TravelManagementService{
 
         return MobileExpense::where('grade',$grade)->select('expense')->first();
 
-    }    
+    }   
+    
+    public function demoVanDetails($employeeSlug){
+        return DemoVan::where('state','karnataka')->where('purpose','Demo')->where('used_by','Sales')->get(['vehicles_reg_no']);
+    }
 }
 ?>

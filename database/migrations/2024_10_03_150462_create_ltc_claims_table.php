@@ -32,7 +32,9 @@ return new class extends Migration
 
             // $table->tinyInteger('status')->default(0)->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 -  Case closed , 8 - Rejected By Account')->change();
             
-
+            if (!Schema::hasColumn('ltc_claims', 'demo_van_no')) {
+                $table->string('demo_van_no',50)->after('mode_of_transport')->nullable();
+            }
 
             // if (!Schema::hasColumn('ltc_claims', 'status')) {
 
@@ -46,9 +48,10 @@ return new class extends Migration
             
             // $table->timestamps();
 
-            if (!Schema::hasColumn('ltc_claims', 'modified')) {
-                $table->tinyInteger('modified')->default(0)->comment('0 - Not Recently Update, 1 - Recently Update')->after('status');
-            }
+            // if (!Schema::hasColumn('ltc_claims', 'modified')) {
+            //     $table->tinyInteger('modified')->default(0)->comment('0 - Not Recently Update, 1 - Recently Update')->after('status');
+            // }
+
 
             //-----------------------
 

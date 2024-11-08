@@ -290,18 +290,20 @@ class TravelManagementController extends Controller
 
     public function ltcDemoVan(Request $request){
 
- // Based on the index, you could fetch relevant data
-    // For simplicity, let's assume it's a static set of options
-    $options = '<option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>';
+    $datavalue = $request->input('data');
+    [$dataid,$demovalue] = explode('|',  $datavalue);
 
-    return response()->json([
-        'options' => $options
-    ]);
+    $employeeSlug=Auth::guard('admin')->user()->employee_slug;
+
+    $demovanoptions = $this->travelManagementService->demoVanDetails($employeeSlug);
+
+    $options = '';
+    foreach($demovanoptions as $demovan) {
+        $options .= '<option value="' . htmlspecialchars($demovan['vehicles_reg_no']) . '">' . htmlspecialchars($demovan['vehicles_reg_no']) . '</option>';
     }
-
-
+  
+    return response()->json(['options' => $options]);
+    }
 
 
 }

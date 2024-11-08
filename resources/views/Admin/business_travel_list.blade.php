@@ -482,7 +482,7 @@
                                                 {{-- <option value="Demo Van">Demo Van</option> --}}
                                     </select>
                                 </div>
-                                <div id="demoVanExtraInputs">
+                                <div id="demoVanExtraInputs0">
 
                                 </div>
                                 <div class="form-group col-md-4"  id="divopeningMeter0">
@@ -918,6 +918,8 @@
                 html +=
                     '<div class="form-group col-md-4" id="divmodeOfTransport'+loop_count +'"> <label for="exampleModeOfTransport">Mode of Transport*</label> <select class="custom-select form-control-border" id="modeOfTransport'+loop_count +'" name="mode_of_transport[]" placeholder="Mode of Transport" onchange="toggleVehicleInputs('+loop_count +')"> @foreach($ltcform['mode_of_transport'] as $transport) <option value="{{$transport->id}}|{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>@endforeach</select></div>';
                 html +=
+                     '<div id="demoVanExtraInputs'+loop_count +'"></div>';
+                html +=
                     '<div class="form-group col-md-4" id="divopeningMeter'+loop_count +'"> <label for="exampleInputBTADtlJFt">Opening Meter*</label> <input type="text" class="form-control" required name="opening_meter[]" id="openingMeter'+loop_count +'" placeholder="Opening Meter" onchange="calculateExpenses('+loop_count +')"> </div>';
                 html +=
                     '<div class="form-group col-md-4" id="divclosingMeter'+loop_count +'"> <label for="exampleInputBTADtlAccomodation">Closing Meter*</label> <input type="text" class="form-control" required name="closing_meter[]" id="closingMeter'+loop_count +'" placeholder="Closing Meter" onchange="calculateExpenses('+loop_count +')"> </div>';
@@ -1007,6 +1009,8 @@
                 const claimAmountElement = document.getElementById('claimAmount' + id);
                 const fuelExpensesElement = document.getElementById('fuelExpenses' + id);
 
+                var demoVanDiv = document.getElementById('demoVanExtraInputs'+ id);
+
                 // Make inputs read-only instead of disabled
                 openingMeterElement.readOnly = !isOwnVehicle;
                 closingMeterElement.readOnly = !isOwnVehicle;
@@ -1034,31 +1038,38 @@
 
                 if (isDemoVan) {
 
-                    fetchExtraDropdownOptions(index);
+                    demoVanDiv.classList.add('form-group', 'col-md-4');
+
+                    fetchExtraDropdownOptions(id,modeOfTransport);
                 } else {
-                
-                    document.getElementById('demoVanExtraInputs').innerHTML = '';
+                 
+                    // document.getElementById('demoVanExtraInputs'+ id).innerHTML = '<label for="extraOption">Select Demo Van*</label><select class="custom-select form-control-border" id="extraOption+id" hidden name="extra_option[]"></select>';
+                    // '<label for="extraOption' + id + '">Select Demo Van*</label>' +
+                    document.getElementById('demoVanExtraInputs' + id).innerHTML = '<select class="custom-select form-control-border" id="extraOption' + id + '" hidden name="extra_option[]"><option value="null" selected></option></select>';
+
+                    // demoVanDiv.remove();
                 }
             }
 
-            function fetchExtraDropdownOptions(index) {
+            function fetchExtraDropdownOptions(index,datavalue) {
+                console.log(index,datavalue);
                 $.ajax({
                     url: '/admin/travelmanagement/ltc-demo-van', 
                     method: 'GET',
                     data: {
-                        index: index
+                        index: index,
+                        data:datavalue
                     },
                     success: function(response) {
-                    
+                        // <div class="form-group col-md-4" id="extraDropdown${index}">
+                        // </div>
                         var extraDropdown = `
-                            <div class="form-group col-md-4" id="extraDropdown${index}">
                                 <label for="extraOption">Select Demo Van*</label>
                                 <select class="custom-select form-control-border" id="extraOption${index}" name="extra_option[]">
                                     ${response.options} 
                                 </select>
-                            </div>
                         `;
-                        document.getElementById('demoVanExtraInputs').innerHTML = extraDropdown;
+                        document.getElementById("demoVanExtraInputs"+index).innerHTML = extraDropdown;
                     },
                     error: function(error) {
                         console.log("Error fetching extra dropdown:", error);
