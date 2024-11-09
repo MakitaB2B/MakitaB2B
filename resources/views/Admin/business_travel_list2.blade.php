@@ -13,7 +13,7 @@
                 href="{{ asset('admin_assets//plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
             <link rel="stylesheet" href="{{ asset('admin_assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
             <link rel="stylesheet"
-                href="{{ asset('admin_assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+            href="{{ asset('admin_assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
 
             <style>
                 .btcardbs {
@@ -82,12 +82,10 @@
                 .dpnone {
                     display: none !important;
                 }
-
-                .mw900px {
+                .mw900px{
                     max-width: 900px !important;
                 }
-
-                .modelbs {
+                .modelbs{
                     box-shadow: 0 0.5rem 1rem rgb(0 65 72) !important;
                 }
             </style>
@@ -111,28 +109,28 @@
                             @csrf
                             <div class="row">
                                 <div class="form-group col-md-6">
-                                    <label for="exampleSDT">Starting Date & Time*</label>
-                                    <div class="input-group date" id="reservationdatetime" data-target-input="nearest">
-                                        <input type="text" name="starting_date_time"
-                                            class="form-control datetimepicker-input" data-target="#reservationdatetime"
-                                            required />
-                                        <div class="input-group-append" data-target="#reservationdatetime"
-                                            data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                        </div>
+                                <label for="exampleSDT">Starting Date & Time*</label>
+                                <div class="input-group date" id="reservationdatetime" data-target-input="nearest">
+                                    <input type="text" name="starting_date_time"
+                                        class="form-control datetimepicker-input" data-target="#reservationdatetime"
+                                        required />
+                                    <div class="input-group-append" data-target="#reservationdatetime"
+                                        data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                     </div>
+                                </div>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="exampleInputCostEstimation">Ending Date & Time*</label>
                                     <div class="input-group date" id="reservationdatetimeid" data-target-input="nearest">
-                                        <input type="text" name="bta_ending_datetime"
-                                            class="form-control datetimepicker-input" data-target="#reservationdatetimeid"
-                                            required />
-                                        <div class="input-group-append" data-target="#reservationdatetimeid"
-                                            data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                        </div>
+                                    <input type="text" name="bta_ending_datetime"
+                                        class="form-control datetimepicker-input" data-target="#reservationdatetimeid"
+                                        required />
+                                    <div class="input-group-append" data-target="#reservationdatetimeid"
+                                        data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                     </div>
+                                </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -165,7 +163,7 @@
                                 </div>
                                 <div class="form-group col-md-4 fvegbt">
                                     <label for="exampleInputCostEstimation">Vehicle Type*</label>
-                                    <select class="custom-select form-control-border" id="btavt" name="vehicle_type">
+                                    <select class="custom-select form-control-border" id="btavt" name="vechile_type">
                                         <option value="">Select Type</option>
                                         <option value="1">Company</option>
                                         <option value="2">Personal</option>
@@ -174,11 +172,10 @@
                                 <div class="form-group col-md-4 fvegbt">
                                     <label for="exampleInputCostEstimation" class="btavtl" style="display: none">Vehicle
                                         Number*</label>
-                                    <input type="text" class="form-control btapvn" name="personal_vehicle_number"
-                                        placeholder="Vehicle Number" style="display: none">
+                                    <input type="text" class="form-control btapvn" name="cost_estimation"
+                                        placeholder="Vehicle Number" style="display: none"  name="own_vechile_number">
 
-                                    <select class="custom-select form-control-border btacvn" style="display: none"
-                                        name="company_vehicle_number">
+                                    <select class="custom-select form-control-border btacvn" style="display: none" name="company_vechile_number">
                                         <option value="">Select Vehicle Number</option>
                                         <option value="KA03TA9859">KA03TA9859</option>
                                         <option value="KA06AL6254">KA06AL6254</option>
@@ -191,10 +188,10 @@
                                 </div>
                                 <div class="form-group col-md-4 fvegbt">
                                     <label for="exampleInputCostEstimation">Employee(S)*</label>
-                                    <select class="custom-select form-control-border" name="groupbt_employees[]" multiple>
+                                    <select class="custom-select form-control-border" name="groupbt_employees">
                                         <option value="">Select Employee</option>
-                                        <option value="468">Shankhadip Bal</option>
-                                        <option value="502">Jean lobo</option>
+                                        <option value="">Shankhadip Bal</option>
+                                        <option value="">Jean lobo</option>
                                     </select>
                                 </div>
                             </div>
@@ -438,7 +435,7 @@
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">LTC for the Month*</label>
-                                    <select class="custom-select form-control-border">
+                                    <select class="custom-select form-control-border" name=ltc_month>
                                         <option>January</option>
                                         <option>February</option>
                                         <option>March</option>
@@ -455,7 +452,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">LTC for the Year*</label>
-                                    <select class="custom-select form-control-border">
+                                    <select class="custom-select form-control-border" name=ltc_year>
                                         <option>2024</option>
                                         <option>2025</option>
                                         <option>2026</option>
@@ -468,56 +465,103 @@
                             <hr>
                             <div class="row" id="ltc_expenses">
                                 <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Date*</label>
-                                    <input type="date" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation">
+                                    <label for="date0">Date*</label>
+                                    <input type="date" class="form-control" name="date[]" required id="date0">
                                 </div>
-                                <div class="form-group col-md-4">
+                                {{-- <div class="form-group col-md-4">
                                     <label for="exampleServiceCost">Mode of Transport*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="mode_of_transport[]" required
                                         id="exampleInputCostEstimation" placeholder="Mode of Transport">
+                                </div> --}}
+                                <div class="form-group col-md-4" id="divmodeOfTransport0">
+                                    <label for="exampleModeOfTransport">Mode of Transport*</label>
+                                    <select class="custom-select form-control-border" id="modeOfTransport0" name="mode_of_transport[]" placeholder="Mode of Transport" onchange="toggleVehicleInputs('0')">
+                                        @foreach($ltcform['mode_of_transport'] as $transport)
+                                                <option value="{{$transport->id}}|{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>
+                                        @endforeach
+                                                {{-- <option value="Demo Van">Demo Van</option> --}}
+                                    </select>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div id="demoVanExtraInputs0">
+
+                                </div>
+                                <div class="form-group col-md-4"  id="divopeningMeter0">
                                     <label for="exampleServiceCost">Opening Meter*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation" placeholder="Opening Meter">
+                                    <input type="text" class="form-control" name="opening_meter[]" required
+                                        id="openingMeter0" placeholder="Opening Meter" onchange="calculateExpenses(0)">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4"  id="divclosingMeter0">
                                     <label for="exampleServiceCost">Closing Meter*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation" placeholder="Closing Meter">
+                                    <input type="text" class="form-control" name="closing_meter[]" required
+                                        id="closingMeter0" placeholder="Closing Meter" onchange="calculateExpenses(0)">
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Total KM*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Total KM">
+                                <div class="form-group col-md-4"  id="divtotalKm0">
+                                    <label for="totalKm0">Total KM*</label>
+                                    <input type="text" class="form-control" name="total_km[]" required
+                                        id="totalKm0" placeholder="Enter Total KM" disabled>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4" id="divplacesVisited0">
                                     <label for="exampleServiceCost">Places Visited*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text"  id="placesVisited0" class="form-control" name="place_visited[]" required
                                         placeholder="Enter Places Visited">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4" id="divclaimAmount0">
                                     <label for="exampleServiceCost">Claim Amount*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" id="claimAmount0" class="form-control" name="claim_amount[]" required
                                         placeholder="Enter Claim Amount">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4" id="divlunchExp0">
                                     <label for="exampleServiceCost">Lunch Exp.*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        placeholder="Enter Lunch Exp.">
+                                    <input type="text" id="lunchExp0" class="form-control" name="lunch_exp[]" required value="100"
+                                        placeholder="Enter Lunch Exp." readonly>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-4" id="divfuelExpenses0">
                                     <label for="exampleServiceCost">Fuel Expenses*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" id="fuelExpenses0" class="form-control" name="fuel_exp[]" required
                                         placeholder="Fuel Expenses">
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Toll Charge*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <label for="exampleServiceCost">Toll Charges*</label>
+                                    <input type="text" class="form-control" name="toll_charge[]" required
                                         placeholder="Toll Charges">
                                 </div>
-                                <div class="form-group col-md-4" style="margin-top: 30px;">
+                                <div class="form-group col-md-4" id="divbillforModeOfTransport0">
+                                    <label for="exampleInputFileTrasport">Bill For Mode Of Transport</label>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="exampleInputFileTrasport" name="mode_of_transport_bill[]">
+                                        <label class="custom-file-label" for="exampleInputFileTrasport">Choose file</label>
+                                        </div>
+                                        <div class="input-group-append">
+                                        <span class="input-group-text">Upload</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4" id="divbillforFuelExp0">
+                                    <label for="exampleInputFileFuelExp">Bill For Fuel Exp*</label>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="exampleInputFileFuelExp" name="fuel_exp_bill[]">
+                                        <label class="custom-file-label" for="exampleInputFileFuelExp">Choose file</label>
+                                        </div>
+                                        <div class="input-group-append">
+                                        <span class="input-group-text">Upload</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4" id="divbillforTollCharges0">
+                                    <label for="exampleInputFileCharges">Bill For Toll Charges</label>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="exampleInputFileCharges" name="bill_for_toll_charge[]">
+                                        <label class="custom-file-label" for="exampleInputFileCharges">Choose file</label>
+                                        </div>
+                                        <div class="input-group-append">
+                                        <span class="input-group-text">Upload</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4" style="margin-top: 30px;" id="addbuttonltc">
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <button type="button" class="btn btn-success"
@@ -531,30 +575,106 @@
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">Courier Bill*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="courier_bill" required
                                         placeholder="Monthly Courier Bill">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">Xerox & Stationary*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="xerox_stationary" required
                                         placeholder="Xerox & Stationary">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">Office Expenses*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" name="office_expense" required
                                         placeholder="Enter Office Expenses">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="exampleServiceCost">Monthly Mobile Bills*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
+                                    <input type="text" class="form-control" id="monthly_mobile_bill" name="monthly_mobile_bill" required
                                         placeholder="Enter Mobile Bills">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                  <div class="card card-default">
+                                    <div class="card-header">
+                                      <h3 class="card-title">Dropzone.js <small><em>jQuery File Upload</em> like look</small></h3>
+                                    </div>
+                                    <div class="card-body">
+                                      <div id="actions" class="row">
+                                        <div class="col-lg-6">
+                                          <div class="btn-group w-100">
+                                            <span class="btn btn-success col fileinput-button">
+                                              <i class="fas fa-plus"></i>
+                                              <span>Add files</span>
+                                            </span>
+                                            <button type="submit" class="btn btn-primary col start">
+                                              <i class="fas fa-upload"></i>
+                                              <span>Start upload</span>
+                                            </button>
+                                            <button type="reset" class="btn btn-warning col cancel">
+                                              <i class="fas fa-times-circle"></i>
+                                              <span>Cancel upload</span>
+                                            </button>
+                                          </div>
+                                        </div>
+                                        <div class="col-lg-6 d-flex align-items-center">
+                                          <div class="fileupload-process w-100">
+                                            <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                                              <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="table table-striped files" id="previews">
+                                        <div id="template" class="row mt-2">
+                                          <div class="col-auto">
+                                              <span class="preview"><img src="data:," alt="" data-dz-thumbnail /></span>
+                                          </div>
+                                          <div class="col d-flex align-items-center">
+                                              <p class="mb-0">
+                                                <span class="lead" data-dz-name></span>
+                                                (<span data-dz-size></span>)
+                                              </p>
+                                              <strong class="error text-danger" data-dz-errormessage></strong>
+                                          </div>
+                                          <div class="col-4 d-flex align-items-center">
+                                              <div class="progress progress-striped active w-100" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                                                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+                                              </div>
+                                          </div>
+                                          <div class="col-auto d-flex align-items-center">
+                                            <div class="btn-group">
+                                              <button class="btn btn-primary start">
+                                                <i class="fas fa-upload"></i>
+                                                <span>Start</span>
+                                              </button>
+                                              <button data-dz-remove class="btn btn-warning cancel">
+                                                <i class="fas fa-times-circle"></i>
+                                                <span>Cancel</span>
+                                              </button>
+                                              <button data-dz-remove class="btn btn-danger delete">
+                                                <i class="fas fa-trash"></i>
+                                                <span>Delete</span>
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                    <div class="card-footer">
+                                      Visit <a href="https://www.dropzonejs.com">dropzone.js documentation</a> for more examples and information about the plugin.
+                                    </div>
+                                  </div>
+                                  <!-- /.card -->
                                 </div>
                             </div>
                             <hr>
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label for="exampleServiceCost">Remark, If Any</label>
-                                    <textarea class="form-control" name="permanent_address" rows="2" placeholder="Enter Remark, If Any"
+                                    <textarea class="form-control" name="remarks" rows="2" placeholder="Enter Remark, If Any"
                                         required=""></textarea>
                                 </div>
                             </div>
@@ -660,7 +780,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Bussiness Trips </h3>
+                                <h3 class="card-title">Bussiness Trips</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -679,21 +799,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{-- @foreach ($result as $key => $list)
-                                            <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>BTA</td>
-                                                <td>{{$list->bta_application_id}}</td>
-                                                <td>{{ \Carbon\Carbon::parse($list->starting_date_time)->format('d M Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($list->ending_date_time)->format('d M Y') }}</td>
-                                                <td>{{ $list->place_of_visit }}</td>
-                                                <td>{{ $list->total_expenses }}</td>
-                                                <td>Status</td>
-                                                <td><a href="{{ url('admin/travelmanagement/bta-application-details/') }}/{{ Crypt::encrypt($list->bta_slug) }}"
-                                                    title="Edit" target="_blanck"> <i class="nav-icon fas fa-edit"></i></a></td>
-                                            </tr>
-                                        @endforeach --}}
-                                        @foreach ($result as $key => $list)
+                                    @foreach ($result as $key => $list)
                                         @php
                                         $status = match ($list["status"]) {
                                         0 => 'Not Yet Reviewed By Manager',
@@ -756,7 +862,6 @@
                                             @endif
                                         </tr>
                                     @endforeach
-
                                     </tbody>
                                     <tfoot>
                                         <tr>
@@ -786,13 +891,13 @@
         <!-- /.content -->
     </div>
     @push('scripts')
-        <!-- Date and time picker -->
-        <!-- InputMask -->
-        <script src="{{ asset('admin_assets/plugins/moment/moment.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
-        <!-- Tempusdominus Bootstrap 4 -->
-        <script src="{{ asset('admin_assets/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}">
-        </script>
+
+     <!-- Date and time picker -->
+    <!-- InputMask -->
+    <script src="{{ asset('admin_assets/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('admin_assets/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{ asset('admin_assets/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
 
         <!-- DataTables  & Plugins -->
         <script src="{{ asset('admin_assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
@@ -912,41 +1017,180 @@
             }
 
             // LTC
+
             function add_more_ltcexpenses() {
                 loop_count++;
-                var html = '<input name="ewe_slug[]" type="hidden"><div class="row" id="ltcexpense_' + loop_count +
-                    '" style="margin-top:20px">';
+                jQuery("#ltc_expenses #addbuttonltc").remove(); 
+                // jQuery("#ltc_expenses .btn-success").remove(); 
+                
+                var html = '<input name="" type="hidden"><div class="row" id="ltcexpense_' + loop_count +
+                   '" style="margin-top:20px">';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="" required value="" id="exampleCompanyName" ></div>';
+                    '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="date[]" required value="" id="exampleDate'+loop_count +'" ></div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlPlaceofVisit">Mode of Transport*</label> <input type="text" class="form-control" required name="" placeholder="Mode of Transport"> </div>';
+                    '<div class="form-group col-md-4" id="divmodeOfTransport'+loop_count +'"> <label for="exampleModeOfTransport">Mode of Transport*</label> <select class="custom-select form-control-border" id="modeOfTransport'+loop_count +'" name="mode_of_transport[]" placeholder="Mode of Transport" onchange="toggleVehicleInputs('+loop_count +')"> @foreach($ltcform['mode_of_transport'] as $transport) <option value="{{$transport->id}}|{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>@endforeach</select></div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlJFt">Opening Meter*</label> <input type="text" class="form-control" required name="" placeholder="Opening Meter"> </div>';
+                     '<div id="demoVanExtraInputs'+loop_count +'"></div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlAccomodation">Closing Meter*</label> <input type="text" class="form-control" required name="" placeholder="Closing Meter"> </div>';
+                    '<div class="form-group col-md-4" id="divopeningMeter'+loop_count +'"> <label for="exampleInputBTADtlJFt">Opening Meter*</label> <input type="text" class="form-control" required name="opening_meter[]" id="openingMeter'+loop_count +'" placeholder="Opening Meter" onchange="calculateExpenses('+loop_count +')"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTAConviniance">Total KM*</label> <input type="text"  class="form-control" required name="" placeholder="Total KM"> </div>';
+                    '<div class="form-group col-md-4" id="divclosingMeter'+loop_count +'"> <label for="exampleInputBTADtlAccomodation">Closing Meter*</label> <input type="text" class="form-control" required name="closing_meter[]" id="closingMeter'+loop_count +'" placeholder="Closing Meter" onchange="calculateExpenses('+loop_count +')"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTAConviniance">Places Visited*</label> <input type="text"  class="form-control" required name="" placeholder="Places Visited"> </div>';
+                    '<div class="form-group col-md-4" id="divtotalKm'+loop_count +'"> <label for="exampleInputBTAConviniance">Total KM*</label> <input type="text"  class="form-control" required name="total_km[]" id="totalKm'+loop_count +'" placeholder="Total KM" disabled> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Claim Amount*</label> <input type="text" class="form-control" required name="" placeholder="Claim Amount"> </div>';
+                    '<div class="form-group col-md-4" id="divplacesVisited'+loop_count +'"> <label for="exampleInputBTAConviniance">Places Visited*</label> <input type="text"  class="form-control" required name="place_visited[]" id="placesVisited'+loop_count +'" placeholder="Places Visited"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="" placeholder="Lunch Exp."> </div>';
+                    '<div class="form-group col-md-4" id="divclaimAmount'+loop_count +'"> <label for="exampleInputAmount">Claim Amount*</label> <input type="text" class="form-control" required name="claim_amount[]" placeholder="Claim Amount" id="claimAmount'+loop_count +'"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Fuel Expenses*</label> <input type="text" class="form-control" required name="" placeholder="Fuel Expenses"> </div>';
+                    '<div class="form-group col-md-4" id="divlunchExp'+loop_count +'"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="lunch_exp[]" placeholder="Lunch Exp." value="100" readonly id="lunchExp'+loop_count +'"> </div>';
                 html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Toll Charges*</label> <input type="text" class="form-control" required name="" placeholder="Toll Charges"> </div>';
+                    '<div class="form-group col-md-4" id="divfuelExpenses'+loop_count +'"> <label for="exampleInputAmount">Fuel Expenses*</label> <input type="text" class="form-control" required name="fuel_exp[]" placeholder="Fuel Expenses" id="fuelExpenses'+loop_count +'"> </div>';
                 html +=
-                    '<div class="form-group col-md-3"><br><button type="button" class="btn btn-danger btn-lg" onclick=remove_more_ltexpenses("' +
-                    loop_count + '")>Remove</button></div>';
+                    '<div class="form-group col-md-4" id="divtollCharges'+loop_count +'"> <label for="exampleInputAmount">Toll Charges*</label> <input type="text" class="form-control" required name="toll_charge[]" placeholder="Toll Charges"> </div>';
+                html +=
+                    '<div class="form-group col-md-2 p-3"><button type="button" class="btn btn-danger" onclick=remove_more_ltexpenses("'+loop_count +'")>Remove</button></div>'
+                    
+                html+='<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>';
                 html += '</div>';
                 jQuery("#ltc_expenses").append(html);
+                toggleVehicleInputs(loop_count);
             }
 
             function remove_more_ltexpenses(loop_count) {
+
                 jQuery('#ltcexpense_' + loop_count).remove();
+    
+                const lastRow = jQuery('#ltc_expenses .row').last();
+
+                if (lastRow.length) {
+
+                    lastRow.find('#addbuttonltc').remove();
+
+                    lastRow.append('<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>');
+                    
+                }
+
+                if (lastRow.length == 0) {
+                    lastRow.find('#addbuttonltc').remove();
+                    jQuery("#ltc_expenses").append('<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>');
+                }
             }
 
+            
+            // function toggleVehicleInputs(id) {
+
+            //     const modeOfTransport = document.getElementById('modeOfTransport'+id).value;
+            //     const isOwnVehicle = modeOfTransport.toLowerCase().includes('own vehicle');
+            //     const isDemoVan = modeOfTransport.toLowerCase().includes('demo van');
+
+            //     const openingMeterElement = document.getElementById('openingMeter' + id);
+            //     const closingMeterElement = document.getElementById('closingMeter' + id);
+            //     const claimAmountElement = document.getElementById('claimAmount' + id);
+
+            //     openingMeterElement.disabled = !isOwnVehicle;
+            //     closingMeterElement.disabled = !isOwnVehicle;
+            //     claimAmountElement.disabled = isOwnVehicle;
+
+            //     document.getElementById('divopeningMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
+            //     document.getElementById('divclosingMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
+            //     document.getElementById('divtotalKm' + id).style.display = isOwnVehicle ? 'block' : 'none';
+            //     document.getElementById('divfuelExpenses' + id).style.display = isDemoVan ? 'block' : 'none';
+            //     document.getElementById('divclaimAmount' + id).style.display = !isDemoVan ? 'block' : 'none';
+
+            //     if ($('#fuelExpenses'+ id).is(':visible')) {
+            //         $('#fuelExpenses'+ id).attr('required', 'required');
+            //     } else {
+            //         $('#fuelExpenses'+ id).removeAttr('required');
+            //     }
+                
+
+            //     if ($('#claimAmount'+ id).is(':visible')) {
+            //         $('#claimAmount'+ id).attr('required', 'required');
+            //     } else {
+            //         $('#claimAmount'+ id).removeAttr('required');
+            //     }
+            // }
+
+            function toggleVehicleInputs(id) {
+                const modeOfTransport = document.getElementById('modeOfTransport' + id).value.toLowerCase();
+                const isOwnVehicle = modeOfTransport.includes('own vehicle');
+                const isDemoVan = modeOfTransport.includes('demo van');
+
+                const openingMeterElement = document.getElementById('openingMeter' + id);
+                const closingMeterElement = document.getElementById('closingMeter' + id);
+                const claimAmountElement = document.getElementById('claimAmount' + id);
+                const fuelExpensesElement = document.getElementById('fuelExpenses' + id);
+                const FileTrasportElement = document.getElementById('exampleInputFileTrasport' + id);
+
+                var demoVanDiv = document.getElementById('demoVanExtraInputs'+ id);
+
+                // Make inputs read-only instead of disabled
+                openingMeterElement.readOnly = !isOwnVehicle;
+                closingMeterElement.readOnly = !isOwnVehicle;
+                claimAmountElement.readOnly = isOwnVehicle;
+
+                // Show or hide sections using 'display' for layout stability
+                document.getElementById('divopeningMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
+                document.getElementById('divclosingMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
+                document.getElementById('divtotalKm' + id).style.display = isOwnVehicle ? 'block' : 'none';
+                document.getElementById('divfuelExpenses' + id).style.display = isDemoVan ? 'block' : 'none';
+                document.getElementById('divclaimAmount' + id).style.display = !isDemoVan ? 'block' : 'none';
+                document.getElementById('divbillforModeOfTransport' + id).style.display = !isDemoVan? 'block' : 'none';
+                document.getElementById('divbillforFuelExp' + id).style.display = isDemoVan? 'block' : 'none';
+
+                // Set or remove the 'required' attribute based on visibility and readability
+                if (fuelExpensesElement.style.display === 'block') {
+                    fuelExpensesElement.setAttribute('required', 'required');
+                } else {
+                    fuelExpensesElement.removeAttribute('required');
+                }
+
+                if (claimAmountElement.style.display === 'block') {
+                    claimAmountElement.setAttribute('required', 'required');
+                } else {
+                    claimAmountElement.removeAttribute('required');
+                }
+
+                if (isDemoVan) {
+
+                    demoVanDiv.classList.add('form-group', 'col-md-4');
+
+                    fetchExtraDropdownOptions(id,modeOfTransport);
+                } else {
+                 
+                    // document.getElementById('demoVanExtraInputs'+ id).innerHTML = '<label for="extraOption">Select Demo Van*</label><select class="custom-select form-control-border" id="extraOption+id" hidden name="extra_option[]"></select>';
+                    // '<label for="extraOption' + id + '">Select Demo Van*</label>' +
+                    document.getElementById('demoVanExtraInputs' + id).innerHTML = '<select class="custom-select form-control-border" id="extraOption' + id + '" hidden name="extra_option[]"><option value="null" selected></option></select>';
+
+                    // demoVanDiv.remove();
+                }
+            }
+
+            function fetchExtraDropdownOptions(index,datavalue) {
+                console.log(index,datavalue);
+                $.ajax({
+                    url: '/admin/travelmanagement/ltc-demo-van', 
+                    method: 'GET',
+                    data: {
+                        index: index,
+                        data:datavalue
+                    },
+                    success: function(response) {
+                        // <div class="form-group col-md-4" id="extraDropdown${index}">
+                        // </div>
+                        var extraDropdown = `
+                                <label for="extraOption">Select Demo Van*</label>
+                                <select class="custom-select form-control-border" id="extraOption${index}" name="extra_option[]">
+                                    ${response.options} 
+                                </select>
+                        `;
+                        document.getElementById("demoVanExtraInputs"+index).innerHTML = extraDropdown;
+                    },
+                    error: function(error) {
+                        console.log("Error fetching extra dropdown:", error);
+                    }
+                });
+            }
 
             $(function() {
                 $("#example1").DataTable({
@@ -974,6 +1218,13 @@
                     $('.fvegbt').hide(1000);
                 }
             });
+
+            document.addEventListener("DOMContentLoaded", function() {
+                        $('#ltcModal').on('shown.bs.modal', function () {
+                            toggleVehicleInputs(0);
+                        });
+            });
+
             $(document).ready(function() {
                 $('#btavt').on('change', function() {
                     let vehicleType = $.trim($("#btavt").val());
@@ -1026,7 +1277,47 @@
                         time: 'far fa-clock'
                     }
                 });
-            });
+
+              });
+
+                function calculateExpenses(index) {
+                    const openingMeter = document.getElementById(`openingMeter${index}`).value;
+                    const closingMeter = document.getElementById(`closingMeter${index}`).value;
+                    const modeOfTransport = document.getElementById(`modeOfTransport${index}`).value;
+
+                    $.ajax({
+                        url: '{{ route("travelmanagement.calculate-expenses") }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',  // Laravel CSRF token
+                            opening_meter: openingMeter,
+                            closing_meter: closingMeter,
+                            mode_of_transport: modeOfTransport
+                        },
+                        success: function(response) {
+                            document.getElementById(`totalKm${index}`).value = response.total_km;
+                            document.getElementById(`claimAmount${index}`).value = response.claim_amount;
+                        },
+                        error: function(xhr) {
+                            console.error("Error calculating expenses:", xhr);
+                            alert(xhr.responseJSON?.error || 'Error calculating expenses');
+                        }
+                    });
+                }
+
+
+                const maxBillAmount = {{ $ltcform['mobile_bill']->expense ?? 0 }};
+
+                document.getElementById('monthly_mobile_bill').addEventListener('input', function (e) {
+                    const input = e.target;
+                    let value = parseFloat(input.value);
+
+                    // Check if value exceeds max allowed
+                    if (value > maxBillAmount) {
+                        input.value = maxBillAmount;
+                    }
+                });
+
         </script>
     @endpush
 @endsection
