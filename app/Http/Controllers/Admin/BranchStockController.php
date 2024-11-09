@@ -104,6 +104,11 @@ class BranchStockController extends Controller
             $count=count($data);
             $lastRow=$count-1;
             $header=$data[0];
+            $header = array_map('strtolower', $header);
+            $header = array_map(function($value) {
+                return preg_replace('/^\x{FEFF}/u', '', $value);
+            }, $header);
+            
             unset($data[0],$data[$lastRow]);
             BranchStocks::truncate();
             foreach ($data as $value) {
