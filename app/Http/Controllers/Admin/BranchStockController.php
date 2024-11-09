@@ -11,7 +11,7 @@ use App\Models\Admin\FscBranchStock;
 use App\Models\Admin\BranchStocks;
 use Illuminate\Pagination\Paginator;
 use App\Models\Admin\ReplacedParts;
-
+use Illuminate\Support\Facades\Schema;
 
 class BranchStockController extends Controller
 {
@@ -106,14 +106,28 @@ class BranchStockController extends Controller
             $header=$data[0];
             $header = array_map('strtolower', $header);
             $header = array_map(function($value) {
-                return preg_replace('/^\x{FEFF}/u', '', $value);
+                $value = preg_replace('/^\x{FEFF}/u', '', $value);
+                return str_replace(' ', '', $value);
             }, $header);
-            
+
+            $columns = DB::select('SHOW COLUMNS FROM dev_makitab2bportal_v1.branch_stocks');
+
+            $columnNames = array_map(function($column) {
+                if(!in_array($column->Field, ['created_at', 'updated_at'])){
+                return $column->Field;
+            }
+            }, $columns);
+            $columnNames = array_filter($columnNames);
+
+            $header_diff = array_diff($header, $columnNames);
+            if(!empty($header_diff)){
+                $header_diff_text=implode(', ', $header_diff);
+                return 'These columns cannont be uploaded'.$header_diff_text;
+            }
             unset($data[0],$data[$lastRow]);
             BranchStocks::truncate();
             foreach ($data as $value) {
                 set_time_limit(0);
-                // dd(array_combine($header,$value));
                 $stockData=array_combine($header,$value);
                 BranchStocks::create($stockData);
             }
