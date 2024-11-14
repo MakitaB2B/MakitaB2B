@@ -1,1323 +1,1824 @@
-@extends('Admin/layout')
-@section('page_title', 'Business Trips | MAKITA')
-@section('travelmanagement-expandable', 'menu-open')
-@section('travelmanagement-expandable', 'active')
-@section('business-trips-select', 'active')
-@section('container')
-    <div class="content-wrapper">
-        @push('styles')
-            <!-- DataTables -->
-            <link rel="stylesheet" href="{{ asset('admin_assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
-            <!-- Date and time picker -->
-            <link rel="stylesheet"
-                href="{{ asset('admin_assets//plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-            <link rel="stylesheet" href="{{ asset('admin_assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
-            <link rel="stylesheet"
-            href="{{ asset('admin_assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdminLTE 3 | Advanced form elements</title>
 
-            <style>
-                .btcardbs {
-                    box-shadow: rgb(178 180 181) 0px 4px 9px 2px;
-                }
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  
+  <link rel="stylesheet" href="{{ asset('admin_assets/plugins/fontawesome-free/css/all.min.css') }}">
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="{{ asset('admin_assets/plugins/daterangepicker/daterangepicker.css') }}"> 
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="{{ asset('admin_assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}"> 
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="{{ asset('admin_assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}"> 
+  <!-- Tempusdominus Bootstrap 4 -->   
+  <link rel="stylesheet" href="{{ asset('admin_assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{{ asset('admin_assets/plugins/select2/css/select2.min.css') }}"> 
+  <link rel="stylesheet" href="{{ asset('admin_assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">   
+  <!-- Bootstrap4 Duallistbox -->   
+  <link rel="stylesheet" href="{{ asset('admin_assets/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css') }}">
+  <!-- BS Stepper -->
+  <link rel="stylesheet" href="{{ asset('admin_assets/plugins/bs-stepper/css/bs-stepper.min.css') }}">   
+  <!-- dropzonejs -->
+  <link rel="stylesheet" href="{{ asset('admin_assets/plugins/dropzone/min/dropzone.min.css') }}"> 
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ asset('admin_assets/dist/css/adminlte.min.css') }}"> 
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="../../index3.html" class="nav-link">Home</a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="#" class="nav-link">Contact</a>
+      </li>
+    </ul>
 
-                .bg-makita-til {
-                    background-color: #008290 !important;
-                }
-
-                .bg-makita-black {
-                    background-color: #4b4c4e !important;
-                }
-
-                .color-white {
-                    color: rgb(255, 255, 255);
-                }
-
-                .info-box-number {
-                    font-size: 19px !important;
-                    font-weight: 600 !important;
-                }
-
-                .cursorpointer {
-                    cursor: pointer;
-                }
-
-                .btn-primary {
-                    background-color: #008290 !important;
-                    border-color: #0ac8dd !important;
-                }
-
-                .dacss {
-                    background: cadetblue;
-                    padding: 5px;
-                    border-radius: 3px;
-                    color: snow;
-                    font-size: 17px;
-                }
-
-                .dcentcss {
-                    background: linear-gradient(45deg, #004148, transparent);
-                    padding: 5px;
-                    border-radius: 3px;
-                    color: #ffffff;
-                    font-size: 17px;
-                }
-
-                .modelheadercss {
-                    background: #008290;
-                }
-
-                .modelheadercontent {
-                    color: #ffffff;
-                    font-weight: 600;
-                }
-
-                .colorwhite {
-                    color: #ffffff;
-                }
-
-                .fvegbt {
-                    display: none;
-                }
-
-                .dpnone {
-                    display: none !important;
-                }
-                .mw900px{
-                    max-width: 900px !important;
-                }
-                .modelbs{
-                    box-shadow: 0 0.5rem 1rem rgb(0 65 72) !important;
-                }
-            </style>
-        @endpush
-
-        <!-- The BTA Application Modal -->
-        <div class="modal" id="btaModal">
-            <div class="modal-dialog mw900px">
-                <div class="modal-content modelbs">
-
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h6 class="modal-title">Apply For A New Business Trip Advanced</h6>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <form method="POST" action="{{ route('travelmanagement.create-travel-management-applications') }}"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                <label for="exampleSDT">Starting Date & Time*</label>
-                                <div class="input-group date" id="reservationdatetime" data-target-input="nearest">
-                                    <input type="text" name="starting_date_time"
-                                        class="form-control datetimepicker-input" data-target="#reservationdatetime"
-                                        required />
-                                    <div class="input-group-append" data-target="#reservationdatetime"
-                                        data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                    </div>
-                                </div>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleInputCostEstimation">Ending Date & Time*</label>
-                                    <div class="input-group date" id="reservationdatetimeid" data-target-input="nearest">
-                                    <input type="text" name="bta_ending_datetime"
-                                        class="form-control datetimepicker-input" data-target="#reservationdatetimeid"
-                                        required />
-                                    <div class="input-group-append" data-target="#reservationdatetimeid"
-                                        data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Number of days*</label>
-                                    <input type="text" class="form-control" name="total_trip_days" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Number of days">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleInputCostEstimation">Place of Visit*</label>
-                                    <input type="text" class="form-control" name="bta_place_of_visit" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Place of Visit">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label for="exampleServiceCost">Purpose of Visit*</label>
-                                    <input type="text" class="form-control" name="purpose_of_visit" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Purpose of Visit">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <div class="icheck-primary">
-                                        <input type="checkbox" name="gbt" id="gbdv">
-                                        <label for="itgbdv">
-                                            Is it Group BT/ DEMO Vehicle?
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-4 fvegbt">
-                                    <label for="exampleInputCostEstimation">Vehicle Type*</label>
-                                    <select class="custom-select form-control-border" id="btavt" name="vechile_type">
-                                        <option value="">Select Type</option>
-                                        <option value="1">Company</option>
-                                        <option value="2">Personal</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-4 fvegbt">
-                                    <label for="exampleInputCostEstimation" class="btavtl" style="display: none">Vehicle
-                                        Number*</label>
-                                    <input type="text" class="form-control btapvn" name="cost_estimation"
-                                        placeholder="Vehicle Number" style="display: none"  name="own_vechile_number">
-
-                                    <select class="custom-select form-control-border btacvn" style="display: none" name="company_vechile_number">
-                                        <option value="">Select Vehicle Number</option>
-                                        <option value="KA03TA9859">KA03TA9859</option>
-                                        <option value="KA06AL6254">KA06AL6254</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-4 fvegbt">
-                                    <label for="exampleInputCostEstimation">Fuel Expenses*</label>
-                                    <input type="text" class="form-control" name="fuel_expenses"
-                                        placeholder="Fuel Expenses">
-                                </div>
-                                <div class="form-group col-md-4 fvegbt">
-                                    <label for="exampleInputCostEstimation">Employee(S)*</label>
-                                    <select class="custom-select form-control-border" name="groupbt_employees">
-                                        <option value="">Select Employee</option>
-                                        <option value="">Shankhadip Bal</option>
-                                        <option value="">Jean lobo</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row" id="previouscompany_doc_box">
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Date*</label>
-                                    <input type="date" class="form-control" name="bta_expbreakup_date[]" required
-                                        id="exampleInputCostEstimation">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Place of Visit*</label>
-                                    <input type="text" class="form-control" name="trip_place_of_visit[]" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Place of Visit">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Journey Fare*</label>
-                                    <input type="text" class="form-control" name="journey_fare[]" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Journey Fare">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Accommodation*</label>
-                                    <input type="text" class="form-control" name="accommodation[]" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Accommodation">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Conveyance*</label>
-                                    <input type="text" class="form-control" name="conveyance[]" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Conveyance">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="exampleServiceCost">Amount (Rs)*</label>
-                                    <input type="text" class="form-control" name="amount[]" required
-                                        id="exampleInputCostEstimation" placeholder="Amount">
-                                </div>
-                                <div class="form-group col-md-3" style="margin-top: 30px;">
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                            <button type="button" class="btn btn-success" onclick="add_more()">Add More
-                                                +</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Apply</button>
-                            <!-- /.card-body -->
-                        </form>
-                    </div>
-                </div>
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <!-- Navbar Search -->
+      <li class="nav-item">
+        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+          <i class="fas fa-search"></i>
+        </a>
+        <div class="navbar-search-block">
+          <form class="form-inline">
+            <div class="input-group input-group-sm">
+              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+              <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
+                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
             </div>
+          </form>
         </div>
-        <!-- The BTC Application Modal -->
-        <div class="modal" id="btcModal">
-            <div class="modal-dialog mw900px">
-                <div class="modal-content modelbs">
+      </li>
 
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h6 class="modal-title">Apply For A New Business Trip Claim</h6>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <form method="POST" action="{{ route('service-management.send-service-cost-estimation-cx') }}"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Starting Date & Time*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Starting Date & Time">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleInputCostEstimation">Ending Date & Time*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Ending Date & Time">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Number of days*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Number of days">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleInputCostEstimation">Place of Visit*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Place of Visit">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label for="exampleServiceCost">Purpose of Visit*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Purpose of Visit">
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row" id="btc_expenses">
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Date*</label>
-                                    <input type="date" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Amount*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation" placeholder="Enter Amount">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Enclosure No*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        id="exampleInputCostEstimation" placeholder="Enclosure No">
-                                </div>
-
-                                <div class="form-group col-md-5">
-                                    <label for="exampleServiceCost">Description*</label>
-                                    <select class="custom-select form-control-border">
-                                        <option>Select One</option>
-                                        <option>Travelling Exp Local</option>
-                                        <option>Boarding & Lodging Exp Local</option>
-                                        <option>Communication & Telephone Exo</option>
-                                        <option>Courier Exp</option>
-                                        <option>Printing & Stationery Exp</option>
-                                        <option>Computer Maintenance Exp</option>
-                                        <option>Electricity & water charges Exp</option>
-                                        <option>Freight Charges-Local Exp</option>
-                                        <option>Vehicle maintenance Other than Fuel Exp</option>
-                                        <option>Fuel Exp</option>
-                                        <option>Food Exp</option>
-                                        <option>Service Room maintenance Exp</option>
-                                        <option>Off Maintenance Exp</option>
-                                        <option>Office Expenses</option>
-                                        <option>Travelling Overseas</option>
-                                        <option>Boarding Overseas</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Receipt Image*</label>
-                                    <input type="file" name="cost_estimation" required>
-                                </div>
-                                <div class="form-group col-md-3" style="margin-top: 30px;">
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                            <button type="button" class="btn btn-success"
-                                                onclick="add_more_btcexpenses()">Add More +</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <h4 class="dacss">Dearness Allowance / Food Allowance Details</h4>
-                            <div class="row">
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">From Date*</label>
-                                    <input type="date" class="form-control" name="cost_estimation" required>
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">To Date*</label>
-                                    <input type="date" class="form-control" name="cost_estimation" required>
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">No. Of Days*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        placeholder="No. Of Days">
-                                </div>
-
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Eligible DA/FA Day*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        placeholder="Eligible DA/FA Day">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Amount*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        placeholder="Enter Amount">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Enclosure No*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        placeholder="Enclosure No">
-                                </div>
-                            </div>
-                            <hr>
-                            <h5 class="dcentcss">Dealer or Customer Entertainment Expenses / Porter Charge</h5>
-                            <div class="row" id="btc_entexpns">
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Date*</label>
-                                    <input type="date" class="form-control" name="cost_estimation" required>
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Descriptions*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        placeholder="Descriptions">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Amount*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        placeholder="Enter Amount">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Enclosure No*</label>
-                                    <input type="text" class="form-control" name="cost_estimation" required
-                                        placeholder="Enclosure No">
-                                </div>
-                                <div class="form-group col-md-4" style="margin-top: 30px;">
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                            <button type="button" class="btn btn-success"
-                                                onclick="add_more_entertainmentexp()">Add More +</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Apply</button>
-                            <!-- /.card-body -->
-                        </form>
-                    </div>
-                </div>
+      <!-- Messages Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-comments"></i>
+          <span class="badge badge-danger navbar-badge">3</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <a href="#" class="dropdown-item">
+            <!-- Message Start -->
+            <div class="media">
+              <img src="../../dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  Brad Diesel
+                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">Call me whenever you can...</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
             </div>
+            <!-- Message End -->
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <!-- Message Start -->
+            <div class="media">
+              <img src="../../dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  John Pierce
+                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">I got your message bro</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+            <!-- Message End -->
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <!-- Message Start -->
+            <div class="media">
+              <img src="../../dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  Nora Silvester
+                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">The subject goes here</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+            <!-- Message End -->
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
         </div>
-
-        <!-- The LTC Application Modal -->
-        <div class="modal" id="ltcModal">
-            <div class="modal-dialog mw900px">
-                <div class="modal-content modelbs">
-
-                    <!-- Modal Header -->
-                    <div class="modal-header modelheadercss">
-                        <h6 class="modal-title modelheadercontent">Apply For A New Local Travel Claim</h6>
-                        <button type="button" class="close colorwhite" data-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <form method="POST" action="{{ route('travelmanagement.create-ltc-claim-application') }}"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">LTC for the Month*</label>
-                                    <select class="custom-select form-control-border" name=ltc_month>
-                                        <option>January</option>
-                                        <option>February</option>
-                                        <option>March</option>
-                                        <option>April</option>
-                                        <option>May</option>
-                                        <option>June</option>
-                                        <option>July</option>
-                                        <option>August</option>
-                                        <option>September</option>
-                                        <option>October</option>
-                                        <option>November</option>
-                                        <option>December</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">LTC for the Year*</label>
-                                    <select class="custom-select form-control-border" name=ltc_year>
-                                        <option>2024</option>
-                                        <option>2025</option>
-                                        <option>2026</option>
-                                        <option>2027</option>
-                                        <option>2028</option>
-                                        <option>2029</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row" id="ltc_expenses">
-                                <div class="form-group col-md-4">
-                                    <label for="date0">Date*</label>
-                                    <input type="date" class="form-control" name="date[]" required id="date0">
-                                </div>
-                                {{-- <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Mode of Transport*</label>
-                                    <input type="text" class="form-control" name="mode_of_transport[]" required
-                                        id="exampleInputCostEstimation" placeholder="Mode of Transport">
-                                </div> --}}
-                                <div class="form-group col-md-4" id="divmodeOfTransport0">
-                                    <label for="exampleModeOfTransport">Mode of Transport*</label>
-                                    <select class="custom-select form-control-border" id="modeOfTransport0" name="mode_of_transport[]" placeholder="Mode of Transport" onchange="toggleVehicleInputs('0')">
-                                        @foreach($ltcform['mode_of_transport'] as $transport)
-                                                <option value="{{$transport->id}}|{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>
-                                        @endforeach
-                                                {{-- <option value="Demo Van">Demo Van</option> --}}
-                                    </select>
-                                </div>
-                                <div id="demoVanExtraInputs0">
-
-                                </div>
-                                <div class="form-group col-md-4"  id="divopeningMeter0">
-                                    <label for="exampleServiceCost">Opening Meter*</label>
-                                    <input type="text" class="form-control" name="opening_meter[]" required
-                                        id="openingMeter0" placeholder="Opening Meter" onchange="calculateExpenses(0)">
-                                </div>
-                                <div class="form-group col-md-4"  id="divclosingMeter0">
-                                    <label for="exampleServiceCost">Closing Meter*</label>
-                                    <input type="text" class="form-control" name="closing_meter[]" required
-                                        id="closingMeter0" placeholder="Closing Meter" onchange="calculateExpenses(0)">
-                                </div>
-                                <div class="form-group col-md-4"  id="divtotalKm0">
-                                    <label for="totalKm0">Total KM*</label>
-                                    <input type="text" class="form-control" name="total_km[]" required
-                                        id="totalKm0" placeholder="Enter Total KM" disabled>
-                                </div>
-                                <div class="form-group col-md-4" id="divplacesVisited0">
-                                    <label for="exampleServiceCost">Places Visited*</label>
-                                    <input type="text"  id="placesVisited0" class="form-control" name="place_visited[]" required
-                                        placeholder="Enter Places Visited">
-                                </div>
-                                <div class="form-group col-md-4" id="divclaimAmount0">
-                                    <label for="exampleServiceCost">Claim Amount*</label>
-                                    <input type="text" id="claimAmount0" class="form-control" name="claim_amount[]" required
-                                        placeholder="Enter Claim Amount">
-                                </div>
-                                <div class="form-group col-md-4" id="divlunchExp0">
-                                    <label for="exampleServiceCost">Lunch Exp.*</label>
-                                    <input type="text" id="lunchExp0" class="form-control" name="lunch_exp[]" required value="100"
-                                        placeholder="Enter Lunch Exp." readonly>
-                                </div>
-                                <div class="form-group col-md-4" id="divfuelExpenses0">
-                                    <label for="exampleServiceCost">Fuel Expenses*</label>
-                                    <input type="text" id="fuelExpenses0" class="form-control" name="fuel_exp[]" required
-                                        placeholder="Fuel Expenses">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="exampleServiceCost">Toll Charges*</label>
-                                    <input type="text" class="form-control" name="toll_charge[]" required
-                                        placeholder="Toll Charges">
-                                </div>
-                                <div class="form-group col-md-4" id="divbillforModeOfTransport0">
-                                    <label for="exampleInputFileTrasport">Bill For Mode Of Transport</label>
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFileTrasport" name="mode_of_transport_bill[]">
-                                        <label class="custom-file-label" for="exampleInputFileTrasport">Choose file</label>
-                                        </div>
-                                        <div class="input-group-append">
-                                        <span class="input-group-text">Upload</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-4" id="divbillforFuelExp0">
-                                    <label for="exampleInputFileFuelExp">Bill For Fuel Exp*</label>
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFileFuelExp" name="fuel_exp_bill[]">
-                                        <label class="custom-file-label" for="exampleInputFileFuelExp">Choose file</label>
-                                        </div>
-                                        <div class="input-group-append">
-                                        <span class="input-group-text">Upload</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-4" id="divbillforTollCharges0">
-                                    <label for="exampleInputFileCharges">Bill For Toll Charges</label>
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFileCharges" name="bill_for_toll_charge[]">
-                                        <label class="custom-file-label" for="exampleInputFileCharges">Choose file</label>
-                                        </div>
-                                        <div class="input-group-append">
-                                        <span class="input-group-text">Upload</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-4" style="margin-top: 30px;" id="addbuttonltc">
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                            <button type="button" class="btn btn-success"
-                                                onclick="add_more_ltcexpenses()">Add More +</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <h5 class="dcentcss">Miscellaneous Expenses</h5>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Courier Bill*</label>
-                                    <input type="text" class="form-control" name="courier_bill" required
-                                        placeholder="Monthly Courier Bill">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Xerox & Stationary*</label>
-                                    <input type="text" class="form-control" name="xerox_stationary" required
-                                        placeholder="Xerox & Stationary">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Office Expenses*</label>
-                                    <input type="text" class="form-control" name="office_expense" required
-                                        placeholder="Enter Office Expenses">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="exampleServiceCost">Monthly Mobile Bills*</label>
-                                    <input type="text" class="form-control" id="monthly_mobile_bill" name="monthly_mobile_bill" required
-                                        placeholder="Enter Mobile Bills">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                  <div class="card card-default">
-                                    <div class="card-header">
-                                      <h3 class="card-title">Dropzone.js <small><em>jQuery File Upload</em> like look</small></h3>
-                                    </div>
-                                    <div class="card-body">
-                                      <div id="actions" class="row">
-                                        <div class="col-lg-6">
-                                          <div class="btn-group w-100">
-                                            <span class="btn btn-success col fileinput-button">
-                                              <i class="fas fa-plus"></i>
-                                              <span>Add files</span>
-                                            </span>
-                                            <button type="submit" class="btn btn-primary col start">
-                                              <i class="fas fa-upload"></i>
-                                              <span>Start upload</span>
-                                            </button>
-                                            <button type="reset" class="btn btn-warning col cancel">
-                                              <i class="fas fa-times-circle"></i>
-                                              <span>Cancel upload</span>
-                                            </button>
-                                          </div>
-                                        </div>
-                                        <div class="col-lg-6 d-flex align-items-center">
-                                          <div class="fileupload-process w-100">
-                                            <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                                              <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="table table-striped files" id="previews">
-                                        <div id="template" class="row mt-2">
-                                          <div class="col-auto">
-                                              <span class="preview"><img src="data:," alt="" data-dz-thumbnail /></span>
-                                          </div>
-                                          <div class="col d-flex align-items-center">
-                                              <p class="mb-0">
-                                                <span class="lead" data-dz-name></span>
-                                                (<span data-dz-size></span>)
-                                              </p>
-                                              <strong class="error text-danger" data-dz-errormessage></strong>
-                                          </div>
-                                          <div class="col-4 d-flex align-items-center">
-                                              <div class="progress progress-striped active w-100" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                                                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
-                                              </div>
-                                          </div>
-                                          <div class="col-auto d-flex align-items-center">
-                                            <div class="btn-group">
-                                              <button class="btn btn-primary start">
-                                                <i class="fas fa-upload"></i>
-                                                <span>Start</span>
-                                              </button>
-                                              <button data-dz-remove class="btn btn-warning cancel">
-                                                <i class="fas fa-times-circle"></i>
-                                                <span>Cancel</span>
-                                              </button>
-                                              <button data-dz-remove class="btn btn-danger delete">
-                                                <i class="fas fa-trash"></i>
-                                                <span>Delete</span>
-                                              </button>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <!-- /.card-body -->
-                                    <div class="card-footer">
-                                      Visit <a href="https://www.dropzonejs.com">dropzone.js documentation</a> for more examples and information about the plugin.
-                                    </div>
-                                  </div>
-                                  <!-- /.card -->
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label for="exampleServiceCost">Remark, If Any</label>
-                                    <textarea class="form-control" name="remarks" rows="2" placeholder="Enter Remark, If Any"
-                                        required=""></textarea>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Apply</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+      </li>
+      <!-- Notifications Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-bell"></i>
+          <span class="badge badge-warning navbar-badge">15</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <span class="dropdown-item dropdown-header">15 Notifications</span>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-envelope mr-2"></i> 4 new messages
+            <span class="float-right text-muted text-sm">3 mins</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-users mr-2"></i> 8 friend requests
+            <span class="float-right text-muted text-sm">12 hours</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-file mr-2"></i> 3 new reports
+            <span class="float-right text-muted text-sm">2 days</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
         </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+          <i class="fas fa-th-large"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
 
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                @if (session()->has('message'))
-                    <div class="card card-success">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ session('message') }}</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i
-                                        class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-                <div class="row mb-2">
-                    <div class="col-md-3 col-sm-3 col-12 cursorpointer" data-toggle="modal" data-target="#btaModal">
-                        <div class="info-box bg-makita-til btcardbs">
-                            <span class="info-box-icon"><i class="far fa fa-plane color-white"></i></span>
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="../../index3.html" class="brand-link">
+      <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">AdminLTE 3</span>
+    </a>
 
-                            <div class="info-box-content color-white">
-                                <span class="info-box-number">BTA (Business Trip Advanced)</span>
-                                <span class="info-box-text">Total Trip: 10</span>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          <img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <a href="#" class="d-block">Alexander Pierce</a>
+        </div>
+      </div>
 
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 100%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    Apply BTA
-                                </span>
-                            </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-md-3 col-sm-3 col-12 cursorpointer" data-toggle="modal" data-target="#btcModal">
-                        <div class="info-box bg-makita-black btcardbs">
-                            <span class="info-box-icon"><i class="far fa fa-car color-white"></i></span>
+      <!-- SidebarSearch Form -->
+      <div class="form-inline">
+        <div class="input-group" data-widget="sidebar-search">
+          <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+          <div class="input-group-append">
+            <button class="btn btn-sidebar">
+              <i class="fas fa-search fa-fw"></i>
+            </button>
+          </div>
+        </div>
+      </div>
 
-                            <div class="info-box-content color-white">
-                                <span class="info-box-number">BTC (Business Trip Claim)</span>
-                                <span class="info-box-text">Total Trip: 41</span>
-
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 100%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    Apply BTC
-                                </span>
-                            </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-md-3 col-sm-6 col-12 cursorpointer" data-toggle="modal" data-target="#ltcModal">
-                        <div class="info-box bg-makita-til btcardbs">
-                            <span class="info-box-icon"><i class="far fa fa-motorcycle color-white"></i></span>
-
-                            <div class="info-box-content color-white">
-                                <span class="info-box-number">LTC (Local Travel Claim)</span>
-                                <span class="info-box-text">Total Trip: 5</span>
-
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 100%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    Apply LTC
-                                </span>
-                            </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                    <!-- /.col -->
-
-                    <div class="col-sm-3">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Business Trips</li>
-                        </ol>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
-
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Bussiness Trips</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>BT Type</th>
-                                            <th>Application Number</th>
-                                            <th>Starting Date & Time</th>
-                                            <th>Ending Date & Time</th>
-                                            <th>Place of Visit</th>
-                                            <th>Total Expenses</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach ($result as $key => $list)
-                                        @php
-                                        $status = match ($list["status"]) {
-                                        0 => 'Not Yet Reviewed By Manager',
-                                        1 => 'Accepted By Manager & In Review for HR',
-                                        2 => 'Rejected By Manager',
-                                        3 => 'Amount Paid',
-                                        4 => 'Approved By HR & In Review for Accounts',
-                                        5 => 'Rejected By HR',
-                                        6 => 'Case Clear By Accounts',
-                                        7 => 'Case Closed',
-                                        8 => 'Rejected By Accounts',
-                                        default => 'Something Wrong',
-                                        };
-                                    
-                                        $startDate = $list["start_date"];
-                                        $formattedStartDate = '-';
-
-                                        if (preg_match('/^\d{1,2} \d{4}$/', $startDate)) {
-                                            list($month, $year) = explode(' ', $startDate);
-
-                                            $month = (int)$month;
-                                            $year = (int)$year;
-
-                                            $formattedStartDate = \Carbon\Carbon::createFromDate($year, $month, 1)->format('M Y');
-                                        }
-
-                                        @endphp
-                                        <tr>
-                                            <td>{{ $key + 1 }}</td>
-                        
-                                            @if ($list["application_type"] === 'BTA')
-                                                <td>{{ $list["application_type"] }}</td>
-                                                <td>{{ $list["application_id"] }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($list["start_date"])->format('d M Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($list["end_date"])->format('d M Y') }}</td>
-                                                <td>{{ $list["place_of_visit"] }}</td>
-                                                <td>{{ $list["total_expenses"] }}</td>
-                                                <td>{{ $status }}</td>
-                                                <td>
-                                                    <a href="{{ url('admin/travelmanagement/bta-application-details/' . Crypt::encrypt($list["slug"])) }}"
-                                                       title="Edit" target="_blank">
-                                                        <i class="nav-icon fas fa-edit"></i>
-                                                    </a>
-                                                </td>
-                        
-                                            @elseif ($list["application_type"] === 'LTC')
-                                                <td>{{ $list["application_type"] }}</td>
-                                                <td>{{ $list["application_id"] }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($formattedStartDate)->format('M Y') }}</td>
-                                                <td>-</td> <!-- LTC applications may not have start/end dates -->
-                                                <td>-</td>
-                                                <td>{{ $list["total_expenses"] }}</td>
-                                                <td>{{ $status }}</td>
-                                                <td>
-                                                    <a href="{{ url('admin/travelmanagement/ltc-application-details/' . Crypt::encrypt($list["slug"])) }}"
-                                                       title="Edit" target="_blank">
-                                                        <i class="nav-icon fas fa-edit"></i>
-                                                    </a>
-                                                </td>
-                                            @endif
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>BT Type</th>
-                                            <th>Application Number</th>
-                                            <th>Starting Date & Time</th>
-                                            <th>Ending Date & Time</th>
-                                            <th>Place of Visit</th>
-                                            <th>Total Expenses</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.container-fluid -->
-        </section>
-        <!-- /.content -->
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Dashboard
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../../index.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Dashboard v1</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../../index2.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Dashboard v2</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../../index3.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Dashboard v3</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="../widgets.html" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Widgets
+                <span class="right badge badge-danger">New</span>
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-copy"></i>
+              <p>
+                Layout Options
+                <i class="fas fa-angle-left right"></i>
+                <span class="badge badge-info right">6</span>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../layout/top-nav.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Top Navigation</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../layout/top-nav-sidebar.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Top Navigation + Sidebar</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../layout/boxed.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Boxed</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../layout/fixed-sidebar.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Fixed Sidebar</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../layout/fixed-sidebar-custom.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Fixed Sidebar <small>+ Custom Area</small></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../layout/fixed-topnav.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Fixed Navbar</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../layout/fixed-footer.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Fixed Footer</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../layout/collapsed-sidebar.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Collapsed Sidebar</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>
+                Charts
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../charts/chartjs.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>ChartJS</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../charts/flot.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Flot</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../charts/inline.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Inline</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../charts/uplot.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>uPlot</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-tree"></i>
+              <p>
+                UI Elements
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../UI/general.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>General</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../UI/icons.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Icons</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../UI/buttons.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Buttons</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../UI/sliders.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Sliders</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../UI/modals.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Modals & Alerts</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../UI/navbar.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Navbar & Tabs</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../UI/timeline.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Timeline</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../UI/ribbons.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Ribbons</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item menu-open">
+            <a href="#" class="nav-link active">
+              <i class="nav-icon fas fa-edit"></i>
+              <p>
+                Forms
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../forms/general.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>General Elements</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../forms/advanced.html" class="nav-link active">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Advanced Elements</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../forms/editors.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Editors</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../forms/validation.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Validation</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-table"></i>
+              <p>
+                Tables
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../tables/simple.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Simple Tables</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../tables/data.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>DataTables</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../tables/jsgrid.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>jsGrid</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-header">EXAMPLES</li>
+          <li class="nav-item">
+            <a href="../calendar.html" class="nav-link">
+              <i class="nav-icon far fa-calendar-alt"></i>
+              <p>
+                Calendar
+                <span class="badge badge-info right">2</span>
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../gallery.html" class="nav-link">
+              <i class="nav-icon far fa-image"></i>
+              <p>
+                Gallery
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../kanban.html" class="nav-link">
+              <i class="nav-icon fas fa-columns"></i>
+              <p>
+                Kanban Board
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon far fa-envelope"></i>
+              <p>
+                Mailbox
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../mailbox/mailbox.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Inbox</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../mailbox/compose.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Compose</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../mailbox/read-mail.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Read</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-book"></i>
+              <p>
+                Pages
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../examples/invoice.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Invoice</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/profile.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Profile</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/e-commerce.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>E-commerce</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/projects.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Projects</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/project-add.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Project Add</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/project-edit.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Project Edit</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/project-detail.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Project Detail</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/contacts.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Contacts</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/faq.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>FAQ</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/contact-us.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Contact us</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon far fa-plus-square"></i>
+              <p>
+                Extras
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>
+                    Login & Register v1
+                    <i class="fas fa-angle-left right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../examples/login.html" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Login v1</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../examples/register.html" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Register v1</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../examples/forgot-password.html" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Forgot Password v1</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../examples/recover-password.html" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Recover Password v1</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>
+                    Login & Register v2
+                    <i class="fas fa-angle-left right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../examples/login-v2.html" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Login v2</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../examples/register-v2.html" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Register v2</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../examples/forgot-password-v2.html" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Forgot Password v2</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../examples/recover-password-v2.html" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Recover Password v2</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/lockscreen.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Lockscreen</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/legacy-user-menu.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Legacy User Menu</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/language-menu.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Language Menu</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/404.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Error 404</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/500.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Error 500</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/pace.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Pace</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../examples/blank.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Blank Page</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../../starter.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Starter Page</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-search"></i>
+              <p>
+                Search
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../search/simple.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Simple Search</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../search/enhanced.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Enhanced</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-header">MISCELLANEOUS</li>
+          <li class="nav-item">
+            <a href="../../iframe.html" class="nav-link">
+              <i class="nav-icon fas fa-ellipsis-h"></i>
+              <p>Tabbed IFrame Plugin</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="https://adminlte.io/docs/3.1/" class="nav-link">
+              <i class="nav-icon fas fa-file"></i>
+              <p>Documentation</p>
+            </a>
+          </li>
+          <li class="nav-header">MULTI LEVEL EXAMPLE</li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-circle nav-icon"></i>
+              <p>Level 1</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-circle"></i>
+              <p>
+                Level 1
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Level 2</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>
+                    Level 2
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="#" class="nav-link">
+                      <i class="far fa-dot-circle nav-icon"></i>
+                      <p>Level 3</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" class="nav-link">
+                      <i class="far fa-dot-circle nav-icon"></i>
+                      <p>Level 3</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" class="nav-link">
+                      <i class="far fa-dot-circle nav-icon"></i>
+                      <p>Level 3</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Level 2</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-circle nav-icon"></i>
+              <p>Level 1</p>
+            </a>
+          </li>
+          <li class="nav-header">LABELS</li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon far fa-circle text-danger"></i>
+              <p class="text">Important</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon far fa-circle text-warning"></i>
+              <p>Warning</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon far fa-circle text-info"></i>
+              <p>Informational</p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
     </div>
-    @push('scripts')
+    <!-- /.sidebar -->
+  </aside>
 
-     <!-- Date and time picker -->
-    <!-- InputMask -->
-    <script src="{{ asset('admin_assets/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('admin_assets/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
-    <!-- Tempusdominus Bootstrap 4 -->
-    <script src="{{ asset('admin_assets/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Advanced Form</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Advanced Form</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
 
-        <!-- DataTables  & Plugins -->
-        <script src="{{ asset('admin_assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/jszip/jszip.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/pdfmake/pdfmake.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/pdfmake/vfs_fonts.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
-        <script src="{{ asset('admin_assets/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- SELECT2 EXAMPLE -->
+        <div class="card card-default">
+          <div class="card-header">
+            <h3 class="card-title">Select2 (Default Theme)</h3>
 
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Minimal</label>
+                  <select class="form-control select2" style="width: 100%;">
+                    <option selected="selected">Alabama</option>
+                    <option>Alaska</option>
+                    <option>California</option>
+                    <option>Delaware</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Washington</option>
+                  </select>
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                  <label>Disabled</label>
+                  <select class="form-control select2" disabled="disabled" style="width: 100%;">
+                    <option selected="selected">Alabama</option>
+                    <option>Alaska</option>
+                    <option>California</option>
+                    <option>Delaware</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Washington</option>
+                  </select>
+                </div>
+                <!-- /.form-group -->
+              </div>
+              <!-- /.col -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Multiple</label>
+                  <select class="select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+                    <option>Alabama</option>
+                    <option>Alaska</option>
+                    <option>California</option>
+                    <option>Delaware</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Washington</option>
+                  </select>
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                  <label>Disabled Result</label>
+                  <select class="form-control select2" style="width: 100%;">
+                    <option selected="selected">Alabama</option>
+                    <option>Alaska</option>
+                    <option disabled="disabled">California (disabled)</option>
+                    <option>Delaware</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Washington</option>
+                  </select>
+                </div>
+                <!-- /.form-group -->
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
 
+            <h5>Custom Color Variants</h5>
+            <div class="row">
+              <div class="col-12 col-sm-6">
+                <div class="form-group">
+                  <label>Minimal (.select2-danger)</label>
+                  <select class="form-control select2 select2-danger" data-dropdown-css-class="select2-danger" style="width: 100%;">
+                    <option selected="selected">Alabama</option>
+                    <option>Alaska</option>
+                    <option>California</option>
+                    <option>Delaware</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Washington</option>
+                  </select>
+                </div>
+                <!-- /.form-group -->
+              </div>
+              <!-- /.col -->
+              <div class="col-12 col-sm-6">
+                <div class="form-group">
+                  <label>Multiple (.select2-purple)</label>
+                  <div class="select2-purple">
+                    <select class="select2" multiple="multiple" data-placeholder="Select a State" data-dropdown-css-class="select2-purple" style="width: 100%;">
+                      <option>Alabama</option>
+                      <option>Alaska</option>
+                      <option>California</option>
+                      <option>Delaware</option>
+                      <option>Tennessee</option>
+                      <option>Texas</option>
+                      <option>Washington</option>
+                    </select>
+                  </div>
+                </div>
+                <!-- /.form-group -->
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer">
+            Visit <a href="https://select2.github.io/">Select2 documentation</a> for more examples and information about
+            the plugin.
+          </div>
+        </div>
+        <!-- /.card -->
 
-        <!-- Page specific script -->
-        <script>
-            // BTA
-            var loop_count = 1;
+        <!-- SELECT2 EXAMPLE -->
+        <div class="card card-default">
+          <div class="card-header">
+            <h3 class="card-title">Select2 (Bootstrap4 Theme)</h3>
 
-            function add_more() {
-                loop_count++;
-                var html = '<input name="ewe_slug" type="hidden"><div class="row" id="prevcom_docs_' + loop_count +
-                    '" style="margin-top:20px">';
-                html +=
-                    '<div class="form-group col-md-6"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="bta_expbreakup_date[]" required value="" id="exampleCompanyName" ></div>';
-                html +=
-                    '<div class="form-group col-md-6"> <label for="exampleInputBTADtlPlaceofVisit">Place of Visit*</label> <input type="text" class="form-control" required name="trip_place_of_visit[]" placeholder="Place of Visit"> </div>';
-                html +=
-                    '<div class="form-group col-md-6"> <label for="exampleInputBTADtlJFt">Journey Fare*</label> <input type="text" class="form-control" required name="journey_fare[]" placeholder="Journey Fare"> </div>';
-                html +=
-                    '<div class="form-group col-md-6"> <label for="exampleInputBTADtlAccomodation">Accommodation*</label> <input type="text" class="form-control" required name="accommodation[]" placeholder="Accommodation"> </div>';
-                html +=
-                    '<div class="form-group col-md-6"> <label for="exampleInputBTAConviniance">Conveyance*</label> <input type="text"  class="form-control" required name="conveyance[]" placeholder="Conveyance"> </div>';
-                html +=
-                    '<div class="form-group col-md-3"> <label for="exampleInputAmount">Amount (Rs)*</label> <input type="text" class="form-control" required name="amount[]" placeholder="Amount"> </div>';
-                html +=
-                    '<div class="form-group col-md-3"><br><button type="button" class="btn btn-danger btn-lg" onclick=remove_more("' +
-                    loop_count + '")>Remove</button></div>';
-                html += '</div>';
-                jQuery("#previouscompany_doc_box").append(html);
-            }
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Minimal</label>
+                  <select class="form-control select2bs4" style="width: 100%;">
+                    <option selected="selected">Alabama</option>
+                    <option>Alaska</option>
+                    <option>California</option>
+                    <option>Delaware</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Washington</option>
+                  </select>
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                  <label>Disabled</label>
+                  <select class="form-control select2bs4" disabled="disabled" style="width: 100%;">
+                    <option selected="selected">Alabama</option>
+                    <option>Alaska</option>
+                    <option>California</option>
+                    <option>Delaware</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Washington</option>
+                  </select>
+                </div>
+                <!-- /.form-group -->
+              </div>
+              <!-- /.col -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Multiple</label>
+                  <select class="select2bs4" multiple="multiple" data-placeholder="Select a State"
+                          style="width: 100%;">
+                    <option>Alabama</option>
+                    <option>Alaska</option>
+                    <option>California</option>
+                    <option>Delaware</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Washington</option>
+                  </select>
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group">
+                  <label>Disabled Result</label>
+                  <select class="form-control select2bs4" style="width: 100%;">
+                    <option selected="selected">Alabama</option>
+                    <option>Alaska</option>
+                    <option disabled="disabled">California (disabled)</option>
+                    <option>Delaware</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Washington</option>
+                  </select>
+                </div>
+                <!-- /.form-group -->
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer">
+            Visit <a href="https://select2.github.io/">Select2 documentation</a> for more examples and information about
+            the plugin.
+          </div>
+        </div>
+        <!-- /.card -->
 
-            function remove_more(loop_count) {
-                jQuery('#prevcom_docs_' + loop_count).remove();
-            }
+        <div class="card card-default">
+          <div class="card-header">
+            <h3 class="card-title">Bootstrap Duallistbox</h3>
 
-            // BTC
-            function add_more_btcexpenses() {
-                loop_count++;
-                var html = '<input name="btc_slug[]" type="hidden"><div class="row" id="btcexpenses_record_' + loop_count +
-                    '" style="margin-top:20px">';
-                html +=
-                    '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="date[]" required value="" id="exampleCompanyName" ></div>';
-                html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlPlaceofVisit">Amount*</label> <input type="text" class="form-control" required name="appointment_letter[]" placeholder="Enter Amount"> </div>';
-                html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlJFt">Enclosure No*</label> <input type="text" class="form-control" required name="relieving_letter[]" placeholder="Enclosure No"> </div>';
-                html += '<div class="form-group col-md-5">' +
-                    '<label for="exampleInputBTADtlAccomodation">Description*</label>' +
-                    '<select class="custom-select form-control-border" required name="payslip_last_month[]">' +
-                    '<option>Select One</option>' +
-                    '<option>Travelling Exp Local</option>' +
-                    '<option>Boarding & Lodging Exp Local</option>' +
-                    '<option>Communication & Telephone Exp</option>' +
-                    '<option>Courier Exp</option>' +
-                    '<option>Printing & Stationery Exp</option>' +
-                    '<option>Computer Maintenance Exp</option>' +
-                    '<option>Electricity & water charges Exp</option>' +
-                    '<option>Freight Charges-Local Exp</option>' +
-                    '<option>Vehicle maintenance Other than Fuel Exp</option>' +
-                    '<option>Fuel Exp</option>' +
-                    '<option>Food Exp</option>' +
-                    '<option>Service Room maintenance Exp</option>' +
-                    '<option>Off Maintenance Exp</option>' +
-                    '<option>Office Expenses</option>' +
-                    '<option>Travelling Overseas</option>' +
-                    '<option>Boarding Overseas</option>' +
-                    '</select>' +
-                    '</div>';
-                html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputAmount">Receipt Image*</label> <input type="file" > </div>';
-                html +=
-                    '<div class="form-group col-md-3"><br><button type="button" class="btn btn-danger btn-lg" onclick=remove_more_btcexp("' +
-                    loop_count + '")>Remove</button></div>';
-                html += '</div>';
-                jQuery("#btc_expenses").append(html);
-            }
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group">
+                  <label>Multiple</label>
+                  <select class="duallistbox" multiple="multiple">
+                    <option selected>Alabama</option>
+                    <option>Alaska</option>
+                    <option>California</option>
+                    <option>Delaware</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Washington</option>
+                  </select>
+                </div>
+                <!-- /.form-group -->
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer">
+            Visit <a href="https://github.com/istvan-ujjmeszaros/bootstrap-duallistbox#readme">Bootstrap Duallistbox</a> for more examples and information about
+            the plugin.
+          </div>
+        </div>
+        <!-- /.card -->
 
-            function remove_more_btcexp(loop_count) {
-                jQuery('#btcexpenses_record_' + loop_count).remove();
-            }
+        <div class="row">
+          <div class="col-md-6">
 
-            function add_more_entertainmentexp() {
-                loop_count++;
-                var html = '<input name="btc_slug[]" type="hidden"><div class="row" id="btcentexp_record_' + loop_count +
-                    '" style="margin-top:20px">';
-                html +=
-                    '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="date[]" required value="" id="exampleCompanyName" ></div>';
-                html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlPlaceofVisit">Descriptions*</label> <input type="text" class="form-control" required name="appointment_letter[]" placeholder="Enter Descriptions"> </div>';
-                html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlJFt">Amount*</label> <input type="text" class="form-control" required name="relieving_letter[]" placeholder="Enter Amount"> </div>';
-                html +=
-                    '<div class="form-group col-md-4"> <label for="exampleInputBTADtlAccomodation">Enclosure No*</label> <input type="text" class="form-control" required name="payslip_last_month[]" placeholder="Enter Enclosure No"> </div>';
-                html +=
-                    '<div class="form-group col-md-4"><br><button type="button" class="btn btn-danger btn-lg" onclick=remove_more_entexpbtn("' +
-                    loop_count + '")>Remove</button></div>';
-                html += '</div>';
-                jQuery("#btc_entexpns").append(html);
-            }
+            <div class="card card-danger">
+              <div class="card-header">
+                <h3 class="card-title">Input masks</h3>
+              </div>
+              <div class="card-body">
+                <!-- Date dd/mm/yyyy -->
+                <div class="form-group">
+                  <label>Date masks:</label>
 
-            function remove_more_entexpbtn(loop_count) {
-                jQuery('#btcentexp_record_' + loop_count).remove();
-            }
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                    <input type="text" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                  </div>
+                  <!-- /.input group -->
+                </div>
+                <!-- /.form group -->
 
-            // LTC
+                <!-- Date mm/dd/yyyy -->
+                <div class="form-group">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                    <input type="text" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="mm/dd/yyyy" data-mask>
+                  </div>
+                  <!-- /.input group -->
+                </div>
+                <!-- /.form group -->
 
-            function add_more_ltcexpenses() {
-                loop_count++;
-                jQuery("#ltc_expenses #addbuttonltc").remove(); 
-                // jQuery("#ltc_expenses .btn-success").remove(); 
-                
-                var html = '<input name="" type="hidden"><div class="row" id="ltcexpense_' + loop_count +
-                   '" style="margin-top:20px">';
-                html +=
-                    '<div class="form-group col-md-4"> <label for="exampleBTADtlDate">Date*</label>  <input type="date" class="form-control" name="date[]" required value="" id="exampleDate'+loop_count +'" ></div>';
-                html +=
-                    '<div class="form-group col-md-4" id="divmodeOfTransport'+loop_count +'"> <label for="exampleModeOfTransport">Mode of Transport*</label> <select class="custom-select form-control-border" id="modeOfTransport'+loop_count +'" name="mode_of_transport[]" placeholder="Mode of Transport" onchange="toggleVehicleInputs('+loop_count +')"> @foreach($ltcform['mode_of_transport'] as $transport) <option value="{{$transport->id}}|{{$transport->conveyance_type."-".$transport->conveyance}}">{{$transport->conveyance_type." - ".$transport->conveyance}}</option>@endforeach</select></div>';
-                html +=
-                     '<div id="demoVanExtraInputs'+loop_count +'"></div>';
-                html +=
-                    '<div class="form-group col-md-4" id="divopeningMeter'+loop_count +'"> <label for="exampleInputBTADtlJFt">Opening Meter*</label> <input type="text" class="form-control" required name="opening_meter[]" id="openingMeter'+loop_count +'" placeholder="Opening Meter" onchange="calculateExpenses('+loop_count +')"> </div>';
-                html +=
-                    '<div class="form-group col-md-4" id="divclosingMeter'+loop_count +'"> <label for="exampleInputBTADtlAccomodation">Closing Meter*</label> <input type="text" class="form-control" required name="closing_meter[]" id="closingMeter'+loop_count +'" placeholder="Closing Meter" onchange="calculateExpenses('+loop_count +')"> </div>';
-                html +=
-                    '<div class="form-group col-md-4" id="divtotalKm'+loop_count +'"> <label for="exampleInputBTAConviniance">Total KM*</label> <input type="text"  class="form-control" required name="total_km[]" id="totalKm'+loop_count +'" placeholder="Total KM" disabled> </div>';
-                html +=
-                    '<div class="form-group col-md-4" id="divplacesVisited'+loop_count +'"> <label for="exampleInputBTAConviniance">Places Visited*</label> <input type="text"  class="form-control" required name="place_visited[]" id="placesVisited'+loop_count +'" placeholder="Places Visited"> </div>';
-                html +=
-                    '<div class="form-group col-md-4" id="divclaimAmount'+loop_count +'"> <label for="exampleInputAmount">Claim Amount*</label> <input type="text" class="form-control" required name="claim_amount[]" placeholder="Claim Amount" id="claimAmount'+loop_count +'"> </div>';
-                html +=
-                    '<div class="form-group col-md-4" id="divlunchExp'+loop_count +'"> <label for="exampleInputAmount">Lunch Exp.*</label> <input type="text" class="form-control" required name="lunch_exp[]" placeholder="Lunch Exp." value="100" readonly id="lunchExp'+loop_count +'"> </div>';
-                html +=
-                    '<div class="form-group col-md-4" id="divfuelExpenses'+loop_count +'"> <label for="exampleInputAmount">Fuel Expenses*</label> <input type="text" class="form-control" required name="fuel_exp[]" placeholder="Fuel Expenses" id="fuelExpenses'+loop_count +'"> </div>';
-                html +=
-                    '<div class="form-group col-md-4" id="divtollCharges'+loop_count +'"> <label for="exampleInputAmount">Toll Charges*</label> <input type="text" class="form-control" required name="toll_charge[]" placeholder="Toll Charges"> </div>';
-                html +=
-                    '<div class="form-group col-md-2 p-3"><button type="button" class="btn btn-danger" onclick=remove_more_ltexpenses("'+loop_count +'")>Remove</button></div>'
-                    
-                html+='<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>';
-                html += '</div>';
-                jQuery("#ltc_expenses").append(html);
-                toggleVehicleInputs(loop_count);
-            }
+                <!-- phone mask -->
+                <div class="form-group">
+                  <label>US phone mask:</label>
 
-            function remove_more_ltexpenses(loop_count) {
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                    </div>
+                    <input type="text" class="form-control" data-inputmask='"mask": "(999) 999-9999"' data-mask>
+                  </div>
+                  <!-- /.input group -->
+                </div>
+                <!-- /.form group -->
 
-                jQuery('#ltcexpense_' + loop_count).remove();
-    
-                const lastRow = jQuery('#ltc_expenses .row').last();
+                <!-- phone mask -->
+                <div class="form-group">
+                  <label>Intl US phone mask:</label>
 
-                if (lastRow.length) {
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                    </div>
+                    <input type="text" class="form-control"
+                           data-inputmask="'mask': ['999-999-9999 [x99999]', '+099 99 99 9999[9]-9999']" data-mask>
+                  </div>
+                  <!-- /.input group -->
+                </div>
+                <!-- /.form group -->
 
-                    lastRow.find('#addbuttonltc').remove();
+                <!-- IP mask -->
+                <div class="form-group">
+                  <label>IP mask:</label>
 
-                    lastRow.append('<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>');
-                    
-                }
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-laptop"></i></span>
+                    </div>
+                    <input type="text" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
+                  </div>
+                  <!-- /.input group -->
+                </div>
+                <!-- /.form group -->
 
-                if (lastRow.length == 0) {
-                    lastRow.find('#addbuttonltc').remove();
-                    jQuery("#ltc_expenses").append('<div class="form-group col-md-2 p-3" id="addbuttonltc"><button type="button" class="btn btn-success" onclick="add_more_ltcexpenses()">Add More +</button></div>');
-                }
-            }
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
 
-            
-            // function toggleVehicleInputs(id) {
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">Color & Time Picker</h3>
+              </div>
+              <div class="card-body">
+                <!-- Color Picker -->
+                <div class="form-group">
+                  <label>Color picker:</label>
+                  <input type="text" class="form-control my-colorpicker1">
+                </div>
+                <!-- /.form group -->
 
-            //     const modeOfTransport = document.getElementById('modeOfTransport'+id).value;
-            //     const isOwnVehicle = modeOfTransport.toLowerCase().includes('own vehicle');
-            //     const isDemoVan = modeOfTransport.toLowerCase().includes('demo van');
+                <!-- Color Picker -->
+                <div class="form-group">
+                  <label>Color picker with addon:</label>
 
-            //     const openingMeterElement = document.getElementById('openingMeter' + id);
-            //     const closingMeterElement = document.getElementById('closingMeter' + id);
-            //     const claimAmountElement = document.getElementById('claimAmount' + id);
+                  <div class="input-group my-colorpicker2">
+                    <input type="text" class="form-control">
 
-            //     openingMeterElement.disabled = !isOwnVehicle;
-            //     closingMeterElement.disabled = !isOwnVehicle;
-            //     claimAmountElement.disabled = isOwnVehicle;
+                    <div class="input-group-append">
+                      <span class="input-group-text"><i class="fas fa-square"></i></span>
+                    </div>
+                  </div>
+                  <!-- /.input group -->
+                </div>
+                <!-- /.form group -->
 
-            //     document.getElementById('divopeningMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
-            //     document.getElementById('divclosingMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
-            //     document.getElementById('divtotalKm' + id).style.display = isOwnVehicle ? 'block' : 'none';
-            //     document.getElementById('divfuelExpenses' + id).style.display = isDemoVan ? 'block' : 'none';
-            //     document.getElementById('divclaimAmount' + id).style.display = !isDemoVan ? 'block' : 'none';
+                <!-- time Picker -->
+                <div class="bootstrap-timepicker">
+                  <div class="form-group">
+                    <label>Time picker:</label>
 
-            //     if ($('#fuelExpenses'+ id).is(':visible')) {
-            //         $('#fuelExpenses'+ id).attr('required', 'required');
-            //     } else {
-            //         $('#fuelExpenses'+ id).removeAttr('required');
-            //     }
-                
+                    <div class="input-group date" id="timepicker" data-target-input="nearest">
+                      <input type="text" class="form-control datetimepicker-input" data-target="#timepicker"/>
+                      <div class="input-group-append" data-target="#timepicker" data-toggle="datetimepicker">
+                          <div class="input-group-text"><i class="far fa-clock"></i></div>
+                      </div>
+                      </div>
+                    <!-- /.input group -->
+                  </div>
+                  <!-- /.form group -->
+                </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
 
-            //     if ($('#claimAmount'+ id).is(':visible')) {
-            //         $('#claimAmount'+ id).attr('required', 'required');
-            //     } else {
-            //         $('#claimAmount'+ id).removeAttr('required');
-            //     }
-            // }
+          </div>
+          <!-- /.col (left) -->
+          <div class="col-md-6">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Date picker</h3>
+              </div>
+              <div class="card-body">
+                <!-- Date -->
+                <div class="form-group">
+                  <label>Date:</label>
+                    <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Date and time -->
+                <div class="form-group">
+                  <label>Date and time:</label>
+                    <div class="input-group date" id="reservationdatetime" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#reservationdatetime"/>
+                        <div class="input-group-append" data-target="#reservationdatetime" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.form group -->
+                <!-- Date range -->
+                <div class="form-group">
+                  <label>Date range:</label>
 
-            function toggleVehicleInputs(id) {
-                const modeOfTransport = document.getElementById('modeOfTransport' + id).value.toLowerCase();
-                const isOwnVehicle = modeOfTransport.includes('own vehicle');
-                const isDemoVan = modeOfTransport.includes('demo van');
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control float-right" id="reservation">
+                  </div>
+                  <!-- /.input group -->
+                </div>
+                <!-- /.form group -->
 
-                const openingMeterElement = document.getElementById('openingMeter' + id);
-                const closingMeterElement = document.getElementById('closingMeter' + id);
-                const claimAmountElement = document.getElementById('claimAmount' + id);
-                const fuelExpensesElement = document.getElementById('fuelExpenses' + id);
-                const FileTrasportElement = document.getElementById('exampleInputFileTrasport' + id);
+                <!-- Date and time range -->
+                <div class="form-group">
+                  <label>Date and time range:</label>
 
-                var demoVanDiv = document.getElementById('demoVanExtraInputs'+ id);
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="far fa-clock"></i></span>
+                    </div>
+                    <input type="text" class="form-control float-right" id="reservationtime">
+                  </div>
+                  <!-- /.input group -->
+                </div>
+                <!-- /.form group -->
 
-                // Make inputs read-only instead of disabled
-                openingMeterElement.readOnly = !isOwnVehicle;
-                closingMeterElement.readOnly = !isOwnVehicle;
-                claimAmountElement.readOnly = isOwnVehicle;
+                <!-- Date and time range -->
+                <div class="form-group">
+                  <label>Date range button:</label>
 
-                // Show or hide sections using 'display' for layout stability
-                document.getElementById('divopeningMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
-                document.getElementById('divclosingMeter' + id).style.display = isOwnVehicle ? 'block' : 'none';
-                document.getElementById('divtotalKm' + id).style.display = isOwnVehicle ? 'block' : 'none';
-                document.getElementById('divfuelExpenses' + id).style.display = isDemoVan ? 'block' : 'none';
-                document.getElementById('divclaimAmount' + id).style.display = !isDemoVan ? 'block' : 'none';
-                document.getElementById('divbillforModeOfTransport' + id).style.display = !isDemoVan? 'block' : 'none';
-                document.getElementById('divbillforFuelExp' + id).style.display = isDemoVan? 'block' : 'none';
+                  <div class="input-group">
+                    <button type="button" class="btn btn-default float-right" id="daterange-btn">
+                      <i class="far fa-calendar-alt"></i> Date range picker
+                      <i class="fas fa-caret-down"></i>
+                    </button>
+                  </div>
+                </div>
+                <!-- /.form group -->
+              </div>
+                <div class="card-footer">
+                  Visit <a href="https://getdatepicker.com/5-4/">tempusdominus </a> for more examples and information about
+                  the plugin.
+                </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
 
-                // Set or remove the 'required' attribute based on visibility and readability
-                if (fuelExpensesElement.style.display === 'block') {
-                    fuelExpensesElement.setAttribute('required', 'required');
-                } else {
-                    fuelExpensesElement.removeAttribute('required');
-                }
+            <!-- iCheck -->
+            <div class="card card-success">
+              <div class="card-header">
+                <h3 class="card-title">iCheck Bootstrap - Checkbox &amp; Radio Inputs</h3>
+              </div>
+              <div class="card-body">
+                <!-- Minimal style -->
+                <div class="row">
+                  <div class="col-sm-6">
+                    <!-- checkbox -->
+                    <div class="form-group clearfix">
+                      <div class="icheck-primary d-inline">
+                        <input type="checkbox" id="checkboxPrimary1" checked>
+                        <label for="checkboxPrimary1">
+                        </label>
+                      </div>
+                      <div class="icheck-primary d-inline">
+                        <input type="checkbox" id="checkboxPrimary2">
+                        <label for="checkboxPrimary2">
+                        </label>
+                      </div>
+                      <div class="icheck-primary d-inline">
+                        <input type="checkbox" id="checkboxPrimary3" disabled>
+                        <label for="checkboxPrimary3">
+                          Primary checkbox
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <!-- radio -->
+                    <div class="form-group clearfix">
+                      <div class="icheck-primary d-inline">
+                        <input type="radio" id="radioPrimary1" name="r1" checked>
+                        <label for="radioPrimary1">
+                        </label>
+                      </div>
+                      <div class="icheck-primary d-inline">
+                        <input type="radio" id="radioPrimary2" name="r1">
+                        <label for="radioPrimary2">
+                        </label>
+                      </div>
+                      <div class="icheck-primary d-inline">
+                        <input type="radio" id="radioPrimary3" name="r1" disabled>
+                        <label for="radioPrimary3">
+                          Primary radio
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Minimal red style -->
+                <div class="row">
+                  <div class="col-sm-6">
+                    <!-- checkbox -->
+                    <div class="form-group clearfix">
+                      <div class="icheck-danger d-inline">
+                        <input type="checkbox" checked id="checkboxDanger1">
+                        <label for="checkboxDanger1">
+                        </label>
+                      </div>
+                      <div class="icheck-danger d-inline">
+                        <input type="checkbox" id="checkboxDanger2">
+                        <label for="checkboxDanger2">
+                        </label>
+                      </div>
+                      <div class="icheck-danger d-inline">
+                        <input type="checkbox" disabled id="checkboxDanger3">
+                        <label for="checkboxDanger3">
+                          Danger checkbox
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <!-- radio -->
+                    <div class="form-group clearfix">
+                      <div class="icheck-danger d-inline">
+                        <input type="radio" name="r2" checked id="radioDanger1">
+                        <label for="radioDanger1">
+                        </label>
+                      </div>
+                      <div class="icheck-danger d-inline">
+                        <input type="radio" name="r2" id="radioDanger2">
+                        <label for="radioDanger2">
+                        </label>
+                      </div>
+                      <div class="icheck-danger d-inline">
+                        <input type="radio" name="r2" disabled id="radioDanger3">
+                        <label for="radioDanger3">
+                          Danger radio
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Minimal red style -->
+                <div class="row">
+                  <div class="col-sm-6">
+                    <!-- checkbox -->
+                    <div class="form-group clearfix">
+                      <div class="icheck-success d-inline">
+                        <input type="checkbox" checked id="checkboxSuccess1">
+                        <label for="checkboxSuccess1">
+                        </label>
+                      </div>
+                      <div class="icheck-success d-inline">
+                        <input type="checkbox" id="checkboxSuccess2">
+                        <label for="checkboxSuccess2">
+                        </label>
+                      </div>
+                      <div class="icheck-success d-inline">
+                        <input type="checkbox" disabled id="checkboxSuccess3">
+                        <label for="checkboxSuccess3">
+                          Success checkbox
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <!-- radio -->
+                    <div class="form-group clearfix">
+                      <div class="icheck-success d-inline">
+                        <input type="radio" name="r3" checked id="radioSuccess1">
+                        <label for="radioSuccess1">
+                        </label>
+                      </div>
+                      <div class="icheck-success d-inline">
+                        <input type="radio" name="r3" id="radioSuccess2">
+                        <label for="radioSuccess2">
+                        </label>
+                      </div>
+                      <div class="icheck-success d-inline">
+                        <input type="radio" name="r3" disabled id="radioSuccess3">
+                        <label for="radioSuccess3">
+                          Success radio
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                Many more skins available. <a href="https://bantikyan.github.io/icheck-bootstrap/">Documentation</a>
+              </div>
+            </div>
+            <!-- /.card -->
 
-                if (claimAmountElement.style.display === 'block') {
-                    claimAmountElement.setAttribute('required', 'required');
-                } else {
-                    claimAmountElement.removeAttribute('required');
-                }
+            <!-- Bootstrap Switch -->
+            <div class="card card-secondary">
+              <div class="card-header">
+                <h3 class="card-title">Bootstrap Switch</h3>
+              </div>
+              <div class="card-body">
+                <input type="checkbox" name="my-checkbox" checked data-bootstrap-switch>
+                <input type="checkbox" name="my-checkbox" checked data-bootstrap-switch data-off-color="danger" data-on-color="success">
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col (right) -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card card-default">
+              <div class="card-header">
+                <h3 class="card-title">bs-stepper</h3>
+              </div>
+              <div class="card-body p-0">
+                <div class="bs-stepper">
+                  <div class="bs-stepper-header" role="tablist">
+                    <!-- your steps here -->
+                    <div class="step" data-target="#logins-part">
+                      <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
+                        <span class="bs-stepper-circle">1</span>
+                        <span class="bs-stepper-label">Logins</span>
+                      </button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" data-target="#information-part">
+                      <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger">
+                        <span class="bs-stepper-circle">2</span>
+                        <span class="bs-stepper-label">Various information</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="bs-stepper-content">
+                    <!-- your steps content here -->
+                    <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                      </div>
+                      <button class="btn btn-primary" onclick="stepper.next()">Next</button>
+                    </div>
+                    <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+                      <div class="form-group">
+                        <label for="exampleInputFile">File input</label>
+                        <div class="input-group">
+                          <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="exampleInputFile">
+                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                          </div>
+                          <div class="input-group-append">
+                            <span class="input-group-text">Upload</span>
+                          </div>
+                        </div>
+                      </div>
+                      <button class="btn btn-primary" onclick="stepper.previous()">Previous</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                Visit <a href="https://github.com/Johann-S/bs-stepper/#how-to-use-it">bs-stepper documentation</a> for more examples and information about the plugin.
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+        <!-- /.row -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card card-default">
+              <div class="card-header">
+                <h3 class="card-title">Dropzone.js <small><em>jQuery File Upload</em> like look</small></h3>
+              </div>
+              <div class="card-body">
+                <div id="actions" class="row">
+                  <div class="col-lg-6">
+                    <div class="btn-group w-100">
+                      <span class="btn btn-success col fileinput-button">
+                        <i class="fas fa-plus"></i>
+                        <span>Add files</span>
+                      </span>
+                      <button type="submit" class="btn btn-primary col start">
+                        <i class="fas fa-upload"></i>
+                        <span>Start upload</span>
+                      </button>
+                      <button type="reset" class="btn btn-warning col cancel">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Cancel upload</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 d-flex align-items-center">
+                    <div class="fileupload-process w-100">
+                      <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="table table-striped files" id="previews">
+                  <div id="template" class="row mt-2">
+                    <div class="col-auto">
+                        <span class="preview"><img src="data:," alt="" data-dz-thumbnail /></span>
+                    </div>
+                    <div class="col d-flex align-items-center">
+                        <p class="mb-0">
+                          <span class="lead" data-dz-name></span>
+                          (<span data-dz-size></span>)
+                        </p>
+                        <strong class="error text-danger" data-dz-errormessage></strong>
+                    </div>
+                    <div class="col-4 d-flex align-items-center">
+                        <div class="progress progress-striped active w-100" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                          <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+                        </div>
+                    </div>
+                    <div class="col-auto d-flex align-items-center">
+                      <div class="btn-group">
+                        <button class="btn btn-primary start">
+                          <i class="fas fa-upload"></i>
+                          <span>Start</span>
+                        </button>
+                        <button data-dz-remove class="btn btn-warning cancel">
+                          <i class="fas fa-times-circle"></i>
+                          <span>Cancel</span>
+                        </button>
+                        <button data-dz-remove class="btn btn-danger delete">
+                          <i class="fas fa-trash"></i>
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                Visit <a href="https://www.dropzonejs.com">dropzone.js documentation</a> for more examples and information about the plugin.
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+      <b>Version</b> 3.2.0
+    </div>
+    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+  </footer>
 
-                if (isDemoVan) {
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
 
-                    demoVanDiv.classList.add('form-group', 'col-md-4');
+<!-- jQuery -->
+<script src="{{ asset('admin_assets/plugins/jquery/jquery.min.js') }}"></script> 
+<!-- Bootstrap 4 -->
+<script src="{{ asset('admin_assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script> 
+<!-- Select2 -->
+<script src="{{ asset('admin_assets/plugins/select2/js/select2.full.min.js') }}"></script>  
+<!-- Bootstrap4 Duallistbox -->
+<script src="{{ asset('admin_assets/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') }}"></script> 
+<!-- InputMask -->
+<script src="{{ asset('admin_assets/plugins/moment/moment.min.js') }}"></script>  
+<script src="{{ asset('admin_assets/plugins/inputmask/jquery.inputmask.min.js') }}"></script>  
+<!-- date-range-picker -->
+<script src="{{ asset('admin_assets/plugins/daterangepicker/daterangepicker.js') }}"></script> 
+<!-- bootstrap color picker -->
+<script src="../../plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script> 
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="../../plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Bootstrap Switch -->
+<script src="../../plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+<!-- BS-Stepper -->
+<script src="../../plugins/bs-stepper/js/bs-stepper.min.js"></script>
+<!-- dropzonejs -->
+<script src="../../plugins/dropzone/min/dropzone.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="../../dist/js/demo.js"></script>
+<!-- Page specific script -->
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
 
-                    fetchExtraDropdownOptions(id,modeOfTransport);
-                } else {
-                 
-                    // document.getElementById('demoVanExtraInputs'+ id).innerHTML = '<label for="extraOption">Select Demo Van*</label><select class="custom-select form-control-border" id="extraOption+id" hidden name="extra_option[]"></select>';
-                    // '<label for="extraOption' + id + '">Select Demo Van*</label>' +
-                    document.getElementById('demoVanExtraInputs' + id).innerHTML = '<select class="custom-select form-control-border" id="extraOption' + id + '" hidden name="extra_option[]"><option value="null" selected></option></select>';
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
 
-                    // demoVanDiv.remove();
-                }
-            }
+    //Datemask dd/mm/yyyy
+    $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+    //Datemask2 mm/dd/yyyy
+    $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+    //Money Euro
+    $('[data-mask]').inputmask()
 
-            function fetchExtraDropdownOptions(index,datavalue) {
-                console.log(index,datavalue);
-                $.ajax({
-                    url: '/admin/travelmanagement/ltc-demo-van', 
-                    method: 'GET',
-                    data: {
-                        index: index,
-                        data:datavalue
-                    },
-                    success: function(response) {
-                        // <div class="form-group col-md-4" id="extraDropdown${index}">
-                        // </div>
-                        var extraDropdown = `
-                                <label for="extraOption">Select Demo Van*</label>
-                                <select class="custom-select form-control-border" id="extraOption${index}" name="extra_option[]">
-                                    ${response.options} 
-                                </select>
-                        `;
-                        document.getElementById("demoVanExtraInputs"+index).innerHTML = extraDropdown;
-                    },
-                    error: function(error) {
-                        console.log("Error fetching extra dropdown:", error);
-                    }
-                });
-            }
+    //Date picker
+    $('#reservationdate').datetimepicker({
+        format: 'L'
+    });
 
-            $(function() {
-                $("#example1").DataTable({
-                    "responsive": true,
-                    "lengthChange": false,
-                    "autoWidth": false,
-                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-                $('#example2').DataTable({
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": false,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false,
-                    "responsive": true,
-                });
-            });
+    //Date and time picker
+    $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
 
-            $('#gbdv').mousedown(function() {
-                if (!$(this).is(':checked')) {
-                    $('.fvegbt').show(1000);
-                    $(this).trigger("change");
-                } else {
-                    $('.fvegbt').hide(1000);
-                }
-            });
+    //Date range picker
+    $('#reservation').daterangepicker()
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({
+      timePicker: true,
+      timePickerIncrement: 30,
+      locale: {
+        format: 'MM/DD/YYYY hh:mm A'
+      }
+    })
+    //Date range as a button
+    $('#daterange-btn').daterangepicker(
+      {
+        ranges   : {
+          'Today'       : [moment(), moment()],
+          'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+          'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+          'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        startDate: moment().subtract(29, 'days'),
+        endDate  : moment()
+      },
+      function (start, end) {
+        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+      }
+    )
 
-            document.addEventListener("DOMContentLoaded", function() {
-                        $('#ltcModal').on('shown.bs.modal', function () {
-                            toggleVehicleInputs(0);
-                        });
-            });
+    //Timepicker
+    $('#timepicker').datetimepicker({
+      format: 'LT'
+    })
 
-            $(document).ready(function() {
-                $('#btavt').on('change', function() {
-                    let vehicleType = $.trim($("#btavt").val());
-                    if (vehicleType == '') {
-                        $("#btavt").css({
-                            "border": "2px solid red",
-                            "color": "red"
-                        });
-                    }
-                    if (vehicleType == 1) {
-                        $('.btapvn').hide(1000);
-                        $('.btavtl').show(1000);
-                        $('.btacvn').show(1000);
-                    }
-                    if (vehicleType == 2) {
-                        $('.btacvn').hide(1000);
-                        $('.btavtl').show(1000);
-                        $('.btapvn').show(1000);
-                    }
+    //Bootstrap Duallistbox
+    $('.duallistbox').bootstrapDualListbox()
 
-                    // if (vehicleType != '') {
-                    //     $.ajax({
-                    //         url: '/admin/service-management/generate-asm-report',
-                    //         type: 'post',
-                    //         data: 'reportYear=' + reportYear + '&reportMonth=' + reportMonth +
-                    //             '&reportServiceCenter=' + reportServiceCenter +
-                    //             '&_token={{ csrf_token() }}',
-                    //         success: function(result) {
-                    //             $('#mswrfr').html(result);
+    //Colorpicker
+    $('.my-colorpicker1').colorpicker()
+    //color picker with addon
+    $('.my-colorpicker2').colorpicker()
 
-                    //             $('#mswrbranch').html(reportSCText);
-                    //             $('#mswryear').html(reportYear);
-                    //             $('#mswrmontsent').show();
-                    //             $('#mswrmonthval').html(reportMonthText);
-                    //             console.log(result);
-                    //         }
-                    //     });
-                    // }
+    $('.my-colorpicker2').on('colorpickerChange', function(event) {
+      $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+    })
 
-                });
+    $("input[data-bootstrap-switch]").each(function(){
+      $(this).bootstrapSwitch('state', $(this).prop('checked'));
+    })
 
-                //Date and time picker
-                $('#reservationdatetime').datetimepicker({
-                    icons: {
-                        time: 'far fa-clock'
-                    }
-                });
-                $('#reservationdatetimeid').datetimepicker({
-                    icons: {
-                        time: 'far fa-clock'
-                    }
-                });
+  })
+  // BS-Stepper Init
+  document.addEventListener('DOMContentLoaded', function () {
+    window.stepper = new Stepper(document.querySelector('.bs-stepper'))
+  })
 
-              });
+  // DropzoneJS Demo Code Start
+  Dropzone.autoDiscover = false
 
-                function calculateExpenses(index) {
-                    const openingMeter = document.getElementById(`openingMeter${index}`).value;
-                    const closingMeter = document.getElementById(`closingMeter${index}`).value;
-                    const modeOfTransport = document.getElementById(`modeOfTransport${index}`).value;
+  // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
+  var previewNode = document.querySelector("#template")
+  previewNode.id = ""
+  var previewTemplate = previewNode.parentNode.innerHTML
+  previewNode.parentNode.removeChild(previewNode)
 
-                    $.ajax({
-                        url: '{{ route("travelmanagement.calculate-expenses") }}',
-                        type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',  // Laravel CSRF token
-                            opening_meter: openingMeter,
-                            closing_meter: closingMeter,
-                            mode_of_transport: modeOfTransport
-                        },
-                        success: function(response) {
-                            document.getElementById(`totalKm${index}`).value = response.total_km;
-                            document.getElementById(`claimAmount${index}`).value = response.claim_amount;
-                        },
-                        error: function(xhr) {
-                            console.error("Error calculating expenses:", xhr);
-                            alert(xhr.responseJSON?.error || 'Error calculating expenses');
-                        }
-                    });
-                }
+  var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
+    url: "/target-url", // Set the url
+    thumbnailWidth: 80,
+    thumbnailHeight: 80,
+    parallelUploads: 20,
+    previewTemplate: previewTemplate,
+    autoQueue: false, // Make sure the files aren't queued until manually added
+    previewsContainer: "#previews", // Define the container to display the previews
+    clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
+  })
 
+  myDropzone.on("addedfile", function(file) {
+    // Hookup the start button
+    file.previewElement.querySelector(".start").onclick = function() { myDropzone.enqueueFile(file) }
+  })
 
-                const maxBillAmount = {{ $ltcform['mobile_bill']->expense ?? 0 }};
+  // Update the total progress bar
+  myDropzone.on("totaluploadprogress", function(progress) {
+    document.querySelector("#total-progress .progress-bar").style.width = progress + "%"
+  })
 
-                document.getElementById('monthly_mobile_bill').addEventListener('input', function (e) {
-                    const input = e.target;
-                    let value = parseFloat(input.value);
+  myDropzone.on("sending", function(file) {
+    // Show the total progress bar when upload starts
+    document.querySelector("#total-progress").style.opacity = "1"
+    // And disable the start button
+    file.previewElement.querySelector(".start").setAttribute("disabled", "disabled")
+  })
 
-                    // Check if value exceeds max allowed
-                    if (value > maxBillAmount) {
-                        input.value = maxBillAmount;
-                    }
-                });
+  // Hide the total progress bar when nothing's uploading anymore
+  myDropzone.on("queuecomplete", function(progress) {
+    document.querySelector("#total-progress").style.opacity = "0"
+  })
 
-        </script>
-    @endpush
-@endsection
+  // Setup the buttons for all transfers
+  // The "add files" button doesn't need to be setup because the config
+  // `clickable` has already been specified.
+  document.querySelector("#actions .start").onclick = function() {
+    myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED))
+  }
+  document.querySelector("#actions .cancel").onclick = function() {
+    myDropzone.removeAllFiles(true)
+  }
+  // DropzoneJS Demo Code End
+</script>
+</body>
+</html>
