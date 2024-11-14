@@ -100,6 +100,7 @@ class BranchStockController extends Controller
     }
     public function uploadDailyStocks() {
         if(request()->has('mycsv')){
+            ini_set('memory_limit', '1024M'); 
             $data=array_map('str_getcsv', file(request()->mycsv));
             $count=count($data);
             $lastRow=$count-1;
@@ -125,12 +126,15 @@ class BranchStockController extends Controller
                 return 'These columns cannont be uploaded'.$header_diff_text;
             }
             unset($data[0],$data[$lastRow]);
+        
             BranchStocks::truncate();
             foreach ($data as $value) {
                 set_time_limit(0);
                 $stockData=array_combine($header,$value);
+              
                 BranchStocks::create($stockData);
             }
+            // return redirect()->route('branch-stock');
             return redirect('admin/branch-stock');
         }else{
             return 'No File not there';
