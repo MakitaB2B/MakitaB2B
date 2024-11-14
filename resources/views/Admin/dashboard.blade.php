@@ -214,6 +214,8 @@
                     <!-- right col -->
                 </div>
                 <!-- Main row -->
+                <iframe title="ghfhg" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=97a9b768-8a53-4583-b3fb-927a51dde861&autoAuth=true&ctid=8715ac1b-06d2-4be8-b329-9677c562cce2" frameborder="0" allowFullScreen="true"></iframe>
+                                <!-- /.card-body -->
                 <div class="row">
                     <!-- Left col -->
                     <section class="col-lg-9 connectedSortable">
@@ -277,7 +279,8 @@
                                     </div>
                                     <!-- /.table-responsive -->
                                 </div>
-                                <!-- /.card-body -->
+
+                                
                             </div>
                         @endrole
 

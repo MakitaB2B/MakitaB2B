@@ -100,10 +100,10 @@ class BranchStockController extends Controller
     }
     public function uploadDailyStocks() {
         if(request()->has('mycsv')){
-            ini_set('memory_limit', '1024M'); 
-            ini_set('upload_max_filesize', '20M');
-            ini_set('post_max_size', '25M');
-            // ini_set('memory_limit', '512M');
+            // ini_set('memory_limit', '1024M'); 
+            // ini_set('upload_max_filesize', '20M');
+            // ini_set('post_max_size', '25M');
+        
             $data=array_map('str_getcsv', file(request()->mycsv));
             $count=count($data);
             $lastRow=$count-1;
