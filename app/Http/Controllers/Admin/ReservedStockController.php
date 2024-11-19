@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Admin\ReservedStocks;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Crypt;
-
+use Illuminate\Support\Facades\DB;
 class ReservedStockController extends Controller
 {
     public function index(){
@@ -17,15 +17,42 @@ class ReservedStockController extends Controller
     public function uploadReservedStocks() {
         if(request()->has('rscsv')){
             $data=array_map('str_getcsv', file(request()->rscsv));
+
             $header=$data[0];
+            $header = array_map('strtolower', $header);
+            $header = array_map(function($value) {
+                $value = preg_replace('/^\x{FEFF}/u', '', $value);
+                return str_replace(' ', '', $value);
+            }, $header);
+
+            $databaseName = env('DB_DATABASE');
+            $tableName = "{$databaseName}.reserved_stocks";
+
+            $columns = DB::select("SHOW COLUMNS FROM $tableName");
+
+            $columnNames = array_map(function($column) {
+                if(!in_array($column->Field, ['created_at', 'updated_at'])){
+                return $column->Field;
+            }
+            }, $columns);
+            $columnNames = array_filter($columnNames);
+
+            $headercheck=$header;
+            unset($headercheck[array_search('duedate', $headercheck)]);
+
+            $header_diff = array_diff( $headercheck, $columnNames);
+
+            if(!empty($header_diff)){
+                $header_diff_text=implode(', ', $header_diff);
+                return 'These columns cannont be uploaded - '.$header_diff_text;
+            }
+               
             unset($data[0]);
             ReservedStocks::truncate();
             foreach ($data as $value) {
                 set_time_limit(0);
-                // dd(array_combine($header,$value));
-                $sanitizeDSD= sanitizeInput($value);
-                $addSlash=addslashes($sanitizeDSD);
-                $reservedStockData=array_combine($header,$addSlash);
+                $reservedStockData=array_combine($header,$value);
+                unset($reservedStockData["duedate"]);
                 ReservedStocks::create($reservedStockData);
             }
             return redirect('admin/reserved-stock');

@@ -129,7 +129,7 @@ class BranchStockController extends Controller
             $header_diff = array_diff($header, $columnNames);
             if(!empty($header_diff)){
                 $header_diff_text=implode(', ', $header_diff);
-                return 'These columns cannont be uploaded'.$header_diff_text;
+                return 'These columns cannont be uploaded  - '.$header_diff_text;
             }
 
             unset($data[0],$data[1],$data[2],$data[$lastRow]);

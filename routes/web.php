@@ -227,6 +227,10 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/upload-dealer',[DealerController::class,'uploadDealer'])->name('upload-dealer');
     Route::get('/billed-transactions',[BilledTransactionController::class,'index'])->name('billed-transactions');
     Route::post('/upload-billed-transaction',[BilledTransactionController::class,'uploadBilledTransaction'])->name('upload-billed-transaction');
+
+    Route::get('/pending-po',[PendingPoController::class,'index'])->name('pending-po');
+    Route::post('/upload-pending-po',[PendingPoController::class,'uploadPendingPO'])->name('upload-pending-po');
+    Route::post('/pending-po-search',[PendingPoController::class,'searchPendingPO'])->name('pending-po-search');
     // 
     // Route::get('/send-promo-email', function(){
     //     $details['email'] = 'lobojeanz@gmail.com';
@@ -239,7 +243,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
 
     Route::get('/promotions/promomail/{promocode}', [PromotionController::class, 'promomail'])->name('promomail');
     Route::get('/promotions/transactionmail/{transactioncode}', [PromotionController::class, 'transactionmail'])->name('transactionmail');
- 
+
     Route::get('/roi', function () {  return view('Admin/roi');  });
 
     });
