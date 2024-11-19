@@ -100,21 +100,24 @@ class BranchStockController extends Controller
     }
     public function uploadDailyStocks() {
         if(request()->has('mycsv')){
-            // ini_set('memory_limit', '1024M'); 
+            ini_set('memory_limit', '1024M'); 
             // ini_set('upload_max_filesize', '20M');
             // ini_set('post_max_size', '25M');
         
             $data=array_map('str_getcsv', file(request()->mycsv));
             $count=count($data);
             $lastRow=$count-1;
-            $header=$data[0];
+            $header=$data[2];
             $header = array_map('strtolower', $header);
             $header = array_map(function($value) {
                 $value = preg_replace('/^\x{FEFF}/u', '', $value);
                 return str_replace(' ', '', $value);
             }, $header);
 
-            $columns = DB::select('SHOW COLUMNS FROM dev_makitab2bportal_v1.branch_stocks');
+            $databaseName = env('DB_DATABASE');
+            $tableName = "{$databaseName}.branch_stocks";
+
+            $columns = DB::select("SHOW COLUMNS FROM $tableName");
 
             $columnNames = array_map(function($column) {
                 if(!in_array($column->Field, ['created_at', 'updated_at'])){
@@ -128,8 +131,8 @@ class BranchStockController extends Controller
                 $header_diff_text=implode(', ', $header_diff);
                 return 'These columns cannont be uploaded'.$header_diff_text;
             }
-            unset($data[0],$data[$lastRow]);
-        
+
+            unset($data[0],$data[1],$data[2],$data[$lastRow]);
             BranchStocks::truncate();
             foreach ($data as $value) {
                 set_time_limit(0);
