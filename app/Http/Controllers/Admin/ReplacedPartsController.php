@@ -15,7 +15,12 @@ class ReplacedPartsController extends Controller
     public function uploadReplacedParts() {
         if(request()->has('rpf')){
             $data=array_map('str_getcsv', file(request()->rpf));
-            $header=$data[0];
+            $header=array_map('strtolower', $data[0]);
+            $header = array_map(function($value) {
+                $value = preg_replace('/^\x{FEFF}/u', '', $value);
+                return str_replace(' ', '', $value);
+            }, $header);
+            
             unset($data[0]);
             ReplacedParts::truncate();
             foreach ($data as $value) {
