@@ -1,0 +1,64 @@
+name: Development Build
+on:
+  push:
+    branches: [production]
+
+jobs:
+  deploy:
+    runs-on: [self-hosted]
+    if: github.ref == 'refs/heads/production'
+    steps:
+      - name: Check if /var/www/html/Makita_ERP_PROD is a git repository
+        id: check_repo
+        run: |
+          if [ -d "/var/www/html/Makita_ERP_PROD/.git" ]; then
+            echo "::set-output name=is_git_repo::true"
+          else
+            echo "::set-output name=is_git_repo::false"
+          fi
+
+      - name: Add /var/www/html/Makita_ERP_PROD as a safe Git directory
+        run: |
+          sudo git config --global --add safe.directory *
+        continue-on-error: true  # Continue even if this fails to debug
+
+      - name: Debug ownership of /var/www/html/Makita_ERP_PROD
+        run: |
+          ls -ld /var/www/html/Makita_ERP_PROD
+          ls -la /var/www/html/Makita_ERP_PROD/.git
+        continue-on-error: true  # Continue and log the output to help with debugging ..
+
+      - name: Clone repository if not a git repository
+        if: steps.check_repo.outputs.is_git_repo == 'false'
+        run: |
+          sudo rm -rf /var/www/html/Makita_ERP_PROD
+          sudo mkdir -p /var/www/html/Makita_ERP_PROD
+          sudo git clone https://github.com/MakitaB2B/MakitaB2B.git /var/www/html/Makita_ERP_PROD
+
+      - name: Pull latest changes and install dependencies
+        run: |
+          #sudo chown www-data:ubuntu -R .git
+          cd /var/www/html/Makita_ERP_PROD
+          sudo git clean -f -d
+          sudo git stash || true  # Don't fail if there's nothing to stash
+          sudo git pull origin production
+          sudo composer install
+
+      - name: Ensure storage and cache directories exist
+        run: |
+          sudo mkdir -p /var/www/html/Makita_ERP_PROD/storage
+          sudo mkdir -p /var/www/html/Makita_ERP_PROD/bootstrap/cache
+
+      - name: Set correct permissions for storage and cache
+        run: |
+          sudo chown -R www-data:www-data /var/www/html/Makita_ERP_PROD/storage /var/www/html/Makita_ERP_PROD/bootstrap/cache
+          sudo chmod -R 775 /var/www/html/Makita_ERP_PROD/storage /var/www/html/Makita_ERP_PROD/bootstrap/cache
+        
+          sudo chown -R www-data:www-data /var/www/html/Makita_ERP_PROD/storage/*
+          sudo chown -R www-data:www-data /var/www/html/Makita_ERP_PROD/bootstrap/cache/*
+
+          sudo chmod 777 -R /var/www/html
+          sudo chmod -R 777 /var/www/html/Makita_ERP_PROD/storage
+          sudo chmod -R 777 /var/www/html/Makita_ERP_PROD/storage/framework
+          sudo chmod -R 777 /var/www/html/Makita_ERP_PROD/storage/framework/sessions
+          sudo chmod -R 777 /var/www/html/Makita_ERP_PROD/storage/logs
