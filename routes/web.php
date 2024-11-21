@@ -22,11 +22,15 @@ use App\Http\Controllers\Admin\ReplacedPartsController;
 use App\Http\Controllers\Admin\RolesPermissionController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\FactoryServiceStationController;
-use App\Http\Controllers\Admin\DailySalesController;
 use App\Http\Controllers\Admin\ToolsService;
 use App\Http\Controllers\Admin\PendingPoController;
 use App\Http\Controllers\Admin\AssetMasterController;
-use App\Http\Controllers\Admin\EmployeeLeaveApplicationController;
+use App\Http\Controllers\Admin\ItemInfoController;
+use App\Http\Controllers\Admin\DealerController;
+use App\Http\Controllers\Admin\RoiController;
+use App\Http\Controllers\Admin\PromotionController;
+use App\Http\Controllers\Admin\BilledTransactionController;
+
 
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
@@ -41,6 +45,24 @@ use App\Http\Controllers\Front\CustomerLoginRegistrationController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/clear',function(){
+Artisan::call('cache:clear');
+Artisan::call('config:clear');
+// Artisan::call('route:clear');
+Artisan::call('route:cache');
+Artisan::call('config:cache');
+Artisan::call('view:cache');
+Artisan::call('key:generate');
+Artisan::call('optimize:clear');
+Artisan::call('view:clear');
+});
+Route::get('/artcmd',function(){
+    Artisan::call('storage:link');
+});
+Route::get('/optimize',function(){
+Artisan::call('optimize');
+});
 
 Route::get('/', function () {
     return view('welcome');
@@ -88,8 +110,7 @@ Route::post('admin/empfpotpv',[AdminLoginController::class,'verifyEmpPwrdOtpCont
 Route::get('admin/checkotp/{empSlug}',[AdminLoginController::class,'otpView'])->name('checkotp');
 Route::get('admin/empresetpassword/{empSlug}',[AdminLoginController::class,'resetPasswordView'])->name('empresetpassword');
 Route::post('admin/empresetpass',[AdminLoginController::class,'empResetCreatePassword'])->name('admin.empresetpass');
-Route::get('admin/direct-logout',[AdminLoginController::class,'logout'])->name('admin.logout');
-
+Route::get('admin/direct-logout',[AdminLoginController::class,'logout']);
 Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/dashboard',[AdminLoginController::class,'dashboard'])->name('admin.dashboard');
     Route::get('/admins',[AdminLoginController::class,'adminList'])->name('admin.admins');
@@ -137,10 +158,10 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/branch-stock-details/{mvid}',[BranchStockController::class,'getBranchStockDetails'])->name('branch-stock-details');
     Route::post('/stock-search',[BranchStockController::class,'searchStock'])->name('stock-search');
     Route::post('/update-stock',[BranchStockController::class,'updateBranchStock'])->name('update-stock');
-    Route::post('/upload-daily-stock',[BranchStockController::class,'uploadDailyStocks'])->name('upload-daily-stock');
     Route::get('/holidays',[HolidayController::class,'index']);
     Route::get('/holidays/manage-holiday/{id?}',[HolidayController::class,'manageHoliday'])->name('holidays.manage-holiday');
     Route::post('/holidays/manage-holiday-process',[HolidayController::class,'createOrUpdateHolidayController'])->name('holidays.manage-holiday-process');
+    Route::post('/upload-daily-stock',[BranchStockController::class,'uploadDailyStocks'])->name('upload-daily-stock');
     Route::get('/reserved-stock',[ReservedStockController::class,'index'])->name('reserved-stock');
     Route::post('/upload-reserved-stock',[ReservedStockController::class,'uploadReservedStocks'])->name('upload-reserved-stock');
     Route::post('/reserve-stock-search',[ReservedStockController::class,'searchReservedStock'])->name('reserve-stock-search');
@@ -155,7 +176,6 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/pending-po',[PendingPoController::class,'index'])->name('pending-po');
     Route::post('/upload-pending-po',[PendingPoController::class,'uploadPendingPO'])->name('upload-pending-po');
     Route::post('/pending-po-search',[PendingPoController::class,'searchPendingPO'])->name('pending-po-search');
-
     Route::get('/roles',[RolesPermissionController::class,'roleIndex'])->name('roles');
     Route::get('/roles/manage-role/{roleslug?}',[RolesPermissionController::class,'manageRole'])->name('roles.manage-role');
     Route::post('/roles/manage-role-process',[RolesPermissionController::class,'manageRoleProcess'])->name('roles.manage-role-process');
@@ -169,6 +189,13 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/teams/manage-team-process',[TeamController::class,'createOrUpdateTeams'])->name('teams.manage-team-process');
     Route::get('/teams/manage-team-members/{teamslug}',[TeamController::class,'manageTeamMember'])->name('teams.manage-team-members');
     Route::post('/teams/manage-team-member-process',[TeamController::class,'manageTeamMemberProcess'])->name('teams.manage-team-member-process');
+    
+    Route::get('/factory-service-center',[FactoryServiceStationController::class,'index']);
+    Route::get('/fsc/manage-fsc/{fscslug?}',[FactoryServiceStationController::class,'manageFSC'])->name('fsc.manage-manage-fsc');
+    Route::post('/fsc/manage-fsc-process',[FactoryServiceStationController::class,'manageFSCProcess'])->name('fsc.manage-fsc-process');
+    Route::get('/fsc/assignee-fsc-executive/{fscSlug}',[FactoryServiceStationController::class,'manageFSCServiceExecutive']);
+    Route::post('/fsc/manage-fsc-executive-process',[FactoryServiceStationController::class,'manageFSCServiceExecutiveProcess'])->name('fsc.manage-fsc-executive-process');
+    
     Route::get('/service-management',[ToolsService::class,'index'])->name('service-management');
     Route::get('/service-management/manage-service-requiest/{srSlug?}',[ToolsService::class,'manageServiceRequest'])->name('service-management.manage-service-requiest');
     Route::post('/service-management/manage-service-requiest-process',[ToolsService::class,'createOrUpdateToolsService'])->name('service-management.manage-service-requiest-process');
@@ -177,22 +204,56 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/service-management/submit-tools-handover-data',[ToolsService::class,'insertToolstHandOverData'])->name('service-management.submit-tools-handover-data');
     Route::post('/service-management/close-sr',[ToolsService::class,'closeSR'])->name('service-management.close-sr');
     Route::post('/service-management/reason-over-48-hours',[ToolsService::class,'reasonOver48Hours'])->name('service-management.reason-over-48-hours');
-    Route::get('/factory-service-center',[FactoryServiceStationController::class,'index']);
-    Route::get('/fsc/manage-fsc/{fscslug?}',[FactoryServiceStationController::class,'manageFSC'])->name('fsc.manage-manage-fsc');
-    Route::post('/fsc/manage-fsc-process',[FactoryServiceStationController::class,'manageFSCProcess'])->name('fsc.manage-fsc-process');
-    Route::get('/fsc/assignee-fsc-executive/{fscSlug}',[FactoryServiceStationController::class,'manageFSCServiceExecutive']);
-    Route::post('/fsc/manage-fsc-executive-process',[FactoryServiceStationController::class,'manageFSCServiceExecutiveProcess'])->name('fsc.manage-fsc-executive-process');
-    Route::get('/daily-sales',[DailySalesController::class,'index'])->name('daily-sales');
-    Route::post('/upload-daily-sales-report',[DailySalesController::class,'uploadDailySalesReport'])->name('upload-daily-sales-report');
+    Route::post('/service-management/export-asm-report-exel',[ToolsService::class,'aSMReportExportExcel'])->name('service-management.export-asm-report-exel');
+    Route::get('/service-management/generate-asm-report-graph',[ToolsService::class,'genarateASMReportGraph'])->name('service-management.generate-asm-report-graph');
+    Route::post('/service-management/generate-asm-report',[ToolsService::class,'genarateASMReport'])->name('service-management.generate-asm-report');
+    Route::get('/service-management/filter/{filterType}/{month}',[ToolsService::class,'filterResultByParam'])->name('service-management-filter');
+    
     Route::get('/asset-master',[AssetMasterController::class,'index'])->name('asset-master');
     Route::get('/asset-master/manage-asset-master/{assetMasterSlug?}',[AssetMasterController::class,'manageAssetMaster'])->name('admin.asset-master.manage-asset-master');
     Route::post('/asset-master/manage-asset-master-process',[AssetMasterController::class,'createOrUpdateAssetMaster'])->name('asset-master.manage-asset-master-process');
     Route::post('/asset-master/check-assettag-existence',[AssetMasterController::class,'checkAssetTagExistance']);
     Route::post('/asset-master/msofficelicence-existence',[AssetMasterController::class,'checkMSOfficeLicenceExistance']);
     Route::post('/asset-master/operatingsystemserialnumber-existence',[AssetMasterController::class,'operatingSystemSerialNumberExistance']);
+    
+    Route::get('/item/item-master-hsn',[ItemInfoController::class,'indexItemMasterWithIGST'])->name('item.item-master-hsn');
+    Route::post('/item/upload-item-master-hsn',[ItemInfoController::class,'uploadItemMasterWithIGST'])->name('upload-item-master-hsn');
+    Route::post('/item/item-master-hsn-search',[ItemInfoController::class,'searchItemMasterIGST'])->name('item-master-hsn-search');
+    
+    Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
+    Route::post('/dealer-search',[DealerController::class,'dealerSearch'])->name('item-search');
+    Route::post('/upload-dealer',[DealerController::class,'uploadDealer'])->name('upload-dealer');
+    
+    Route::get('/roi', function () {  return view('Admin/roi-elevation-board');  });
+    Route::get('/roi/roi-billboard', [RoiController::class, 'prepRoiBillBoard'])
+    ->name('roi.roi-billboard');
+    
+    
+    Route::get('/promotions',[PromotionController::class,'index'])->name('promo');
+    Route::get('/promotions/promotion-creation',[PromotionController::class,'promotionCreation'])->name('admin.promotions.promotion-creation');
+    Route::post('/promotions/promotion-create',[PromotionController::class,'promotionCreate'])->name('admin.promotions.promotion-create');
+    Route::get('/promotions/promotion-preview/{promocode}',[PromotionController::class,'promotionPreview'])->name('admin.promotions.promotion-preview');
+    Route::get('/promotions/promotion-transaction',[PromotionController::class,'promotionTransaction'])->name('admin.promotions.transaction');
+    Route::get('/promotions/transaction-creation',[PromotionController::class,'transactionCreation'])->name('admin.promotions.promotion-transaction');
+    Route::post('/promotions/transaction-create',[PromotionController::class,'transactionCreate'])->name('admin.promotions.transaction-create');
+    Route::get('/promotions/transaction-preview/{orderid}',[PromotionController::class,'transactionPreview'])->name('promotions.transaction-preview');
+    Route::get('/promotions/promotion-fetch',[PromotionController::class,'getPromo'])->name('admin.promotions.promotion-fetch');
+    Route::get('/promotions/search-data', [PromotionController::class, 'searchData'])->name('search.data');
+    Route::get('/promotions/model-details-search', [PromotionController::class, 'modeldetailSearch'])->name('model.detail.Search');
+    Route::get('/promotions/single-model-details-search', [PromotionController::class, 'modeldetailSingleSearch'])->name('model.single.detail.Search');
+    Route::get('/promotions/transaction-verify',[PromotionController::class,'transactionVerify'])->name('admin.promotions.transaction-verify');
+    Route::post('/promotions/promotion-changestatus', [PromotionController::class, 'changeStatus'])->name('promotions.change-status');
+    Route::post('/promotions/transaction-changestatus', [PromotionController::class, 'changeTransationStatus'])->name('transaction.change-status');
+    Route::get('/items', [ItemInfoController::class, 'index'])->name('items');
+    Route::post('/items-search',[ItemInfoController::class,'itemSearch'])->name('item-search');
+    Route::post('/upload-daily-item',[ItemInfoController::class,'uploadDailyItem'])->name('upload-daily-item');
+    
+    Route::get('/billed-transactions',[BilledTransactionController::class,'index'])->name('billed-transactions');
+    Route::post('/upload-billed-transaction',[BilledTransactionController::class,'uploadBilledTransaction'])->name('upload-billed-transaction');
 
-    Route::get('/employee/leave-application',[EmployeeLeaveApplicationController::class,'index'])->name('employee.leave-application');
-    Route::get('/employee/manage-leave-application/{empLvApSlug?}',[EmployeeLeaveApplicationController::class,'manageLeaveApllication'])->name('employee.manage-leave-appllication');
+    Route::get('/promotions/promomail/{promocode}', [PromotionController::class, 'promomail'])->name('promomail');
+    Route::get('/promotions/transactionmail/{transactioncode}', [PromotionController::class, 'transactionmail'])->name('transactionmail');
+    
 
 });
 

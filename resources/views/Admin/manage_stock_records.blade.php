@@ -211,13 +211,18 @@
                                             <tr>
                                                 @php
                                                     if ($stockDetails[0]['gh01'] == '') {
-                                                        $dlMainStock = 0;
+                                                        $ghMainStock = 0;
                                                     } elseif ($stockDetails[0]['gh01'] != '') {
-                                                        $dlMainStock = $stockDetails[0]['gh01'];
+                                                        $ghMainStock = $stockDetails[0]['gh01'];
+                                                    }
+                                                    if ($stockDetails[0]['gh02'] == '') {
+                                                        $ghDemoInStock = 0;
+                                                    } elseif ($stockDetails[0]['gh02'] != '') {
+                                                        $ghDemoInStock = $stockDetails[0]['gh02'];
                                                     }
                                                 @endphp
-                                                <td>Guwahati: {{ $dlMainStock }}</td>
-                                                <td>NA</td>
+                                                <td>Guwahati: {{ $ghMainStock }}</td>
+                                                <td>Guwahati: {{ $ghDemoInStock }}</td>
                                                 <td>NA</td>
                                                 <td>NA</td>
                                                 <td>NA</td>

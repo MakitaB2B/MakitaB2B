@@ -130,18 +130,18 @@
                                         @endphp
                                         @if ($aadharCard != 'pdf')
                                             <div id="img-preview" style="height: 100px">
-                                                <img src="{{ asset($aadhar_card) }}"
+                                                <img src="{{ asset('storage/app/'.$aadhar_card) }}"
                                                     height="80px">
-                                                <p><a href="{{ asset($aadhar_card) }}"
+                                                <p><a href="{{ asset('storage/app/'.$aadhar_card) }}"
                                                         target="iframe_a" style="color: black"><i
                                                             class="fa fa-eye"
                                                             aria-hidden="true"></i>Explore?</a>
                                             </div>
                                         @else
-                                            <iframe src="{{ asset($aadhar_card) }}"
+                                            <iframe src="{{ asset('storage/app/'.$aadhar_card) }}"
                                                 frameBorder="0" scrolling="auto" height="150px"
                                                 width="150px"></iframe>
-                                            <p><a href="{{ asset($aadhar_card) }}"
+                                            <p><a href="{{ asset('storage/app/'.$aadhar_card) }}"
                                                     target="iframe_a" style="color: black"><i
                                                         class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                             </p>
@@ -153,18 +153,18 @@
                                         @endphp
                                         @if ($panCard != 'pdf')
                                             <div id="img-preview" style="height: 100px">
-                                                <img src="{{ asset($pan_card) }}"
+                                                <img src="{{ asset('storage/app/'.$pan_card) }}"
                                                     height="80px">
-                                                <p><a href="{{ asset($pan_card) }}"
+                                                <p><a href="{{ asset('storage/app/'.$pan_card) }}"
                                                         target="iframe_a" style="color: black"><i
                                                             class="fa fa-eye"
                                                             aria-hidden="true"></i>Explore?</a>
                                             </div>
                                         @else
-                                            <iframe src="{{ asset($pan_card) }}"
+                                            <iframe src="{{ asset('storage/app/'.$pan_card) }}"
                                                 frameBorder="0" scrolling="auto" height="150px"
                                                 width="150px"></iframe>
-                                            <p><a href="{{ asset($pan_card) }}"
+                                            <p><a href="{{ asset('storage/app/'.$pan_card) }}"
                                                     target="iframe_a" style="color: black"><i
                                                         class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                             </p>
@@ -176,18 +176,18 @@
                                         @endphp
                                         @if ($drivingLicence != 'pdf')
                                             <div id="img-preview" style="height: 100px">
-                                                <img src="{{ asset($driving_licence) }}"
+                                                <img src="{{ asset('storage/app/'.$driving_licence) }}"
                                                     height="80px">
-                                                <p><a href="{{ asset($driving_licence) }}"
+                                                <p><a href="{{ asset('storage/app/'.$driving_licence) }}"
                                                         target="iframe_a" style="color: black"><i
                                                             class="fa fa-eye"
                                                             aria-hidden="true"></i>Explore?</a>
                                             </div>
                                         @else
-                                            <iframe src="{{ asset($driving_licence) }}"
+                                            <iframe src="{{ asset('storage/app/'.$driving_licence) }}"
                                                 frameBorder="0" scrolling="auto" height="150px"
                                                 width="150px"></iframe>
-                                            <p><a href="{{ asset($driving_licence) }}"
+                                            <p><a href="{{ asset('storage/app/'.$driving_licence) }}"
                                                     target="iframe_a" style="color: black"><i
                                                         class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                             </p>
@@ -290,18 +290,18 @@
                                         @endphp
                                         @if ($passportExt != 'pdf')
                                             <div id="img-preview" style="height: 100px">
-                                                <img src="{{ asset($passport) }}"
+                                                <img src="{{ asset('storage/app/'.$passport) }}"
                                                     height="80px">
-                                                <p><a href="{{ asset($passport) }}"
+                                                <p><a href="{{ asset('storage/app/'.$passport) }}"
                                                         target="iframe_a" style="color: black"><i
                                                             class="fa fa-eye"
                                                             aria-hidden="true"></i>Explore?</a>
                                             </div>
                                         @else
-                                            <iframe src="{{ asset($passport) }}"
+                                            <iframe src="{{ asset('storage/app/'.$passport) }}"
                                                 frameBorder="0" scrolling="auto" height="150px"
                                                 width="150px"></iframe>
-                                            <p><a href="{{ asset($passport) }}"
+                                            <p><a href="{{ asset('storage/app/'.$passport) }}"
                                                     target="iframe_a" style="color: black"><i
                                                         class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                             </p>
@@ -313,18 +313,18 @@
                                         @endphp
                                         @if ($sslcMarksCardExt != 'pdf')
                                             <div id="img-preview" style="height: 100px">
-                                                <img src="{{ asset($sslc_marks_card) }}"
+                                                <img src="{{ asset('storage/app/'.$sslc_marks_card) }}"
                                                     height="80px">
-                                                <p><a href="{{ asset($sslc_marks_card) }}"
+                                                <p><a href="{{ asset('storage/app/'.$sslc_marks_card) }}"
                                                         target="iframe_a" style="color: black"><i
                                                             class="fa fa-eye"
                                                             aria-hidden="true"></i>Explore?</a>
                                             </div>
                                         @else
-                                            <iframe src="{{ asset($sslc_marks_card) }}"
+                                            <iframe src="{{ asset('storage/app/'.$sslc_marks_card) }}"
                                                 frameBorder="0" scrolling="auto" height="150px"
                                                 width="150px"></iframe>
-                                            <p><a href="{{ asset($sslc_marks_card) }}"
+                                            <p><a href="{{ asset('storage/app/'.$sslc_marks_card) }}"
                                                     target="iframe_a" style="color: black"><i
                                                         class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                             </p>
@@ -336,18 +336,18 @@
                                         @endphp
                                         @if ($pucMarksCardExt != 'pdf')
                                             <div id="img-preview" style="height: 100px">
-                                                <img src="{{ asset($puc_marks_card) }}"
+                                                <img src="{{ asset('storage/app/'.$puc_marks_card) }}"
                                                     height="80px">
-                                                <p><a href="{{ asset($puc_marks_card) }}"
+                                                <p><a href="{{ asset('storage/app/'.$puc_marks_card) }}"
                                                         target="iframe_a" style="color: black"><i
                                                             class="fa fa-eye"
                                                             aria-hidden="true"></i>Explore?</a>
                                             </div>
                                         @else
-                                            <iframe src="{{ asset($puc_marks_card) }}"
+                                            <iframe src="{{ asset('storage/app/'.$puc_marks_card) }}"
                                                 frameBorder="0" scrolling="auto" height="150px"
                                                 width="150px"></iframe>
-                                            <p><a href="{{ asset($puc_marks_card) }}"
+                                            <p><a href="{{ asset('storage/app/'.$puc_marks_card) }}"
                                                     target="iframe_a" style="color: black"><i
                                                         class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                             </p>
@@ -359,18 +359,18 @@
                                         @endphp
                                         @if ($degreeMarksCardExt != 'pdf')
                                             <div id="img-preview" style="height: 100px">
-                                                <img src="{{ asset($degree_marks_card) }}"
+                                                <img src="{{ asset('storage/app/'.$degree_marks_card) }}"
                                                     height="80px">
-                                                <p><a href="{{ asset($degree_marks_card) }}"
+                                                <p><a href="{{ asset('storage/app/'.$degree_marks_card) }}"
                                                         target="iframe_a" style="color: black"><i
                                                             class="fa fa-eye"
                                                             aria-hidden="true"></i>Explore?</a>
                                             </div>
                                         @else
-                                            <iframe src="{{ asset($degree_marks_card) }}"
+                                            <iframe src="{{ asset('storage/app/'.$degree_marks_card) }}"
                                                 frameBorder="0" scrolling="auto" height="150px"
                                                 width="150px"></iframe>
-                                            <p><a href="{{ asset($degree_marks_card) }}"
+                                            <p><a href="{{ asset('storage/app/'.$degree_marks_card) }}"
                                                     target="iframe_a" style="color: black"><i
                                                         class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                             </p>
@@ -408,18 +408,18 @@
                                         @endphp
                                         @if ($higherDegreeMarksCardExt != 'pdf')
                                             <div id="img-preview" style="height: 100px">
-                                                <img src="{{ asset($higher_degree_marks_card) }}"
+                                                <img src="{{ asset('storage/app/'.$higher_degree_marks_card) }}"
                                                     height="80px">
-                                                <p><a href="{{ asset($higher_degree_marks_card) }}"
+                                                <p><a href="{{ asset('storage/app/'.$higher_degree_marks_card) }}"
                                                         target="iframe_a" style="color: black"><i
                                                             class="fa fa-eye"
                                                             aria-hidden="true"></i>Explore?</a>
                                             </div>
                                         @else
-                                            <iframe src="{{ asset($higher_degree_marks_card) }}"
+                                            <iframe src="{{ asset('storage/app/'.$higher_degree_marks_card) }}"
                                                 frameBorder="0" scrolling="auto" height="150px"
                                                 width="150px"></iframe>
-                                            <p><a href="{{ asset($higher_degree_marks_card) }}"
+                                            <p><a href="{{ asset('storage/app/'.$higher_degree_marks_card) }}"
                                                     target="iframe_a" style="color: black"><i
                                                         class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                             </p>

@@ -2,6 +2,10 @@
 @section('page_title', 'Makita Tools Repair | Tools Repair List')
 @section('cx_tools_repair_list', 'active')
 @section('container')
+@push('styles')
+<!-- Select2 -->
+<link rel="stylesheet" href="{{ asset('admin_assets/plugins/select2/css/select2.min.css') }}">
+@endpush
 <style>
 .ceb{
     color: white;
@@ -61,6 +65,66 @@
 .radio-inline input:focus + .indicator {
   outline: 0px solid #ddd;
 }
+
+.glow-on-hover {
+    width: 220px;
+    height: 50px;
+    border: none;
+    outline: none;
+    color: #fff;
+    background: #008290;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: 10px;
+}
+
+.glow-on-hover:before {
+    content: '';
+    background: linear-gradient(45deg, #b30000, #D2042D, #880808, #8B0000, #800020, #008290, #00565f, #00adc0, #00e5ff);
+    position: absolute;
+    top: -2px;
+    left:-2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing 20s linear infinite;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+    border-radius: 10px;
+}
+
+.glow-on-hover:active {
+    color: #fff5f5;
+}
+
+.glow-on-hover:active:after {
+    background: transparent;
+}
+
+.glow-on-hover:hover:before {
+    opacity: 1;
+}
+
+.glow-on-hover:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #ff0019;
+    left: 0;
+    top: 0;
+    border-radius: 3px;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+}
 </style>
  <!-- The Repair Estimation Modal -->
  <div class="modal" id="gECFCModal">
@@ -115,6 +179,130 @@
     </div>
 </div>
 
+ <!-- The Team Modal -->
+ <div class="modal" id="raiseNewServiceRequestModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Create New Service Request</h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form method="POST" action="{{ route('cx-tsr-registration') }}">
+                    @csrf
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="exampleServiceRequest">Service Center*</label>
+                            <select class="form-control" name="service_center"
+                                style="width: 100%;font-size: medium !important;" required>
+                                <option value="">Select FSC</option>
+                                @foreach ($fscList as $fsc)
+                                    <option value="{{ $fsc->fsc_slug }}">{{ $fsc->center_name }}</option>
+                                @endforeach
+                            </select>
+                            @error('service_center')
+                                <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                    {{ $message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="exampleServiceRequest">Dealer/Customer Name*</label>
+                            <input class="form-control" type="text" name="cx_name"
+                                required placeholder="Enter Name">
+                            @error('name')
+                                <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                    {{ $message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="exampleServiceRequest">Contact Number*</label>
+                            <input class="form-control" type="text" name="cx_number"
+                                required placeholder="Enter Contact Number">
+                            @error('name')
+                                <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                    {{ $message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="exampleServiceRequest">Model*</label>
+                            <select class="form-control select2" name="model_number"
+                                style="width: 100%;font-size: medium !important;" required>
+                                <option value="">Select Model</option>
+                                @foreach ($models as $modelList)
+                                    <option value="{{ $modelList->model_number }}">{{ $modelList->model_number }}</option>
+                                @endforeach
+                            </select>
+                            @error('model_number')
+                                <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                    {{ $message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="exampleServiceRequest">Tools Serial Number*</label>
+                            <input class="form-control" type="text" name="machine_sl_no"
+                                required placeholder="Enter Tools SL. No.">
+                            @error('machine_sl_no')
+                                <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                    {{ $message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="exampleIssue">Issue*</label>
+                            <textarea class="form-control" name="tools_issue" rows="5" placeholder="Enter tool issues that you are facing"
+                                required></textarea>
+                            @error('tools_issue')
+                                <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                    {{ $message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <!-- /.card-body -->
+                    <input type="hidden" name="incoming_source"  value="{{ Crypt::encrypt('cx') }}" required>
+                    <input type="hidden" name="srSlug" value={{ Crypt::encrypt(0) }} required>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
     <!-- Container (Contact Section) -->
     <div id="contact" class="container">
 
@@ -130,8 +318,10 @@
                 @php
                     $arrayCount = $toolsService->count();
                 @endphp
+                 <p style="color:black;font-size:15px">Raise A Tool Service Request?</p>
+                 <button type="button" class="glow-on-hover" data-toggle="modal" data-target="#raiseNewServiceRequestModal">Raise New Service Request</button>
                 @if ($arrayCount > 0)
-                    <p style="color:black;font-size:15px">Tools Repair List</p>
+                    <p style="color:#fff;font-size:15px;margin-top: 20px;font-size: x-large;background: #008290;padding: 3px;">Tools Repair List</p>
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -186,10 +376,7 @@
                         </tbody>
                     </table>
                 @elseif ($arrayCount == 0)
-                    <p style="color:black;font-size:15px">No record found, Raise A Tool Service Request?</p>
-                    <a href="{{ url('warranty-registration-list-spec-cx') }}">
-                        <button type="button" class="btn btn-success">Raise Request</button>
-                    </a>
+                    <p style="color:black;font-size:15px">No record found</p>
                 @endif
             </div>
         </div>
@@ -197,8 +384,12 @@
         <x-warrantypolicy />
     </div>
      @push('scripts')
+     <script src="{{ asset('admin_assets/plugins/select2/js/select2.full.min.js') }}"></script>
      <!-- Page specific script -->
      <script>
+        $(function() {
+            $('.select2').select2()
+        });
          $(function() {
             $("#optionsRadiosRejectCE").click(function() {
                 $("#arceb").show();

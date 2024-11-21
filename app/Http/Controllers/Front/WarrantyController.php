@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Crypt;
 use App\Models\Admin\ProductModel;
 use App\Models\Admin\FactoryServiceCenters;
 use App\Models\Admin\ToolsService;
-use App\Models\Admin\Employee;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use App\Models\Admin\Sms;
@@ -147,6 +146,8 @@ class WarrantyController extends Controller
     }
     public function listofToolsRepair(){
         $cxSlug=Auth::guard('customer')->user()->customer_slug;
+        $result['models']=ProductModel::get(['id','model_number','warranty_period']);
+        $result['fscList']=FactoryServiceCenters::get(['center_name','fsc_slug']);
         $result['toolsService']=ToolsService::with(['fscBranch:center_name,fsc_slug'])->orderBy('status','asc')->where('cx_slug','=',$cxSlug)->get(['id','trn','model','tools_sl_no','receive_date_time','tools_issue','status','cost_estimation','sr_slug','costestimation_file','service_center','repairer']);
         return view('Front.customer_tools_repair_list',$result);
     }
@@ -192,6 +193,9 @@ class WarrantyController extends Controller
         }
         return redirect('cx-tools-repair-list');
     }
+    public function findToolsServiceBySlug($slug){
+        return ToolsService::where(['sr_slug'=>$slug])->get();
+    }
     public function acceptRejectTRCostEstimationWithoutLogin(Request $request){
         $srSlug= Crypt::decrypt($request->srslug_cear);
         $estDTConfirmByCX=Carbon::now()->toDateTimeString();
@@ -233,9 +237,6 @@ class WarrantyController extends Controller
         }
         $tsSlug=base64_encode($srSlug);
         return redirect()->route('cxtoolsrepaircostestimation', [$tsSlug]);
-    }
-    public function findToolsServiceBySlug($slug){
-        return ToolsService::where(['sr_slug'=>$slug])->get();
     }
     public function findEmployeeByEmpSlug($empSlug){
         return Employee::where(['employee_slug'=>$empSlug])->get(['full_name','employee_slug','phone_number']);

@@ -17,7 +17,7 @@
                                 @csrf
                                 <div>
                                     <input type="text" name="mobile_number" value="{{ $mobile_number }}"
-                                        title="Enter Valid Mobile Number" maxlength="10" pattern="[1-9]{1}[0-9]{9}"
+                                        title="Enter Valid Mobile Number" maxlength="10" 
                                         autocomplete="off" required placeholder="">
                                     <label>Enter Mobile Number</label>
                                 </div>

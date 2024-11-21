@@ -180,11 +180,19 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="{{ asset('admin_assets/img/user2-160x160.jpg') }}" class="img-circle elevation-2"
+                        @php
+                            $employees=Auth::guard('admin')->user()->employee;
+                        @endphp
+                        @if($employees->photo !=NULL)
+                        <img src="{{asset('storage/app/'.$employees->photo)}}" class="img-circle elevation-2"
                             alt="User Image">
+                        @else
+                        <img src="{{ asset('admin_assets/img/avator-placeholder-3.png') }}" class="img-circle elevation-2"
+                            alt="User Image">
+                        @endif
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">{{ Auth::guard('admin')->user()->access_id }}</a>
+                        <a href="#" class="d-block">{{ $employees->full_name }}</a>
                     </div>
                 </div>
 
@@ -215,6 +223,7 @@
                                 </p>
                             </a>
                         </li>
+                         @module('stocks685643980')
                         <li class="nav-item @yield('stock-expandable')">
                             <a href="#" class="nav-link @yield('stock_select')">
                                 <i class="nav-icon fa fa-microchip"></i>
@@ -242,33 +251,16 @@
                                         <p>Replaced  Parts</p>
                                     </a>
                                 </li>
-                                @module('147092804369935471')
-                                <li class="nav-item">
+                                 <li class="nav-item">
                                     <a href="{{ url('admin/pending-po') }}" class="nav-link @yield('pending_po')">
                                         <i class="nav-icon fa fa-spinner"></i>
                                         <p>ETA Enquiry</p>
                                     </a>
                                 </li>
-                                @endmodule
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ url('admin/service-management') }}" class="nav-link @yield('service_management_select')">
-                                <i class="nav-icon fa fa-wrench"></i>
-                                <p>
-                                    Service Management
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url('admin/factory-service-center') }}" class="nav-link @yield('factory_service_center_select')">
-                                <i class="nav-icon fa fa-cogs"></i>
-                                <p>
-                                    Service Center
-                                </p>
-                            </a>
-                        </li>
-                        @module('product-category1569185750')
+                        @endmodule
+                        @module('product-category1643218470')
                         <li class="nav-item">
                             <a href="{{ url('admin/productcategory') }}" class="nav-link @yield('productcategory_select')">
                                 <i class="nav-icon fas fa-list"></i>
@@ -278,9 +270,9 @@
                             </a>
                         </li>
                         @endmodule
-                        @module('product-model683637913')
+                        @module('product-model571983230')
                         <li class="nav-item">
-                            <a href="{{ url('admin/productmodel') }}" class="nav-link @yield('product_models_select')">
+                            <a href="{{ url('admin/productmodel') }}" class="nav-link @yield('product_select')">
                                 <i class="nav-icon fa fa-snowflake"></i>
                                 <p>
                                     Product Model
@@ -288,7 +280,7 @@
                             </a>
                         </li>
                         @endmodule
-                        @module('products245036701')
+                        @module('products391636110')
                         <li class="nav-item">
                             <a href="{{ url('admin/product') }}" class="nav-link @yield('product_select')">
                                 <i class="nav-icon fas fa-briefcase"></i>
@@ -298,7 +290,7 @@
                             </a>
                         </li>
                         @endmodule
-                        @module('department600397507')
+                        @module('department1141411814')
                         <li class="nav-item">
                             <a href="{{ url('admin/department') }}" class="nav-link @yield('department_select')">
                                 <i class="nav-icon fas fa-building"></i>
@@ -308,7 +300,7 @@
                             </a>
                         </li>
                         @endmodule
-                        @module('designation1509507120')
+                        @module('designation2139792740')
                         <li class="nav-item">
                             <a href="{{ url('admin/designation') }}" class="nav-link @yield('designation_select')">
                                 <i class="nav-icon fas fa-arrows-alt"></i>
@@ -318,6 +310,7 @@
                             </a>
                         </li>
                         @endmodule
+                        @module('employees902844744')
                         <li class="nav-item">
                             <a href="{{ url('admin/employee') }}" class="nav-link @yield('employees_select')">
                                 <i class="nav-icon fas fa-users"></i>
@@ -326,6 +319,8 @@
                                 </p>
                             </a>
                         </li>
+                        @endmodule
+                        @module('states-locations1968018428')
                         <li class="nav-item @yield('expandable')">
                             <a href="#" class="nav-link @yield('state_location_select')">
                                 <i class="nav-icon fas fa-globe"></i>
@@ -355,6 +350,8 @@
                                 </li>
                             </ul>
                         </li>
+                        @endmodule
+                        @module('warranty-applications1052462358')
                         <li class="nav-item">
                             <a href="{{ url('admin/warranty-applications') }}" class="nav-link @yield('warrantyapp_select')">
                                 <i class="nav-icon fas fa-sticky-note"></i>
@@ -363,6 +360,8 @@
                                 </p>
                             </a>
                         </li>
+                        @endmodule
+                        @module('holidays267205558')
                         <li class="nav-item">
                             <a href="{{ url('admin/holidays') }}" class="nav-link @yield('holiday_select')">
                                 <i class="nav-icon fas fa-calendar"></i>
@@ -371,6 +370,8 @@
                                 </p>
                             </a>
                         </li>
+                        @endmodule
+                        @module('apply-leave1183424704')
                         <li class="nav-item">
                             <a href="" class="nav-link">
                                 <i class="nav-icon fa fa-calendar-minus"></i>
@@ -379,7 +380,8 @@
                                 </p>
                             </a>
                         </li>
-                        {{-- @module('modules2087432049') --}}
+                        @endmodule
+                        @module('admins1226818892')
                         <li class="nav-item">
                             <a href="{{ url('admin/admins') }}" class="nav-link @yield('admins_select')">
                                 <i class="nav-icon fas fa-lock"></i>
@@ -388,6 +390,8 @@
                                 </p>
                             </a>
                         </li>
+                        @endmodule
+                        @module('roles429197001')
                         <li class="nav-item">
                             <a href="{{ url('admin/roles') }}" class="nav-link @yield('role_select')">
                                 <i class="nav-icon fa fa-tree"></i>
@@ -396,6 +400,8 @@
                                 </p>
                             </a>
                         </li>
+                        @endmodule
+                        @module('permission754419451')
                         <li class="nav-item">
                             <a href="{{ url('admin/permission') }}" class="nav-link @yield('permission_select')">
                                 <i class="nav-icon fa fa-universal-access"></i>
@@ -404,6 +410,8 @@
                                 </p>
                             </a>
                         </li>
+                        @endmodule
+                        @module('modules1878026609')
                         <li class="nav-item">
                             <a href="{{ url('admin/access-modules') }}" class="nav-link @yield('module_select')">
                                 <i class="nav-icon fa fa-magic"></i>
@@ -412,8 +420,9 @@
                                 </p>
                             </a>
                         </li>
-                        {{-- @endmodule --}}
-                        <li class="nav-item">
+                        @endmodule
+                        @module('teams1437404800')
+                         <li class="nav-item">
                             <a href="{{ url('admin/teams') }}" class="nav-link @yield('teams_select')">
                                 <i class="nav-icon fa fa-address-book"></i>
                                 <p>
@@ -421,15 +430,29 @@
                                 </p>
                             </a>
                         </li>
+                        @endmodule
+                        @module('service-center1118563352')
                         <li class="nav-item">
-                            <a href="{{ url('admin/daily-sales') }}" class="nav-link @yield('daily_sales')">
-                                <i class="nav-icon fa fa-book"></i>
+                            <a href="{{ url('admin/factory-service-center') }}" class="nav-link @yield('factory_service_center_select')">
+                                <i class="nav-icon fa fa-cogs"></i>
                                 <p>
-                                    Daily Sales
+                                    Service Center
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item @yield('assetaudit-expandable')">
+                        @endmodule
+                        @module('13208845341198264500')
+                        <li class="nav-item">
+                            <a href="{{ url('admin/service-management') }}" class="nav-link @yield('service_management_select')">
+                                <i class="nav-icon fa fa-wrench"></i>
+                                <p>
+                                    Service Management
+                                </p>
+                            </a>
+                        </li>
+                        @endmodule
+                        @module('11334588271080948769')
+                         <li class="nav-item @yield('assetaudit-expandable')">
                             <a href="#" class="nav-link @yield('asset_audit_select')">
                                 <i class="nav-icon fa fa-bars"></i>
                                 <p>
@@ -446,13 +469,101 @@
                                 </li>
                             </ul>
                         </li>
+                        @endmodule
+                         <li class="nav-item @yield('item-expandable')">
+                            <a href="#" class="nav-link @yield('item-select')">
+                                <i class="nav-icon fa fa-list-alt"></i>
+                                <p>
+                                    Item Info
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/items') }}" class="nav-link @yield('item-price-select')">
+                                        <i class="fas fa-money-bill"></i>
+                                        <p>Item Price</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/item/item-master-hsn') }}" class="nav-link @yield('item-masterhsnigst-select')">
+                                        <i class="fas fa fa-bullseye"></i>
+                                        <p>Item Master HSN, IGST ...</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item @yield('dealer-expandable')">
+                            <a href="#" class="nav-link @yield('dealer-select')">
+                                <i class="nav-icon fa fa-store"></i>
+                                <p>
+                                    Dealer Management
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/dealers') }}" class="nav-link @yield('dealer_master_select')">
+                                        <i class="fas fa-users"></i>
+                                        <p>Dealer master</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                         <li class="nav-item @yield('billedtransaction-expandable')">
+                            <a href="#" class="nav-link @yield('billedtransaction-select')">
+                                <i class="fas fa-file-invoice"></i>
+                                <p>
+                                    Billed Transaction Master
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/billed-transactions') }}" class="nav-link @yield('billedtransaction_select')">
+                                        <i class="fas fa-money-bill"></i>
+                                        <p>Billed Transactions</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item @yield('promotion-expandable')">
+                            <a href="#" class="nav-link @yield('promotion-select')">
+                                <i class="nav-icon fa fa-bullhorn"></i>
+                                <p>
+                                    Promo Management
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/promotions') }}" class="nav-link @yield('promotion_select')">
+                                        <i class='fas fa-business-time'></i>
+                                        <p>Promotions</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/promotions/promotion-transaction') }}" class="nav-link @yield('promotion_select')">
+                                        <i class="fa fa-shopping-cart"></i>
+                                        <p>Transactions</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        
                         <li class="nav-item">
-                            <a href="{{ url('admin/employee/leave-application') }}" class="nav-link @yield('employee_leave_application_select')">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Leave Application</p>
+                            <a href="{{ url('admin/roi') }}" class="nav-link @yield('tools_roi')">
+                                <i class="nav-icon fa fa-percent"></i>
+                                <p>
+                                    ROI
+                                </p>
                             </a>
                         </li>
-
+                        
+                        
+                        
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

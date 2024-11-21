@@ -28,6 +28,7 @@
                     </div>
                 @endif
                 <div class="row mb-2">
+                    @permission('3878966571965017114')
                     <div class="col-sm-6">
                         <h1>ETA Enquiries</h1>
                     </div>
@@ -42,6 +43,7 @@
                             <input type="file" name="ppof" id="inputField" style="display:none" required>
                         </form>
                     </div>
+                    @endpermission
                 </div>
             </div><!-- /.container-fluid -->
         </section>
@@ -53,21 +55,23 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title"><div class="input-group input-group-sm">
-                                    <select class="custom-select" id="stype">
-                                        <option value="">Select Option</option>
-                                        <option value="item" selected="selected">Item</option>
-                                        <option value="description">Description</option>
-                                    </select>
-                                    <input type="text" name="table_search" class="form-control float-right"
-                                        placeholder="Search by Item" id="searchtxt">
-                                    <div class="input-group-append">
-                                        <button type="submit" class="btn btn-default spp">
-                                            <i class="fas fa-search"></i>
-                                        </button>
+                                <div class="card-title">
+                                    <div class="input-group input-group-sm">
+                                        <select class="custom-select" id="stype">
+                                            <option value="">Select Option</option>
+                                            <option value="item" selected="selected">Item</option>
+                                            <option value="description">Description</option>
+                                        </select>
+                                        <input type="text" name="table_search" class="form-control float-right"
+                                            placeholder="Search by Item" id="searchtxt">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-default spp">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
                                     </div>
+                                    <span id="searchresultmsg"></span>
                                 </div>
-                                <span id="searchresultmsg"></span></h3>
                             </div>
                             <!-- ./card-header -->
                             <div class="card-body">
@@ -81,9 +85,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
-                                        @php
-                                        //    dd($result->toArray());
-                                        @endphp
                                         @foreach ($result as $key => $pendingPO)
                                             <tr>
                                                 <td>{{ $pendingPO->item }}</td>

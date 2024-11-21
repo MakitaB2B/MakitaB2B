@@ -9,7 +9,7 @@ use App\Models\Admin\PendingPo;
 class PendingPoController extends Controller
 {
     public function index(){
-        $result=PendingPo::paginate(20,['vendorpo','vendor','name','po','line','item','itemdescription','cat','ordered','poorderdate','duedate']);
+        $result=PendingPo::paginate(20,['vendorpo','vendor','name','po','line','item','itemdescription','cat','ordered','poorderdate','duedate','month']);
         return view('Admin.pending_po',compact('result'));
     }
     public function uploadPendingPO(Request $request) {

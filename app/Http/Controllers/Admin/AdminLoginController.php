@@ -46,7 +46,7 @@ class AdminLoginController extends Controller
             return back()->with('error','Invalid User ID or Password');
         }
     }
-    public function dashboard(Request $request){
+   public function dashboard(Request $request){
         $empAuth=Auth::guard('admin')->user();
         $dashboardData['empLoginActivity']=$this->adminService->getAllLoginActivities();
         return view('Admin/dashboard',$dashboardData);
@@ -132,7 +132,7 @@ class AdminLoginController extends Controller
     public function register(){
         return view('Admin.register');
     }
-    public function checkRegisterByPhone(Request $request){
+   public function checkRegisterByPhone(Request $request){
         $checker=$this->adminService->checkIfRegisterByPhone($request->empprimphone);
         if(count($checker)>0){
             $checkAdminLogin=$this->adminService->findAdminLoginByEmpSlugAccessID($checker[0]->employee_slug,$checker[0]->employee_no);
@@ -150,7 +150,7 @@ class AdminLoginController extends Controller
                     return redirect('admin/register');
                 }
             }else{
-                $msg='Your Login ID Not Yet Created, Please Contact IT Support: 9591149431 ';
+                $msg='Your Login ID Not Yet Created or Blocked, Please Contact IT Support: 9591149431 ';
                 $request->session()->flash('message',$msg);
                 return redirect('admin/register');
             }

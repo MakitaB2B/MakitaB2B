@@ -15,14 +15,32 @@ class ReplacedPartsController extends Controller
     public function uploadReplacedParts() {
         if(request()->has('rpf')){
             $data=array_map('str_getcsv', file(request()->rpf));
-            $header=$data[0];
+
+            $header=array_map('strtolower', $data[0]);
+            $header = array_map(function($value) {
+                $value = preg_replace('/^\x{FEFF}/u', '', $value);
+                return str_replace(' ', '', $value);
+            }, $header);
+
+            unset($header[0], $header[1], $header[8]);
+            $header = array_values($header);
+
             unset($data[0]);
+
             ReplacedParts::truncate();
             foreach ($data as $value) {
                 set_time_limit(0);
-                // dd(array_combine($header,$value));
-                $reservedStockData=array_combine($header,$value);
-                ReplacedParts::create($reservedStockData);
+
+                unset($value[0], $value[1], $value[8]);
+                $value = array_values($value);
+
+                $replacedPartsData = array_combine($header,$value);
+
+                $replacedPartsData  = array_filter(  $replacedPartsData , function ($value, $key) {
+                    return !empty($key);
+                }, ARRAY_FILTER_USE_BOTH);
+
+                ReplacedParts::create($replacedPartsData);
             }
             return redirect('admin/replaced-parts');
         }else{

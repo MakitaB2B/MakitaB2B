@@ -8,8 +8,14 @@ use App\Models\Admin\Employee;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 class ToolsRepairService{
-    public function getAllToolsServices(){
-        return ToolsService::with(['fscBranch:center_name,fsc_slug','waranty:machine_serial_number,warranty_expiry_date'])->orderBy('status','asc')->get();
+     public function getAllToolsServices(){
+        // return ToolsService::with(['fscBranch:center_name,fsc_slug','waranty:machine_serial_number,warranty_expiry_date'])->orderBy('status','asc')->get();
+        
+        return ToolsService::select('tools_services.*', 'factory_service_centers.center_name', 'warranty_registrations.machine_serial_number', 'warranty_registrations.warranty_expiry_date')
+        ->leftJoin('factory_service_centers', 'tools_services.service_center', '=', 'factory_service_centers.fsc_slug')
+        ->leftJoin('warranty_registrations', 'tools_services.tools_sl_no', '=', 'warranty_registrations.machine_serial_number')
+        ->orderBy('tools_services.status', 'asc')
+        ->get();
     }
     public function getToolsServicesByRepairer($dataOparateEmpSlug){
         return ToolsService::join('fsc_executives','fsc_executives.fsc_slug','=','tools_services.service_center')->where('fsc_executives.employee_slug', '=', $dataOparateEmpSlug)->get();
@@ -73,6 +79,9 @@ class ToolsRepairService{
     }
     public function findEmployeeBySlug($empSlug){
         return Employee::where(['employee_slug'=>$empSlug])->get(['full_name']);
+    }
+    public function getAllServiceCenters(){
+        return FactoryServiceCenters::get(['center_name','fsc_slug']);
     }
 }
 ?>

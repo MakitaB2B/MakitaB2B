@@ -16,7 +16,7 @@ use App\Models\Admin\ReplacedParts;
 class BranchStockController extends Controller
 {
     public function index(){
-        $result=BranchStocks::with('reservedStock:id,item,reserved')->paginate(20,['item','description','grandtotal','id','updated_at']);
+        $result=BranchStocks::with('reservedStock:id,item,reserved')->paginate(20,['item','description','grandtotal','id','updated_at','cb01','dl01','gh01','gj01','id01','jm01','ka01','kl01','mh01','pn01','py01','rd01','tn01','vd01','wb01']);
         return view('Admin.branch_stock',compact('result'));
     }
     public function getBranchStockDetails($pmvSlug){
@@ -34,8 +34,8 @@ class BranchStockController extends Controller
         }
         return view('Admin.manage_stock_records',$result);
     }
-    public function searchStock(Request $request){
-        $searchValue=strtoupper($request->searchtxt);
+     public function searchStock(Request $request){
+        $searchValue=$request->searchtxt;
         $searchFrom=$request->searchFrom;
         $searchType=$request->searchtype;
         $type = match($searchType){
@@ -49,7 +49,7 @@ class BranchStockController extends Controller
         if($type=='description'){
             $searchQuery='%'.$searchValue.'%';
         }
-        $searchResult=BranchStocks::where($type,'LIKE',"$searchQuery")->with('reservedStock:id,item,reserved')->get(['id','item','description','grandtotal','updated_at']);
+        $searchResult=BranchStocks::where($type,'LIKE',"$searchQuery")->with('reservedStock:id,item,reserved')->get(['id','item','description','grandtotal','updated_at','cb01','dl01','gh01','gj01','id01','jm01','ka01','kl01','mh01','pn01','py01','rd01','tn01','vd01','wb01']);
         if(($searchResult->count())>0 ){
             $output="";
             if($searchFrom=='stockpg'){
@@ -69,11 +69,13 @@ class BranchStockController extends Controller
                 }else{
                     $totalReserveData='<i style="color:#dc129c">'.$totalReservedQty.'</i>';
                 }
+                $mainStock=(int)($data->cb01)+(int)($data->dl01)+(int)($data->gh01)+(int)($data->gj01)+(int)($data->id01)+(int)($data->jm01)+(int)($data->ka01)+(int)($data->kl01)+(int)($data->mh01)+(int)($data->pn01)+(int)($data->py01)+(int)($data->rd01)+(int)($data->tn01)+(int)($data->vd01)+(int)($data->wb01);
                 $output.='<tr>'.
                 '<td>'.'<a href= "'.$routeTo.Crypt::encrypt($data->item).'" style="color:#00909E">'.$data->item.'</a>'.'</td>'.
                 '<td>'.$data->description.'</td>'.
-                '<td>'.number_format($data->grandtotal).'</td>'.
+                '<td>'.$mainStock.'</td>'.
                 '<td>'.$totalReserveData.'</td>'.
+                '<td>'.$mainStock - $totalReservedQty.'</td>'.
                 '</tr>';
                 }
         return Response($output);
@@ -96,20 +98,50 @@ class BranchStockController extends Controller
             echo "No";
         }
     }
-    public function uploadDailyStocks() {
+   public function uploadDailyStocks() {
         if(request()->has('mycsv')){
+            ini_set('memory_limit', '1024M');
+            // ini_set('upload_max_filesize', '20M');
+            // ini_set('post_max_size', '25M');
+
             $data=array_map('str_getcsv', file(request()->mycsv));
             $count=count($data);
             $lastRow=$count-1;
-            $header=$data[0];
-            unset($data[0],$data[$lastRow]);
+            $header=$data[2];
+            $header = array_map('strtolower', $header);
+            $header = array_map(function($value) {
+                $value = preg_replace('/^\x{FEFF}/u', '', $value);
+                return str_replace(' ', '', $value);
+            }, $header);
+
+            $databaseName = env('DB_DATABASE');
+            $tableName = "{$databaseName}.branch_stocks";
+
+            $columns = DB::select("SHOW COLUMNS FROM $tableName");
+
+            $columnNames = array_map(function($column) {
+                if(!in_array($column->Field, ['created_at', 'updated_at'])){
+                return $column->Field;
+            }
+            }, $columns);
+            $columnNames = array_filter($columnNames);
+
+            $header_diff = array_diff($header, $columnNames);
+            if(!empty($header_diff)){
+                $header_diff_text=implode(', ', $header_diff);
+                return 'These columns cannont be uploaded'.$header_diff_text;
+            }
+
+            unset($data[0],$data[1],$data[2],$data[$lastRow]);
+
             BranchStocks::truncate();
             foreach ($data as $value) {
                 set_time_limit(0);
-                // dd(array_combine($header,$value));
                 $stockData=array_combine($header,$value);
+
                 BranchStocks::create($stockData);
             }
+            // return redirect()->route('branch-stock');
             return redirect('admin/branch-stock');
         }else{
             return 'No File not there';

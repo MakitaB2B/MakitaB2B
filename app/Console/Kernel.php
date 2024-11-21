@@ -13,6 +13,25 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+         $currentYear = date('Y');
+            $currentMonth = date('m');
+
+            $firstDayOfMonth = new \DateTime("$currentYear-$currentMonth-01");
+
+            $firstSaturday = clone $firstDayOfMonth;
+            $firstSaturday->modify('first Saturday of this month');
+            $firstsat=$firstSaturday->format('Y-m-d');
+
+            $thirdSaturday = clone $firstSaturday;
+            $thirdSaturday->modify('+2 weeks');
+            $thirdsat=$thirdSaturday->format('Y-m-d');
+
+            $today = now()->format('Y-m-d');
+
+            if ($today !== $firstsat && $today !== $thirdsat) {
+                $schedule->command('daily:promo-follow-up')->cron('0 6 * * 1-6');
+                // $schedule->command("daily:promo-follow-up")->dailyAt('13:15');
+            }
     }
 
     /**

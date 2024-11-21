@@ -25,5 +25,4 @@ class Employee extends Model
         'official_email','current_address','permanent_address','department_id','designation_id','joining_date',
         'posting_state','posting_city','employee_slug','status','crated_by'
     ];
-
 }

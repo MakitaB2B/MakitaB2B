@@ -27,6 +27,8 @@
                         </div>
                     </div>
                 @endif
+                
+                @permission('reserved-stocks1337947443')
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         <h1>Reserved Stocks</h1>
@@ -43,6 +45,8 @@
                         </form>
                     </div>
                 </div>
+                @endpermission
+                
             </div><!-- /.container-fluid -->
         </section>
 

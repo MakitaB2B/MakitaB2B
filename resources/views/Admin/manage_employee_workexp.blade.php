@@ -142,18 +142,18 @@
                                                     @endphp
                                                     @if ($appLetFileExtension != 'pdf')
                                                         <div id="img-preview" style="height: 100px">
-                                                            <img src="{{ asset($val['appointment_letter']) }}"
+                                                            <img src="{{ asset('storage/app/'.$val['appointment_letter']) }}"
                                                                 height="80px">
-                                                            <p><a href="{{ asset($val['appointment_letter']) }}"
+                                                            <p><a href="{{ asset('storage/app/'.$val['appointment_letter']) }}"
                                                                     target="iframe_a" style="color: black"><i
                                                                         class="fa fa-eye"
                                                                         aria-hidden="true"></i>Explore?</a>
                                                         </div>
                                                     @else
-                                                        <iframe src="{{ asset($val['appointment_letter']) }}"
+                                                        <iframe src="{{ asset('storage/app/'.$val['appointment_letter']) }}"
                                                             frameBorder="0" scrolling="auto" height="150px"
                                                             width="150px"></iframe>
-                                                        <p><a href="{{ asset($val['appointment_letter']) }}"
+                                                        <p><a href="{{ asset('storage/app/'.$val['appointment_letter']) }}"
                                                                 target="iframe_a" style="color: black"><i
                                                                     class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                                         </p>
@@ -165,7 +165,7 @@
                                                     @endphp
                                                     @if ($relievingLetter != 'pdf')
                                                         <div id="img-preview" style="height: 100px">
-                                                            <img src="{{ asset($val['relieving_letter']) }}"
+                                                            <img src="{{ asset('storage/app/'.$val['relieving_letter']) }}"
                                                                 height="80px">
                                                             <p><a href="{{ asset($val['relieving_letter']) }}"
                                                                     target="iframe_a" style="color: black"><i
@@ -173,10 +173,10 @@
                                                                         aria-hidden="true"></i>Explore?</a>
                                                         </div>
                                                     @else
-                                                        <iframe src="{{ asset($val['relieving_letter']) }}"
+                                                        <iframe src="{{ asset('storage/app/'.$val['relieving_letter']) }}"
                                                             frameBorder="0" scrolling="auto" height="150px"
                                                             width="150px"></iframe>
-                                                        <p><a href="{{ asset($val['relieving_letter']) }}"
+                                                        <p><a href="{{ asset('storage/app/'.$val['relieving_letter']) }}"
                                                                 target="iframe_a" style="color: black"><i
                                                                     class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                                         </p>
@@ -188,18 +188,18 @@
                                                     @endphp
                                                     @if ($payslipLastMonth != 'pdf')
                                                         <div id="img-preview" style="height: 100px">
-                                                            <img src="{{ asset($val['payslip_last_month']) }}"
+                                                            <img src="{{ asset('storage/app/'.$val['payslip_last_month']) }}"
                                                                 height="80px">
-                                                            <p><a href="{{ asset($val['relieving_letter']) }}"
+                                                            <p><a href="{{ asset('storage/app/'.$val['relieving_letter']) }}"
                                                                     target="iframe_a" style="color: black"><i
                                                                         class="fa fa-eye"
                                                                         aria-hidden="true"></i>Explore?</a>
                                                         </div>
                                                     @else
-                                                        <iframe src="{{ asset($val['payslip_last_month']) }}"
+                                                        <iframe src="{{ asset('storage/app/'.$val['payslip_last_month']) }}"
                                                             frameBorder="0" scrolling="auto" height="150px"
                                                             width="150px"></iframe>
-                                                        <p><a href="{{ asset($val['payslip_last_month']) }}"
+                                                        <p><a href="{{ asset('storage/app/'.$val['payslip_last_month']) }}"
                                                                 target="iframe_a" style="color: black"><i
                                                                     class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                                         </p>
@@ -273,7 +273,7 @@
                                                     @endphp
                                                     @if ($payslip2ndLastMonth != 'pdf')
                                                         <div id="img-preview" style="height: 100px">
-                                                            <img src="{{ asset($val['payslip_2nd_last_month']) }}"
+                                                            <img src="{{ asset('storage/app/'.$val['payslip_2nd_last_month']) }}"
                                                                 height="80px">
                                                             <p><a href="{{ asset($val['relieving_letter']) }}"
                                                                     target="iframe_a" style="color: black"><i
@@ -281,10 +281,10 @@
                                                                         aria-hidden="true"></i>Explore?</a>
                                                         </div>
                                                     @else
-                                                        <iframe src="{{ asset($val['payslip_2nd_last_month']) }}"
+                                                        <iframe src="{{ asset('storage/app/'.$val['payslip_2nd_last_month']) }}"
                                                             frameBorder="0" scrolling="auto" height="150px"
                                                             width="150px"></iframe>
-                                                        <p><a href="{{ asset($val['payslip_2nd_last_month']) }}"
+                                                        <p><a href="{{ asset('storage/app/'.$val['payslip_2nd_last_month']) }}"
                                                                 target="iframe_a" style="color: black"><i
                                                                     class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                                         </p>
@@ -297,7 +297,7 @@
                                                     @endphp
                                                     @if ($payslip3rdLastMonth != 'pdf')
                                                         <div id="img-preview" style="height: 100px">
-                                                            <img src="{{ asset($val['payslip_3rd_last_month']) }}"
+                                                            <img src="{{ asset('storage/app/'.$val['payslip_3rd_last_month']) }}"
                                                                 height="80px">
                                                             <p><a href="{{ asset($val['relieving_letter']) }}"
                                                                     target="iframe_a" style="color: black"><i
@@ -305,10 +305,10 @@
                                                                         aria-hidden="true"></i>Explore?</a>
                                                         </div>
                                                     @else
-                                                        <iframe src="{{ asset($val['payslip_3rd_last_month']) }}"
+                                                        <iframe src="{{ asset('storage/app/'.$val['payslip_3rd_last_month']) }}"
                                                             frameBorder="0" scrolling="auto" height="150px"
                                                             width="150px"></iframe>
-                                                        <p><a href="{{ asset($val['payslip_3rd_last_month']) }}"
+                                                        <p><a href="{{ asset('storage/app/'.$val['payslip_3rd_last_month']) }}"
                                                                 target="iframe_a" style="color: black"><i
                                                                     class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                                         </p>

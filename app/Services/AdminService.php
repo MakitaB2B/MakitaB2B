@@ -25,7 +25,7 @@ class AdminService{
         return AdminLogin::where(['admin_login_slug'=>$adminSlug])->get();
     }
     public function findAdminLoginByEmpSlugAccessID($empSlug,$accessId){
-        return AdminLogin::where(['employee_slug'=>$empSlug])->where(['access_id'=>$accessId])->get();
+        return AdminLogin::where(['employee_slug'=>$empSlug])->where(['access_id'=>$accessId])->where(['status'=>1])->get();
     }
     public function findActiveEmployee(){
         return DB::table('employees')->where(['status'=>1])->orderBy('id','desc')->get(['employee_no','full_name','employee_slug']);
@@ -191,7 +191,7 @@ class AdminService{
             return "Employee not found";
         }
     }
-    public function empCreateUpdatePasswordService($password,$decryptEmpSlug){
+   public function empCreateUpdatePasswordService($password,$decryptEmpSlug){
         $empInfo=DB::table('employees')->where('employee_slug',$decryptEmpSlug)->get(['employee_no','full_name','phone_number']);
         $empNo=$empInfo[0]->employee_no;
         $empName=$empInfo[0]->full_name;

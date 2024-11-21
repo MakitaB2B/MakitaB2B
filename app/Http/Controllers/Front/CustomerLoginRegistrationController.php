@@ -37,7 +37,7 @@ class CustomerLoginRegistrationController extends Controller
     }
     public function customerSignupSigninOTPSend(Request $request){
         $data = $request->validate([
-            'mobile_number' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10|starts_with: 6,7,8,9',
+            'mobile_number' => 'required|min:10|max:10',
         ]);
         $cxSlug=Crypt::decrypt($request->cxslug);
         if($request->filled('forgetpassword')){
@@ -56,7 +56,7 @@ class CustomerLoginRegistrationController extends Controller
                     return redirect('cx-signup-otp-page/'.Crypt::encrypt($checkPhone->customer_slug).'/'.Crypt::encrypt(1));
                 }
                 }else{
-                $msg='This Phone Number is Not Registered With Us';
+                    $msg='This Phone Number is Not Registered With Us';
                 $request->session()->flash('message',$msg);
                 return redirect('/cx-signup');
                 }
@@ -257,7 +257,7 @@ class CustomerLoginRegistrationController extends Controller
             if($status==0){
                 return back()->with('error','Access has been revoked!');
             }else{
-                return redirect()->route('warranty-registration-list-spec-cx')->with('msg','You are successfully logged in');
+                return redirect()->route('cx-tools-repair-list')->with('msg','You are successfully logged in');
             }
         }else{
             return back()->with('error','Invalid Email or Password');

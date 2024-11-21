@@ -17,8 +17,11 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-2">
+            @permission('1830765631483037868')
             <a href="{{ url('admin/holidays/manage-holiday') }}"><button type="button" class="btn btn-block btn-primary">Add Holiday</button></a>
+            @endpermission
           </div>
+          
           <div class="col-sm-10">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Home</a></li>
@@ -82,7 +85,11 @@
                         @endif
                     </td>
                     <td>{{ $list->notes }}</td>
-                    <td><a href="{{ url('admin/holidays/manage-holiday')}}/{{ Crypt::encrypt($list->slug) }}" title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td>
+                    <td>
+                        @permission('3550150851307041023')
+                        <a href="{{ url('admin/holidays/manage-holiday')}}/{{ Crypt::encrypt($list->slug) }}" title="Edit"> <i class="nav-icon fas fa-edit"></i></a>
+                        @endpermission
+                    </td>
                   </tr>
                   @endforeach
 

@@ -2,12 +2,11 @@
 @section('page_title', 'Service Request List | MAKITA')
 @section('service_management_select', 'active')
 @section('container')
-    <style>
-        .cp {
-            cursor: pointer;
-        }
-
-        .tooltip .tooltiptext {
+<style>
+    .cp{
+        cursor: pointer;
+    }
+    .tooltip .tooltiptext {
             visibility: hidden;
             width: 140px;
             text-align: center;
@@ -20,8 +19,8 @@
             margin-left: -75px;
             opacity: 0;
             transition: opacity 0.3s;
-        }
-    </style>
+    }
+</style>
     @push('styles')
         <!-- Tempusdominus Bootstrap 4 -->
         <link rel="stylesheet"
@@ -301,14 +300,14 @@
 
                                             <label for="exampleInputRepairer">Repairer*</label>
                                             @if ($srStatus != 7)
-                                                <select class="custom-select" name="repairer" required>
-                                                    <option value="">Please Select A Repairer</option>
-                                                    @foreach ($service_executives as $repairerList)
-                                                        <option value="<?= $repairerList->employee_slug ?>"@if ($repairerList->employee_slug == $repairer)
-                                                            selected
-                                                    @endif><?= $repairerList->full_name ?>
-                                                    </option>
-                                            @endforeach
+                                            <select class="custom-select" name="repairer" required>
+                                                <option value="">Please Select A Repairer</option>
+                                                @foreach ($service_executives as $repairerList)
+                                                    <option value="<?= $repairerList->employee_slug ?>"@if ($repairerList->employee_slug == $repairer)
+                                                        selected
+                                                @endif><?= $repairerList->full_name ?>
+                                                </option>
+                                                @endforeach
                                             </select>
                                             @error('repairer')
                                                 <div
@@ -320,9 +319,9 @@
                                                     </button>
                                                 </div>
                                             @enderror
-                                        @else
-                                            <input type="text" class="form-control"
-                                                value="{{ $empDetails[0]->full_name }}" disabled>
+                                            @else
+                                            <input type="text" class="form-control" value="{{ $empDetails[0]->full_name }}"
+                                                disabled>
                                             @endif
 
                                         </div>
@@ -348,10 +347,21 @@
                                         </div>
                                         <div class="form-group col-md-2">
                                             <label for="exampleInputReceiveDateTime">Receive Date Time</label>
+                                            @php
+                                            $receiveDateTime = \Carbon\Carbon::parse($receive_date_time);
+                                            
+                                            // Manually add 12 hours to convert from AM to PM if necessary
+                                            if ($receiveDateTime->hour == 0) {
+                                                $receiveDateTime->addHours(12);
+                                            }
+                                            
+                                            $receivedAt = $receiveDateTime->format('d M Y, h:i:s A');
+
+                                            @endphp
                                             <input type="text" class="form-control" disabled
-                                                value="{{ \Carbon\Carbon::parse($receive_date_time)->format('d M Y, H:i:s A') }}">
+                                                value="{{ $receivedAt }}">
                                         </div>
-                                        @if ($estimation_date_time == null && $repairer != null)
+                                        @if ($estimation_date_time == null && $repairer != null && $srStatus != 7)
                                             <div class="col-sm-6 col-md-4">
                                                 <label for="exampleInputGECFC">.</label>
                                                 <h4 class="text-center bg-lime cp" data-toggle="modal"
@@ -363,18 +373,51 @@
                                         @if ($estimation_date_time != null)
                                             <div class="form-group col-md-2">
                                                 <label for="exampleInputEstimationDateTime">Estimation Date Time</label>
+                                                @php
+                                                $estimationDateTime = \Carbon\Carbon::parse($estimation_date_time);
+                                                
+                                                // Manually add 12 hours to convert from AM to PM if necessary
+                                                if ($estimationDateTime->hour == 0) {
+                                                    $estimationDateTime->addHours(12);
+                                                }
+                                                
+                                                $estimationAt = $estimationDateTime->format('d M Y, h:i:s A');
+    
+                                                @endphp
                                                 <input type="text" class="form-control" disabled
-                                                    value="{{ \Carbon\Carbon::parse($estimation_date_time)->format('d M Y, H:i:s A') }}">
+                                                    value="{{ $estimationAt }}">
                                             </div>
                                         @endif
 
                                         @if ($estimation_date_time != null)
                                             @php
-                                                $receivedat = \Carbon\Carbon::parse($receive_date_time);
-                                                $estimatedat = \Carbon\Carbon::parse($estimation_date_time);
-                                                $timeDifference = $receivedat->diffInMinutes($estimatedat);
-                                                $hours = floor($timeDifference / 60);
-                                                $minutes = $timeDifference % 60;
+                                            
+                                            $receiveDateTime = \Carbon\Carbon::parse($receive_date_time);
+                                             if ($receiveDateTime->hour == 0) {
+                                                $receiveDateTime->addHours(12);
+                                                $receivedAt = $receiveDateTime->format('Y-m-d h:i:s');
+                                            }else{
+                                            $receivedAt = $receiveDateTime;
+                                            }
+                                            
+                                            $estimatedDateTime = \Carbon\Carbon::parse($estimation_date_time);
+                                             if ($estimatedDateTime->hour == 0) {
+                                                $estimatedDateTime->addHours(12);
+                                                $estimatedAt = $estimatedDateTime->format('Y-m-d h:i:s');
+                                            }else{
+                                                $estimatedAt = $estimatedDateTime;
+                                            }
+                                                
+                                           $receivedat = \Carbon\Carbon::parse($receivedAt);
+                                           $estimatedat = \Carbon\Carbon::parse($estimatedAt);
+                                            
+                                            // Calculate the difference in minutes
+                                            $timeDifference = $receivedat->diffInMinutes($estimatedat);
+                                            
+                                            // Convert minutes to hours and minutes
+                                            $hours = floor($timeDifference / 60);
+                                            $minutes = $timeDifference % 60;
+                                                
                                             @endphp
                                             <div class="form-group col-md-2">
                                                 <label for="exampleInputDurationAB">Duration A-B</label>
@@ -409,7 +452,7 @@
                                                 <h4 class="text-center bg-orange color-palette"
                                                     style="color:#ffffff !important">Estimation Send To Customer Waiting On
                                                     Reply
-                                                    <a href="{{ asset($costEstimationFile) }}" target="iframe_a"
+                                                    <a href="{{ asset('storage/app/'.$costEstimationFile) }}" target="iframe_a"
                                                         style="color: black"
                                                         title="Click here to see the Estimation PDF"><i class="fa fa-eye"
                                                             aria-hidden="true"></i></a>
@@ -446,9 +489,7 @@
                                             @php
                                                 $estDateConfirmCx = \Carbon\Carbon::parse($est_date_confirm_cx);
                                                 $repairCompleteDate = \Carbon\Carbon::parse($repair_complete_date_time);
-                                                $timeDifferenceCD = $estDateConfirmCx->diffInMinutes(
-                                                    $repairCompleteDate,
-                                                );
+                                                $timeDifferenceCD = $estDateConfirmCx->diffInMinutes($repairCompleteDate);
                                                 $hours = floor($timeDifferenceCD / 60);
                                                 $minutes = $timeDifferenceCD % 60;
                                             @endphp
@@ -460,14 +501,13 @@
                                         @endif
                                         @if ($total_hour_for_repair != null)
                                             @php
-                                                $totalHoursForRepair = $total_hour_for_repair;
-                                                $hours = floor($totalHoursForRepair / 60);
-                                                $minutes = $totalHoursForRepair % 60;
+                                               $totalHoursForRepair = $total_hour_for_repair;
+                                               $hours = floor($totalHoursForRepair / 60);
+                                               $minutes = $totalHoursForRepair % 60;
                                             @endphp
                                             <div class="form-group col-md-2">
                                                 <label for="exampleInputTotalhourforrepair">Total hour for repair*</label>
-                                                <input type="text" class="form-control"
-                                                    value="{{ $hours . ' hours  ' . $minutes . '  minutes' }}" disabled>
+                                                <input type="text" class="form-control" value="{{ $hours . ' hours  ' . $minutes . '  minutes' }}" disabled>
                                             </div>
                                         @endif
                                         @if ($repair_parts_details != null)
@@ -476,12 +516,11 @@
                                                 <textarea class="form-control" rows="2" required disabled>{{ $repair_parts_details }}</textarea>
                                             </div>
                                         @endif
-                                        @if ($duration_c_d > 2880 && $reason_for_over_48h == null)
+                                        @if ($duration_c_d > 2880 && $reason_for_over_48h==NULL)
                                             <div class="form-group col-md-2">
                                                 <label>.</label>
                                                 <h6 class="text-center bg-maroon" data-toggle="modal"
-                                                    data-target="#rfo48hModal" id="trf48h">The Reason For Over 48
-                                                    Hours?
+                                                data-target="#rfo48hModal" id="trf48h">The Reason For Over 48 Hours?
                                                 </h6>
                                             </div>
                                         @endif
@@ -570,12 +609,12 @@
                                 </div>
                                 <!-- /.card-body -->
                                 @if ($srStatus != 7)
-                                    <div class="card-footer">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </div>
-                                    <input type="hidden" name="srSlug" value={{ $sr_slug }} id="srSlug">
-                                    <input type="hidden" name="incoming_source" value="{{ Crypt::encrypt('emp') }}"
-                                        required>
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                                <input type="hidden" name="srSlug" value={{ $sr_slug }} id="srSlug">
+                                <input type="hidden" name="incoming_source" value="{{ Crypt::encrypt('emp') }}"
+                                    required>
                                 @endif
                             </form>
                         </div>

@@ -122,7 +122,7 @@
                         <div class="form-group col-md-12">
                             <iframe
                             frameBorder="1" scrolling="auto" height="290px"
-                            width="600px" id="cEFiframeId" src="{{ asset($costEstFile) }}"></iframe>
+                            width="600px" id="cEFiframeId" src="{{ asset('storage/app/'.$costEstFile) }}"></iframe>
                         </div>
                         <div class="form-group col-md-12">
                             <label for="exampleInputCostEstimation">Total Repair Cost*</label>
@@ -141,10 +141,6 @@
                                 <input type="radio" name="acceptrejectce" id="optionsRadiosRejectCE" value="rejectce"><span class="indicator"></span> Reject Estimation
                               </label>
                             </div>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="sealerdealername">OTP<span class="required">*</span></label>
-                            <input class="form-control" name="cx_cear_otp" placeholder="Enter OTP" type="text"  required>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary" style="display:none" id="arceb">Submit</button>

@@ -70,8 +70,8 @@
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>{{ $list->access_id }}</td>
-                                                <td>{{ $list->employee->pluck('full_name')->implode('') }}</td>
-                                                <td>{{ $list->employee->pluck('phone_number')->implode('') }}</td>
+                                                <td>{{ $list->employee->full_name }}</td>
+                                                <td>{{ $list->employee->phone_number }}</td>
                                                 <td>
                                                     @foreach ($list->employeeRoles as $role)
                                                     {{ $role->role_slug }} {{ !$loop->last ? ', ' : '' }}

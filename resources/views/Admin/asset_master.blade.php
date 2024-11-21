@@ -17,8 +17,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-2">
+                        @permission('9934224041073792102')
                         <a href="{{ url('admin/asset-master/manage-asset-master') }}"><button type="button"
                                 class="btn btn-block btn-primary">Add Assets</button></a>
+                        @endpermission
+                        
                     </div>
                     <div class="col-sm-10">
                         <ol class="breadcrumb float-sm-right">
@@ -80,8 +83,13 @@
                                                 <td>{{ $list->service_tag }}</td>
                                                 <td>{{ $list->status === 'Active' ? "Active" : "Scrap" }}</td>
                                                 <td>{{$list->employee->full_name}}</td>
-                                                <td><a href="{{ url('admin/asset-master/manage-asset-master/') }}/{{ Crypt::encrypt($list->assetmaster_slug) }}"
-                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td>
+                                                <td>
+                                                    @permission('18480194411961879923')
+                                                    <a href="{{ url('admin/asset-master/manage-asset-master/') }}/{{ Crypt::encrypt($list->assetmaster_slug) }}"
+                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a>
+                                                    @endpermission
+                                                    
+                                                </td>
                                             </tr>
                                         @endforeach
 

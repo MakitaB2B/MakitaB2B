@@ -429,7 +429,7 @@
                                             {{ Crypt::decrypt($employee_slug) === 0 ? 'style=display:none' : '' }}>
                                             <div id="img-preview" style="height: 100px">
                                                 @if ($photo != '')
-                                                    <img src="{{ asset($photo) }}" height="100px">
+                                                    <img src="{{asset('storage/app/'.$photo)}}" width="100" />
                                                 @endif
                                             </div>
                                         </div>

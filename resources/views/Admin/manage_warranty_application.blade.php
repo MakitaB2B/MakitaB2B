@@ -70,9 +70,9 @@
                                         <div class="form-group col-md-3">
                                             <label for="exampleInputStateName">Invoice Copy</label>
                                             <br>
-                                            <img src="{{ asset($invoice_copy) }}"
+                                            <img src="{{ asset('storage/app/'.$invoice_copy) }}"
                                                                 height="80px">
-                                            <p><a href="{{ asset($invoice_copy) }}"
+                                            <p><a href="{{ asset('storage/app/'.$invoice_copy) }}"
                                                 target="iframe_a" style="color: black"><i
                                                     class="fa fa-eye" aria-hidden="true"></i>Explore?</a>
                                             </p>
@@ -81,9 +81,9 @@
                                         <div class="form-group col-md-3">
                                             <label for="exampleInputStateName">Machine SL. Number</label>
                                             <br>
-                                            <a href="{{ asset($machine_slno_photo) }}"
+                                            <a href="{{ asset('storage/app/'.$machine_slno_photo) }}"
                                                 target="iframe_a" style="color: black" title="Explore">
-                                            <img src="{{ asset($machine_slno_photo) }}"
+                                            <img src="{{ asset('storage/app/'.$machine_slno_photo) }}"
                                                                 height="80px">
                                             </a>
                                         </div>

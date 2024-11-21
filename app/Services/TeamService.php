@@ -9,11 +9,11 @@ class TeamService{
     public function getAllTeamsWithOwner(){
         return Team::with(['employee:employee_slug,full_name,employee_no'])->select('team_name','team_owner','team_slug')->get();
     }
-    public function getTeamsByOwner($dataOparateEmpSlug){
-        return Team::with(['employee:employee_slug,full_name,employee_no'])->where(['team_owner'=>$dataOparateEmpSlug])->select('team_name','team_owner','team_slug')->get();
-    }
     public function findTeamBySlug($slug){
         return Team::where(['team_slug'=>$slug])->get();
+    }
+    public function getTeamsByOwner($dataOparateEmpSlug){
+        return Team::with(['employee:employee_slug,full_name,employee_no'])->where(['team_owner'=>$dataOparateEmpSlug])->select('team_name','team_owner','team_slug')->get();
     }
     public function createOrUpdateTeams($id,$request,$slug,$dataOparateEmpSlug,$teamOwner){
         $operate=Team::updateOrCreate(
@@ -72,6 +72,10 @@ class TeamService{
         }
         return true;
     }
+    public function getTeamOwner($teamMember){
+        return TeamMembers::with(['employee:employee_slug,full_name,employee_no'])->where('team_member',$teamMember)->select('team_owner')->first();
+    }
+    
 
 }
 ?>

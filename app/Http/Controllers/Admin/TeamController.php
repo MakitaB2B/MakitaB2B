@@ -17,7 +17,7 @@ class TeamController extends Controller
         $this->teamService=$teamService;
     }
     public function index(){
-        $role= Auth::guard('admin')->user()->hasRole('super-admin1944305928');
+         $role= Auth::guard('admin')->user()->hasRole('super-admin484842382');
         if($role==true){
             $teams=$this->teamService->getAllTeamsWithOwner();
         }else{
@@ -52,6 +52,7 @@ class TeamController extends Controller
                  else{
                     $msg='Team sucessfully inserted';
                  }
+                $msg='Team sucessfully inserted';
                 $request->session()->flash('message',$msg);
                 return redirect('admin/teams');
             }
@@ -68,7 +69,7 @@ class TeamController extends Controller
             'teammember'=>'required|array',
         ]);
         if($data){
-            $dataOparateEmpSlug=Auth::guard('admin')->user()->employee_slug;
+            $dataOparateEmpSlug=Auth::guard('admin')->user()->employee_slug ;
             $teamSlug=Crypt::decrypt($request->input('teamSlug'));
             $createUpdateAction=$this->teamService->createOrUpdateTeamMembers($request,$dataOparateEmpSlug,$teamSlug);
             if($createUpdateAction){

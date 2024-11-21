@@ -27,6 +27,7 @@
                         </div>
                     </div>
                 @endif
+                @permission('replaced-parts2096581790')
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         <h1>Replaced Parts</h1>
@@ -43,6 +44,7 @@
                         </form>
                     </div>
                 </div>
+                @endpermission
             </div><!-- /.container-fluid -->
         </section>
 

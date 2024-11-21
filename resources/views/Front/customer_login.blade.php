@@ -57,8 +57,8 @@
                     <div class="row">
                         <div class="col-sm-7 form-group">
                             <label for="userid">Registered Mobile Number<span class="required">*</span></label>
-                            <input class="form-control"  name="user_id" placeholder="Registered Mobile Number"
-                                type="text" required autocomplete="off">
+                            <input class="form-control"  name="user_id" placeholder="Enter Registered Mobile Number"
+                                type="text" required >
                             @error('userid')
                                 <div class="sufee-alert alert with-close alert-danger alert-dismissible show">
                                     {{ $message }}

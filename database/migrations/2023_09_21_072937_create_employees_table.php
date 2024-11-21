@@ -16,19 +16,19 @@ return new class extends Migration
             $table->string('employee_no')->nullable()->unique()->index();
             $table->string('full_name')->index();
             $table->string('father_name');
-            $table->string('mother_name')->nullable();
-            $table->date('dob')->nullable();
-            $table->tinyInteger('age')->nullable();
-            $table->enum('sex',['male','female'])->nullable();
-            $table->enum('marital_status',['married','unmarried'])->nullable();
-            $table->string('photo')->nullable();
-            $table->string('phone_number',25)->index()->nullable();
+            $table->string('mother_name');
+            $table->date('dob');
+            $table->tinyInteger('age');
+            $table->enum('sex',['male','female']);
+            $table->enum('marital_status',['married','unmarried']);
+            $table->string('photo');
+            $table->string('phone_number',25)->index();
             $table->string('alt_phone_number',25)->index()->nullable();
             $table->string('personal_email')->index()->nullable();
             $table->string('official_email')->index()->nullable();
-            $table->text('current_address')->nullable();
-            $table->text('permanent_address')->nullable();
-            $table->unsignedBigInteger('department_id')->nullable();
+            $table->text('current_address');
+            $table->text('permanent_address');
+            $table->unsignedBigInteger('department_id');
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade')->nullable();
             $table->unsignedBigInteger('designation_id');
             $table->foreign('designation_id')->references('id')->on('designations')->onDelete('cascade')->nullable();
@@ -40,8 +40,6 @@ return new class extends Migration
             $table->string('employee_slug');
             $table->tinyInteger('status')->default(1)->nullable()->unsigned();
             $table->integer('crated_by');
-            $table->string('otp')->nullable();
-            $table->timestamp('otp_created_at')->nullable();
             $table->timestamps();
         });
     }

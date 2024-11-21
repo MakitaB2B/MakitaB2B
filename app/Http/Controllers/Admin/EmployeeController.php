@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use App\Traits\HasPermissionsTrait;
 use Auth;
-
 class EmployeeController extends Controller
 {
     protected $employeeService;
@@ -18,7 +17,7 @@ class EmployeeController extends Controller
         $this->employeeService=$employeeService;
     }
     public function index(){
-        $role= Auth::guard('admin')->user()->hasRole('super-admin1944305928');
+        $role= Auth::guard('admin')->user()->hasRole('super-admin484842382','15452866131023969008');
         if($role==true){
             $employeeList=$this->employeeService->getAllEmployees();
         }else{
@@ -101,10 +100,14 @@ class EmployeeController extends Controller
             $slug=$rowData[0]->employee_slug;
             if($request->has('photo')){
                 $photo=$rowData[0]->photo;
-                if(Storage::exists($photo)){
+                if($photo==NULL){
+                    $photo=$request->file('photo')->store('mimes/employee');
+                }
+                if($photo!=NULL && Storage::exists($photo)){
                     Storage::delete($photo);
                     $photo=$request->file('photo')->store('mimes/employee');
                 }
+                
             }else{
                 $photo=$rowData[0]->photo;
             }
