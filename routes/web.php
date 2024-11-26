@@ -232,7 +232,37 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     //     $details['email'] = 'lobojeanz@gmail.com';
     //     dispatch(new App\Jobs\PromoJob($details));
     //     return response()->json(['message'=>'Mail Send Successfully!!']);
+    
     // });
+
+
+
+    // Route::get('/send-test-email', function () {
+    //     $email = 'lobojeanz@gmail.com';
+    
+    //     Mail::send([], [], function ($message) use ($email) {
+    //         $message->to($email)
+    //                 ->subject('Static Email Test')
+    //                 ->setBody('<p>Hi</p>', 'text/html'); // Use 'text/plain' for plain text emails
+    //     });
+    
+    //     return response()->json(['message' => 'Static mail sent successfully!']);
+    // });
+
+
+
+
+    Route::get('/send-test-email', function () {
+        $email = 'lobojeanz@gmail.com';
+    
+        // Use the Mail::html() method for a simpler approach
+        \Mail::html('<p>Hi</p>', function ($message) use ($email) {
+            $message->to($email)
+                    ->subject('Static Email Test');
+        });
+    
+        return response()->json(['message' => 'Static mail sent successfully!']);
+    });
 
     // Route::get('/promotions/promomailview/{promocode}',  function () {  return view('mails.promomail');  });
     // Route::get('/promotions/transactionmailview',  function () {  return view('mails.transactionmail');  });
