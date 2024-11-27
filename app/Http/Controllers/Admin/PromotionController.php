@@ -446,7 +446,7 @@ class PromotionController extends Controller
       $sales_mail=$this->transactionEmailService->getEmailId($transaction[0]['sales_slug']);
       $rm_name=$this->employeeService->getOfficialMailByName($transaction[0]['rm_name']);
       $promo_transaction_cc_emails = PROMO_TRANSACTION_CC_EMAILS;
-      array_push($promo_transaction_cc_emails,$sales_mail,$rm_name);
+      array_push($promo_transaction_cc_emails,$sales_mail, $rm_name);
       $details['cc'] = $promo_transaction_cc_emails;
 
       try {

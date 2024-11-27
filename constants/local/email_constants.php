@@ -19,27 +19,25 @@
 // ----------
 
 defined('PROMO_TRANSACTION_CC_EMAILS') OR define('PROMO_TRANSACTION_CC_EMAILS', [
-    'lobojeanz@gmail.com',
-    'it_security@makita.in',
-    'it_pm@makita.in',
+
     // 'jileesh@makita.in',
     // 'kamalraj@makita.in',
     // 'bm_east@makita.in',
     // 'sunil@makita.in',
     // 'hara@makita.in',
-    'accounting@makita.in',
-    'vanan@makita.in',
-    'veena@makita.in'
+    'accounting@makita.in'=>'',
+    'vanan@makita.in'=>'',
+    'veena@makita.in'=>''
     // 'sales@makita.in',
     // 'veena@makita.in'
  ]);
  
- defined('PROMO_TRANSACTION_TO_EMAILS') OR define('PROMO_TRANSACTION_TO_EMAILS','jeanlobo@makita.in');
+ defined('PROMO_TRANSACTION_TO_EMAILS') OR define('PROMO_TRANSACTION_TO_EMAILS',['jeanlobo94@gmail.com'=>'']);
 
 
- defined('PROMO_TRANSACTION_FROM_EMAILS') OR define('PROMO_TRANSACTION_FROM_EMAILS','lobojeanz@gmail.com');
+ defined('PROMO_TRANSACTION_FROM_EMAILS') OR define('PROMO_TRANSACTION_FROM_EMAILS',['it_security@makita.in'=>'']);
 
- defined('PROMO_TRANSACTION_BCC') OR define('PROMO_TRANSACTION_BCC','jeanlobo@makita.in');
+ defined('PROMO_TRANSACTION_BCC') OR define('PROMO_TRANSACTION_BCC',['it_pm@makita.in'=>'']);
 // ----------
 
 defined('PROMO_TO') OR define('PROMO_TO', [
@@ -47,19 +45,25 @@ defined('PROMO_TO') OR define('PROMO_TO', [
     //'yano@makita.in',
     //'shinichi_goto@makita.in'
     // 'ishigaki@makita.in'
-  'jileesh@makita.in',
-  'kamalraj@makita.in',
-  'bm_east@makita.in',
-  'sunil@makita.in',
-  'hara@makita.in',
+  'jileesh@makita.in'=>'',
+  'kamalraj@makita.in'=>'',
+  'bm_east@makita.in'=>'',
+  'sunil@makita.in'=>'',
+  'hara@makita.in'=>'',
 
 ]);
 
+
+// [
+//     "test+2@example.com" => "Example User2",
+//     "test+3@example.com" => "Example User3",
+// ];
+
 defined('PROMO_CC') OR define('PROMO_CC', [
-    'accounting@makita.in',
-    'sales@makita.in',
-    'vanan@makita.in',
-    'it_pm@makita.in'
+    'accounting@makita.in'=>'',
+    'sales@makita.in'=>'',
+    'vanan@makita.in'=>'',
+    'it_pm@makita.in'=>''
  ]);
 
 // defined('PROMO_FROM') OR define('PROMO_FROM','shinichi_goto@makita.in');
@@ -80,6 +84,8 @@ defined('PROMO_CC') OR define('PROMO_CC', [
  
  defined('PROMO_FROM') OR define('PROMO_FROM','jeanlobo94@gmail.com');
 
- defined('PROMO_BCC') OR define('PROMO_BCC','jeanlobo@makita.in');
+ defined('PROMO_BCC') OR define('PROMO_BCC',['jeanlobo@makita.in'=>'','jeanlobo94@gmail.com'=>'']);
+
+ defined('MakitaERPApiKey') OR define('MakitaERPApiKey','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');
 
 ?>
