@@ -59,5 +59,9 @@ class EmployeeService{
       return Employee::where('full_name',$full_name)->value('official_email');
     }
 
+
+    public function findEmployeeByEmpNo($emp_no){
+        return Employee::where(['employee_no'=>$emp_no])->value('full_name');
+    }
 }
 ?>

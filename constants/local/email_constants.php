@@ -86,4 +86,6 @@ defined('PROMO_CC') OR define('PROMO_CC', [
 
  defined('PROMO_BCC') OR define('PROMO_BCC',['jeanlobo@makita.in'=>'','jeanlobo94@gmail.com'=>'']);
 
+ defined('MakitaERPApiKey') OR define('MakitaERPApiKey','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');
+
 ?>

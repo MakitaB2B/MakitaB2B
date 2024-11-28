@@ -19,6 +19,7 @@ use App\Models\Admin\TransactionEmail;
 use Illuminate\Support\Facades\Crypt;
 use App\Jobs\PromoJob;
 use App\Jobs\TransactionJob;
+use App\Jobs\TransactionCancelJob;
 
 
 class PromotionController extends Controller
@@ -167,6 +168,7 @@ class PromotionController extends Controller
         if($statusarray[1]=='cancel'){
           $addcount = $this->dealerService->addcounts($dealer_code, $emp_no);
           $this->dealerCancelledService->Create($dealer_code, $promo_code,$cancelled_date);
+          $this->transactionCancelMail($statusarray[0]);
         }
         $result = $this->transactionService->UpdateTransaction($statusarray[0],$statusarray[1], $emp_no);
         return response()->json(['data' => $result]);
@@ -462,6 +464,36 @@ class PromotionController extends Controller
       //  return redirect()->route('promotions.transaction-preview',['orderid' =>   $crypttransaction])->with('message', 'Mail Send Successfully!!');
       return response()->json(['message' => "Transaction Mail Sent Successfully!"]);
       }  
+
+
+      public function transactionCancelMail($order_id){
+        $transaction = $this->transactionService->getTransactionDetails($order_id);
+
+        $details['focproduct'] = $transaction->where('product_type','FOC')->values();
+        $details['offerproduct'] = $transaction->where('product_type','Offer Product')->values();
+
+        $details['email'] = PROMO_TRANSACTION_TO_EMAILS;
+        $details['bcc'] =PROMO_TRANSACTION_BCC;
+        $sales_mail=$this->transactionEmailService->getEmailId($transaction[0]['sales_slug']);
+        $rm_name=$this->employeeService->getOfficialMailByName($transaction[0]['rm_name']);
+        $promo_transaction_cc_emails = PROMO_TRANSACTION_CC_EMAILS;
+        array_push($promo_transaction_cc_emails,$sales_mail, $rm_name);
+        $details['cc'] = $promo_transaction_cc_emails;
+        $details['canceledby']=$this->employeeService->findEmployeeByEmpNo( $transaction[0]['modified_by']);
+
+      
+        try {
+          $transactioncanceljob = TransactionCancelJob::dispatch($details);
+        } catch (\Exception $e) {
+  
+          Log::error($e->getMessage());
+  
+          return response()->json(['message' => $e->getMessage()]);
+        }
+  
+        return response()->json(['message' => "Transaction Cancel Mail Sent Successfully!"]);
+
+      }
 
       public function filter_data_by_offer_type($offer_type,$data){
 

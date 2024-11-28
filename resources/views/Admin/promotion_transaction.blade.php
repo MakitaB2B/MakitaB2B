@@ -136,8 +136,10 @@
                                  
                                         <div class="form-group col-md-2">
                                             <label for="exampleDealerCode">Dealer Code*</label>
-                                            <select class="custom-select select2" name="dealer_code" required id="exampleDealerCode">
-                                                <option value="0">Select Dealer Code</option>
+                                            <select class="custom-select select2" name="dealer_code" required id="exampleDealerCode" placeholder="Dealer Code"
+                                            oninvalid="this.setCustomValidity('Please select Dealer Code')" 
+                                            >
+                                                <option value=""  >Select Dealer Code</option>
                                                 @foreach ($dealer_master as $item)
                                                 <option value="{{$item->Customer}}-{{$item->Name}}">{{$item->Customer}}</option>
                                                 @endforeach
