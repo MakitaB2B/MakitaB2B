@@ -5,15 +5,15 @@ namespace App\Exports;
 use Illuminate\Support\Facades\DB;
 
 use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+// use Maatwebsite\Excel\Concerns\FromCollection;
+// use Maatwebsite\Excel\Concerns\WithMapping;
+// use Maatwebsite\Excel\Concerns\WithHeadings;
+// use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+// use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+// use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 
-use Maatwebsite\Excel\Concerns\WithStyles;
+// use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 use PhpOffice\PhpSpreadsheet\Style\Fill;
