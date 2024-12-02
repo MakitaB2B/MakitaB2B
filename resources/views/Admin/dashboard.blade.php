@@ -18,6 +18,13 @@
             <link rel="stylesheet"
                 href="{{ asset('admin_assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
         @endpush
+        <style>
+        .power-bi-div iframe 
+        {
+            height: 1000px;
+            width: 100%;
+        }
+        </style>
         <!-- Content Header (Page header) -->
         <div class="content-header">
             <div class="container-fluid">
@@ -214,9 +221,11 @@
                     <!-- right col -->
                 </div>
                 <!-- Main row -->
-                <iframe title="ghfhg" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=97a9b768-8a53-4583-b3fb-927a51dde861&autoAuth=true&ctid=8715ac1b-06d2-4be8-b329-9677c562cce2" frameborder="0" allowFullScreen="true"></iframe>
+                {{-- <iframe title="ghfhg" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=97a9b768-8a53-4583-b3fb-927a51dde861&autoAuth=true&ctid=8715ac1b-06d2-4be8-b329-9677c562cce2" frameborder="0" allowFullScreen="true"></iframe> --}}
 
-                <iframe title="powebi_dashboard_23-24" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=8abfc810-3a40-4793-87a1-b56d5c9f302d&autoAuth=true&ctid=8715ac1b-06d2-4be8-b329-9677c562cce2" frameborder="0" allowFullScreen="true"></iframe>
+                <div class="power-bi-div">
+                <iframe title="powebi_dashboard_23-24" width="" height="" src="https://app.powerbi.com/reportEmbed?reportId=8abfc810-3a40-4793-87a1-b56d5c9f302d&autoAuth=true&ctid=8715ac1b-06d2-4be8-b329-9677c562cce2" frameborder="0" allowFullScreen="true"></iframe>
+                </div>
                                 <!-- /.card-body -->
                 <div class="row">
                     <!-- Left col -->
