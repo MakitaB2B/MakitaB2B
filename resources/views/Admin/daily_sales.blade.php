@@ -48,11 +48,16 @@
                                     <div class="input-group input-group-sm">
                                         <select class="custom-select" id="stype">
                                             <option value="">Select Option</option>
-                                            <option value="item">Item</option>
-                                            <option value="description">Description</option>
+                                            {{-- <option value="date">Date</option>
+                                            <option value="year">Year</option>
+                                            <option value="state">State</option> --}}
+                                            <option value="customername">Customer Name</option>
+                                            <option value="invoice">Invoice</option>
+                                            {{-- <option value="categorytype">Category Type</option> --}}
+                                            <option value="order number">Order Number</option>
                                         </select>
                                         <input type="text" name="table_search" class="form-control float-right"
-                                            placeholder="Search by Item" id="searchtxt">
+                                            placeholder="Search ..." id="searchtxt">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-default smi">
                                                 <i class="fas fa-search"></i>
@@ -69,7 +74,7 @@
                                         <tr>
                                             <th>Date</th>
                                             <th>Year</th>
-                                            <th>Sate</th>
+                                            <th>State</th>
                                             <th>Customer Name</th>
                                             <th>QTY</th>
                                             <th>Unit Cost</th>
@@ -122,7 +127,7 @@
                         });
                     } else {
                         let searchtxt = $.trim($("#searchtxt").val());
-                        let searchFrom = "stockpg";
+                        let searchFrom = "dailysalespg";
                         if (searchtxt != '' && searchtxt.length > 3) {
                             $("#searchresultmsg").text('Please Wait while processing....').css({
                                 "color": "green",
@@ -130,7 +135,7 @@
                                 "font-size": "11px"
                             });
                             $.ajax({
-                                url: '/admin/stock-search',
+                                url: '/admin/daily-sales-search',
                                 type: 'post',
                                 data: 'searchtxt=' + searchtxt + '&searchtype=' + searchType +
                                     '&searchFrom=' + searchFrom +

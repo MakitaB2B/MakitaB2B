@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('daily_sales', function (Blueprint $table) {
+        Schema::table('daily_sales', function (Blueprint $table) {
+            if (!Schema::hasColumn('daily_sales', 'id')) {
             $table->id();
             $table->string('date',20)->index();
             $table->string('fy',15)->comment('Financial Year');
@@ -33,6 +34,16 @@ return new class extends Migration
             $table->string('category_type',15)->index();
             $table->string('customer_order_number',25)->index();
             $table->timestamps();
+            }
+
+            if (!Schema::hasColumn('daily_sales', 'sales_person')) {
+                $table->string('sales_person',10)->nullable()->after('customer_order_number');
+            }
+
+            if (!Schema::hasColumn('daily_sales', 'sales_person_name')) {
+                $table->string('sales_person_name',30)->nullable()->after('sales_person');
+            }
+
         });
     }
 

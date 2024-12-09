@@ -188,6 +188,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/fsc/manage-fsc-executive-process',[FactoryServiceStationController::class,'manageFSCServiceExecutiveProcess'])->name('fsc.manage-fsc-executive-process');
     Route::get('/daily-sales',[DailySalesController::class,'index'])->name('daily-sales');
     Route::post('/upload-daily-sales-report',[DailySalesController::class,'uploadDailySalesReport'])->name('upload-daily-sales-report');
+    Route::post('/daily-sales-search',[DailySalesController::class,'searchDailySales'])->name('daily-sales-search');
     Route::get('/asset-master',[AssetMasterController::class,'index'])->name('asset-master');
     Route::get('/asset-master/manage-asset-master/{assetMasterSlug?}',[AssetMasterController::class,'manageAssetMaster'])->name('admin.asset-master.manage-asset-master');
     Route::post('/asset-master/manage-asset-master-process',[AssetMasterController::class,'createOrUpdateAssetMaster'])->name('asset-master.manage-asset-master-process');
