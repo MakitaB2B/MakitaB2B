@@ -43,88 +43,26 @@ class PromotionController extends Controller
       return view('Admin.promotion',$result); 
     }
     
-    public function uploadPromotion(Request $request){
+    // Find all keys containing 'Stock'
+// $keys = array_keys($array);
+// $splitIndices = array_filter(array_keys($keys), function ($index) use ($keys) {
+//     return str_contains($keys[$index], 'Stock');
+// });
 
-      if(request()->has('mycsv')){
+// // Add first and last indices for complete slices
+// $splitIndices = array_merge([-1], $splitIndices, [count($keys)]);
 
-        $data=array_map('str_getcsv', file(request()->mycsv));
+// // Split the array using array_slice
+// $result = array_map(function ($start, $end) use ($keys, $array) {
+//     return array_slice($array, $start + 1, $end - $start, true);
+// }, $splitIndices, array_slice($splitIndices, 1));
 
-        $effective_from=$data[0];
-
-        $effective_from = array_filter($effective_from);
-
-        $effective_from=preg_replace('/^\x{FEFF}/u', '',   $effective_from[0]);
-
-        $date=null;
-        if (preg_match('/\d{2}\/\d{2}\/\d{4}/', $effective_from, $matches)) {
-          $date = $matches[0]; 
-        }
-        $from_date = $date;
-
-        $header=$data[1];
-
-        unset($data[0], $data[1]);
-        $result = [];
-        foreach ($data as $value) {
-          set_time_limit(0);
-          $promoData=array_combine($header,$value);
-          // echo "<pre>";
-          // print_r($promoData);
-          // echo die();
-
-        //   $result[] = [
-        //     'promo_code' => $value['CODE'],
-        //     'from_date' => $from_date,
-        //     'to_date' => $value['Valid for'],
-        //     'product_type' => isset($value['Code-Main']) ?, 
-        //     // 'offer_type' => $value['OFFER TYPE'],
-        //     // 'offer_mrp' => $value['OFFER MRP'],
-        //     // 'offer_dlp' => $value['OFFER DLP'],
-        //     // 'offer_stock' => $value['OFFER STOCK'],
-        // ];
-          Promotion::create($promoData); 
-        }
+// // Filter out arrays that don't contain 'Stock' in their keys
+// $result = array_filter($result, function ($subArray) {
+//     return array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Stock'));
+// });
 
 
-       
-
-      }
-
-    }
-
-
-    public function split_promo_array() {
-
-      $keys = array_keys($array);
-      $splitIndices = array_filter(array_keys($keys), function ($index) use ($keys) {
-          return str_contains($keys[$index], 'Stock');
-      });
-
-      // Add first and last indices for complete slices
-      $splitIndices = array_merge([-1], $splitIndices, [count($keys)]);
-
-      // Split the array using array_slice
-      $result = array_map(function ($start, $end) use ($keys, $array) {
-          return array_slice($array, $start + 1, $end - $start, true);
-      }, $splitIndices, array_slice($splitIndices, 1));
-
-      // Filter out arrays that don't contain 'Stock' in their keys
-      $result = array_filter($result, function ($subArray) {
-          return array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Stock'));
-      });
-
-      // Add [CODE] to each nested array
-      $code = $array['CODE'] ?? null; // Extract the CODE from the original array
-      $result = array_map(function ($subArray) use ($code) {
-          $subArray['CODE'] = $code; // Add the CODE key to each nested array
-          return $subArray;
-      }, $result);
-
-      // Print result
-
-      return $result;
-
-    }
 
     public function promotionCreation()
     { 

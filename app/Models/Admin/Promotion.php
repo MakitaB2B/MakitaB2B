@@ -13,4 +13,11 @@ class Promotion extends Model
     public function reservedStock(){
         return $this->hasMany('App\Models\Admin\ReservedStocks','item','model_no');
     }
+
+    public function setFromDateAttribute($value)
+    {
+        $this->attributes['from_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
+    }
+
+    
 }

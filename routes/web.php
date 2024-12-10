@@ -312,6 +312,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
 
 
     Route::get('/promotions',[PromotionController::class,'index'])->name('promo');
+    Route::post('/upload-promotion',[PromotionController::class,'uploadPromotion'])->name('upload-promotion');
     Route::get('/promotions/promotion-creation',[PromotionController::class,'promotionCreation'])->name('admin.promotions.promotion-creation');
     Route::post('/promotions/promotion-create',[PromotionController::class,'promotionCreate'])->name('admin.promotions.promotion-create');
     Route::get('/promotions/promotion-preview/{promocode}',[PromotionController::class,'promotionPreview'])->name('admin.promotions.promotion-preview');

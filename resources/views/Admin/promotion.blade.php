@@ -50,7 +50,19 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Promotion List</h3>
+                                <b style="display: none; color:green" id="hm">File is large, it may take a while, please wait
+                                    while processing.....</b>
+                                <form action="{{ route('upload-promotion') }}" method="post" enctype="multipart/form-data"
+                                    id="suf">
+                                    @csrf
+                                    <input type="submit" value="Upload" class="btn float-right" id="submititem">
+                                    <label for="inputField" class="btn btn-primary float-right">Promotion File</label>
+                                    <input type="file" name="mycsv" id="inputField" style="display:none" required>
+                                </form>
                             </div>
+                            {{-- <div class="col-sm-6">
+                                
+                            </div> --}}
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
