@@ -40,7 +40,9 @@ class DailySalesController extends Controller
             $column = 'customer_order_number';
         }
 
-        $searchResult=DailySales::where($column,'LIKE',"$searchQuery")->get(['id','date','year','state','customer_name','sales_qty','unit_cost','sales_value','invoice_no','category_type','customer_order_number']);
+        $searchResult=DailySales::where($column,'LIKE',"$searchQuery")
+        ->orderby("date", "desc")
+        ->get(['id','date','year','state','customer_name','sales_qty','unit_cost','sales_value','invoice_no','category_type','customer_order_number']);
         if(($searchResult->count())>0 ){
             $output="";
             if($searchFrom=='dailysalespg'){
