@@ -594,11 +594,15 @@ class TravelManagementService{
     }
 
     public function fetchGrade($employeeSlug){
+      
 
         $designation = Employee::with(['designation_department','department'])->where('employee_slug',$employeeSlug)->first();
-     
-        $grade = Grade::where('department',$designation["department"]->name)->where('designation',$designation["designation_department"]->designation_name)->select('grade')->first();
+       
 
+        // $grade = Grade::where('department',$designation["department"]->name)->where('designation',$designation["designation_department"]->designation_name)->select('grade')->first();
+
+        $grade = Grade::where('department',"Sales")->where('designation',"Assistant Manager")->select('grade')->first();
+        
        return $grade;
     }
 
