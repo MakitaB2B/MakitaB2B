@@ -15,42 +15,52 @@ class DailySalesController extends Controller
     }
 
     public function searchDailySales(Request $request) {
+
         $searchValue=strtoupper($request->searchtxt);
-        dd($searchValue);
         $searchFrom=$request->searchFrom;
         $searchType=$request->searchtype;
+
         $type = match($searchType){
-            'item'=>'item',
-            'description'=>'description',
-            default => 'item',
+            'customername'=>'customername',
+            'invoice'=>'invoice',
+            'ordernumber'=>'ordernumber',
+            default => 'customername',
         };
-        if($type=='item'){
-            $searchQuery=$searchValue.'%';
-            $column = 'Item';
-        }
-        if($type=='description'){
+
+        if($type=='customername'){
             $searchQuery='%'.$searchValue.'%';
-            $column = 'Item Description';
+            $column = 'customer_name';
+        }
+        if($type=='invoice'){
+            $searchQuery='%'.$searchValue.'%';
+            $column = 'invoice_no';
+        }
+        if($type=='ordernumber'){
+            $searchQuery='%'.$searchValue.'%';
+            $column = 'customer_order_number';
         }
 
-        $searchResult=ItemPrice::where($column,'LIKE',"$searchQuery")->get(['id','Item','Item Description','U/M','DLP','LP','MRP','BEST']);
+        $searchResult=DailySales::where($column,'LIKE',"$searchQuery")->get(['id','date','year','state','customer_name','sales_qty','unit_cost','sales_value','invoice_no','category_type','customer_order_number']);
         if(($searchResult->count())>0 ){
             $output="";
-            if($searchFrom=='itempg'){
-                $routeTo="items/";
+            if($searchFrom=='dailysalespg'){
+                $routeTo="daily-sales/";
             }
 
             foreach ($searchResult as $key => $data) {
                 $output.='<tr>'.
-                '<td>'.$data->Item.'</td>'.
-                '<td>'.$data->{'Item Description'}.'</td>'.
-                '<td>'.$data->{'U/M'}.'</td>'.
-                '<td>'.$data->{'DLP'}.'</td>'.
-                '<td title="'.$data->{'LP'}.'">'.$data->descriptionsystem.'</td>'.
-                '<td>'.$data->{'MRP'}.'</td>'.
-                '<td>'.$data->{'BEST'}.'</td>'.
+                '<td>'.$data->date.'</td>'.
+                '<td>'.$data->year.'</td>'.
+                '<td>'.$data->state.'</td>'.
+                '<td>'.$data->customer_name.'</td>'.
+                '<td title="'.$data->sales_qty.'">'.$data->sales_qty.'</td>'.
+                '<td>'.$data->unit_cost.'</td>'.
+                '<td>'.$data->sales_value.'</td>'.
+                '<td>'.$data->invoice_no.'</td>'.
+                '<td>'.$data->category_type.'</td>'.
+                '<td>'.$data->customer_order_number.'</td>'.
                 '</tr>';
-                }
+                }       
         return Response($output);
         }else{
             echo "No Record Found";

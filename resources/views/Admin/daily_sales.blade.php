@@ -54,7 +54,7 @@
                                             <option value="customername">Customer Name</option>
                                             <option value="invoice">Invoice</option>
                                             {{-- <option value="categorytype">Category Type</option> --}}
-                                            <option value="order number">Order Number</option>
+                                            <option value="ordernumber">Order Number</option>
                                         </select>
                                         <input type="text" name="table_search" class="form-control float-right"
                                             placeholder="Search ..." id="searchtxt">
