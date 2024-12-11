@@ -48,7 +48,7 @@ class PromotionController extends Controller
       if(request()->has('mycsv')){
 
         $data=array_map('str_getcsv', file(request()->mycsv));
-
+     
         $effective_from=$data[0];
 
         $effective_from = array_filter($effective_from);
@@ -59,10 +59,9 @@ class PromotionController extends Controller
         if (preg_match('/\d{2}\/\d{2}\/\d{4}/', $effective_from, $matches)) {
           $date = $matches[0]; 
         }
+
         $from_date = $date;
-
         $header=$data[1];
-
         unset($data[0], $data[1]);
         $result = [];
         foreach ($data as $value) {
@@ -82,6 +81,11 @@ class PromotionController extends Controller
         //     // 'offer_dlp' => $value['OFFER DLP'],
         //     // 'offer_stock' => $value['OFFER STOCK'],
         // ];
+           
+
+          $promoarray = $this->split_promo_array($promoData,$from_date);
+          dd($promoarray);
+
           Promotion::create($promoData); 
         }
 
@@ -93,39 +97,113 @@ class PromotionController extends Controller
     }
 
 
-    public function split_promo_array() {
+    // public function split_promo_array($array) {
 
+    //   $keys = array_keys($array);
+     
+    //   $splitIndices = array_filter(array_keys($keys), function ($index) use ($keys) {
+    //       return str_contains($keys[$index], 'Stock');
+    //   });
+
+    //   $splitIndices = array_merge([-1], $splitIndices, [count($keys)]);
+
+    //   $result = array_map(function ($start, $end) use ($keys, $array) {
+    //       return array_slice($array, $start + 1, $end - $start, true);
+    //   }, $splitIndices, array_slice($splitIndices, 1));
+
+    //   $result = array_filter($result, function ($subArray) {
+    //       return array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Stock'));
+    //   });
+
+    //   $code = $array['CODE'] ?? null; 
+    //   $result = array_map(function ($subArray) use ($code) {
+    //       $subArray['CODE'] = $code; 
+    //       return $subArray;
+    //   }, $result);
+
+    //   return $result;
+
+    // }
+
+    public function split_promo_array($array, $from_date) {
+      $array = array_filter($array, fn($value, $key) => $key !== "", ARRAY_FILTER_USE_BOTH);
       $keys = array_keys($array);
       $splitIndices = array_filter(array_keys($keys), function ($index) use ($keys) {
           return str_contains($keys[$index], 'Stock');
       });
-
-      // Add first and last indices for complete slices
+  
       $splitIndices = array_merge([-1], $splitIndices, [count($keys)]);
-
-      // Split the array using array_slice
+  
       $result = array_map(function ($start, $end) use ($keys, $array) {
           return array_slice($array, $start + 1, $end - $start, true);
       }, $splitIndices, array_slice($splitIndices, 1));
+  
+      // $result = array_filter($result, function ($subArray) {
+      //     return array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Stock'));
+      // });
 
-      // Filter out arrays that don't contain 'Stock' in their keys
-      $result = array_filter($result, function ($subArray) {
-          return array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Stock'));
-      });
+      $hasMainKey = !empty(array_column($result, 'Price-FOC 1'));
 
-      // Add [CODE] to each nested array
-      $code = $array['CODE'] ?? null; // Extract the CODE from the original array
-      $result = array_map(function ($subArray) use ($code) {
-          $subArray['CODE'] = $code; // Add the CODE key to each nested array
+      $priceFoc1 = array_column($result, 'Price-FOC 1')[0];
+
+      $offer_type = $hasMainKey && $priceFoc1 == "BEST" ? "Combo Offer" : "Buy One Of The Product";
+  
+      $code = $array['CODE'] ?? null;
+      $valid_for = $array['Valid for'] ?? null;
+      $modelKeys = ['Code-Main', 'Code-FOC 1', 'Code-FOC 2', 'Code-FOC 3'];
+      $priceKeys = ['Price-Main','Price-FOC 1', 'Price-FOC 2', 'Price-FOC 3'];
+      $result = array_map(function ($subArray) use ($code,$valid_for,$from_date,$offer_type,$modelKeys,$priceFoc1,$priceKeys) {
+       
+          $subArray['promotion_slug'] = $this->promotionService->promotion_slug();
+          $subArray['promo_code'] = $code;
+          $subArray['to_date'] =  \Carbon\Carbon::createFromFormat('d-m-Y', $valid_for)->format('Y-m-d'); //$valid_for; 
+          $subArray['from_date'] = \Carbon\Carbon::createFromFormat('d/m/Y', $from_date)->format('Y-m-d');
+          
+
+          // $subArray['model_no'] = array_filter(array_map(function ($key) use ($subArray) {
+          //   return $subArray[$key] ?? null;
+          // }, $modelKeys));
+
+          $modelNoArray = array_filter(array_map(function ($key) use ($subArray) {
+            return $subArray[$key] ?? null;
+          }, $modelKeys));
+          $subArray['model_no'] = implode(", ", $modelNoArray); 
+
+          $keysNoArray = array_filter(array_map(function ($key) use ($subArray) {
+            return $subArray[$key] ?? null;
+          }, $priceKeys));
+
+          $subArray['price_type'] = implode(", ", $keysNoArray)  ;
+          if (array_key_exists('Main', $subArray)) {
+            $subArray['product_type'] = 'Offer Product';
+            $subArray['offer_type'] = $offer_type;
+          }elseif (array_key_exists('Price-FOC 1',$subArray) && $subArray['Price-FOC 1']=="BEST"){
+            $subArray['product_type'] = 'Offer Product';
+            $subArray['offer_type'] = $offer_type;
+          }else{
+            $subArray['product_type'] = 'FOC';
+            $subArray['offer_type'] = null;
+          }
+
+          
+
           return $subArray;
       }, $result);
 
-      // Print result
-
+  
+      $result = array_filter($result, function ($subArray) {
+          $codeFOCKeys = array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Code-FOC') || str_contains($key, 'Code-Main'));
+          foreach ($codeFOCKeys as $key) {
+              if (!empty($subArray[$key])) {
+                  return true;
+              }
+          }
+          return false;
+      });
+  
       return $result;
-
     }
-
+  
     public function promotionCreation()
     { 
       $result['promo_code'] = $this->promotionService->getPromoCount()+1;

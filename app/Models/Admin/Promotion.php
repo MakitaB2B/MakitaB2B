@@ -19,5 +19,9 @@ class Promotion extends Model
         $this->attributes['from_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
     }
 
+    public function setToDateAttribute($value)
+    {
+        $this->attributes['to_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
+    }
     
 }
