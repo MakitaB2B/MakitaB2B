@@ -43,6 +43,13 @@ class PromotionService{
 
     }
 
+    public function ckeck_if_exists($promo_code){
+
+      $promoExists = Promotion::distinct()->pluck('promo_code')->toArray();
+
+      return (in_array($promo_code,$promoExists));
+    }
+
     public function createOrUpdatePromo($data){
 
       try {
@@ -51,6 +58,7 @@ class PromotionService{
            $promotion = Promotion::insert($data);
         
          }); 
+
         } catch (Exception $e) {
 
           return $e->getMessage();
@@ -290,6 +298,30 @@ class PromotionService{
 
       return response()->json($result);
 
+    }
+
+    public function modeldetailSearchNonJson($query){
+
+      $result = BranchStocks::with('reservedStock:id,item,reserved')
+        ->join('item_prices', 'branch_stocks.item', '=', 'item_prices.Item')
+        ->whereIn('item_prices.Item', $query)
+        ->select(
+            'item_prices.Item as item',
+            'item_prices.Item Description as description',
+            'item_prices.MRP as mrp',
+            'item_prices.DLP as dlp',
+            'item_prices.Best as best'
+        )
+        ->selectRaw(
+            '(branch_stocks.cb01 + branch_stocks.dl01 + branch_stocks.gh01 + branch_stocks.gj01 + branch_stocks.id01 + branch_stocks.jm01 + branch_stocks.ka01 + branch_stocks.kl01 + branch_stocks.mh01 + branch_stocks.pn01 + branch_stocks.py01 + branch_stocks.rd01 + branch_stocks.tn01 + branch_stocks.vd01 + branch_stocks.wb01) as total_stock'
+        )
+        ->first(); 
+
+        if ($result) {
+            $result->total_reserved = $result->reservedStock->sum('reserved');
+        }
+
+        return $result;
     }
 
     public function modeldetailSingleSearch($query){

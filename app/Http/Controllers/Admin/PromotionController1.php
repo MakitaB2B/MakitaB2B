@@ -555,3 +555,33 @@ class PromotionController extends Controller
       }
 
 }
+
+
+
+  // public function split_promo_array($array) {
+
+    //   $keys = array_keys($array);
+     
+    //   $splitIndices = array_filter(array_keys($keys), function ($index) use ($keys) {
+    //       return str_contains($keys[$index], 'Stock');
+    //   });
+
+    //   $splitIndices = array_merge([-1], $splitIndices, [count($keys)]);
+
+    //   $result = array_map(function ($start, $end) use ($keys, $array) {
+    //       return array_slice($array, $start + 1, $end - $start, true);
+    //   }, $splitIndices, array_slice($splitIndices, 1));
+
+    //   $result = array_filter($result, function ($subArray) {
+    //       return array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Stock'));
+    //   });
+
+    //   $code = $array['CODE'] ?? null; 
+    //   $result = array_map(function ($subArray) use ($code) {
+    //       $subArray['CODE'] = $code; 
+    //       return $subArray;
+    //   }, $result);
+
+    //   return $result;
+
+    // }
