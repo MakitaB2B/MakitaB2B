@@ -343,6 +343,9 @@ class PromotionController extends Controller
       // $result['regional_manager']= $this->employeeService->getEmployeeByDesignation($designation,$department);  //$this->regionalManager->rmNames();
       $loggedIn = Auth::guard('admin')->user()->employee_slug;
       $result['regional_manager'] = $this->teamService->getTeamOwner($loggedIn);
+      if(empty($result['regional_manager'])){
+       return  redirect("/admin/promotions/promotion-transaction")->with(["error"=>"You're not a team owner or a team member. Please contact your manager."]);
+      }
       $result['transaction_email'] = $this->transactionEmailService->getTransactionDetails($result['regional_manager']->team_owner);
       $result['dealer_master']= $this->dealerService->getDealers();
 

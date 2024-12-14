@@ -33,10 +33,19 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                @if (session()->has('message'))
-                    <div class="card card-success">
+                @if (session()->has('error') || session()->has('message'))
+                @php
+                if(session()->has('error')){
+                    $msgCard='card-danger';
+                    $msg=session('error');
+                }if(session()->has('message')){
+                    $msgCard='card-success';
+                    $msg=session('message');
+                }
+                @endphp
+                    <div class="card {{$msgCard}}">
                         <div class="card-header">
-                            <h3 class="card-title">{{ session('message') }}</h3>
+                            <h3 class="card-title">{{ $msg }}</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="remove"><i
                                         class="fas fa-times"></i>
