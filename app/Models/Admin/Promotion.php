@@ -24,10 +24,10 @@ class Promotion extends Model
         $this->attributes['to_date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
     }
 
-    public function setPriceAttribute($value)
-    {
-        $cleanedValue = str_replace(',', '', $value);
-        $this->attributes['price'] = is_numeric($cleanedValue) ? $cleanedValue : 0;
-    }
+    // public function setPriceAttribute($value)
+    // {
+    //     $cleanedValue = str_replace(',', '', $value);
+    //     $this->attributes['price'] = is_numeric($cleanedValue) ? $cleanedValue : 0;
+    // }
     
 }
