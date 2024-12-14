@@ -116,8 +116,8 @@
                                         </div>
                     
                                         <div class="form-group col-md-2">
-                                            <label for="exampleRmname">Regional Manager Region*</label>
-                                            <select class="custom-select select2" name="rm_region" required id="exampleRmregion">
+                                            <label for="exampleRmname">Region*</label>
+                                            <select class="custom-select select2" name="rm_region" required id="exampleRmregion"   oninvalid="this.setCustomValidity('Please select Region')" >
                                                 @foreach ($transaction_email as $item)
                                                 <option value="{{$item->region}}-{{$item['sales_name']['employee_slug']}}">{{$item->region}}-{{$item['sales_name']['full_name']}}</option>
                                                 @endforeach
@@ -417,6 +417,8 @@
             let flag=0;
             let ajaxcall=1;
             let storeproductqty = 0;
+            let validSubmission = true;
+            $("#submitbutton").prop('disabled', true);
             $('.rowdata').each(function() {
               
                 let modelInput = $(this).find('input[name="model[]"]');
@@ -427,6 +429,7 @@
                 let product_type = $(this).find('input[name="product_type[]"]').val();
                 let stock= $(this).find('input[name="promostock[]"]').val();
                 let modelId = modelInput.attr('id').replace("exampleModel", ""); 
+                console.log(modelId);
                 $("#exampleQtyStatus"+modelId).empty();
                 $("#exampleQty"+modelId).empty();
                 $("#exampleTotalPrice").empty();
@@ -445,9 +448,20 @@
                     }
                 }
 
+                if (offertype =='Combo Offer' && qty == 0) {
+                $("#exampleQtyStatus" + modelId).html('<b style="color:red;">Qty cannot be 0 for Combo Offer</b>');
+                ajaxcall = 0;
+                // return false;
+                }
+
                 if(flag==0 && qty>0 && offertype=='Buy One Of The Product'){
                       flag=modelId;
                 }
+                
+                // else if (flag !== 0 && flag !== modelId && product_type !== 'FOC' && qty !== 0) {
+                // $("#exampleQtyStatus" + modelId).html('<b style="color:red;">Only one Offer Product can have a non-zero Qty for Buy One Of The Product</b>');
+                // }
+
             
                 if(flag!=0 && flag!=modelId && product_type!='FOC' && qty!=0){
                     $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Buy one of the Offer Product </b>');
