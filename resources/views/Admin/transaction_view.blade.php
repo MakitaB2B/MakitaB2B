@@ -126,6 +126,10 @@
                         <input type="text" id="inputName" class="form-control" value="{{$offer->price_type}}" >
                       </div>
                       <div class="form-group col-md-6">
+                        <label for="inputName">Offer Qty</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->offer_qty}}" >
+                      </div>
+                      <div class="form-group col-md-6">
                         <label for="inputName">Order Qty</label>
                         <input type="text" id="inputName" class="form-control" value="{{$offer->order_qty}}" >
                       </div>
@@ -200,6 +204,10 @@
                       <div class="form-group col-md-6">
                         <label for="inputName">Price Type</label>
                         <input type="text" id="inputName" class="form-control" value="{{$offer->price_type}}" >
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">Offer Qty</label>
+                        <input type="text" id="inputName" class="form-control" value="{{$offer->offer_qty}}" >
                       </div>
                       <div class="form-group col-md-6">
                         <label for="inputName">Order Qty</label>
