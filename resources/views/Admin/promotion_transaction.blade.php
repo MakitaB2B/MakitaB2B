@@ -417,8 +417,8 @@
             let flag=0;
             let ajaxcall=1;
             let storeproductqty = 0;
-            let validSubmission = true;
-            $("#submitbutton").prop('disabled', true);
+            // let validSubmission = true;
+            // $("#submitbutton").prop('disabled', true);
             $('.rowdata').each(function() {
               
                 let modelInput = $(this).find('input[name="model[]"]');
@@ -429,7 +429,7 @@
                 let product_type = $(this).find('input[name="product_type[]"]').val();
                 let stock= $(this).find('input[name="promostock[]"]').val();
                 let modelId = modelInput.attr('id').replace("exampleModel", ""); 
-                console.log(modelId);
+                // console.log(modelId);
                 $("#exampleQtyStatus"+modelId).empty();
                 $("#exampleQty"+modelId).empty();
                 $("#exampleTotalPrice").empty();

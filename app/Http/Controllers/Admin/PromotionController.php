@@ -160,7 +160,7 @@ class PromotionController extends Controller
 
           $model_details = $this->promotionService->modeldetailSearchNonJson($modelNoArray);
           
-          $subArray['price'] =  $price;
+          $subArray['price'] =  (int)$price;
           
           // ($subArray['price_type'] === 'Best Price') ? (int)$model_details->best : 
           // (($subArray['price_type'] === 'DLP' || $subArray['price_type'] === 'dlp') ? (int)$model_details->dlp : 
