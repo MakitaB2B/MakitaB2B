@@ -73,6 +73,7 @@ class PromotionController extends Controller
           $promo_check = $this->promotionService->ckeck_if_exists($promoData[0]['promo_code']);
 
           if(!$promo_check){
+       
             $data = $this->promotionService->createOrUpdatePromo($promoData);
             if(!empty($data)){
               $error_promo[]=$promoData[0]['promo_code'];
@@ -153,13 +154,17 @@ class PromotionController extends Controller
 
           $price = implode(",",$price); 
 
+          $price = str_replace(',', '', $price);
+
           $subArray['price_type'] = $priceTypes[implode(", ", $keysNoArray)] ?? (stripos(implode(", ", $keysNoArray), 'DLP') !== false ? "DLP" : "Unknown");
 
           $model_details = $this->promotionService->modeldetailSearchNonJson($modelNoArray);
           
-          $subArray['price'] = ($subArray['price_type'] === 'Best Price') ? (int)$model_details->best : 
-          (($subArray['price_type'] === 'DLP' || $subArray['price_type'] === 'dlp') ? (int)$model_details->dlp : 
-          (($subArray['price_type'] === 'Special Price' || $subArray['price_type'] === 'FOC') ? (int)$price : ''));
+          $subArray['price'] =  $price;
+          
+          // ($subArray['price_type'] === 'Best Price') ? (int)$model_details->best : 
+          // (($subArray['price_type'] === 'DLP' || $subArray['price_type'] === 'dlp') ? (int)$model_details->dlp : 
+          // (($subArray['price_type'] === 'Special Price' || $subArray['price_type'] === 'FOC') ? (int)$price : ''));
           
           $subArray['model_desc'] = $model_details?->description ?? '';
           $subArray['mrp'] =$model_details->mrp ?? ''; 

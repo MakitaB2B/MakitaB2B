@@ -448,11 +448,11 @@
                     }
                 }
 
-                if (offertype =='Combo Offer' && qty == 0) {
-                $("#exampleQtyStatus" + modelId).html('<b style="color:red;">Qty cannot be 0 for Combo Offer</b>');
-                ajaxcall = 0;
+                // if (offertype =='Combo Offer' && qty == 0) {
+                // $("#exampleQtyStatus" + modelId).html('<b style="color:red;">Qty cannot be 0 for Combo Offer</b>');
+                // ajaxcall = 0;
                 // return false;
-                }
+                // }
 
                 if(flag==0 && qty>0 && offertype=='Buy One Of The Product'){
                       flag=modelId;
