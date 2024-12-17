@@ -56,13 +56,13 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form method="POST" action="{{ route('admin.promotions.transaction-create') }}" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('admin.promotions.transaction-create') }}" enctype="multipart/form-data" id="transactionForm">
                                 @csrf
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-2">
                                             <label for="examplePromoCode">Promo Code*</label>
-                                            <select class="promotions select2" name="promo_code" required id="examplePromoCode">
+                                            <select class="promotions select2" name="promo_code" id="examplePromoCode">
                                                     <option value="0">Select Promo Code</option>
                                                     @foreach ($promo_code as $item)
                                                     <option value="{{$item->promo_code}}">{{$item->promo_code}}</option>
@@ -117,7 +117,7 @@
                     
                                         <div class="form-group col-md-2">
                                             <label for="exampleRmname">Region*</label>
-                                            <select class="custom-select select2" name="rm_region" required id="exampleRmregion"   oninvalid="this.setCustomValidity('Please select Region')" >
+                                            <select class="custom-select select2" name="rm_region" id="exampleRmregion">
                                                 @foreach ($transaction_email as $item)
                                                 <option value="{{$item->region}}-{{$item['sales_name']['employee_slug']}}">{{$item->region}}-{{$item['sales_name']['full_name']}}</option>
                                                 @endforeach
@@ -136,9 +136,7 @@
                                  
                                         <div class="form-group col-md-2">
                                             <label for="exampleDealerCode">Dealer Code*</label>
-                                            <select class="custom-select select2" name="dealer_code" required id="exampleDealerCode" placeholder="Dealer Code"
-                                            oninvalid="this.setCustomValidity('Please select Dealer Code')" 
-                                            >
+                                            <select class="custom-select select2" name="dealer_code" id="exampleDealerCode" placeholder="Dealer Code">
                                                 <option value=""  >Select Dealer Code</option>
                                                 @foreach ($dealer_master as $item)
                                                 <option value="{{$item->Customer}}-{{$item->Name}}">{{$item->Customer}}</option>
@@ -509,6 +507,90 @@
             });
 
         }
+
+        // $("#submitbutton").on("click", function(e){
+        //     e.preventDefault();
+        //     let promoCode = $("#examplePromoCode").val().trim();
+        //     let rmCode = $("#exampleRmregion").val().trim();
+            
+        //     if (!promoCode || promoCode == 0 || rmCode == 0 ||  !rmCode) {
+                
+        //     } else {
+            
+        //         $(this).closest("form").submit();
+        //     }
+        // })
+
+
+        $("#submitbutton").on("click", function(e){
+        e.preventDefault();
+        let promoCode = $("#examplePromoCode").val();
+        let rmCode = $("#exampleRmregion").val();
+    
+        $(".error-message").remove();
+        $("#examplePromoCode, #exampleRmregion").removeClass("is-invalid");
+    
+
+        let isValid = true;
+    
+    if (!promoCode || promoCode == 0) {
+        $("#examplePromoCode").addClass("is-invalid");
+        $(this).closest(".form-group").append('<div class="error-message text-danger">Please enter a promo code</div>');
+        isValid = false;
+    }
+    
+    if (!rmCode || rmCode.length === 0) {
+        $("#exampleRmregion").addClass("is-invalid");
+        $(this).closest(".form-group").append('<div class="error-message text-danger">Please select a region</div>');
+        isValid = false;
+    }
+    
+    if (isValid) {
+        $(this).closest("form").submit();
+    }
+    });
+
+    //     $("#submitbutton").on("click", function (e) {
+    //     e.preventDefault();
+
+       
+    //     $(".error-message").remove();
+    //     $("#examplePromoCode, #exampleRmregion").removeClass("is-invalid");
+
+     
+    //     let promoCode = $("#examplePromoCode").val().trim();
+    //     let rmCode = $("#exampleRmregion").val().trim();
+
+    //     let isValid = true;
+
+     
+    //     if (!promoCode || promoCode === "0") {
+    //         $("#examplePromoCode").addClass("is-invalid");
+    //         if ($("#examplePromoCode").next(".error-message").length === 0) {
+    //             $("#examplePromoCode").after(
+    //                 '<div class="error-message text-danger">Please select a promo code</div>'
+    //             );
+    //         }
+    //         isValid = false;
+    //     }
+
+      
+    //     if (!rmCode || rmCode === "0") {
+    //         $("#exampleRmregion").addClass("is-invalid");
+    //         if ($("#exampleRmregion").next(".error-message").length === 0) {
+    //             $("#exampleRmregion").after(
+    //                 '<div class="error-message text-danger">Please select a region</div>'
+    //             );
+    //         }
+    //         isValid = false;
+    //     }
+
+     
+    //     if (isValid) {
+    //         $(this).closest("form").submit();
+    //     }
+    // });
+
 
     </script>
     @endpush
