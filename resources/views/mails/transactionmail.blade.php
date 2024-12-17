@@ -103,8 +103,9 @@
           <th>Offer Type</th>
           <th>Product Type</th>
           <th>Price Type</th>
-          <th>Price</th>
+          <th>Offer Price</th>
           <th>Qty</th>
+          <th>Total Price</th>
         </tr>
       </thead>
       <tbody>
@@ -115,6 +116,7 @@
           <td>{{ $offer["offer_type"] }}</td>
           <td>{{ $offer["product_type"] }}</td>
           <td>{{ $offer["price_type"] }}</td>
+          <td>{{ $offer["offer_price"] }}</td>
           <td>{{ $offer["order_price"] }}</td>
           <td>{{ $offer["order_qty"] }}</td>
         </tr>
@@ -131,8 +133,9 @@
           <th>Offer Type</th>
           <th>Product Type</th>
           <th>Price Type</th>
-          <th>Price</th>
+          <th>Offer Price</th>
           <th>Qty</th>
+          <th>Total Price</th>
         </tr>
       </thead>
       <tbody>
@@ -143,8 +146,9 @@
           <td>{{ $offer["offer_type"] }}</td>
           <td>{{ $offer["product_type"] }}</td>
           <td>{{ $offer["order_price"] == 0 ? ' - ' : $offer["price_type"] }}</td>
-          <td>{{ $offer["order_price"] }}</td>
+          <td>{{ $offer["offer_price"] }}</td>
           <td>{{ $offer["order_qty"] }}</td>
+          <td>{{ $offer["order_price"] }}</td>
         </tr>
         @endforeach 
       </tbody>
