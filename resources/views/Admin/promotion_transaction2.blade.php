@@ -430,12 +430,11 @@
             let storeproductqty = 0;
             // let validSubmission = true;
             // $("#submitbutton").prop('disabled', true);
-            $('.rowdata').each(function(index) {
+            $('.rowdata').each(function() {
               
                 let modelInput = $(this).find('input[name="model[]"]');
                 let modelNo = modelInput.val();
                 let qty = $(this).find('input[name="qty[]"]').val();
-                // let qty = $(`#exampleQty${index + 1}`).val();
                 let offerqty = $(this).find('input[name="offerqty[]"]').val();
                 let offertype = $(this).find('input[name="offertype[]"]').val();
                 let product_type = $(this).find('input[name="product_type[]"]').val();
@@ -460,14 +459,12 @@
                     }
                 }
 
-                if (offertype =='Combo Offer' && qty == 0 || qty=="" && storeproductqty===0 && product_type!='FOC') {
-                $("#exampleQtyStatus" + modelId).html('<b style="color:red;">Qty cannot be 0</b>');
-                $('#submitbutton').prop('disabled', true);
-                ajaxcall = 0;
-                } else{
-                    $('#submitbutton').prop('disabled', false); 
-                }
-                
+                // if (offertype =='Combo Offer' && qty == 0) {
+                // $("#exampleQtyStatus" + modelId).html('<b style="color:red;">Qty cannot be 0 for Combo Offer</b>');
+                // ajaxcall = 0;
+                // return false;
+                // }
+
                 if(flag==0 && qty>0 && offertype=='Buy One Of The Product'){
                       flag=modelId;
                 }
@@ -476,17 +473,18 @@
                 // $("#exampleQtyStatus" + modelId).html('<b style="color:red;">Only one Offer Product can have a non-zero Qty for Buy One Of The Product</b>');
                 // }
 
+            
                 if(flag!=0 && flag!=modelId && product_type!='FOC' && qty!=0){
                     $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Buy one of the Offer Product </b>');
                     ajaxcall=0;
                     return false;
                 }
 
-                if(storeproductqty!=0 && (product_type=='FOC' || offertype=='Combo Offer')){
+                if(storeproductqty!=0 && product_type=='FOC' || offertype=='Combo Offer'){
                     $("#exampleQty"+modelId).val(storeproductqty*offerqty);
-                    qty=storeproductqty*offerqty;                    
+                    qty=storeproductqty*offerqty;
                 }
-
+         
                 if (modelNo && qty) {
                     modelData.push({
                         model_no: modelNo,
