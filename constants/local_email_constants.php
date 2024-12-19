@@ -25,15 +25,11 @@ defined('PROMO_TRANSACTION_CC_EMAILS') OR define('PROMO_TRANSACTION_CC_EMAILS', 
     // 'bm_east@makita.in',
     // 'sunil@makita.in',
     // 'hara@makita.in',
+    'accounting@makita.in'=>'',
+    'vanan@makita.in'=>'',
+    'veena@makita.in'=>''
     // 'sales@makita.in',
     // 'veena@makita.in'
-
-
-    // 'accounting@makita.in'=>'',
-    // 'vanan@makita.in'=>'',
-    // 'veena@makita.in'=>''
-
-    'jeanlobo@makita.in'=>'',
  ]);
  
  defined('PROMO_TRANSACTION_TO_EMAILS') OR define('PROMO_TRANSACTION_TO_EMAILS',['jeanlobo94@gmail.com'=>'']);
@@ -90,9 +86,9 @@ defined('PROMO_CC') OR define('PROMO_CC', [
 
  defined('PROMO_BCC') OR define('PROMO_BCC',['jeanlobo@makita.in'=>'','jeanlobo94@gmail.com'=>'']);
 
- defined('PROMO_FOLLOWUP_CC') OR define('PROMO_FOLLOWUP_CC',['jeanlobo@makita.in'=>'','jeanlobo94@gmail.com'=>'']);
+ //------------
 
-
- defined('MakitaERPApiKey') OR define('MakitaERPApiKey','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');
+ 
+ defined('PROMO_FOLLOWUP_CC') OR define('PROMO_FOLLOWUP_CC',['accounting@makita.in'=>'','agila@makita.in'=>'']);
 
 ?>
