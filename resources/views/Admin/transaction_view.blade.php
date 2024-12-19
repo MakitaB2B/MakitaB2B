@@ -70,7 +70,7 @@
                       </div>
                   
                       <div class="form-group col-md-4 d-flex align-items-end  justify-content-end">
-                          <button type="submit" class="btn btn-primary float-right" id="sendMailButton" data-order-id="{{Crypt::encrypt($offerproduct[0]["order_id"] ?? null)}}">Send Mail</button>
+                          <button type="submit" class="btn btn-primary float-right" id="sendMailButton" data-order-id="{{Crypt::encrypt($offerproduct[0]["order_id"] ?? null)}}"><i class="fa fa-envelope"></i> Send Mail</button>
                           <span id="sendMailButtonText"></span>
                       </div>
 
