@@ -45344,3 +45344,18 @@ button#changeStatusButton, #sendMailButton, .preview-email {
     color: #fff; 
     text-transform:uppercase;
 }
+.promo_offer, .foc_offer{
+    border:2px solid #008290;
+    border-radius: 3px;
+    position: relative;
+    padding: 24px 16px;
+    margin: 32px 0;
+}
+.promo_offer .dacss, .foc_offer .dacss{
+    position: absolute;
+    top: -14px;
+    background: #008290;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 14px;
+}
