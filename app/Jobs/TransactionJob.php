@@ -215,8 +215,9 @@ class TransactionJob implements ShouldQueue
                 <td>'.$offer["offer_type"].'</td>
                 <td>'.$offer["product_type"].'</td>
                 <td>'.($offer["order_price"] == 0 ? ' - ' : $offer["price_type"]).'</td>
-                <td>'.$offer["order_price"].'</td>
+                <td>'.$offer["offer_price"].'</td>
                 <td>'.$offer["order_qty"].'</td>
+                <td>'.$offer["order_price"].'</td>
             </tr>';
         }
     $emailContent .= '</tbody>
