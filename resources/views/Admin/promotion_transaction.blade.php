@@ -232,7 +232,7 @@
                                         </div>
                                         {{-- <div class="form-group col-md-2">
                                             <label for="exampleModelStock">Stock*</label>
-                                            <input type="text" class="form-control" name="model_stock"
+                                            <input type="text" class="form-control stock" name="model_stock"
                                                 value="" required id="exampleModelStock"
                                                 placeholder="Enter Serial Number" readonly>
                                             @error('model_stock')
@@ -261,7 +261,7 @@
                                 </div>
                                 <!-- /.card-body -->
                                 <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary" id="submitbutton">Submit</button>
+                                    <button type="submit" class="btn btn-primary" id="submitbutton" >Submit</button>
                                 </div>
                                 {{-- <input type="hidden" value="" name="assetmaster_slug" required /> --}}
                             </form>
@@ -304,7 +304,6 @@
             type: 'get',
             data: 'promoID=' + promoID,
             success: function(result) {
-
             let  promohtml='<h6 class="dacss">Offer Product<h6>' ;let fochtml='<h6 class="dacss">FOC Product<h6>';
             let hr =`<hr>`;
             result.data.forEach(option => {
@@ -321,7 +320,7 @@
             fochtml+=hr;
             $('.promo_offer').append( promohtml); 
             $('.foc_offer').append( fochtml);
-            $('#submitbutton').prop('disabled', false);
+            $('#submitbutton').prop('disabled', true);
             }
 
         });
@@ -358,7 +357,7 @@
                         </div>
                         <div class="form-group col-md-1">
                             <label for="examplePromoStock${loop_count}">Stock</label>
-                            <input type="text" class="form-control" name="promostock[]" value="${option.stock}" id="examplePromoStock${loop_count}" placeholder="Stock" readonly>
+                            <input type="text" class="form-control stock" name="promostock[]" value="${option.stock}" id="examplePromoStock${loop_count}" placeholder="Stock" readonly>
                         </div>
                         <div class="form-group col-md-2">
                             <label for="exampleOfferType${loop_count}">Offer Type</label>
@@ -422,91 +421,97 @@
         };
 
         $(document).ready(function() {
-        $(document).on('keyup', 'input[name="qty[]"]',debounce(function() {
+            const validateUserQuantity = (qty, offerQty, stock, modelNo) => {
+            const numQty = parseInt(qty || 0);
+            if (!qty) return { isValid: false, error: 'Quantity is required' };
+            if (numQty <= 0) return { isValid: false, error: 'Quantity must be greater than 0' };
+            if (numQty % offerQty !== 0) return { isValid: false, error: `Quantity must be multiple of ${offerQty}` };
+            if (numQty > stock) return { isValid: false, error: `Quantity ${numQty} exceeds stock (${stock}) for ${modelNo}` };
+            return { isValid: true, error: '' };
+        };
 
-            let modelData = [];
-            let flag=0;
-            let ajaxcall=1;
-            let storeproductqty = 0;
-            // let validSubmission = true;
-            // $("#submitbutton").prop('disabled', true);
-            $('.rowdata').each(function(index) {
-              
-                let modelInput = $(this).find('input[name="model[]"]');
-                let modelNo = modelInput.val();
-                let qty = $(this).find('input[name="qty[]"]').val();
-                // let qty = $(`#exampleQty${index + 1}`).val();
-                let offerqty = $(this).find('input[name="offerqty[]"]').val();
-                let offertype = $(this).find('input[name="offertype[]"]').val();
-                let product_type = $(this).find('input[name="product_type[]"]').val();
-                let stock= $(this).find('input[name="promostock[]"]').val();
-                let modelId = modelInput.attr('id').replace("exampleModel", ""); 
-                // console.log(modelId);
-                $("#exampleQtyStatus"+modelId).empty();
-                $("#exampleQty"+modelId).empty();
-                $("#exampleTotalPrice").empty();
+        const calculateQuantity = (sourceQty, sourceOfferQty, targetOfferQty) => 
+            Math.floor(sourceQty / sourceOfferQty) * targetOfferQty || 0;
 
-                if(!(stock-qty >= 0)){
-                    $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Qty to be less than or equal to stock</b>');
-                }
-          
-                if ( qty % offerqty !== 0 ) {
-                     $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Qty to be multiple of OfferQty</b>');
-                     ajaxcall=0;
-                     return false;
-                }else{
-                    if (storeproductqty===0 && qty>0 && product_type!=='FOC'){
-                        storeproductqty=qty/offerqty;
-                    }
-                }
+        const updateQuantities = (sourceRow, sourceQty) => {
+            const sourceOfferQty = parseInt(sourceRow.find('[id^=exampleOfferQty]').val());
+            const sourceOfferType = sourceRow.find('[name="offertype[]"]').val();
+            const updateRow = (row, offerQty, stock, modelNo) => {
+                const calculatedQty = calculateQuantity(sourceQty, sourceOfferQty, offerQty);
+                const validation = validateUserQuantity(calculatedQty, offerQty, stock, modelNo);
+                row.find('[id^=exampleQty]').val(calculatedQty);
+                row.find('[id^=exampleQtyStatus]').text(validation.error).css('color', validation.error ? 'red' : '');
+            };
 
-                if (offertype =='Combo Offer' && qty == 0 || qty=="" && storeproductqty===0 && product_type!='FOC') {
-                $("#exampleQtyStatus" + modelId).html('<b style="color:red;">Qty cannot be 0</b>');
-                $('#submitbutton').prop('disabled', true);
-                ajaxcall = 0;
-                } else{
-                    $('#submitbutton').prop('disabled', false); 
-                }
-                
-                if(flag==0 && qty>0 && offertype=='Buy One Of The Product'){
-                      flag=modelId;
-                }
-                
-                // else if (flag !== 0 && flag !== modelId && product_type !== 'FOC' && qty !== 0) {
-                // $("#exampleQtyStatus" + modelId).html('<b style="color:red;">Only one Offer Product can have a non-zero Qty for Buy One Of The Product</b>');
-                // }
+            $('.promo_offer .rowdata, .foc_offer .rowdata').each(function () {
+                const row = $(this);
+                const offerQty = parseInt(row.find('[id^=exampleOfferQty]').val());
+                const stock = parseInt(row.find('.stock').val());
+                const modelNo = row.find('[id^=exampleModel]').val();
 
-                if(flag!=0 && flag!=modelId && product_type!='FOC' && qty!=0){
-                    $("#exampleQtyStatus"+modelId).html('<b style="color:red;">Buy one of the Offer Product </b>');
-                    ajaxcall=0;
-                    return false;
+                if (row.closest('.promo_offer').length && row.index() !== sourceRow.index()) {
+                    if (row.find('[name="offertype[]"]').val() === sourceOfferType) updateRow(row, offerQty, stock, modelNo);
+                } else if (row.closest('.foc_offer').length) updateRow(row, offerQty, stock, modelNo);
+            });
+        };
+
+        const validateForm = () => {
+            let isValid = true, hasComboOffer = false, comboOfferValid = true;
+
+            $('.promo_offer .rowdata').each(function () {
+                const row = $(this);
+                const qty = row.find('[id^=exampleQty]').val();
+                const offerQty = parseInt(row.find('[id^=exampleOfferQty]').val());
+                const stock = parseInt(row.find('.stock').val());
+                const modelNo = row.find('[id^=exampleModel]').val();
+                const offerType = row.find('[name="offertype[]"]').val();
+
+                if (offerType === 'Combo Offer') {
+                    hasComboOffer = true;
+                    if (!qty || parseInt(qty) <= 0) comboOfferValid = false;
                 }
 
-                if(storeproductqty!=0 && (product_type=='FOC' || offertype=='Combo Offer')){
-                    $("#exampleQty"+modelId).val(storeproductqty*offerqty);
-                    qty=storeproductqty*offerqty;                    
-                }
+                if (!validateUserQuantity(qty, offerQty, stock, modelNo).isValid) isValid = false;
+            });
 
-                if (modelNo && qty) {
-                    modelData.push({
-                        model_no: modelNo,
-                        qty: qty,
-                        id: modelId ,
-                        offertype: offertype
-                    });
+            $('.foc_offer .rowdata').each(function () {
+                const row = $(this);
+                const qty = row.find('[id^=exampleQty]').val();
+                if (qty) {
+                    const offerQty = parseInt(row.find('[id^=exampleOfferQty]').val());
+                    const stock = parseInt(row.find('.stock').val());
+                    const modelNo = row.find('[id^=exampleModel]').val();
+                    if (!validateUserQuantity(qty, offerQty, stock, modelNo).isValid) isValid = false;
                 }
             });
 
-            let modelDataJson = JSON.stringify(modelData);
-            let promocode=$('#examplePromoCode').val();
+            $('#submitbutton').prop('disabled', !(isValid && (!hasComboOffer || comboOfferValid)));
+            return isValid;
+        };
 
-            if(ajaxcall==1){
-                displayModelData(modelDataJson,promocode);
-            }
-      
-        },100));
+        $(document).on('input', '.promo_offer [id^=exampleQty]', function () {
+            const row = $(this).closest('.rowdata');
+            const qty = $(this).val();
+            const offerQty = parseInt(row.find('[id^=exampleOfferQty]').val());
+            const stock = parseInt(row.find('.stock').val());
+            const modelNo = row.find('[id^=exampleModel]').val();
 
+            const validation = validateUserQuantity(qty, offerQty, stock, modelNo);
+            row.find('[id^=exampleQtyStatus]').text(validation.error).css('color', validation.error ? 'red' : '');
+
+            updateQuantities(row, parseInt(qty));
+            validateForm();
         });
+
+        const initialize = () => {
+            $('.foc_offer [id^=exampleQty]').prop('disabled', true);
+            $('#submitbutton').prop('disabled', true);
+            $(document).on('keypress', '[id^=exampleQty]', e => (e.which >= 48 && e.which <= 57) || e.which === 8 || e.which === 0);
+            validateForm();
+        };
+
+        initialize();
+    });
 
         function displayModelData(modelDataJson,promocode) {
 
