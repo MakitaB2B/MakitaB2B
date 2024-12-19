@@ -48,6 +48,42 @@
           </div>
         </div>
         <div class="card-body">
+        <div class="row">
+                <div class="col-12">
+                  <h4>Change Order status</h4>
+                <div class="post">
+                  <div class="card-top">
+                    <div class="row">
+                      <div class="form-group col-md-4">
+                          <label for="exampleStatus">Order Status</label>
+                          <select class="custom-select mySelect" name="status" id="exampleStatus">
+                              @foreach($status as $type)
+                                  <option value="{{$offerproduct[0]["order_id"]}}-{{$type}}">{{$type}}</option>
+                              @endforeach
+                          </select>
+                          <span id="exampleTransactionStatus"></span>
+                      </div>
+                  
+                      <div class="form-group col-md-4 d-flex align-items-end">
+                          <button type="submit" class="btn btn-primary" id="changeStatusButton">Change Status</button>
+                          <span id="changeStatusButtonText"></span>
+                      </div>
+                  
+                      <div class="form-group col-md-4 d-flex align-items-end  justify-content-end">
+                          <button type="submit" class="btn btn-primary float-right" id="sendMailButton" data-order-id="{{Crypt::encrypt($offerproduct[0]["order_id"] ?? null)}}">Send Mail</button>
+                          <span id="sendMailButtonText"></span>
+                      </div>
+
+                      <input type="hidden" name="model_number" id="dealer_code"  value="{{$offerproduct[0]["dealer_code"]}}" required>
+                      <input type="hidden" name="model_number" id="promo_code"  value="{{$offerproduct[0]["promo_code"]}}" required>
+                  </div>
+                  
+                  </div>
+                  <!-- /.card -->
+
+                  </div>
+                </div>
+              </div>
           <div class="row">
             <div class="col-12 col-md-12 order-2 order-md-1">
                 {{-- col-lg-8 --}}
@@ -232,42 +268,7 @@
                 </div>
               </div>
               {{-- General --}}
-              <div class="row">
-                <div class="col-12">
-                  <h4>Change Order status</h4>
-                <div class="post">
-                  <div class="card-footer">
-                    <div class="row">
-                      <div class="form-group col-md-4">
-                          <label for="exampleStatus">Order Status</label>
-                          <select class="custom-select mySelect" name="status" id="exampleStatus">
-                              @foreach($status as $type)
-                                  <option value="{{$offerproduct[0]["order_id"]}}-{{$type}}">{{$type}}</option>
-                              @endforeach
-                          </select>
-                          <span id="exampleTransactionStatus"></span>
-                      </div>
-                  
-                      <div class="form-group col-md-4 d-flex align-items-end">
-                          <button type="submit" class="btn btn-primary" id="changeStatusButton">Change Status</button>
-                          <span id="changeStatusButtonText"></span>
-                      </div>
-                  
-                      <div class="form-group col-md-4 d-flex align-items-end">
-                          <button type="submit" class="btn btn-primary btn-lg float-right" id="sendMailButton" data-order-id="{{Crypt::encrypt($offerproduct[0]["order_id"] ?? null)}}">Send Mail</button>
-                          <span id="sendMailButtonText"></span>
-                      </div>
-
-                      <input type="hidden" name="model_number" id="dealer_code"  value="{{$offerproduct[0]["dealer_code"]}}" required>
-                      <input type="hidden" name="model_number" id="promo_code"  value="{{$offerproduct[0]["promo_code"]}}" required>
-                  </div>
-                  
-                  </div>
-                  <!-- /.card -->
-
-                  </div>
-                </div>
-              </div>
+             
 
 
             </div>
