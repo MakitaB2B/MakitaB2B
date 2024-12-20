@@ -58,7 +58,7 @@ class TransactionCancelJob implements ShouldQueue
         // $email->setReplyTo(PROMO_TRANSACTION_FROM_EMAILS, "");
       
         // $email->setFrom(PROMO_TRANSACTION_FROM_EMAILS, "Makita ERP");
-        $email->setFrom("it_pm@makita.in", "Makita ERP");
+        $email->setFrom(MakitaSendGridFrom, "Makita ERP");
 
      
         // $sendemail->addContent("text/html", $emailContent);
@@ -222,7 +222,9 @@ class TransactionCancelJob implements ShouldQueue
 
   
         // try {
-            $sendgrid = new \SendGrid(MakitaERPApiKey);
+
+            $apiKey = env('MakitaERPApiKey');
+            $sendgrid = new \SendGrid($apiKey);
             $response = $sendgrid->send($email);
             // print $response->statusCode() . "\n";
             // print_r($response->headers());

@@ -65,7 +65,7 @@ class TransactionJob implements ShouldQueue
         // $email->setReplyTo(PROMO_TRANSACTION_FROM_EMAILS, "");
       
         // $email->setFrom(PROMO_TRANSACTION_FROM_EMAILS, "Makita ERP");
-        $email->setFrom("it_pm@makita.in", "Makita ERP");
+        $email->setFrom(MakitaSendGridFrom, "Makita ERP");
 
      
         // $sendemail->addContent("text/html", $emailContent);
@@ -175,8 +175,9 @@ class TransactionJob implements ShouldQueue
           <th>Offer Type</th>
           <th>Product Type</th>
           <th>Price Type</th>
-          <th>Price</th>
+          <th>Unit Price</th>
           <th>Qty</th>
+          <th>Total Price</th>
         </tr>
       </thead>
       <tbody>';
@@ -187,8 +188,9 @@ class TransactionJob implements ShouldQueue
                 <td>'.$offer["offer_type"].'</td>
                 <td>'.$offer["product_type"].'</td>
                 <td>'.$offer["price_type"].'</td>
-                <td>'.$offer["order_price"].'</td>
+                <td>'.$offer["offer_price"].'</td>
                 <td>'.$offer["order_qty"].'</td>
+                <td>'.$offer["order_price"].'</td>
             </tr>';
         }
     $emailContent .= '</tbody>
@@ -203,8 +205,9 @@ class TransactionJob implements ShouldQueue
           <th>Offer Type</th>
           <th>Product Type</th>
           <th>Price Type</th>
-          <th>Price</th>
+          <th>Unit Price</th>
           <th>Qty</th>
+        <th>Total Price</th>
         </tr>
       </thead>
       <tbody>';
@@ -233,7 +236,8 @@ class TransactionJob implements ShouldQueue
 
   
         // try {
-            $sendgrid = new \SendGrid(MakitaERPApiKey);
+            $apiKey = env('MakitaERPApiKey');
+            $sendgrid = new \SendGrid($apiKey);
             $response = $sendgrid->send($email);
             // print $response->statusCode() . "\n";
             // print_r($response->headers());

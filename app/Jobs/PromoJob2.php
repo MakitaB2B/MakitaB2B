@@ -123,7 +123,7 @@ $email->addBccs($bccEmails);
 // The values below this comment are global to an entire message
 
 // $email->setFrom("test@example.com", "Twilio SendGrid");
-$sendemail->setFrom("it_pm@makita.in", "Makita ERP");
+$sendemail->setFrom(MakitaSendGridFrom, "Makita ERP");
 
 // $email->setGlobalSubject("Sending with Twilio SendGrid is Fun and Global 2");
 

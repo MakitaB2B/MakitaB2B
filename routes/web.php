@@ -76,7 +76,7 @@ Route::get('/send-email', function () {
         // Create a new SendGrid email
         // $email = new \Mail();
         $email = new \SendGrid\Mail\Mail();
-        $email->setFrom("it_pm@makita.in", "Makita ERP");
+        $email->setFrom(MakitaSendGridFrom, "Makita ERP");
         $email->setSubject("Sending with SendGrid is Fun.......");
 
         // Add multiple recipients
@@ -96,7 +96,8 @@ Route::get('/send-email', function () {
         );
 
         // Initialize SendGrid
-        $sendgrid = new \SendGrid(MakitaERPApiKey); // Replace with your API key or use .env
+        $apiKey = env('MakitaERPApiKey');
+        $sendgrid = new \SendGrid($apiKey); // Replace with your API key or use .env
 
         // Send the email
         $response = $sendgrid->send($email);

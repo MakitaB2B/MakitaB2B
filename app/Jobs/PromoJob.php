@@ -49,7 +49,7 @@ class PromoJob implements ShouldQueue
         $bccEmails = PROMO_BCC;
         $email->addBccs($bccEmails);
       
-        $email->setFrom("it_pm@makita.in", "Makita ERP");
+        $email->setFrom(MakitaSendGridFrom,"Makita ERP");
         // $sendgrid->setFrom("it_pm@makita.in", "Makita ERP");
 
         $emailContent = <<<HTML
@@ -209,7 +209,8 @@ class PromoJob implements ShouldQueue
 
   
         // try {
-            $sendgrid = new \SendGrid(MakitaERPApiKey);
+            $apiKey = env('MakitaERPApiKey');
+            $sendgrid = new \SendGrid($apiKey);
             $response = $sendgrid->send($email);
         //     print $response->statusCode() . "\n";
         //     print_r($response->headers());

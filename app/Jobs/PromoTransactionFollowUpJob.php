@@ -40,7 +40,7 @@ class PromoTransactionFollowUpJob implements ShouldQueue
         $email->addTos($toEmails);
         $email->addCcs($ccEmails);
 
-        $email->setFrom("it_pm@makita.in", "Makita ERP");
+        $email->setFrom(MakitaSendGridFrom, "Makita ERP");
         $details=$this->details;
  
         $emailContent = '
@@ -186,10 +186,9 @@ class PromoTransactionFollowUpJob implements ShouldQueue
 
         
         $email->addContent("text/html", $emailContent);
-        $sendgrid = new \SendGrid(MakitaERPApiKey);
+        $apiKey = env('MakitaERPApiKey');
+        $sendgrid = new \SendGrid($apiKey);
         $response = $sendgrid->send($email);
-        dd($response);
-
     }
 
     public function retryUntil()
