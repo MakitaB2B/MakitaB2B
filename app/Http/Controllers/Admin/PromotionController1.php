@@ -43,174 +43,27 @@ class PromotionController extends Controller
       return view('Admin.promotion',$result); 
     }
     
-    public function uploadPromotion(Request $request){
+    // Find all keys containing 'Stock'
+// $keys = array_keys($array);
+// $splitIndices = array_filter(array_keys($keys), function ($index) use ($keys) {
+//     return str_contains($keys[$index], 'Stock');
+// });
 
-      if(request()->has('mycsv')){
+// // Add first and last indices for complete slices
+// $splitIndices = array_merge([-1], $splitIndices, [count($keys)]);
 
-        $data=array_map('str_getcsv', file(request()->mycsv));
-     
-        $effective_from=$data[0];
+// // Split the array using array_slice
+// $result = array_map(function ($start, $end) use ($keys, $array) {
+//     return array_slice($array, $start + 1, $end - $start, true);
+// }, $splitIndices, array_slice($splitIndices, 1));
 
-        $effective_from = array_filter($effective_from);
+// // Filter out arrays that don't contain 'Stock' in their keys
+// $result = array_filter($result, function ($subArray) {
+//     return array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Stock'));
+// });
 
-        $effective_from=preg_replace('/^\x{FEFF}/u', '',   $effective_from[0]);
 
-        $date=null;
-        if (preg_match('/\d{2}\/\d{2}\/\d{4}/', $effective_from, $matches)) {
-          $date = $matches[0]; 
-        }
 
-        $from_date = $date;
-        $header=$data[1];
-        unset($data[0], $data[1]);
-        $error_promo = [];
-        foreach ($data as $value) {
-          set_time_limit(0);
-          $promoData=array_combine($header,$value);
-
-          $promoData = $this->split_promo_array($promoData,$from_date);
-
-          $promo_check = $this->promotionService->ckeck_if_exists($promoData[0]['promo_code']);
-
-          if(!$promo_check){
-       
-            $data = $this->promotionService->createOrUpdatePromo($promoData);
-            if(!empty($data)){
-              $error_promo[]=$promoData[0]['promo_code'];
-            }
-          }
-        
-        }
-
-      }
-
-      if(empty($error_promo)){
-        return redirect('admin/promotions')->with('success', 'Promotion uploaded successfully');
-      } else {
-        return 'Please add there promo manually'.implode(', ', $error_promo);
-      }
-
-    }
-
-    public function split_promo_array($array, $from_date) {
-      $array = array_filter($array, fn($value, $key) => $key !== "", ARRAY_FILTER_USE_BOTH);
-      $keys = array_keys($array);
-      $splitIndices = array_filter(array_keys($keys), function ($index) use ($keys) {
-          return str_contains($keys[$index], 'Stock');
-      });
-  
-      $splitIndices = array_merge([-1], $splitIndices, [count($keys)]);
-  
-      $result = array_map(function ($start, $end) use ($keys, $array) {
-          return array_slice($array, $start + 1, $end - $start, true);
-      }, $splitIndices, array_slice($splitIndices, 1));
-  
-      // $result = array_filter($result, function ($subArray) {
-      //     return array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Stock'));
-      // });
-
-      $hasMainKey = !empty(array_column($result, 'Price-FOC 1'));
-
-      $priceFoc1 = array_column($result, 'Price-FOC 1')[0];
-
-      $offer_type = $hasMainKey && $priceFoc1 == "BEST" ? "Combo Offer" : "Buy One Of The Product";
-  
-      $code = $array['CODE'] ?? null;
-      $valid_for = $array['Valid for'] ?? null;
-      $modelKeys = ['Code-Main', 'Code-FOC 1', 'Code-FOC 2', 'Code-FOC 3'];
-      $priceKeys = ['Price-Main','Price-FOC 1', 'Price-FOC 2', 'Price-FOC 3'];
-      $priceTypes = ["BEST" => "Best Price", "SPECIAL" => "Special Price", "FOC" => "Special Price", "DLP" => "DLP","dlp" => "DLP"];
-      $qtyTypes = ['MOQ','Qty-FOC 1','Qty-FOC 2','Qty-FOC 3','Qty-FOC 4'];
-      $priceValues = ['Offer-Main','Offer-FOC 1','Offer-FOC 2','Offer-FOC 3','Offer-FOC 4'];
-      $result = array_map(function ($subArray) use ($code,$valid_for,$from_date,$offer_type,$modelKeys,$priceFoc1,$priceKeys,$priceTypes,$qtyTypes,$priceValues) {
-       
-          $subArray['promotion_slug'] = $this->promotionService->promotion_slug();
-          $subArray['promo_code'] = $code;
-          $subArray['to_date'] =  \Carbon\Carbon::createFromFormat('d-m-Y', $valid_for)->format('Y-m-d'); //$valid_for; 
-          $subArray['from_date'] = \Carbon\Carbon::createFromFormat('d/m/Y', $from_date)->format('Y-m-d');
-        
-
-          // $subArray['model_no'] = array_filter(array_map(function ($key) use ($subArray) {
-          //   return $subArray[$key] ?? null;
-          // }, $modelKeys));
-
-          $modelNoArray = array_filter(array_map(function ($key) use ($subArray) {
-            return $subArray[$key] ?? null;
-          }, $modelKeys));
-
-          $subArray['model_no'] = implode(", ", $modelNoArray); 
-
-          $keysNoArray = array_filter(array_map(function ($key) use ($subArray) {
-            return $subArray[$key] ?? null;
-          }, $priceKeys));
-
-          $qtyArray = array_filter(array_map(function ($key) use ($subArray) {
-            return $subArray[$key] ?? null;
-          }, $qtyTypes));
-
-          $price = array_filter(array_map(function ($key) use ($subArray) {
-            return $subArray[$key] ?? null;
-          }, $priceValues));
-
-          $price = implode(",",$price); 
-
-          $price = str_replace(',', '', $price);
-
-          $subArray['price_type'] = $priceTypes[implode(", ", $keysNoArray)] ?? (stripos(implode(", ", $keysNoArray), 'DLP') !== false ? "DLP" : "Unknown");
-
-          $model_details = $this->promotionService->modeldetailSearchNonJson($modelNoArray);
-          
-          $subArray['price'] =  (int)$price;
-          
-          // ($subArray['price_type'] === 'Best Price') ? (int)$model_details->best : 
-          // (($subArray['price_type'] === 'DLP' || $subArray['price_type'] === 'dlp') ? (int)$model_details->dlp : 
-          // (($subArray['price_type'] === 'Special Price' || $subArray['price_type'] === 'FOC') ? (int)$price : ''));
-          
-          $subArray['model_desc'] = $model_details?->description ?? '';
-          $subArray['mrp'] =$model_details->mrp ?? ''; 
-          $subArray['dlp'] =$model_details->dlp ?? ''; 
-          $subArray['stock'] = $model_details->total_stock ?? ''; 
-          $subArray['qty'] = (int)implode(",", $qtyArray); 
-          $subArray['status'] = "Active"; 
-          $subArray['created_by'] = Auth::guard('admin')->user()->access_id;
-          $subArray['created_at'] = date('Y-m-d H:i:s');
-          $subArray['updated_at'] = date('Y-m-d H:i:s');
-      
-          if (array_key_exists('Main', $subArray)) {
-            $subArray['product_type'] = 'Offer Product';
-            $subArray['offer_type'] = $offer_type;
-          }elseif (array_key_exists('Price-FOC 1',$subArray) && $subArray['Price-FOC 1']=="BEST"){
-            $subArray['product_type'] = 'Offer Product';
-            $subArray['offer_type'] = $offer_type;
-          }else{
-            $subArray['product_type'] = 'FOC';
-            $subArray['offer_type'] = null;
-          }
-
-          return $subArray;
-      }, $result);
-
-      $result = array_filter($result, function ($subArray) {
-          $codeFOCKeys = array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Code-FOC') || str_contains($key, 'Code-Main'));
-          foreach ($codeFOCKeys as $key) {
-              if (!empty($subArray[$key])) {
-                  return true;
-              }
-          }
-          return false;
-      });
-
-      $allowedColumns = \Schema::getColumnListing('promotions');
-
-      $result = array_map(function ($row) use ($allowedColumns) {
-          return array_filter($row, function ($key) use ($allowedColumns) {
-              return in_array($key, $allowedColumns);
-          }, ARRAY_FILTER_USE_KEY);
-      }, $result);
- 
-      return $result;
-    }
-  
     public function promotionCreation()
     { 
       $result['promo_code'] = $this->promotionService->getPromoCount()+1;
@@ -348,9 +201,6 @@ class PromotionController extends Controller
       // $result['regional_manager']= $this->employeeService->getEmployeeByDesignation($designation,$department);  //$this->regionalManager->rmNames();
       $loggedIn = Auth::guard('admin')->user()->employee_slug;
       $result['regional_manager'] = $this->teamService->getTeamOwner($loggedIn);
-      if(empty($result['regional_manager'])){
-       return  redirect("/admin/promotions/promotion-transaction")->with(["error"=>"You're not a team owner or a team member. Please contact your manager."]);
-      }
       $result['transaction_email'] = $this->transactionEmailService->getTransactionDetails($result['regional_manager']->team_owner);
       $result['dealer_master']= $this->dealerService->getDealers();
 
@@ -621,6 +471,7 @@ class PromotionController extends Controller
       $promo_transaction_cc_emails = PROMO_TRANSACTION_CC_EMAILS;
       array_push($promo_transaction_cc_emails,$sales_mail, $rm_name);
       $details['cc'] = $promo_transaction_cc_emails;
+
       try {
         $transactionjob = TransactionJob::dispatch($details);
       } catch (\Exception $e) {
@@ -704,3 +555,33 @@ class PromotionController extends Controller
       }
 
 }
+
+
+
+  // public function split_promo_array($array) {
+
+    //   $keys = array_keys($array);
+     
+    //   $splitIndices = array_filter(array_keys($keys), function ($index) use ($keys) {
+    //       return str_contains($keys[$index], 'Stock');
+    //   });
+
+    //   $splitIndices = array_merge([-1], $splitIndices, [count($keys)]);
+
+    //   $result = array_map(function ($start, $end) use ($keys, $array) {
+    //       return array_slice($array, $start + 1, $end - $start, true);
+    //   }, $splitIndices, array_slice($splitIndices, 1));
+
+    //   $result = array_filter($result, function ($subArray) {
+    //       return array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Stock'));
+    //   });
+
+    //   $code = $array['CODE'] ?? null; 
+    //   $result = array_map(function ($subArray) use ($code) {
+    //       $subArray['CODE'] = $code; 
+    //       return $subArray;
+    //   }, $result);
+
+    //   return $result;
+
+    // }

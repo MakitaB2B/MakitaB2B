@@ -11,6 +11,10 @@
             <link rel="stylesheet"
                 href="{{ asset('admin_assets//plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
             <link rel="stylesheet" href="{{ asset('admin_assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+            <style>
+
+            
+            </style>
         @endpush
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -33,10 +37,19 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                @if (session()->has('message'))
-                    <div class="card card-success">
+                @if (session()->has('error') || session()->has('message'))
+                @php
+                if(session()->has('error')){
+                    $msgCard='card-danger';
+                    $msg=session('error');
+                }if(session()->has('message')){
+                    $msgCard='card-success';
+                    $msg=session('message');
+                }
+                @endphp
+                    <div class="card {{$msgCard}}">
                         <div class="card-header">
-                            <h3 class="card-title">{{ session('message') }}</h3>
+                            <h3 class="card-title">{{ $msg }}</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="remove"><i
                                         class="fas fa-times"></i>
@@ -142,7 +155,7 @@
                     "responsive": true,
                     "lengthChange": false,
                     "autoWidth": false,
-                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                    "buttons": ["excel", "pdf", "print"]
                 }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
                 $('#example2').DataTable({
                     "paging": true,

@@ -27,16 +27,13 @@ use App\Http\Controllers\Admin\ToolsService;
 use App\Http\Controllers\Admin\PendingPoController;
 use App\Http\Controllers\Admin\AssetMasterController;
 use App\Http\Controllers\Admin\EmployeeLeaveApplicationController;
-use App\Http\Controllers\Admin\TravelManagementController;
-use App\Http\Controllers\Admin\ItemInfoController;
-use App\Http\Controllers\Admin\DealerController;
-use App\Http\Controllers\Admin\RoiController;
 use App\Http\Controllers\Admin\PromotionController;
+use App\Http\Controllers\Admin\DealerController;
+use App\Http\Controllers\Admin\ItemInfoController;
 use App\Http\Controllers\Admin\BilledTransactionController;
-
 use App\Http\Controllers\Front\WarrantyController;
 use App\Http\Controllers\Front\CustomerLoginRegistrationController;
-// require 'vendor/autoload.php';
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -48,79 +45,8 @@ use App\Http\Controllers\Front\CustomerLoginRegistrationController;
 |
 */
 
-
-
-// $email = new \SendGrid\Mail\Mail();
-// $email->setFrom("test@example.com", "Example User");
-// $email->setSubject("Sending with SendGrid is Fun");
-// $email->addTo(['lobojeanz@gmail.com','jeanlobo94@gmail.com','jeanlobo.makita.in'], "Example User");
-// $email->addContent("text/plain", "and easy to do anywhere, even with PHP");
-// $email->addContent(
-//     "text/html", "<strong>and easy to do anywhere, even with PHP</strong>"
-// );
-// $sendgrid = new \SendGrid(MakitaERPApiKey);
-// try {
-//     $response = $sendgrid->send($email);
-//     print $response->statusCode() . "\n";
-//     print_r($response->headers());
-//     print $response->body() . "\n";
-// } catch (Exception $e) {
-//     echo 'Caught exception: '. $e->getMessage() ."\n";
-// }
-
-
-
-
-Route::get('/send-email', function () {
-    try {
-        // Create a new SendGrid email
-        // $email = new \Mail();
-        $email = new \SendGrid\Mail\Mail();
-        $email->setFrom(MakitaSendGridFrom, "Makita ERP");
-        $email->setSubject("Sending with SendGrid is Fun.......");
-
-        // Add multiple recipients
-        $recipients = [
-            'lobojeanz@gmail.com',
-            'jeanlobo94@gmail.com',
-            'jeanlobo@makita.in'
-        ];
-        foreach ($recipients as $recipient) {
-            $email->addTo($recipient, "Example User");
-        }
-
-        // Add content
-        $email->addContent("text/plain", "and easy to do anywhere, even with PHP");
-        $email->addContent(
-            "text/html", "<strong>and easy to do anywhere, even with PHP</strong>"
-        );
-
-        // Initialize SendGrid
-        $apiKey = env('MakitaERPApiKey');
-        $sendgrid = new \SendGrid($apiKey); // Replace with your API key or use .env
-
-        // Send the email
-        $response = $sendgrid->send($email);
-
-        // Return the response
-        return response()->json([
-            'status' => $response->statusCode(),
-            'headers' => $response->headers(),
-            'body' => $response->body(),
-        ]);
-    } catch (Exception $e) {
-        // Handle exceptions
-        return response()->json(['error' => $e->getMessage()]);
-    }
-});
-
-
-
-
-
-
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
 });
 /*-----Start Front Route-----*/
 Route::get('/cx-login',[CustomerLoginRegistrationController::class,'cxLoginView'])->name('cxlogin');
@@ -255,11 +181,6 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/service-management/close-sr',[ToolsService::class,'closeSR'])->name('service-management.close-sr');
     Route::post('/service-management/reason-over-48-hours',[ToolsService::class,'reasonOver48Hours'])->name('service-management.reason-over-48-hours');
     Route::post('/service-management/export-asm-report-exel',[ToolsService::class,'aSMReportExportExcel'])->name('service-management.export-asm-report-exel');
-    Route::post('/service-management/generate-asm-report',[ToolsService::class,'genarateASMReport'])->name('service-management.generate-asm-report');
-    Route::get('/service-management/generate-asm-report-graph',[ToolsService::class,'genarateASMReportGraph'])->name('service-management.generate-asm-report-graph');
-
-    Route::get('/service-management/filter/{filterType}/{month}',[ToolsService::class,'filterResultByParam'])->name('service-management-filter');
-
     Route::get('/factory-service-center',[FactoryServiceStationController::class,'index']);
     Route::get('/fsc/manage-fsc/{fscslug?}',[FactoryServiceStationController::class,'manageFSC'])->name('fsc.manage-manage-fsc');
     Route::post('/fsc/manage-fsc-process',[FactoryServiceStationController::class,'manageFSCProcess'])->name('fsc.manage-fsc-process');
@@ -279,41 +200,11 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/employee/manage-leave-application-process',[EmployeeLeaveApplicationController::class,'createOrUpdateLeaveApllication'])->name('employee.manage-leave-appllication-process');
     Route::post('/employee/change-leave-applications-status',[EmployeeLeaveApplicationController::class,'changeLeaveApplicationStatus'])->name('employee.change-leave-applications-status');
 
-    Route::get('/travelmanagement/applyviewclaimtravelexpenses',[TravelManagementController::class,'getAllBTAppliedByLoggedInEmployee'])->name('travelmanagement.applyviewclaimtravelexpenses');
-
-    Route::post('/travelmanagement/create-travel-management-applications',[TravelManagementController::class,'createTravelMangmentApplication'])->name('travelmanagement.create-travel-management-applications');
-    Route::get('/travelmanagement/bt-applications-requests-manager',[TravelManagementController::class,'getAllBTRequestsForMangersTeam'])->name('travelmanagement.bt-applications-requests-manager');
-    Route::post('/travelmanagement/change-bta-applications-status-manager-approval',[TravelManagementController::class,'changeBTAStatusToManagerApprovReject'])->name('travelmanagement.change-bta-applications-status-manager-approval');
-    Route::get('/travelmanagement/bt-applications-paymentadvancerequests-accountdept',[TravelManagementController::class,'getAllBTAdvanceRequestsForAccountDept'])->name('travelmanagement.bt-applications-paymentadvancerequests-accountdept');
-    Route::get('/travelmanagement/bta-application-details/{btaSlug?}',[TravelManagementController::class,'getSpecificBTADetails'])->name('travelmanagement.bta-application-details');
-    Route::get('/travelmanagement/bta-application-details-manger/{btaSlug?}',[TravelManagementController::class,'getSpecificBTADetailsManager'])->name('travelmanagement.bta-application-details-manger');
-    Route::get('/travelmanagement/bta-application-details-account-dep/{btaSlug?}',[TravelManagementController::class,'getSpecificBTADetailsForAccountDepertment'])->name('travelmanagement.bta-application-details-account-dep');
-    Route::post('/travelmanagement/bt-account-operation-chanel',[TravelManagementController::class,'insertBtAccountLedger'])->name('travelmanagement.bt-account-operation-chanel');
-    Route::post('/travelmanagement/bta-application-record-statusupdate',[TravelManagementController::class,'btaApplicationRecordStatusUpdate'])->name('travelmanagement.bta-application-record-statusupdate');
-    Route::get('/travelmanagement/bt-applications-requests-hr',[TravelManagementController::class,'getAllBTRequestsForHRTeam'])->name('travelmanagement.bt-applications-requests-hr');
-    Route::get('/travelmanagement/bta-application-details-hr-process/{btaSlug?}',[TravelManagementController::class,'getSpecificBTADetailsForHRProcess'])->name('travelmanagement.bta-application-details-hr-process');
-    Route::post('/travelmanagement/bta-application-claim-by-applicant',[TravelManagementController::class,'btaApplicationClaimByApplicant'])->name('travelmanagement.bta-application-claim-by-applicant');
-
-    Route::get('/roi', function () {  return view('Admin/roi-elevation-board');  });
-
-    Route::get('/roi/roi-billboard', [RoiController::class, 'prepRoiBillBoard'])
-    ->name('roi.roi-billboard');
-
-
-
-
-    Route::get('/item/item-master-hsn',[ItemInfoController::class,'indexItemMasterWithIGST'])->name('item.item-master-hsn');
-    Route::post('/item/upload-item-master-hsn',[ItemInfoController::class,'uploadItemMasterWithIGST'])->name('upload-item-master-hsn');
-    Route::post('/item/item-master-hsn-search',[ItemInfoController::class,'searchItemMasterIGST'])->name('item-master-hsn-search');
-
-
-    Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
-    Route::post('/dealer-search',[DealerController::class,'dealerSearch'])->name('item-search');
-    Route::post('/upload-dealer',[DealerController::class,'uploadDealer'])->name('upload-dealer');
-
+    Route::get('/travelmanagement/applyviewclaimtravelexpenses',function(){
+        return view('Admin/business_travel_list');
+    })->name('travelmanagement.applyviewclaimtravelexpenses');
 
     Route::get('/promotions',[PromotionController::class,'index'])->name('promo');
-    Route::post('/upload-promotion',[PromotionController::class,'uploadPromotion'])->name('upload-promotion');
     Route::get('/promotions/promotion-creation',[PromotionController::class,'promotionCreation'])->name('admin.promotions.promotion-creation');
     Route::post('/promotions/promotion-create',[PromotionController::class,'promotionCreate'])->name('admin.promotions.promotion-create');
     Route::get('/promotions/promotion-preview/{promocode}',[PromotionController::class,'promotionPreview'])->name('admin.promotions.promotion-preview');
@@ -331,15 +222,57 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/items', [ItemInfoController::class, 'index'])->name('items');
     Route::post('/items-search',[ItemInfoController::class,'itemSearch'])->name('item-search');
     Route::post('/upload-daily-item',[ItemInfoController::class,'uploadDailyItem'])->name('upload-daily-item');
-
+    Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
+    Route::post('/dealer-search',[DealerController::class,'dealerSearch'])->name('item-search');
+    Route::post('/upload-dealer',[DealerController::class,'uploadDealer'])->name('upload-dealer');
     Route::get('/billed-transactions',[BilledTransactionController::class,'index'])->name('billed-transactions');
     Route::post('/upload-billed-transaction',[BilledTransactionController::class,'uploadBilledTransaction'])->name('upload-billed-transaction');
+    // 
+    // Route::get('/send-promo-email', function(){
+    //     $details['email'] = 'lobojeanz@gmail.com';
+    //     dispatch(new App\Jobs\PromoJob($details));
+    //     return response()->json(['message'=>'Mail Send Successfully!!']);
+    
+    // });
 
-Route::get('/promotions/promomail/{promocode}', [PromotionController::class, 'promomail'])->name('promomail');
-Route::get('/promotions/transactionmail/{transactioncode}', [PromotionController::class, 'transactionmail'])->name('transactionmail');
 
 
-});
+    // Route::get('/send-test-email', function () {
+    //     $email = 'lobojeanz@gmail.com';
+    
+    //     Mail::send([], [], function ($message) use ($email) {
+    //         $message->to($email)
+    //                 ->subject('Static Email Test')
+    //                 ->setBody('<p>Hi</p>', 'text/html'); // Use 'text/plain' for plain text emails
+    //     });
+    
+    //     return response()->json(['message' => 'Static mail sent successfully!']);
+    // });
+
+
+
+
+    Route::get('/send-test-email', function () {
+        $email = 'lobojeanz@gmail.com';
+    
+        // Use the Mail::html() method for a simpler approach
+        \Mail::html('<p>Hi</p>', function ($message) use ($email) {
+            $message->to($email)
+                    ->subject('Static Email Test');
+        });
+    
+        return response()->json(['message' => 'Static mail sent successfully!']);
+    });
+
+    // Route::get('/promotions/promomailview/{promocode}',  function () {  return view('mails.promomail');  });
+    // Route::get('/promotions/transactionmailview',  function () {  return view('mails.transactionmail');  });
+
+    Route::get('/promotions/promomail/{promocode}', [PromotionController::class, 'promomail'])->name('promomail');
+    Route::get('/promotions/transactionmail/{transactioncode}', [PromotionController::class, 'transactionmail'])->name('transactionmail');
+ 
+    Route::get('/roi', function () {  return view('Admin/roi');  });
+
+    });
 
 /*-----End Admin Route-----*/
 

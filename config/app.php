@@ -170,7 +170,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\PermissionServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-        Maatwebsite\Excel\ExcelServiceProvider::class,
+        // Maatwebsite\Excel\ExcelServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -187,7 +187,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
         'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
-        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        // 'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ])->toArray(),
 
 ];

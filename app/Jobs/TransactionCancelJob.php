@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use SendGrid\Mail\Mail;
 // use App\Mail\TransactionMail;
 // use Mail;
-class TransactionJob implements ShouldQueue
+class TransactionCancelJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     protected $details;
@@ -29,31 +29,24 @@ class TransactionJob implements ShouldQueue
      */
     public function handle(): void
     {
-        // $email = new TransactionMail($this->details);
-        // Mail::to($this->details['email'])->cc($this->details['cc'])->bcc($this->details['bcc'])->send($email);
-
-        //------------------------------
         
         $email = new Mail();
 
-        $email->setSubject('MakitaERP - Promotion Transaction Mail');
+        $email->setSubject('MakitaERP - Promotion Transaction Cancellation Mail');
 
 
         $toEmails = $this->details['email'];
         $ccEmails = $this->details['cc'];
         $ccEmail = [];
 
-        // Process the indexed emails and add them to the associative array
         foreach (  $ccEmails as $key => $value) {
-            // Check if the current key is numeric, meaning it's an indexed array element
             if (is_numeric($key)) {
-                $ccEmail[$value] = ''; // Add the email as a key with empty value
+                $ccEmail[$value] = '';
             } else {
-                $ccEmail[$key] = $value; // Keep the already existing associative pair
+                $ccEmail[$key] = $value;
             }
         }
         
-     
         $bccEmails = $this->details['bcc'];
       
         $email->addTos($toEmails);
@@ -85,7 +78,7 @@ class TransactionJob implements ShouldQueue
         /* General Styling */
         body {
             font-family: Arial, sans-serif;
-            color: #333;
+            color: #000000;
             line-height: 1.6;
             background-color: #f9f9f9;
             padding: 20px;
@@ -117,7 +110,7 @@ class TransactionJob implements ShouldQueue
         th {
             background-color: #f4f4f4;
             font-weight: bold;
-            color: #555;
+            color: #000000;
         }
         td {
             background-color: #fafafa;
@@ -126,7 +119,7 @@ class TransactionJob implements ShouldQueue
             margin-top: 20px;
             font-size: 18px;
             font-weight: bold;
-            color: #444;
+            color: #000000;
         }
         .red{
             color:red;
@@ -134,13 +127,10 @@ class TransactionJob implements ShouldQueue
     </style>
 </head>
 <body>
-    <p><b>Dear MD,</b></p>
+    <p class="red"><b>Cancelled!</b></p>
 
-    <p>I have applied for the following PROMO.</p>
-    <p class="red">**This is Auto Approval Applicable PROMO.**</p>
-    <p><small>Auto Approved by system.</small></p>
-    <p class="red"><b>'.$details['offerproduct'][0]["stock"].' set(s) / no(s) left for the promotional campaign.</b></p>
 
+    <p>Order ID - '.$details['offerproduct'][0]['order_id'].' has been cancelled by ' .$details['canceledby'].' .</p>
     <p><u>Detail</u></p>
 
     <table>
@@ -151,17 +141,17 @@ class TransactionJob implements ShouldQueue
             <th>Dealer Code</th>
             <th>Dealer Name</th>
             <th>Region</th>
-            <th>Transaction ID</th>
+            <th>Order ID</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="color:orange;">'.$details['offerproduct'][0]['promo_code'].'</td>
-            <td style="color:orange;">'.$details['offerproduct'][0]['rm_name'].'</td>
+            <td>'.$details['offerproduct'][0]['promo_code'].'</td>
+            <td>'.$details['offerproduct'][0]['rm_name'].'</td>
             <td>'.$details['offerproduct'][0]['dealer_code'].'</td>
             <td>'.$details['offerproduct'][0]['dealer_name'].'</td>
-            <td style="color:orange;">'.$details['offerproduct'][0]['region'].'</td>
-            <td style="color:orange;">'.$details['offerproduct'][0]['order_id'].'</td>
+            <td>'.$details['offerproduct'][0]['region'].'</td>
+            <td>'.$details['offerproduct'][0]['order_id'].'</td>
           </tr>
         </tbody>
     </table>
@@ -175,9 +165,8 @@ class TransactionJob implements ShouldQueue
           <th>Offer Type</th>
           <th>Product Type</th>
           <th>Price Type</th>
-          <th>Unit Price</th>
+          <th>Price</th>
           <th>Qty</th>
-          <th>Total Price</th>
         </tr>
       </thead>
       <tbody>';
@@ -188,9 +177,8 @@ class TransactionJob implements ShouldQueue
                 <td>'.$offer["offer_type"].'</td>
                 <td>'.$offer["product_type"].'</td>
                 <td>'.$offer["price_type"].'</td>
-                <td>'.$offer["offer_price"].'</td>
-                <td>'.$offer["order_qty"].'</td>
                 <td>'.$offer["order_price"].'</td>
+                <td>'.$offer["order_qty"].'</td>
             </tr>';
         }
     $emailContent .= '</tbody>
@@ -205,9 +193,8 @@ class TransactionJob implements ShouldQueue
           <th>Offer Type</th>
           <th>Product Type</th>
           <th>Price Type</th>
-          <th>Unit Price</th>
+          <th>Price</th>
           <th>Qty</th>
-        <th>Total Price</th>
         </tr>
       </thead>
       <tbody>';
@@ -218,9 +205,8 @@ class TransactionJob implements ShouldQueue
                 <td>'.$offer["offer_type"].'</td>
                 <td>'.$offer["product_type"].'</td>
                 <td>'.($offer["order_price"] == 0 ? ' - ' : $offer["price_type"]).'</td>
-                <td>'.$offer["offer_price"].'</td>
-                <td>'.$offer["order_qty"].'</td>
                 <td>'.$offer["order_price"].'</td>
+                <td>'.$offer["order_qty"].'</td>
             </tr>';
         }
     $emailContent .= '</tbody>
@@ -236,6 +222,7 @@ class TransactionJob implements ShouldQueue
 
   
         // try {
+
             $apiKey = env('MakitaERPApiKey');
             $sendgrid = new \SendGrid($apiKey);
             $response = $sendgrid->send($email);

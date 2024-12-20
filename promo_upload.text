@@ -1,0 +1,78 @@
+<?php
+
+$array = [
+    'No.' => 627,
+    'CODE' => 627,
+    'Valid for' => '31-12-2024',
+    'Code-Main' => 'HM1213C',
+    'Main' => 'DEMOLITION HAMMER (HM1213C)',
+    'Price-Main' => 'BEST',
+    'Offer-Main' => '37,990',
+    'MOQ' => 2,
+    'Stock-Main' => 11,
+    'Code-FOC 1' => 'M9513B',
+    'FOC 1' => 'ANGLE GRINDER',
+    'Price-FOC 1' => 'FOC',
+    'Offer-FOC 1' => 0,
+    '' => null,
+    'Qty-FOC 1' => 1,
+    'Stock-FOC 1' => 5814,
+    'Code-FOC 2' => null,
+    'FOC 2' => null,
+    'Price-FOC 2' => null,
+    'Offer-FOC 2' => null,
+    'Qty-FOC 2' => null,
+    'Stock-FOC 2' => null,
+    'Code-FOC 3' => null,
+    'FOC 3' => null,
+    'Price-FOC 3' => null,
+    'Offer-FOC 3' => null,
+    'Qty-FOC 3' => null,
+    'Stock-FOC 3' => null,
+    'Code-FOC 4' => null,
+    'FOC 4' => null,
+    'Price-FOC 4' => null,
+    'Offer-FOC 4' => null,
+    'Qty-FOC 4' => null,
+    'Stock-FOC 4' => null,
+    'Recommended Limit' => 10,
+    'Limit-Main' => 42,
+    'Remaining' => 10,
+    'Applied-Main' => 32,
+    'Stat from' => '01-02-2024',
+    'CK' => null,
+    'NUM' => null,
+    '価格情報' => 42,
+    '19-11-2024' => null
+];
+
+// Find all keys containing 'Stock'
+$keys = array_keys($array);
+$splitIndices = array_filter(array_keys($keys), function ($index) use ($keys) {
+    return str_contains($keys[$index], 'Stock');
+});
+
+// Add first and last indices for complete slices
+$splitIndices = array_merge([-1], $splitIndices, [count($keys)]);
+
+// Split the array using array_slice
+$result = array_map(function ($start, $end) use ($keys, $array) {
+    return array_slice($array, $start + 1, $end - $start, true);
+}, $splitIndices, array_slice($splitIndices, 1));
+
+// Filter out arrays that don't contain 'Stock' in their keys
+$result = array_filter($result, function ($subArray) {
+    return array_filter(array_keys($subArray), fn($key) => str_contains($key, 'Stock'));
+});
+
+// Add [CODE] to each nested array
+$code = $array['CODE'] ?? null; // Extract the CODE from the original array
+$result = array_map(function ($subArray) use ($code) {
+    $subArray['CODE'] = $code; // Add the CODE key to each nested array
+    return $subArray;
+}, $result);
+
+// Print result
+echo "<pre>";
+print_r($result);
+echo "</pre>";

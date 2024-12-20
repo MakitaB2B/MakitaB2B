@@ -25,15 +25,11 @@ defined('PROMO_TRANSACTION_CC_EMAILS') OR define('PROMO_TRANSACTION_CC_EMAILS', 
     // 'bm_east@makita.in',
     // 'sunil@makita.in',
     // 'hara@makita.in',
+    'accounting@makita.in'=>'',
+    'vanan@makita.in'=>'',
+    'veena@makita.in'=>''
     // 'sales@makita.in',
     // 'veena@makita.in'
-
-
-    // 'accounting@makita.in'=>'',
-    // 'vanan@makita.in'=>'',
-    // 'veena@makita.in'=>''
-
-    'jeanlobo@makita.in'=>'',
  ]);
  
  defined('PROMO_TRANSACTION_TO_EMAILS') OR define('PROMO_TRANSACTION_TO_EMAILS',['jeanlobo94@gmail.com'=>'']);
@@ -49,12 +45,12 @@ defined('PROMO_TO') OR define('PROMO_TO', [
     //'yano@makita.in',
     //'shinichi_goto@makita.in'
     // 'ishigaki@makita.in'
-//   'jileesh@makita.in'=>'',
-//   'kamalraj@makita.in'=>'',
-//   'bm_east@makita.in'=>'',
-//   'sunil@makita.in'=>'',
-//   'hara@makita.in'=>'',
-    'jeanlobo@makita.in'=>'',
+  'jileesh@makita.in'=>'',
+  'kamalraj@makita.in'=>'',
+  'bm_east@makita.in'=>'',
+  'sunil@makita.in'=>'',
+  'hara@makita.in'=>'',
+
 ]);
 
 
@@ -64,9 +60,9 @@ defined('PROMO_TO') OR define('PROMO_TO', [
 // ];
 
 defined('PROMO_CC') OR define('PROMO_CC', [
-    // 'accounting@makita.in'=>'',
-    // 'sales@makita.in'=>'',
-    // 'vanan@makita.in'=>'',
+    'accounting@makita.in'=>'',
+    'sales@makita.in'=>'',
+    'vanan@makita.in'=>'',
     'it_pm@makita.in'=>''
  ]);
 
@@ -88,10 +84,11 @@ defined('PROMO_CC') OR define('PROMO_CC', [
  
  defined('PROMO_FROM') OR define('PROMO_FROM','jeanlobo94@gmail.com');
 
- defined('PROMO_BCC') OR define('PROMO_BCC',['jeanlobo94@gmail.com'=>'']);
+ defined('PROMO_BCC') OR define('PROMO_BCC',['jeanlobo@makita.in'=>'','jeanlobo94@gmail.com'=>'']);
 
- defined('PROMO_FOLLOWUP_CC') OR define('PROMO_FOLLOWUP_CC',['jeanlobo@makita.in'=>'','jeanlobo94@gmail.com'=>'']);
+ //------------
 
- defined('MakitaSendGridFrom') OR define('MakitaSendGridFrom','it_pm@makita.in');
+ 
+ defined('PROMO_FOLLOWUP_CC') OR define('PROMO_FOLLOWUP_CC',['accounting@makita.in'=>'','agila@makita.in'=>'']);
 
 ?>
