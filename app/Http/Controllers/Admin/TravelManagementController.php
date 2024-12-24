@@ -18,8 +18,6 @@ class TravelManagementController extends Controller
     }
 
     public function getAllBTAppliedByLoggedInEmployee(){
-
-        dd(Auth::user());
         
         $employeeSlug=Auth::guard('admin')->user()->employee_slug;
 

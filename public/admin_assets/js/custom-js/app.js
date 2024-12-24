@@ -1,0 +1,986 @@
+/**
+ * Expense Application
+ * Main application that integrates all modules and manages the expense form
+ */
+const ExpenseApp = {
+    // Application configuration
+    config: {
+        primaryColor: '#008290',
+        transportTypes: {
+            company: [
+                { value: 'car', text: 'Car' },
+                { value: 'van', text: 'Van' }
+            ],
+            private: [
+                { value: 'car', text: 'Car' },
+                { value: 'motorcycle', text: 'Bike' }
+            ],
+            public: [
+                { value: 'bus', text: 'Bus' },
+                { value: 'bike', text: 'Two Wheeler' },
+                { value: 'train', text: 'Train' },
+                { value: 'taxi', text: 'Taxi' },
+                { value: 'metro', text: 'Metro' }
+            ]
+        },
+        expenseTypes: [
+            { value: 'parking', text: 'Parking' },
+            { value: 'internet', text: 'Internet' },
+            { value: 'phone', text: 'Phone' },
+            { value: 'other', text: 'Other' }
+        ],
+        dayTypes: [
+            { value: 'L', text: 'On Leave' },
+            { value: 'H', text: 'Holiday' },
+            { value: 'W', text: 'Working Day' }
+        ]
+    },
+
+    // Application state
+    state: {
+        travelEntryCount: 0,
+        miscEntryCount: 0
+    },
+
+    /**
+     * Time Management Module
+     */
+    timeManager: {
+        initialize: function() {
+            // Initialize calendar with 2 months restriction
+            const today = new Date();
+            const twoMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+
+            Calendar.init({
+                container: '#calendarBody',
+                minDate: twoMonthsAgo,
+                maxDate: today,
+                inputSelector: '.datepicker',
+                wrapperSelector: '.calendar-wrapper',
+                onChange: (date) => {
+                    this.validateAndUpdate();
+                }
+            });
+
+            // Initialize time dropdowns
+            this.initializeTimeDropdowns();
+            // Initialize day type dropdown
+            this.initializeDayTypeDropdown();
+        },
+
+        initializeDayTypeDropdown: function() {
+            CustomDropdown.init({
+                container: '#dayTypeDropdown',
+                data: ExpenseApp.config.dayTypes,
+                placeholder: 'Select Day Type',
+                required: true,
+                onChange: () => {
+                    this.validateAndUpdate();
+                }
+            });
+        },
+
+        initializeTimeDropdowns: function() {
+            const timeConfig = {
+                hours: Array.from({length: 24}, (_, i) => ({
+                    value: i.toString().padStart(2, '0'),
+                    text: i.toString().padStart(2, '0')
+                })),
+                minutes: Array.from({length: 60}, (_, i) => ({
+                    value: i.toString().padStart(2, '0'),
+                    text: i.toString().padStart(2, '0')
+                }))
+            };
+
+            // Initialize In Time
+            CustomDropdown.init({
+                container: '#inHoursDropdown',
+                data: timeConfig.hours,
+                placeholder: '00',
+                onChange: () => this.validateAndUpdate()
+            });
+
+            CustomDropdown.init({
+                container: '#inMinutesDropdown',
+                data: timeConfig.minutes,
+                placeholder: '00',
+                onChange: () => this.validateAndUpdate()
+            });
+
+            // Initialize Out Time
+            CustomDropdown.init({
+                container: '#outHoursDropdown',
+                data: timeConfig.hours,
+                placeholder: '00',
+                onChange: () => this.validateAndUpdate()
+            });
+
+            CustomDropdown.init({
+                container: '#outMinutesDropdown',
+                data: timeConfig.minutes,
+                placeholder: '00',
+                onChange: () => this.validateAndUpdate()
+            });
+        },
+
+        validateAndUpdate: function() {
+            const times = this.getTimeValues();
+            const dayType = this.getDayType();
+            const selectedDate = Calendar.getDate('#calendarBody');
+            
+            // Validate all required inputs
+            const isDateValid = !!selectedDate;
+            const inTime = parseInt(times.inHours) * 60 + parseInt(times.inMinutes);
+            const outTime = parseInt(times.outHours) * 60 + parseInt(times.outMinutes);
+            const isTimeValid = inTime < outTime;
+            const isDayTypeValid = !!dayType;
+
+            // Apply error states
+            $('.datepicker').toggleClass('error', !isDateValid);
+            ['in', 'out'].forEach(type => {
+                CustomDropdown.setError(`#${type}HoursDropdown`, !isTimeValid);
+                CustomDropdown.setError(`#${type}MinutesDropdown`, !isTimeValid);
+            });
+
+            CustomDropdown.setError('#dayTypeDropdown', !isDayTypeValid);
+            $('.time-error-message').toggle(!isTimeValid);
+
+            const isValid = isDateValid && isTimeValid && isDayTypeValid;
+
+            if (isValid) {
+                ExpenseApp.expenseManager.validateTimeAndExpenses();
+            }            
+
+            return isValid;
+        },
+
+        getTimeValues: function() {
+            return {
+                inHours: CustomDropdown.getValue('#inHoursDropdown') || '00',
+                inMinutes: CustomDropdown.getValue('#inMinutesDropdown') || '00',
+                outHours: CustomDropdown.getValue('#outHoursDropdown') || '00',
+                outMinutes: CustomDropdown.getValue('#outMinutesDropdown') || '00'
+            };
+        },
+
+        getDayType: function() {
+            return CustomDropdown.getValue('#dayTypeDropdown');
+        }
+    },
+
+    /**
+     * Expense Management Module
+     */
+    expenseManager: {
+        validateTimeAndExpenses: function() {
+            const times = ExpenseApp.timeManager.getTimeValues();
+            const inHours = parseInt(times.inHours);
+            const outHours = parseInt(times.outHours);
+            
+            // Update meal access based on time
+            this.updateMealAccess('breakfast', inHours < 7);
+            this.updateMealAccess('lunch', outHours >= 12);
+            this.updateMealAccess('dinner', outHours >= 20);
+            
+            this.updateTotalFoodExpenses();
+        },
+
+        updateMealAccess: function(meal, hasAccess) {
+            const $container = $(`#${meal}Row`);
+            const $input = $(`#${meal}Claim`);
+            const $uploader = FileUploader.getInstance('food-expenses', meal);
+
+            $container.toggleClass('show', hasAccess);
+            $input.prop('disabled', !hasAccess);
+
+            if (hasAccess) {
+                FileUploader.enable($uploader);
+                $container.find('.expense-message')
+                    .text('')
+                    .removeClass('text-danger')
+                    .addClass('text-muted');
+            } else {
+                $input.val('0.00');
+                FileUploader.disable($uploader);
+                FileUploader.clearFiles('food-expenses', meal);
+                $container.find('.expense-message')
+                    .text(`Not eligible for ${meal} claim`)
+                    .removeClass('text-muted')
+                    .addClass('text-danger');
+            }
+        },
+
+        initializeFileUploaders: function() {
+            // Initialize food expense uploaders
+            ['breakfast', 'lunch', 'dinner'].forEach(meal => {
+                FileUploader.init({
+                    container: `#${meal}-attachments`,
+                    moduleId: 'food-expenses',
+                    sectionId: meal,
+                    maxFiles: 1,
+                    buttonText: 'Add Receipt',
+                    uploadIcon: 'bi-receipt',
+                    onChange: () => {
+                        this.validateMealExpense(meal);
+                    }
+                });
+            });
+        },
+
+        validateMealExpense: function(meal) {
+            const $input = $(`#${meal}Claim`);
+            const value = $input.val();
+            
+            if (!/^\d{1,3}(\.\d{0,2})?$/.test(value)) {
+                $input.val('0.00');
+                return false;
+            }
+            
+            const amount = parseFloat(value) || 0;
+            const files = FileUploader.getFiles('food-expenses', meal) || [];
+            
+            const isValid = amount === 0 || (amount > 0 && files.length > 0);
+            $(`#${meal}Row`).find('.expense-message')
+                .text(!isValid ? 'Please attach receipt for the expense claim' : '')
+                .toggle(!isValid).addClass("text-danger ").removeClass("text-muted");
+    
+            return isValid;
+        },
+    
+        updateTotalFoodExpenses: function() {
+            let total = 0;            
+            ['breakfast', 'lunch', 'dinner'].forEach(meal => {
+                const value = parseFloat($(`#${meal}Claim`).val()) || 0;
+                total += value;
+            });
+            $('#totalFoodExpenses').text(`₹${total.toFixed(2)}`);            
+        },
+
+        validateAllExpenses: function() {
+            return ['breakfast', 'lunch', 'dinner'].every(meal => 
+                this.validateMealExpense(meal)
+            );
+        }
+    },
+
+    /**
+     * Travel Management Module
+     */
+    travelManager: {
+        addTravelEntry: function(data = null) {
+            const template = document.getElementById('travel-entry-template')
+                                   .content.cloneNode(true);
+            const $newEntry = $(template);
+            
+            const entryNumber = ++ExpenseApp.state.travelEntryCount;
+
+            FileUploader.init({
+                container: $newEntry.find('.travel-documents-uploader')[0],
+                moduleId: 'travel-expenses',
+                sectionId: `travel-${entryNumber}`,
+                maxFiles: 5,
+                required: true,
+                buttonText: 'Add Documents',
+                uploadIcon: 'bi-file-earmark-text',
+                onChange: () => this.validateEntry($newEntry)
+            });
+            
+            $newEntry.find('.entry-number').text(entryNumber);
+            
+            this.initializeTransportDropdowns($newEntry);
+            
+            // Add to container
+            $('#travelEntriesContainer').append($newEntry);
+            
+            // Initialize file uploader for this section
+            const $container = $('.file-upload-container');
+            if ($container.length > 0) {
+                this.initializeFileUploader($container, entryNumber);
+            }
+            
+            if (data) {
+                this.populateEntryData($newEntry, data);
+            }
+            
+            this.updateRemoveButtons();
+            
+            return $newEntry;
+        },
+
+        initializeTransportDropdowns: function($entry) {
+            const transportData = {
+                parentData: Object.keys(ExpenseApp.config.transportTypes)
+                    .map(key => ({ value: key, text: key.charAt(0).toUpperCase() + key.slice(1) })),
+                childData: ExpenseApp.config.transportTypes
+            };
+            const parentContainer = $entry.find('.mode-transport-container')[0];  // Store reference
+            const childContainer = $entry.find('.type-transport-container')[0];   // Store reference
+        
+
+            DependentDropdown.init({
+                parentContainer: $entry.find('.mode-transport-container')[0],
+                childContainer: $entry.find('.type-transport-container')[0],
+                parentData: transportData.parentData,
+                childData: transportData.childData,
+                required: true,
+                onChange: (parentValue, childValue) => {
+                    const currentEntry = $(parentContainer).closest('.travel-entry');
+                    this.toggleMeterFields(currentEntry, parentValue === 'private');
+                    this.validateEntry($entry);
+                }
+            });
+        },
+        toggleMeterFields: function($entry, show) {
+            // Use find to get to the card from the mode-transport-container
+            const $travelEntry = $($entry.find('.mode-transport-container')).closest('.card.travel-entry');
+            // Or start from the mode-transport-container and go up
+            if (!$travelEntry.length) {
+                const $container = $entry.find('.mode-transport-container');
+                const $cardEntry = $container.closest('.card.travel-entry');
+                if ($cardEntry.length) {
+                    $travelEntry = $cardEntry;
+                }
+            }
+            console.log("Travel Entry found:", $travelEntry.length);
+            
+            const $meterRow = $travelEntry.find('.meter-fields-row');
+            console.log("Meter Row found:", $meterRow.length);
+        
+            if (show) {
+                $meterRow.css("display","flex");
+                $meterRow.find('.starting-meter').val('0');
+                $meterRow.find('.closing-meter').val('0');
+                $meterRow.find('.total-kms').val('0');
+            } else {
+                $meterRow.hide();
+                $meterRow.find('.starting-meter').val('');
+                $meterRow.find('.closing-meter').val('');
+                $meterRow.find('.total-kms').val('');
+            }
+        },
+
+        validateEntry: function($entry) {
+            let isValid = true;
+            
+            // Reset previous error states
+            $entry.find('.is-invalid').removeClass('is-invalid');
+            $entry.find('.invalid-feedback').remove();
+            console.log("Validating Travel Entry...");
+            
+            // Validate transport selections
+            const modeValue = CustomDropdown.getValue($entry.find('.mode-transport-container'));
+            const typeValue = CustomDropdown.getValue($entry.find('.type-transport-container'));
+            console.log("Mode:", modeValue, "Type:", typeValue);
+        
+            if (!modeValue || !typeValue) {
+                isValid = false;
+                if (!modeValue) {
+                    CustomDropdown.setError($entry.find('.mode-transport-container'), true);
+                }
+                if (!typeValue) {
+                    CustomDropdown.setError($entry.find('.type-transport-container'), true);
+                }
+            }
+        
+            // Validate meters if transport mode is private
+            if (modeValue === 'private') {
+                const start = parseFloat($entry.find('.starting-meter').val()) || 0;
+                const end = parseFloat($entry.find('.closing-meter').val()) || 0;
+                console.log("Meter values - Start:", start, "End:", end);
+                
+                if (end <= start) {
+                    isValid = false;
+                    $entry.find('.starting-meter, .closing-meter').addClass('is-invalid');
+                    if (!$entry.find('.meter-error').length) {
+                        $entry.find('.closing-meter').after(
+                            '<div class="invalid-feedback meter-error">Closing meter must be greater than starting meter</div>'
+                        );
+                    }
+                }
+            }
+        
+            // Validate places visited - Safe check for null/undefined
+            const placesVisitedValue = $entry.find('.places-visited').val();
+            console.log("Places visited:", placesVisitedValue);
+            if (!placesVisitedValue || !placesVisitedValue.trim()) {
+                isValid = false;
+                $entry.find('.places-visited').addClass('is-invalid');
+                if (!$entry.find('.places-error').length) {
+                    $entry.find('.places-visited').after(
+                        '<div class="invalid-feedback places-error">Please enter places visited</div>'
+                    );
+                }
+            }
+        
+          // Validate file attachments
+            const entryNumber = $entry.find('.entry-number').text();
+            console.log("Entry number for files:", entryNumber);
+
+            const files = FileUploader.getFiles('travel-expenses', `travel-${entryNumber}`);
+            console.log("Files attached:", files);
+
+            if (!files || !files.length || !files[0]) {
+                isValid = false;
+                $entry.find('.travel-documents-uploader').addClass('has-error');
+                if (!$entry.find('.documents-error').length) {
+                    $entry.find('.travel-documents-uploader').after(
+                        '<div class="invalid-feedback documents-error">Supporting documents are required</div>'
+                    );
+                }
+            } else {
+                // Clear error state if files exist
+                $entry.find('.travel-documents-uploader').removeClass('has-error');
+                $entry.find('.documents-error').remove();
+            }
+            console.log("Validation result:", isValid);
+            return isValid;
+        },
+
+        calculateTotalKms: function($entry) {
+            const start = parseFloat($entry.find('.starting-meter').val()) || 0;
+            const end = parseFloat($entry.find('.closing-meter').val()) || 0;
+            const total = Math.max(0, end - start);
+            
+            $entry.find('.total-kms').val(total.toFixed(2));
+
+            this.validateEntry($entry);
+            $entry.find('.starting-meter, .closing-meter')
+                  .toggleClass('is-invalid', end <= start);
+        },
+
+        calculateTotalClaim: function($entry) {
+            const tollCharges = parseFloat($entry.find('.toll-charges').val()) || 0;
+            const fuelCharges = parseFloat($entry.find('.fuel-charges').val()) || 0;
+            return tollCharges + fuelCharges;
+        },
+
+        updateRemoveButtons: function() {
+            $('.travel-entry').each(function(index) {
+                $(this).find('.remove-entry').toggle(index > 0);
+            });
+        },
+
+        removeEntry: function($entry) {
+            const entryNumber = $entry.find('.entry-number').text();
+            FileUploader.clearFiles('travel-expenses', `travel-${entryNumber}`);
+            $entry.remove();
+            this.updateRemoveButtons();
+        }
+    },
+
+    miscManager: {
+        addMiscEntry: function(data = null) {
+            const template = document.getElementById('misc-entry-template')
+                                   .content.cloneNode(true);
+            const $newEntry = $(template);
+            
+            const entryNumber = ++ExpenseApp.state.miscEntryCount;
+    
+            // Initialize file uploader
+            FileUploader.init({
+                container: $newEntry.find('.misc-documents-uploader')[0],
+                moduleId: 'misc-expenses',
+                sectionId: `misc-${entryNumber}`,
+                maxFiles: 5,
+                required: false,
+                buttonText: 'Add Documents',
+                uploadIcon: 'bi-file-earmark-text',
+                onChange: () => this.validateEntry($newEntry)
+            });
+            
+            $newEntry.find('.entry-number').text(entryNumber);
+            
+            // Initialize expense type dropdown
+            this.initializeExpenseTypeDropdown($newEntry);
+            
+            // Add to container
+            $('#miscExpensesContainer').append($newEntry);
+            
+            if (data) {
+                this.populateEntryData($newEntry, data);
+            }
+            
+            this.updateRemoveButtons();
+            
+            return $newEntry;
+        },
+    
+        initializeExpenseTypeDropdown: function($entry) {
+            CustomDropdown.init({
+                container: $entry.find('.expense-type-container')[0],
+                data: ExpenseApp.config.expenseTypes,
+                placeholder: 'Select Type',
+                required: true,
+                onChange: () => {
+                    this.validateEntry($entry);
+                }
+            });
+        },
+    
+        validateEntry: function($entry) {
+            let isValid = true;
+            
+            // Reset previous error states
+            $entry.find('.is-invalid').removeClass('is-invalid');
+            $entry.find('.invalid-feedback').remove();
+            
+            // Validate expense type selection
+            const typeValue = CustomDropdown.getValue($entry.find('.expense-type-container'));
+            if (!typeValue) {
+                isValid = false;
+                CustomDropdown.setError($entry.find('.expense-type-container'), true);
+            }
+    
+            // Validate amount
+            const amount = parseFloat($entry.find('.claim-amount').val()) || 0;
+            if (amount <= 0) {
+                isValid = false;
+                $entry.find('.claim-amount').addClass('is-invalid');
+                if (!$entry.find('.amount-error').length) {
+                    $entry.find('.claim-amount').after(
+                        '<div class="invalid-feedback amount-error">Please enter a valid amount</div>'
+                    );
+                }
+            }
+    
+            // Validate file attachments
+            const entryNumber = $entry.find('.entry-number').text();
+            const files = FileUploader.getFiles('misc-expenses', `misc-${entryNumber}`);
+    
+            if (!files || !files.length) {
+                isValid = false;
+                $entry.find('.misc-documents-uploader').addClass('has-error');
+                if (!$entry.find('.documents-error').length) {
+                    $entry.find('.misc-documents-uploader').after(
+                        '<div class="invalid-feedback documents-error">Supporting documents are required</div>'
+                    );
+                }
+            }
+    
+            return isValid;
+        },
+    
+        updateRemoveButtons: function() {
+            $('.misc-entry').each(function(index) {
+                $(this).find('.remove-misc-entry').toggle(index > 0);
+            });
+        },
+    
+        removeEntry: function($entry) {
+            const entryNumber = $entry.find('.entry-number').text();
+            FileUploader.clearFiles('misc-expenses', `misc-${entryNumber}`);
+            $entry.remove();
+            this.updateRemoveButtons();
+        }
+    },
+    collectCurrentStepData : function(step) {
+        switch(step) {
+            case 1: // Time Info
+                return {
+                    date: Calendar.getDate('#calendarBody'),
+                    dayType: CustomDropdown.getValue('#dayTypeDropdown'),
+                    inTime: {
+                        hours: CustomDropdown.getValue('#inHoursDropdown') || '00',
+                        minutes: CustomDropdown.getValue('#inMinutesDropdown') || '00'
+                    },
+                    outTime: {
+                        hours: CustomDropdown.getValue('#outHoursDropdown') || '00',
+                        minutes: CustomDropdown.getValue('#outMinutesDropdown') || '00'
+                    }
+                };
+    
+            case 2: // Food Expenses
+                return {
+                    breakfast: {
+                        amount: $('#breakfastClaim').val() || '0.00',
+                        files: FileUploader.getFiles('food-expenses', 'breakfast') || []
+                    },
+                    lunch: {
+                        amount: $('#lunchClaim').val() || '0.00',
+                        files: FileUploader.getFiles('food-expenses', 'lunch') || []
+                    },
+                    dinner: {
+                        amount: $('#dinnerClaim').val() || '0.00',
+                        files: FileUploader.getFiles('food-expenses', 'dinner') || []
+                    }
+                };
+    
+            case 3: // Travel Expenses
+                const travelExpenses = [];
+                $('.travel-entry').each(function() {
+                    const $entry = $(this);
+                    const entryNumber = $entry.find('.entry-number').text();
+                    travelExpenses.push({
+                        modeOfTransport: CustomDropdown.getValue($entry.find('.mode-transport-container')),
+                        typeOfTransport: CustomDropdown.getValue($entry.find('.type-transport-container')),
+                        startingMeter: $entry.find('.starting-meter').val(),
+                        closingMeter: $entry.find('.closing-meter').val(),
+                        totalKms: $entry.find('.total-kms').val(),
+                        tollCharges: $entry.find('.toll-charges').val(),
+                        fuelCharges: $entry.find('.fuel-charges').val(),
+                        placesVisited: $entry.find('.places-visited').val(),
+                        files: FileUploader.getFiles('travel-expenses', `travel-${entryNumber}`) || []
+                    });
+                });
+                return travelExpenses;
+    
+            case 4: // Misc Expenses
+                const miscExpenses = [];
+                $('.misc-entry').each(function() {
+                    const $entry = $(this);
+                    const entryNumber = $entry.find('.entry-number').text();
+                    miscExpenses.push({
+                        type: CustomDropdown.getValue($entry.find('.expense-type-container')),
+                        amount: $entry.find('.claim-amount').val(),
+                        files: FileUploader.getFiles('misc-expenses', `misc-${entryNumber}`) || []
+                    });
+                });
+                return miscExpenses;
+    
+            default:
+                return null;
+        }
+    },
+    
+    /**
+     * Event Handlers and Initialization (continued)
+     */
+    initializeEventHandlers: function() {
+        // Initialize components
+        this.timeManager.initialize();
+        this.expenseManager.initializeFileUploaders();
+
+        // Form Navigation
+        $('.next-step').click(function(e) {
+            const $currentStep = $(this).closest('.step-container');
+            const currentStepNumber = parseInt($currentStep.data('step'));
+
+            // Validate current step
+            let isValid = true;
+            switch(currentStepNumber) {
+                case 1: // Time Info
+                    isValid = ExpenseApp.timeManager.validateAndUpdate();
+                    if (!isValid) {
+                        showToast('Please fix the errors', 'danger');
+                    }
+                    break;
+                    
+                case 2: // Food Expenses
+                    isValid = ExpenseApp.expenseManager.validateAllExpenses();
+                    if (!isValid) {
+                        showToast('Please attach receipts for all expense claims', 'danger');
+                    }
+                    break;
+                    
+                case 3: // Travel Expenses
+                    $('.travel-entry').each(function() {
+                        if (!ExpenseApp.travelManager.validateEntry($(this))) {
+                            isValid = false;
+                        }
+                    });
+                    if (!isValid) {
+                        showToast('Please complete all travel entry details', 'danger');
+                    }
+                    break;
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            // Proceed to next step
+            const nextStepNumber = currentStepNumber + 1;
+            
+            // Update stepper UI
+            $(`.step[data-step="${currentStepNumber}"]`)
+                .removeClass('active')
+                .addClass('completed');
+            $(`.step[data-step="${nextStepNumber}"]`).addClass('active');
+            
+            // Show next step
+            $currentStep.removeClass('active');
+            $(`.step-container[data-step="${nextStepNumber}"]`).addClass('active');
+        });
+
+        // Previous step navigation
+        $('.prev-step').click(function() {
+            const $currentStep = $(this).closest('.step-container');
+            const currentStepNumber = parseInt($currentStep.data('step'));
+            const prevStepNumber = currentStepNumber - 1;
+            
+            // Update stepper UI
+            $(`.step[data-step="${currentStepNumber}"]`).removeClass('active');
+            $(`.step[data-step="${prevStepNumber}"]`)
+                .addClass('active')
+                .removeClass('completed');
+            
+            // Show previous step
+            $currentStep.removeClass('active');
+            $(`.step-container[data-step="${prevStepNumber}"]`).addClass('active');
+        });
+
+        // Travel entry handlers
+        $('#addTravelEntry').click(() => {
+            this.travelManager.addTravelEntry();
+        });
+
+        $(document).on('click', '.remove-entry', function() {
+            ExpenseApp.travelManager.removeEntry($(this).closest('.travel-entry'));
+        });
+
+        $(document).on('input', '.starting-meter, .closing-meter', function() {
+            const $entry = $(this).closest('.travel-entry');
+            ExpenseApp.travelManager.calculateTotalKms($entry);
+        });
+
+        // Initialize with a default misc entry
+        if ($('#miscExpensesContainer').children().length === 0) {
+            this.miscManager.addMiscEntry();
+        }
+
+        // Add Misc Entry handler
+        $('#addMiscExpense').click(() => {
+            this.miscManager.addMiscEntry();
+        });
+        $(document).on('click', '.remove-misc-entry', function() {
+            ExpenseApp.miscManager.removeEntry($(this).closest('.misc-entry'));
+        });
+
+        // // Form submission
+        // $('#submit-form').click(function() {
+        //     if (ExpenseApp.validateForm()) {
+        //         const formData = ExpenseApp.collectFormData();
+        //         ExpenseApp.submitForm(formData);
+        //     }
+        // });
+    },
+
+    /**
+     * Form Validation and Submission
+     */
+    validateForm: function() {
+        let isValid = true;
+
+        // Validate time
+        if (!this.timeManager.validateAndUpdate()) {
+            isValid = false;
+            showToast('Please fix the time validation errors', 'danger');
+            return false;
+        }
+
+        // Validate food expenses
+        if (!this.expenseManager.validateAllExpenses()) {
+            isValid = false;
+            showToast('Please attach receipts for all expense claims', 'danger');
+            return false;
+        }
+
+        // Validate travel entries
+        $('.travel-entry').each(function() {
+            if (!ExpenseApp.travelManager.validateEntry($(this))) {
+                isValid = false;
+            }
+        });
+
+        if (!isValid) {
+            showToast('Please complete all required fields', 'danger');
+            return false;
+        }
+
+        return true;
+    },
+
+    collectFormData: function() {
+        const times = this.timeManager.getTimeValues();
+        return {
+            date: Calendar.getDate('#dateCalendar'),
+            time: times,
+            foodExpenses: {
+                breakfast: {
+                    amount: $('#breakfastClaim').val(),
+                    files: FileUploader.getFiles('food-expenses', 'breakfast') || []
+                },
+                lunch: {
+                    amount: $('#lunchClaim').val(),
+                    files: FileUploader.getFiles('food-expenses', 'lunch') || []
+                },
+                dinner: {
+                    amount: $('#dinnerClaim').val(),
+                    files: FileUploader.getFiles('food-expenses', 'dinner') || []
+                }
+            },
+            travelExpenses: this.collectTravelExpenses()
+        };
+    },
+
+    collectTravelExpenses: function() {
+        const entries = [];
+        $('.travel-entry').each(function() {
+            const $entry = $(this);
+            const entryNumber = $entry.find('.entry-number').text();
+            
+            entries.push({
+                modeOfTransport: CustomDropdown.getValue($entry.find('.mode-transport-container')),
+                typeOfTransport: CustomDropdown.getValue($entry.find('.type-transport-container')),
+                startingMeter: $entry.find('.starting-meter').val(),
+                closingMeter: $entry.find('.closing-meter').val(),
+                totalKms: $entry.find('.total-kms').val(),
+                tollCharges: $entry.find('.toll-charges').val(),
+                fuelCharges: $entry.find('.fuel-charges').val(),
+                placesVisited: $entry.find('.places-visited').val(),
+                files: FileUploader.getFiles('travel-expenses', `travel-${entryNumber}`)
+            });
+        });
+        
+        return entries;
+    },
+
+    submitForm: function(formData) {
+        // Here you would typically send the data to your server
+        console.log('Submitting form data:', formData);
+        showToast('Form submitted successfully!', 'success');
+        
+        // Reset form
+        setTimeout(() => {
+            location.reload();
+        }, 2000);
+    },
+
+    /**
+     * Utility Functions
+     */
+    formatMoney: function(amount) {
+        return parseFloat(amount).toFixed(2);
+    },
+
+    formatDate: function(date) {
+        return new Date(date).toLocaleDateString();
+    },
+
+    calculateDuration: function(inTime, outTime) {
+        const inMinutes = parseInt(inTime.inHours) * 60 + parseInt(inTime.inMinutes);
+        const outMinutes = parseInt(outTime.outHours) * 60 + parseInt(outTime.outMinutes);
+        const diff = outMinutes - inMinutes;
+        
+        const hours = Math.floor(diff / 60);
+        const minutes = diff % 60;
+        
+        return `${hours}h ${minutes}m`;
+    }
+};
+
+/**
+ * Toast Notification Helper
+ */
+function showToast(message, type = 'success') {
+    const toastEl = $(`
+        <div class="toast align-items-center text-white bg-${type} border-0" 
+             role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                        data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `);
+    
+    $('body').append(toastEl);
+    const toast = new bootstrap.Toast(toastEl[0], { delay: 3000 });
+    toast.show();
+    
+    toastEl.on('hidden.bs.toast', function() {
+        $(this).remove();
+    });
+}
+
+$(document).ready(function() {    
+    ExpenseApp.timeManager.initialize();
+    ExpenseApp.initializeEventHandlers();
+
+    $('.next-step, .prev-step').click(function() {
+        const $currentStep = $(this).closest('.step-container');
+        const currentStep = parseInt($currentStep.data('step'));
+        
+        // Save current step data
+        const stepData = ExpenseApp.collectCurrentStepData(currentStep);
+        
+        // Update current step in state
+        const nextStep = $(this).hasClass('next-step') ? currentStep + 1 : currentStep - 1;
+    });
+
+    // Initialize with a default travel entry
+    if ($('#travelEntriesContainer').children().length === 0) {
+        ExpenseApp.travelManager.addTravelEntry();
+    }
+
+    // Expense input handlers
+    $('.expense-container .input-group input').on('input', function(e) {
+        const input = this;
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        let value = $(input).val();
+        const beforeValue = value;
+        
+        // Remove non-numeric characters except decimal
+        value = value.replace(/[^\d.]/g, '');
+        
+        // Handle decimal points
+        const decimalParts = value.split('.');
+        if (decimalParts.length > 2) {
+            value = decimalParts[0] + '.' + decimalParts[1];
+        }
+    
+        // Limit to two decimal places
+        if (value.includes('.')) {
+            const parts = value.split('.');
+            value = parts[0] + '.' + (parts[1] || '').slice(0, 2);
+        }
+    
+        // Convert to number and check max value
+        let numValue = parseFloat(value) || 0;
+        if (numValue > 100) {
+            numValue = 100;
+            value = "100.00";
+        }
+    
+        // Only update if value has changed
+        if (value !== beforeValue) {
+            $(input).val(value);
+            
+            // Calculate new cursor position
+            const cursorPos = start - (beforeValue.length - value.length);
+            // Restore cursor position after update
+            input.setSelectionRange(cursorPos, cursorPos);
+        }
+    
+        // Handle expense validations
+        const meal = $(this).attr('id').replace('Claim', '').toLowerCase();
+        ExpenseApp.expenseManager.validateMealExpense(meal);
+        ExpenseApp.expenseManager.updateTotalFoodExpenses();
+    });
+    
+    // Handle blur event for final formatting
+    $('.expense-container .input-group input').on('blur', function() {
+        let value = $(this).val();
+        
+        // Format to 2 decimal places when leaving the field
+        const numValue = parseFloat(value) || 0;
+        $(this).val(numValue.toFixed(2));
+    });
+    
+    // Handle focus event to make editing easier
+    $('.expense-container .input-group input').on('focus', function() {
+        let value = $(this).val();
+        if (value === '0.00') {
+            $(this).val('');
+        }
+    });
+
+    $('#submit-form').click(function() {
+        if (ExpenseApp.validateForm()) {
+            const formData = ExpenseApp.collectFormData();
+            ExpenseApp.submitForm(formData);
+            // Clear state after successful submission
+        }
+    });
+});
