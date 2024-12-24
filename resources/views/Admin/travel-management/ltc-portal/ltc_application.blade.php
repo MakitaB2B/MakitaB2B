@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('admin_assets/css/custom-styles.css') }}">
 @endpush
-<div class="content-wrapper rescss"> 
+<div class="content-wrapper"> 
     <div class="custom-container">
     <div>
         <!-- Step Indicator -->
@@ -38,12 +38,12 @@
             <!-- Calendar Section -->
             <div class="calendar-section">
                 <div class="row">
-                    <div class="col-4 mb-3">
+                    <div class="col-12 col-sm-6 col-md-4 mb-3">
                         <label class="form-label">Select Date</label>
                         <input type="text" class="form-control datepicker" readonly placeholder="Select a date" required>
                         <i class="fa fa-calendar"></i>
                     </div>
-                    <div class="col-4">
+                    <div class="col-12 col-sm-6 col-md-4 mb-3">
                         <label class="form-label">Select Day</label>
                         <div id="dayTypeDropdown"></div>
                     </div>

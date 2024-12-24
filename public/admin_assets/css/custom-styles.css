@@ -706,9 +706,152 @@ span.d-stat {
     padding: 2px 4px;
     color: #fff;
     border-radius: 3px;
-    width: 17px;
+    width: 20px;
     line-height: 1;
     text-align: center;
     position: absolute;
     right: 6px;
 }
+
+
+
+.mobile-accordion .accordion-header {
+    display: none;
+}
+.exp-row .exp-value .exp-title {display: none;}
+
+@media (max-width: 768px) {
+    .mobile-accordion .accordion-header{
+        display: block;
+        text-transform: uppercase;
+    }
+    .stepper {
+        display: none !important;
+    }
+    
+    .mobile-accordion {
+        display: block;
+    }
+
+    .accordion-header {
+        padding: 15px;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        margin-bottom: 0;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .accordion-header.active {
+        background: #ff0018;
+        color: white;
+    }
+
+    .accordion-header.completed {
+        background: #008290;
+        color: white;
+    }
+
+    .step-container {
+        display: none;
+        border: 1px solid #dee2e6;
+        border-top: 0;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .step-container.active {
+        display: block;
+    }
+
+    .custom-container{padding: 8px;}
+    .calendar-wrapper {
+        top: 85px;
+        width: 100%;
+    }
+    .accordion-header i.bi-chevron-down{position: absolute; right: 24px;}
+
+
+    /* Hide specific columns in mobile view */
+    .td-hide {
+        display: none !important;
+    }
+
+    /* Adjust the table for mobile */
+    /* .table > :not(caption) > * > * {
+        padding: 8px !important;
+    } */
+
+    /* Make the remaining columns take full width */
+    .table td:not(.td-hide) {
+        display: table-cell;
+    }
+
+    /* Adjust the checkbox column width */
+    .table td:first-child {
+        width: 40px;
+    }
+
+    /* Adjust the date column */
+    .table td:nth-child(2) {
+        font-size: 12px;
+    }
+
+    /* Status column adjustments */
+    .table td:nth-child(9) {
+        text-align: center;
+    }
+
+    /* Accordion content adjustments */
+    .exp-card-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .exp-data-wrapper {
+        width: 100%;
+        margin: 8px 0;
+    }
+    .custom-table .accordion-body {
+        padding: 1rem;
+    }
+
+    .travel-exp-data {
+        margin-top: 15px;
+    }
+
+    /* Adjust grid for responsive view */
+    .exp-row {
+        grid-template-columns: 1fr !important;
+        gap: 8px;
+    }
+
+    .exp-row .exp-value {
+        text-align: left !important;
+    }
+    .exp-row .exp-value .exp-title {
+        min-width: 149px;
+        font-size: 12px;
+        font-weight: 700;
+        display:inline-block
+    }
+
+    .row-header {
+        display: none;  /* Hide headers in mobile */
+    }
+
+    .action-grp{
+        grid-template-columns: 50% 50%;
+        grid-template-rows: auto;
+    }
+    .action-grp .btn-grp {
+        grid-column: 1 / -1;
+        margin-top: 10px;
+      }
+    .action-grp .btn-grp a.btn{width: calc(100% / 2 - 8px);}
+    .action-grp .btn-grp a.btn + a.btn{margin-left: 10px;}
+}
+

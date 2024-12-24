@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('admin_assets/css/custom-styles.css') }}">
 @endpush
-<div class="content-wrapper rescss"> 
+<div class="content-wrapper"> 
     <div class="custom-container">
         <div class="action-grp">
             <div class="info-group color-info-box">
@@ -38,12 +38,12 @@
                         </div>
                     </th>
                     <th>Date</th>
-                    <th>In Time</th>
-                    <th>Out Time</th>
-                    <th>Travel Exp.(Total)</th>
-                    <th>Food Exp.(Total)</th>
-                    <th>Misc. Exp.(Total)</th>
-                    <th>Total</th>
+                    <th class="td-hide">In Time</th>
+                    <th class="td-hide">Out Time</th>
+                    <th class="td-hide">Travel Exp.(Total)</th>
+                    <th class="td-hide">Food Exp.(Total)</th>
+                    <th class="td-hide">Misc. Exp.(Total)</th>
+                    <th class="td-hide">Total</th>
                     <th>Status</th>
                     <th width="30"></th>
                 </tr>

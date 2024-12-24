@@ -50,12 +50,12 @@ $(document).ready(function() {
                         </div>
                     </td>
                     <td>${row.date}<span class="d-stat">${daystat}<span></td>
-                    <td>${row.inTime}</td>
-                    <td>${row.outTime}</td>
-                    <td>${totalTravelExp}</td>
-                    <td>${totalFoodExpense}</td>
-                    <td>${totalMiscExp}</td>
-                    <td>${grandTotal}</td>
+                    <td class="td-hide">${row.inTime}</td>
+                    <td class="td-hide">${row.outTime}</td>
+                    <td class="td-hide">${totalTravelExp}</td>
+                    <td class="td-hide">${totalFoodExpense}</td>
+                    <td class="td-hide">${totalMiscExp}</td>
+                    <td class="td-hide">${grandTotal}</td>
                     <td><span class="${statusClass}">${row.status}</span></td>
                     <td>
                         <i class="bi bi-chevron-down toggle-icon" data-bs-toggle="collapse" data-bs-target="#collapse${index}"></i>
@@ -132,14 +132,15 @@ $(document).ready(function() {
                                             <div class="row-body">
                                                 ${row.travelEntries.map(travelEntry => `
                                                     <div class="exp-row">
-                                                        <span class="exp-value">${travelEntry.typeOfTransport} - ${travelEntry.modeOfTransport}</span>
-                                                        <span class="exp-value">${travelEntry.startingMeter}</span>
-                                                        <span class="exp-value">${travelEntry.closingMeter}</span>
-                                                        <span class="exp-value">${travelEntry.totalKms}</span>
-                                                        <span class="exp-value">${travelEntry.placesVisited}</span>
-                                                        <span class="exp-value">&#8377;${travelEntry.fuelCharges}</span>
-                                                        <span class="exp-value">&#8377;${travelEntry.tollCharges}</span>
+                                                        <span class="exp-value"><span class="exp-title">Transport Mode</span>${travelEntry.typeOfTransport} - ${travelEntry.modeOfTransport}</span>
+                                                        <span class="exp-value"><span class="exp-title">Starting Meter</span>${travelEntry.startingMeter}</span>
+                                                        <span class="exp-value"><span class="exp-title">Closing Meter</span>${travelEntry.closingMeter}</span>
+                                                        <span class="exp-value"><span class="exp-title">Total KM</span>${travelEntry.totalKms}</span>
+                                                        <span class="exp-value"> <span class="exp-title">Places Visited</span>${travelEntry.placesVisited}</span>
+                                                        <span class="exp-value"><span class="exp-title">Claim</span>&#8377;${travelEntry.fuelCharges}</span>
+                                                        <span class="exp-value"><span class="exp-title">Toll</span>&#8377;${travelEntry.tollCharges}</span>
                                                         <span class="exp-value exp-bill-copy">
+                                                            <span class="exp-title exp-bill-copy">Bill Copy</span>
                                                             ${travelEntry.files?.map(file => `
                                                                 <a href="${baseURL}${file.name}"><i class="fa-solid fa-file"></i></a>
                                                             `).join('')}

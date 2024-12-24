@@ -650,6 +650,7 @@ const ExpenseApp = {
         this.timeManager.initialize();
         this.expenseManager.initializeFileUploaders();
 
+
         // Form Navigation
         $('.next-step').click(function(e) {
             const $currentStep = $(this).closest('.step-container');
@@ -691,15 +692,29 @@ const ExpenseApp = {
             // Proceed to next step
             const nextStepNumber = currentStepNumber + 1;
             
-            // Update stepper UI
-            $(`.step[data-step="${currentStepNumber}"]`)
-                .removeClass('active')
-                .addClass('completed');
-            $(`.step[data-step="${nextStepNumber}"]`).addClass('active');
-            
-            // Show next step
-            $currentStep.removeClass('active');
-            $(`.step-container[data-step="${nextStepNumber}"]`).addClass('active');
+            if ($(window).width() <= 768) {
+                // Mobile View: Update accordion headers and show content
+                $('.mobile-accordion .accordion-header').removeClass('active');
+                $(`.mobile-accordion .accordion-section[data-step="${currentStepNumber}"] .accordion-header`)
+                    .removeClass('active')
+                    .addClass('completed');
+                $(`.mobile-accordion .accordion-section[data-step="${nextStepNumber}"] .accordion-header`)
+                    .addClass('active');
+                    
+                // Hide all step containers and show next
+                $('.mobile-accordion .step-container').hide();
+                $(`.mobile-accordion .step-container[data-step="${nextStepNumber}"]`).show();
+            } else {
+                // Desktop View: Update stepper UI
+                $(`.step[data-step="${currentStepNumber}"]`)
+                    .removeClass('active')
+                    .addClass('completed');
+                $(`.step[data-step="${nextStepNumber}"]`).addClass('active');
+                
+                // Show next step
+                $currentStep.removeClass('active');
+                $(`.step-container[data-step="${nextStepNumber}"]`).addClass('active');
+            }
         });
 
         // Previous step navigation
@@ -708,15 +723,28 @@ const ExpenseApp = {
             const currentStepNumber = parseInt($currentStep.data('step'));
             const prevStepNumber = currentStepNumber - 1;
             
-            // Update stepper UI
-            $(`.step[data-step="${currentStepNumber}"]`).removeClass('active');
-            $(`.step[data-step="${prevStepNumber}"]`)
-                .addClass('active')
-                .removeClass('completed');
-            
-            // Show previous step
-            $currentStep.removeClass('active');
-            $(`.step-container[data-step="${prevStepNumber}"]`).addClass('active');
+            if ($(window).width() <= 768) {
+                // Mobile View: Update accordion headers and show content
+                $('.mobile-accordion .accordion-header').removeClass('active');
+                $(`.mobile-accordion .accordion-section[data-step="${currentStepNumber}"] .accordion-header`)
+                    .removeClass('active completed');
+                $(`.mobile-accordion .accordion-section[data-step="${prevStepNumber}"] .accordion-header`)
+                    .addClass('active');
+                    
+                // Hide all step containers and show previous
+                $('.mobile-accordion .step-container').hide();
+                $(`.mobile-accordion .step-container[data-step="${prevStepNumber}"]`).show();
+            } else {
+                // Desktop View: Update stepper UI
+                $(`.step[data-step="${currentStepNumber}"]`).removeClass('active');
+                $(`.step[data-step="${prevStepNumber}"]`)
+                    .addClass('active')
+                    .removeClass('completed');
+                
+                // Show previous step
+                $currentStep.removeClass('active');
+                $(`.step-container[data-step="${prevStepNumber}"]`).addClass('active');
+            }
         });
 
         // Travel entry handlers
@@ -975,6 +1003,81 @@ $(document).ready(function() {
             $(this).val('');
         }
     });
+
+
+
+    function initializeMobileView() {
+        if ($(window).width() <= 768 && $('.mobile-accordion').length === 0) {
+            // Create accordion structure
+            const $accordion = $('<div class="mobile-accordion"></div>');
+            
+            // For each step, create an accordion section
+            $('.step').each(function() {
+                const stepNumber = $(this).data('step');
+                const stepTitle = $(this).find('.step-title').html();
+                const $stepContent = $(`.step-container[data-step="${stepNumber}"]`);
+                
+                const $section = $(`
+                    <div class="accordion-section" data-step="${stepNumber}">
+                        <div class="accordion-header ${stepNumber === 1 ? 'active' : ''}">
+                            ${stepTitle}
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                    </div>
+                `);
+                
+                // Move the actual step container into the accordion section
+                $section.append($stepContent);
+                $accordion.append($section);
+            });
+            
+            // Insert accordion after stepper
+            $('.stepper').after($accordion);
+            
+            // Show first step
+            $('.step-container[data-step="1"]').show();
+        }
+    }
+
+    function cleanupMobileView() {
+        // Find active step before cleanup
+        const activeStepNumber = $('.step.active').data('step');
+        
+        // Move step containers back
+        $('.mobile-accordion .step-container').each(function() {
+            const $container = $(this);
+            // Hide container first
+            $container.hide().removeClass('active');
+            // Move back to original position
+            $('.custom-container').append($container);
+        });
+    
+        // Show only the active step
+        $(`.step-container[data-step="${activeStepNumber}"]`).show().addClass('active');
+        
+        // Remove mobile accordion
+        $('.mobile-accordion').remove();
+    }
+
+    // Initialize on page load
+    if ($(window).width() <= 768) {
+        initializeMobileView();
+    }
+
+    // Handle window resize
+    let resizeTimer;
+    $(window).resize(function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            if ($(window).width() <= 768) {
+                initializeMobileView();
+            } else {
+                cleanupMobileView();
+            }
+        }, 250);
+    });
+
+    
 
     $('#submit-form').click(function() {
         if (ExpenseApp.validateForm()) {
