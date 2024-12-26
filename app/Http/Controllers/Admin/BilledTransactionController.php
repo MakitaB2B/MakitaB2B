@@ -107,11 +107,10 @@ class BilledTransactionController extends Controller
         
         // Step 4: Fetch the valid column names from the database
         $tableColumns = \Schema::getColumnListing('billed_transactions');
-               
+       
         // Begin database transaction
         DB::transaction(function () use($data, $tableColumns) {
             $header = array_map('trim', array_shift($data)); // Get the header row
-            // dd($data,  $header); 
             $batchSize = 1000;
             $billedData = [];
             set_time_limit(0); // Prevent timeout

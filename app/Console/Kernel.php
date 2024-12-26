@@ -23,6 +23,9 @@ class Kernel extends ConsoleKernel
             $currentYear = date('Y');
             $currentMonth = date('m');
 
+            \Log::info("Current Year: $currentYear, Current Month: $currentMonth");
+
+
             $firstDayOfMonth = new \DateTime("$currentYear-$currentMonth-01");
 
             $firstSaturday = clone $firstDayOfMonth;
@@ -33,11 +36,21 @@ class Kernel extends ConsoleKernel
             $thirdSaturday->modify('+2 weeks');
             $thirdsat=$thirdSaturday->format('Y-m-d');
 
+            \Log::info("First Saturday: $firstsat $thirdsat");
+
             $today = now()->format('Y-m-d');
+            \Log::info($today);
 
             if ($today !== $firstsat && $today !== $thirdsat) {
-                $schedule->command('daily:promo-follow-up')->cron('0 6 * * 1-6');
-                // $schedule->command("daily:promo-follow-up")->dailyAt('13:15');
+                // $schedule->command('daily:promo-follow-up')->cron('0 6 * * 1-6');
+
+                \Log::info("Scheduling daily:promo-follow-up command at 9:25");
+                // $schedule->command("daily:promo-follow-up")->dailyAt('9:25');
+
+                $schedule->command('daily:promo-follow-up')->cron('25 10 * * 1-6');
+
+                \Log::info("Scheduling");
+
             }
           
 

@@ -96,7 +96,7 @@ Route::get('/send-email', function () {
         );
 
         // Initialize SendGrid
-        $apiKey = env('MakitaERPApiKey');
+        $apiKey = MakitaERPApiKey;//env('MakitaERPApiKey');
         $sendgrid = new \SendGrid($apiKey); // Replace with your API key or use .env
 
         // Send the email

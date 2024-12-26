@@ -186,9 +186,10 @@ class PromoTransactionFollowUpJob implements ShouldQueue
 
         
         $email->addContent("text/html", $emailContent);
-        $apiKey = env('MakitaERPApiKey');
+        $apiKey = MakitaERPApiKey; // env('MakitaERPApiKey');
         $sendgrid = new \SendGrid($apiKey);
         $response = $sendgrid->send($email);
+       
     }
 
     public function retryUntil()

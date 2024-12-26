@@ -45,10 +45,10 @@ class EmployeeService{
     }
 
     public function getEmployeeByDesignation($designation,$department){
-
+       
     return Employee::join('designations', 'employees.designation_id', '=', 'designations.id')
     ->join('departments', 'employees.department_id', '=', 'departments.id')
-    ->where('designation_name', '=', $designation)
+    ->whereIn('designation_name', $designation)
     ->where('name', '=', $department)
     ->select('employees.full_name','employees.official_email')
     ->get();

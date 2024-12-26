@@ -90,7 +90,7 @@ defined('PROMO_CC') OR define('PROMO_CC', [
 
  defined('PROMO_BCC') OR define('PROMO_BCC',['jeanlobo94@gmail.com'=>'']);
 
- defined('PROMO_FOLLOWUP_CC') OR define('PROMO_FOLLOWUP_CC',['jeanlobo@makita.in'=>'','jeanlobo94@gmail.com'=>'']);
+ defined('PROMO_FOLLOWUP_CC') OR define('PROMO_FOLLOWUP_CC',['jeanlobo94@gmail.com'=>'']);
 
  defined('MakitaSendGridFrom') OR define('MakitaSendGridFrom','it_pm@makita.in');
 

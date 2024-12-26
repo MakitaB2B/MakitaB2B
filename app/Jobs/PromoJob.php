@@ -209,7 +209,7 @@ class PromoJob implements ShouldQueue
 
   
         // try {
-            $apiKey = env('MakitaERPApiKey');
+            $apiKey = MakitaERPApiKey; //env('MakitaERPApiKey');
             $sendgrid = new \SendGrid($apiKey);
             $response = $sendgrid->send($email);
         //     print $response->statusCode() . "\n";

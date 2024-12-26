@@ -152,6 +152,7 @@ class TransactionJob implements ShouldQueue
             <th>Dealer Name</th>
             <th>Region</th>
             <th>Transaction ID</th>
+            <th>Customer PO</th>
           </tr>
         </thead>
         <tbody>
@@ -162,6 +163,7 @@ class TransactionJob implements ShouldQueue
             <td>'.$details['offerproduct'][0]['dealer_name'].'</td>
             <td style="color:orange;">'.$details['offerproduct'][0]['region'].'</td>
             <td style="color:orange;">'.$details['offerproduct'][0]['order_id'].'</td>
+            <td style="color:orange;">PR'.$details['offerproduct'][0]['promo_code'].'-'.$details['offerproduct'][0]['order_id'].'|</td>
           </tr>
         </tbody>
     </table>
@@ -236,7 +238,7 @@ class TransactionJob implements ShouldQueue
 
   
         // try {
-            $apiKey = env('MakitaERPApiKey');
+            $apiKey = MakitaERPApiKey;// env('MakitaERPApiKey');
             $sendgrid = new \SendGrid($apiKey);
             $response = $sendgrid->send($email);
             // print $response->statusCode() . "\n";
