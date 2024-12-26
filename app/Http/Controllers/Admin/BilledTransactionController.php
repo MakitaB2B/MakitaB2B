@@ -99,7 +99,6 @@ class BilledTransactionController extends Controller
         return redirect()->back()->withErrors($validator->errors());
     }
 
-    
     if (request()->has('mycsv')) {
 
         $data = array_map('str_getcsv', file(request()->mycsv));
@@ -113,15 +112,20 @@ class BilledTransactionController extends Controller
             $header = array_map('trim', array_shift($data)); // Get the header row
             $batchSize = 1000;
             $billedData = [];
+            $pattern = '/PR\d{3}-\w{1,10}\|/';  //'/PR\d{3}-\w{10}\|/';
             set_time_limit(0); // Prevent timeout
 
             // Step 5: Process each row of data
             foreach ($data as $index => $row) {
                 $billData = array_combine($header, $row);
                 $consistentRecord = [];
-
+                
+                if (!isset($billData['Cust PO']) || !preg_match($pattern, $billData['Cust PO'])) {
+                    continue;
+                }
                 // Step 6: Map and filter the row data to match the database columns
-                foreach ($billData as $key => $value) {
+               
+            foreach($billData as $key => $value){    //foreach ($billData as $key => $value) {
                     if ($key === "Cust PO") {
                         $fieldValue = explode('-', explode('|', $value)[0] ?? $value);
                         
@@ -140,6 +144,7 @@ class BilledTransactionController extends Controller
                 $consistentRecord['create_date'] = date('Y-m-d H:i:s');
                 $billedData[] = $consistentRecord;
 
+
                 // Step 7: Insert data in batches to optimize performance
                 if (count($billedData) >= $batchSize) {
                     BilledTransaction::insert($billedData);
@@ -155,7 +160,7 @@ class BilledTransactionController extends Controller
             // Change status to billed after successful insertion
             $this->changeStatusToBilled();
         });
-
+   
         // Redirect to the billed transactions page
         return redirect('admin/billed-transactions');
     }
@@ -163,6 +168,7 @@ class BilledTransactionController extends Controller
 
 
     public function changeStatusToBilled(){
+
             
         // DB::enableQueryLog();
 
@@ -259,16 +265,16 @@ class BilledTransactionController extends Controller
         // ]);
 
        //-----------working code
-    //    DB::enableQueryLog();
+       DB::enableQueryLog();
         $start_date = now()->subDays(15)->toDateString();
-        $end_date = now()->toDateString();
+        $end_date = now()->addDay()->toDateString();
 
         Transaction::join('billed_transactions', function($join) {
             $join->on('billed_transactions.order_id', '=', 'transactions.order_id')
                  ->on('billed_transactions.Item', '=', 'transactions.model_no')
                  ->on('billed_transactions.promo_code', '=', 'transactions.promo_code');
         })
-        ->whereBetween('billed_transactions.created_at', [$start_date, $end_date])
+        ->whereBetween('billed_transactions.create_date', [$start_date, $end_date])
         ->update([
             'transactions.billed_qty' => DB::raw("
                 CASE
