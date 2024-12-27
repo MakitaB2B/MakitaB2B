@@ -249,15 +249,4 @@ class WarrantyController extends Controller
         $result['srslug_cear']=Crypt::encrypt($getData[0]->sr_slug);
         return view('Front.customer_toolsrepair_costest_acceptreject',$result);
     }
-    public function cxToolRepair(){
-        return view('Front.cust_tool_service');
-    }
-
-    public function cxWarrantyList(){
-        return view('Front.cust_warranty_list');
-    }
-
-    public function cxWarrantyService(){
-        return view('Front.cust_warranty_service');
-    }
 }

@@ -116,13 +116,44 @@ Route::get('/send-email', function () {
 
 
 
-
-
-
 Route::get('/', function () {
     return view('welcome');
 });
 /*-----Start Front Route-----*/
+// Route::get('/cx-login',[CustomerLoginRegistrationController::class,'cxLoginView'])->name('cxlogin');
+// Route::get('/cx-signup/{cxslug?}/{flag?}',[CustomerLoginRegistrationController::class,'customerSignup'])->name('customer-signup');
+// Route::post('/cx-signup-otp-send',[CustomerLoginRegistrationController::class,'customerSignupSigninOTPSend'])->name('cx-signup-otp-send');
+// Route::post('/cx-signup-resend-otp',[CustomerLoginRegistrationController::class,'customerSignupSigninResendOTP'])->name('cx-signup-resend-otp');
+// Route::get('/cx-signup-otp-page/{cxslug}/{flag?}',[CustomerLoginRegistrationController::class,'customerOTPPage'])->name('cx-signup-otp-page');
+// Route::get('/cx-login-password-making/{cxslug}/{flag?}',[CustomerLoginRegistrationController::class,'createCXLoginPasswordView'])->name('cx-login-password-making');
+// Route::post('/cx-login-password-dbinsert/{cxslug?}',[CustomerLoginRegistrationController::class,'createCXLoginPassword'])->name('cx-login-password-dbinsert');
+// Route::post('/cx-login-credentials-process',[CustomerLoginRegistrationController::class,'cxLoginProcess'])->name('cx-login-credentials-process');
+// Route::post('/cx-otp-verification',[CustomerLoginRegistrationController::class,'verifyCXLoginRegisOTP']);
+// Route::get('/cx-forget-password',[CustomerLoginRegistrationController::class,'cxForgetPasswordView'])->name('cx-forget-password');
+// Route::post('/cx-login-password-reset',[CustomerLoginRegistrationController::class,'resetCXLoginPassword'])->name('cx-login-password-reset');
+// Route::get('/cxtoolsrepaircostestimation/{tsSlug}',[WarrantyController::class,'cxConfirmRejectToolsRepairCostEstimation'])->name('cxtoolsrepaircostestimation');
+// Route::post('/accept-reject-cost-estimation-cx-wl',[WarrantyController::class,'acceptRejectTRCostEstimationWithoutLogin'])->name('accept-reject-cost-estimation-cx-wl');
+
+
+// Route::group(['middleware' => ['customer']], function() {
+// Route::get('/cx-signup-details',[CustomerLoginRegistrationController::class,'customerSignupPersonalDetails'])->name('cx-signup-details');
+// Route::get('/warranty-registration/{modelID?}/{slno?}',[WarrantyController::class,'warrantyCard'])->name('warranty-card');
+// Route::post('/warranty-registration-process',[WarrantyController::class,'warrantyCardProcess'])->name('warranty-registration-process');
+// Route::get('/cx-warranty-registration-fairmsg',[WarrantyController::class,'warrantyRegistrationUtterMsg'])->name('cx-warranty-registration-fairmsg');
+// Route::post('/cx-profile-manage',[CustomerLoginRegistrationController::class,'manageCustomerProfileProcess'])->name('cx-profile-manage');
+// Route::post('/city/get-cities-by-state',[CustomerLoginRegistrationController::class,'prepCitiesByStates']);
+// Route::get('/warranty-scan-machine',[WarrantyController::class,'scanningMachineBcode'])->name('warranty-scan-machine');
+// Route::post('/prod-model-details',[WarrantyController::class,'getProductSpecificModelDetails']);
+// Route::post('/check-serialnumber-existence',[WarrantyController::class,'checkSerialNumberExistence'])->name('check-serialnumber-existence');
+// Route::get('/warranty-registration-list-spec-cx',[WarrantyController::class,'getWarrantyListForSpecCX'])->name('warranty-registration-list-spec-cx');
+// Route::get('/cx-logout',[CustomerLoginRegistrationController::class,'logout'])->name('customerlogout');
+// Route::post('/cx-tsr-registration',[ToolsService::class,'createOrUpdateToolsService'])->name('cx-tsr-registration');
+// Route::get('/cx-tools-repair-list',[WarrantyController::class,'listofToolsRepair'])->name('cx-tools-repair-list');
+// Route::post('/accept-reject-cost-estimation-cx',[WarrantyController::class,'acceptRejectTRCostEstimation'])->name('accept-reject-cost-estimation-cx');
+// });
+/*-----End Front Route-----*/
+
+/*-----New Start Front Route-----*/
 Route::get('/cx-login',[CustomerLoginRegistrationController::class,'cxLoginView'])->name('cxlogin');
 Route::get('/cx-signup/{cxslug?}/{flag?}',[CustomerLoginRegistrationController::class,'customerSignup'])->name('customer-signup');
 Route::post('/cx-signup-otp-send',[CustomerLoginRegistrationController::class,'customerSignupSigninOTPSend'])->name('cx-signup-otp-send');
@@ -137,8 +168,15 @@ Route::post('/cx-login-password-reset',[CustomerLoginRegistrationController::cla
 Route::get('/cxtoolsrepaircostestimation/{tsSlug}',[WarrantyController::class,'cxConfirmRejectToolsRepairCostEstimation'])->name('cxtoolsrepaircostestimation');
 Route::post('/accept-reject-cost-estimation-cx-wl',[WarrantyController::class,'acceptRejectTRCostEstimationWithoutLogin'])->name('accept-reject-cost-estimation-cx-wl');
 
+Route::get('/cx-dashboard',[CustomerLoginRegistrationController::class,'cxDasView'])->name('cxdash'); 
+Route::get('/cx-product-details',[CustomerLoginRegistrationController::class,'cxProductDetailsView'])->name('cxproduct-details');
+Route::get('/cx-register',[CustomerLoginRegistrationController::class,'cxRegisterView'])->name('cxregister'); 
+Route::get('/cx-tools-repair',[WarrantyController::class,'cxToolRepair'])->name('cx-tools-repair');
+Route::get('/cx-warranty-list',[WarrantyController::class,'cxWarrantyList'])->name('cx-warranty-list');
+Route::get('/cx-warranty-service',[WarrantyController::class,'cxWarrantyService'])->name('cx-warranty-service');
 
 Route::group(['middleware' => ['customer']], function() {
+
 Route::get('/cx-signup-details',[CustomerLoginRegistrationController::class,'customerSignupPersonalDetails'])->name('cx-signup-details');
 Route::get('/warranty-registration/{modelID?}/{slno?}',[WarrantyController::class,'warrantyCard'])->name('warranty-card');
 Route::post('/warranty-registration-process',[WarrantyController::class,'warrantyCardProcess'])->name('warranty-registration-process');
@@ -151,10 +189,11 @@ Route::post('/check-serialnumber-existence',[WarrantyController::class,'checkSer
 Route::get('/warranty-registration-list-spec-cx',[WarrantyController::class,'getWarrantyListForSpecCX'])->name('warranty-registration-list-spec-cx');
 Route::get('/cx-logout',[CustomerLoginRegistrationController::class,'logout'])->name('customerlogout');
 Route::post('/cx-tsr-registration',[ToolsService::class,'createOrUpdateToolsService'])->name('cx-tsr-registration');
-Route::get('/cx-tools-repair-list',[WarrantyController::class,'listofToolsRepair'])->name('cx-tools-repair-list');
+// Route::get('/cx-tools-repair-list',[WarrantyController::class,'listofToolsRepair'])->name('cx-tools-repair-list');
 Route::post('/accept-reject-cost-estimation-cx',[WarrantyController::class,'acceptRejectTRCostEstimation'])->name('accept-reject-cost-estimation-cx');
 });
-/*-----End Front Route-----*/
+
+/*-----New End Front Route-----*/
 
 /*-----Start Admin Route-----*/
 Route::get('admin/login',[AdminLoginController::class,'index'])->name('adminlogin');
