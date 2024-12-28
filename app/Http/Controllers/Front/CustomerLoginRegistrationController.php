@@ -247,7 +247,7 @@ class CustomerLoginRegistrationController extends Controller
         }
     }
     public function cxLoginView(){
-        return view('Front.cust_login');
+        return view('Front.customer_login');
     }
     public function cxLoginProcess(Request $request){
         $userId = $request->post('user_id');
@@ -284,16 +284,4 @@ class CustomerLoginRegistrationController extends Controller
             echo "error";
         }
     }
-    
-    public function cxDasView(){
-      return view('Front.cust_dashboard');
-    }
-    public function cxProductDetailsView(){
-        return view('Front.cust_product_details');
-    }
-
-    public function cxRegisterView(){
-        return view('Front.cust_register');
-    }
-    
 }

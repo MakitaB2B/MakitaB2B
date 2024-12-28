@@ -284,4 +284,16 @@ class CustomerLoginRegistrationController extends Controller
             echo "error";
         }
     }
+    
+    public function cxDasView(){
+      return view('Front.cust_dashboard');
+    }
+    public function cxProductDetailsView(){
+        return view('Front.cust_product_details');
+    }
+
+    public function cxRegisterView(){
+        return view('Front.cust_register');
+    }
+    
 }
