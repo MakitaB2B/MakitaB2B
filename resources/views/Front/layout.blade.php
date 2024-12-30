@@ -136,7 +136,7 @@
             </div>
         </footer>
     </div>
-    <script src="js/default.js"></script>
+    <script src="{{ asset('front_assets/js/default.js') }}"></script>  
     @stack('scripts')
 </body>
 

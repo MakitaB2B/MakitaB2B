@@ -103,7 +103,9 @@
                             </div>
                             
                         </div>
-            
+                        @if (session()->has('message'))
+                        <h5 style="color:rgb(220, 2, 2)">{{ session('message') }}</h5>
+                        @endif
                         <form class="step-form active" id="step1Form" action="{{ route('cx-signup-otp-send') }}" method="post">
                             @csrf
                             <div class="form-group">
@@ -123,7 +125,7 @@
                             <input type="hidden" name="forgetpassword" value="{{ $forgetpassword }}">
                         </form>
             
-                        <form class="step-form" id="step2Form">
+                        {{-- <form class="step-form" id="step2Form">
                             <div class="form-group">
                                 <label>Enter OTP sent to your mobile</label>
                                 <div class="otp-inputs">
@@ -131,12 +133,14 @@
                                     <input type="text" maxlength="1" pattern="\d">
                                     <input type="text" maxlength="1" pattern="\d">
                                     <input type="text" maxlength="1" pattern="\d">
+                                    <input type="text" maxlength="1" pattern="\d">
+                                    <input type="text" maxlength="1" pattern="\d">
                                 </div>
                             </div>
                             <button type="submit" class="btn-primary">Verify OTP</button>
-                        </form>
+                        </form> --}}
             
-                        <form class="step-form" id="step3Form">
+                        {{-- <form class="step-form" id="step3Form">
                             @csrf
                             <div class="f-col">
                               <div class="form-group">
@@ -177,7 +181,7 @@
                               <textarea placeholder="Enter your comment here" name="comment"></textarea>
                               </div>
                             <button type="submit" class="btn-primary">Complete Registration</button>
-                        </form>
+                        </form> --}}
             
                         <div class="auth-links">
                             <a href="{{ url('cx-login') }}">Already have an account? Login here</a>

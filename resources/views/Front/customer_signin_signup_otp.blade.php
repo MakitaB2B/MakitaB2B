@@ -1,6 +1,6 @@
 
 @extends('Front/layout')
-@section('page_title', 'Makita Customer | Customer Details')
+@section('page_title', 'Makita Customer | Customer SignUp OTP')
 @section('cxsignup_select', 'active')
 @section('container')
 <main class="main-content bg-grey">
@@ -91,11 +91,11 @@
             
                         <div class="steps-container">
                             <div class="step">
-                                <div class="step-circle active">1</div>
+                                <div class="step-circle">1</div>
                                 <div class="step-text">Number</div>
                             </div>
                             <div class="step">
-                                <div class="step-circle">2</div>
+                                <div class="step-circle active">2</div>
                                 <div class="step-text">OTP</div>
                             </div>
                             <div class="step">
@@ -105,7 +105,7 @@
                             
                         </div>
             
-                        <form class="step-form active" id="step1Form" action="{{ route('cx-signup-otp-send') }}" method="post">
+                        {{-- <form class="step-form active" id="step1Form" action="{{ route('cx-signup-otp-send') }}" method="post">
                             @csrf
                             <div class="form-group">
                                 <label for="mobileNumber">Enter Mobile Number</label>
@@ -122,22 +122,31 @@
                             <button type="submit" class="btn-primary">Continue</button>
                             <input type="hidden" name="cxslug" value="{{ Crypt::encrypt($cxslug) }}">
                             <input type="hidden" name="forgetpassword" value="{{ $forgetpassword }}">
-                        </form>
+                        </form> --}}
             
-                        <form class="step-form" id="step2Form">
+                        <form class="step-form active" id="step2Form">
                             <div class="form-group">
-                                <label>Enter OTP sent to your mobile</label>
+                                <label>Enter OTP sent to your mobile +91 {{ Str::mask($mobile_number, '*', -9, 6) }}</label>
+                                {{-- <p>OTP sent on +91 {{ Str::mask($mobile_number, '*', -9, 6) }} <a
+                                    href="{{ url('cx-signup') }}/{{ $cxSlug }}" title="Update Mobile Number">
+                                    <span class="glyphicon glyphicon-pencil pencil"></span></a> </p> --}}
                                 <div class="otp-inputs">
-                                    <input type="text" maxlength="1" pattern="\d">
-                                    <input type="text" maxlength="1" pattern="\d">
-                                    <input type="text" maxlength="1" pattern="\d">
-                                    <input type="text" maxlength="1" pattern="\d">
+                                    <input class="otpstr" type="text" maxlength="1" pattern="\d">
+                                    <input class="otpstr" type="text" maxlength="1" pattern="\d">
+                                    <input class="otpstr" type="text" maxlength="1" pattern="\d">
+                                    <input class="otpstr" type="text" maxlength="1" pattern="\d">
+                                    <input class="otpstr" type="text" maxlength="1" pattern="\d">
+                                    <input class="otpstr" type="text" maxlength="1" pattern="\d">
                                 </div>
+                                <p id="otpprocess" style="display: none;color:rgb(0, 134, 4);fot-size:20px">Please Wait While OTP Processing</p>
+                                <p id="wrongotp" style="display: none;color:red;fot-size:20px">You have entered wrong OTP</p>
+                                <p class="resendotp" id="resendotp" style="display: none">Resend OTP?</p>
+                                <div class="otptimer">Resend OTP in <span id="timer"></span> Seconds</div>
                             </div>
-                            <button type="submit" class="btn-primary">Verify OTP</button>
+                            {{-- <button type="submit" class="btn-primary">Verify OTP</button> --}}
                         </form>
             
-                        <form class="step-form" id="step3Form">
+                        {{-- <form class="step-form" id="step3Form">
                             @csrf
                             <div class="f-col">
                               <div class="form-group">
@@ -178,7 +187,7 @@
                               <textarea placeholder="Enter your comment here" name="comment"></textarea>
                               </div>
                             <button type="submit" class="btn-primary">Complete Registration</button>
-                        </form>
+                        </form> --}}
             
                         <div class="auth-links">
                             <a href="{{ url('cx-login') }}">Already have an account? Login here</a>
@@ -205,6 +214,93 @@
             $(".steps-grid .step-card:nth-child(2)").addClass("active-card")
             $(".steps-grid .step-card:nth-child(-n+2)").show();                
         }
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        // $('.otpstr').on('keyup', function() {
+        //     $("#wrongotp").hide();
+        //     let otp = "";
+        //     inputs.forEach((input) => {
+        //         otp += input.value;
+        //     });
+        //     console.log(inputs);
+        //     let otpLength = (otp).length;
+        //     if (otpLength === 6) {
+        //         $("#otpprocess").show();
+        //         $("#resendotp").hide();
+        //         $.ajax({
+        //             url: '/cx-otp-verification',
+        //             type: 'post',
+        //             data: 'otp=' + otp + '&cxslug={{ $cxSlug }}' +
+        //                 '&_token={{ csrf_token() }}',
+        //             success: function(data) {
+        //                 if (data == 'success') {
+        //                     window.location.href = "/cx-login-password-making/{{ $cxSlug }}/{{$flag}}";
+        //                 } else {
+        //                     $("#otpprocess").hide();
+        //                     $("input").removeAttr("disabled").removeClass("disabled");
+        //                     $("#wrongotp").show();
+        //                     $("#resendotp").show();
+        //                 }
+        //             }
+        //         });
+        //     } else {
+        //         console.log('please fill all four input');
+        //     }
+
+        // });
+
+        const inputs = document.querySelectorAll('.otpstr');
+
+        $('.otpstr').on('keyup', function() {
+            let otp = Array.from(inputs).map(input => input.value).join('');
+            $("#wrongotp").hide();
+
+            if (otp.length === 6) {
+                $("#otpprocess").show();
+                $("#resendotp").hide();
+
+                $.ajax({
+                    url: '/cx-otp-verification',
+                    type: 'post',
+                    data: {
+                        otp: otp,
+                        cxslug: '{{ $cxSlug }}',
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        if (data === 'success') {
+                            window.location.href = `/cx-login-password-making/{{ $cxSlug }}/{{ $flag }}`;
+                        } else {
+                            $("#otpprocess").hide();
+                            $("#wrongotp").show();
+                            $("#resendotp").show();
+                        }
+                    }
+                });
+            }
+        });
+        
+        $('#resendotp').on('click', function() {
+            let cxSlug = "{{ $cxSlug }}";
+            $("#resendotp").hide();
+            $("#otpprocess").text('Re-Sending OTP please wait');
+            $("#otpprocess").show();
+            $.ajax({
+                url: '/cx-signup-resend-otp',
+                type: 'post',
+                data: 'cxslug=' + cxSlug + '&_token={{ csrf_token() }}',
+                success: function(data) {
+                    if (data == 'success') {
+                        $("#otpprocess").text('OTP Sent! please enter');
+                        $("#resendotp").show(5000);
+                    } else {
+                        console.log('Failed');
+                    }
+                }
+            });
+        });
     });
 </script>
 @endpush

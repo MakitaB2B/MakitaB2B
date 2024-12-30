@@ -151,8 +151,8 @@
                                     </div>
                                     <button type="submit" class="btn-primary submit-button">Login</button>
                                     <div class="auth-links">
-                                        <a href="{{ url('cx-signup/'.Crypt::encrypt(0).'/'.Crypt::encrypt(1)) }}"">Don't have an account? Register</a>
-                                        <a href="{{ url('cx-forget-password') }}">Forgot Password?</a>  
+                                        <a href="{{ url('cx-signup/'.Crypt::encrypt(0).'/') }}">Don't have an account? Register</a>
+                                        <a href="{{ url('cx-signup/'.Crypt::encrypt(0).'/'.Crypt::encrypt(1)) }}">Forgot Password?</a>
                                     </div>
                                     <div class="contact-info">
                                         <p>Need help? Contact us at:</p>

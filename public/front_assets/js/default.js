@@ -98,29 +98,29 @@ class FormManager {
         // });
     }
 
-    initializeFormSubmissions() {
-        document.getElementById('step1Form')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.currentStep = 2;
-            this.showStep(this.currentStep);
-            $(".steps-grid .step-card:nth-child(2)").removeClass("active-card")
-            $(".steps-grid .step-card:nth-child(3)").addClass("active-card")
-            $(".steps-grid .step-card:nth-child(3)").show();
-        });
+    // initializeFormSubmissions() {
+    //     document.getElementById('step1Form')?.addEventListener('submit', (e) => {
+    //         e.preventDefault();
+    //         this.currentStep = 2;
+    //         this.showStep(this.currentStep);
+    //         $(".steps-grid .step-card:nth-child(2)").removeClass("active-card")
+    //         $(".steps-grid .step-card:nth-child(3)").addClass("active-card")
+    //         $(".steps-grid .step-card:nth-child(3)").show();
+    //     });
 
-        document.getElementById('step2Form')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.currentStep = 3;
-            this.showStep(this.currentStep);
-            $(".steps-grid .step-card:nth-child(3)").removeClass("active-card")
-            $(".steps-grid .step-card:nth-child(4),.steps-grid .step-card:nth-child(5) ").addClass("active-card").show();
-        });
+    //     document.getElementById('step2Form')?.addEventListener('submit', (e) => {
+    //         e.preventDefault();
+    //         this.currentStep = 3;
+    //         this.showStep(this.currentStep);
+    //         $(".steps-grid .step-card:nth-child(3)").removeClass("active-card")
+    //         $(".steps-grid .step-card:nth-child(4),.steps-grid .step-card:nth-child(5) ").addClass("active-card").show();
+    //     });
 
-        document.getElementById('step3Form')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            window.location.href='dashboard.html';
-        });
-    }
+    //     document.getElementById('step3Form')?.addEventListener('submit', (e) => {
+    //         e.preventDefault();
+    //         window.location.href='dashboard.html';
+    //     });
+    // }
 }
 
 // Navigation class
