@@ -118,6 +118,7 @@ class CustomerLoginRegistrationController extends Controller
         }
     }
     public function customerOTPPage($cxSlug='',$flag=''){
+        dd($cxSlug,$flag);
         $cxDetails=Customer::where('customer_slug',Crypt::decrypt($cxSlug))->get();
         $result['mobile_number']=$cxDetails[0]->phone;
         $result['cxSlug']=Crypt::encrypt($cxDetails[0]->customer_slug);
