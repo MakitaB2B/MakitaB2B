@@ -112,11 +112,11 @@ if(!empty($flag)){
                                 <div class="step-text">OTP</div>
                             </div>
                             <div class="step">
-                                <div class="step-circle active">3</div>
+                                <div class="step-circle">3</div>
                                 <div class="step-text">Password</div>
                             </div>
                             <div class="step">
-                                <div class="step-circle">4</div>
+                                <div class="step-circle active">4</div>
                                 <div class="step-text">Details</div>
                             </div>
                             
@@ -215,44 +215,81 @@ if(!empty($flag)){
                             <button type="submit" class="btn-primary">Complete Registration</button>
                         </form> --}}
 
-                        <form class="step-form" id="step4Form">
+                        <form class="step-form active" id="step4Form" method="post" action="{{ route('cx-profile-manage') }}">
+                            @csrf
                             <div class="f-col">
                               <div class="form-group">
                                   <label for="name">Full Name</label>
-                                  <input type="text" id="name" placeholder="Enter your full name" required>
+                                  <input type="text" id="name" placeholder="Enter your full name" value="{{ $name }}"  required>
                               </div>
                               <div class="form-group">
                                   <label for="email">Email Address</label>
-                                  <input type="email" id="email" placeholder="Enter your email" required>
+                                  <input type="email" id="email" placeholder="Enter your email" value="{{ $email }}" required>
                               </div>
                             </div>
                             <div class="f-col">
                               <div class="form-group">
                                 <label for="">State*</label>
                                 <div class="custom-select-container" id="stateID">
-                                      <input type="text" class="custom-select-input" readonly placeholder="Select an option...">
-                                      <div class="dropdown-arrow"></div>
-                                      <div class="custom-select-dropdown">
-                                          <input type="text" class="search-box" placeholder="Type to search...">
-                                          <div class="options-container"></div>
-                                      </div>
+                                      {{-- <input type="text" class="custom-select-input" readonly placeholder="Select an option..."> --}}
+                                      {{-- <div class="dropdown-arrow"></div>
+                                      <div class="custom-select-dropdown"> --}}
+                                        <select class="form-control select2" name="state" style="width: 100%;" id="state"
+                                        required>
+                                        <option value="0">Please Select State</option>
+                                        @foreach ($states as $stateList)
+                                            <option @if ($stateList->id == $state_id) selected @endif value="{{ $stateList->id }}">
+                                                {{ ucfirst(trans($stateList->name)) }}</option>
+                                        @endforeach
+                                        </select>
+                                          {{-- <input type="text" class="search-box" placeholder="Type to search..."> --}}
+                                          {{-- <div class="options-container"> --}}
+                                            {{-- @foreach ($states as $stateList)
+                                            <option @if ($stateList->id == $state_id) selected @endif value="{{ $stateList->id }}">
+                                                {{ ucfirst(trans($stateList->name)) }}</option>
+                                            @endforeach --}}
+                                          {{-- </div> --}}
+                                      {{-- </div> --}}
                                   </div>
                               </div>
                               <div class="form-group">
                                 <label for="">City*</label>
                                 <div class="custom-select-container" id="cityID">
-                                    <input type="text" class="custom-select-input" readonly placeholder="Select an option...">
-                                    <div class="dropdown-arrow"></div>
-                                    <div class="custom-select-dropdown">
-                                        <input type="text" class="search-box" placeholder="Type to search...">
-                                        <div class="options-container"></div>
-                                    </div>
+                                    {{-- <input type="text" class="custom-select-input" readonly placeholder="Select an option..."> --}}
+                                    {{-- <div class="dropdown-arrow"></div>
+                                    <div class="custom-select-dropdown"> --}}
+                                        <select class="form-control select2" name="city" style="width: 100%;" id="city">
+                                            @if ($city_id != '')
+                                                <option>Select A City</option>
+                                                @foreach ($cityByState as $citiesbystateList)
+                                                    <option @if ($citiesbystateList->id == $city_id) selected @endif
+                                                        value="{{ $citiesbystateList->id }}">
+                                                        {{ $citiesbystateList->name }}</option>
+                                                @endforeach
+                                                @else
+                                                <option>Select A State To Fetch City</option>
+                                            @endif
+                                        </select>
+                                        {{-- <input type="text" class="search-box" placeholder="Type to search..."> --}}
+                                        {{-- <div class="options-container"> --}}
+                                            {{-- @if ($city_id != '')
+                                            <option>Select A City</option>
+                                            @foreach ($cityByState as $citiesbystateList)
+                                                <option @if ($citiesbystateList->id == $city_id) selected @endif
+                                                    value="{{ $citiesbystateList->id }}">
+                                                    {{ $citiesbystateList->name }}</option>
+                                            @endforeach
+                                            @else
+                                            <option>Select A State To Fetch City</option>
+                                            @endif --}}
+                                        {{-- </div> --}}
+                                    {{-- </div> --}}
                                 </div>
                             </div>
                             </div>
                             <div class="form-group">
                               <label>Address</label>
-                              <textarea placeholder="Enter your comment here" name="comment"></textarea>
+                              <textarea placeholder="Enter your comment here" name="comment">{{ $address }}</textarea>
                               </div>
                             <button type="submit" class="btn-primary">Complete Registration</button>
                         </form>
@@ -285,77 +322,26 @@ if(!empty($flag)){
     });
 </script>
 <script>
-        // script.js File
-    var passwordInput = document.getElementById("password");
-    var passwordMessageItems = document.getElementsByClassName("password-message-item");
-    var passwordMessage = document.getElementById("password-message");
-
-
-    passwordInput.onfocus = function() {
-        passwordMessage.style.display = "block";
-    }
-
-    // After clicking outside of password input hide the message
-    passwordInput.onblur = function() {
-        passwordMessage.style.display = "none";
-    }
-
-    passwordInput.onkeyup = function() {
-        // checking uppercase letters
-        let uppercaseRegex = /[A-Z]/g;
-        if (passwordInput.value.match(uppercaseRegex)) {
-            passwordMessageItems[1].classList.remove("invalid");
-            passwordMessageItems[1].classList.add("valid");
-        } else {
-            passwordMessageItems[1].classList.remove("valid");
-            passwordMessageItems[1].classList.add("invalid");
-        }
-
-        // checking lowercase letters
-        let lowercaseRegex = /[a-z]/g;
-        if (passwordInput.value.match(lowercaseRegex)) {
-            passwordMessageItems[0].classList.remove("invalid");
-            passwordMessageItems[0].classList.add("valid");
-        } else {
-            passwordMessageItems[0].classList.remove("valid");
-            passwordMessageItems[0].classList.add("invalid");
-        }
-
-        // checking the number
-        let numbersRegex = /[0-9]/g;
-        if (passwordInput.value.match(numbersRegex)) {
-            passwordMessageItems[2].classList.remove("invalid");
-            passwordMessageItems[2].classList.add("valid");
-        } else {
-            passwordMessageItems[2].classList.remove("valid");
-            passwordMessageItems[2].classList.add("invalid");
-        }
-
-        // Checking length of the password
-        if (passwordInput.value.length >= 8) {
-            passwordMessageItems[3].classList.remove("invalid");
-            passwordMessageItems[3].classList.add("valid");
-        } else {
-            passwordMessageItems[3].classList.remove("valid");
-            passwordMessageItems[3].classList.add("invalid");
-        }
-    }
-
-    $('#password, #confirmpassword').on('keyup', function() {
-        let passval = $('#password').val();
-        let confirmpassval = $('#confirmpassword').val();
-        if (passval != '' && confirmpassval != '') {
-            if ($('#password').val() == $('#confirmpassword').val()) {
-                $('#submitfrom').prop('disabled', false);
-                $('#message').html('Password Match').css('color', 'green');
-                $('#password,#confirmpassword').css('border', '1px solid rgb(36 159 30)');
-            } else {
-                $('#submitfrom').prop('disabled', true);
-                $('#message').html('The Password doesn`t Match').css('color', 'red');
-                $('#confirmpassword,#password').css('border', '1px solid #f60808');
+$(document).ready(function() {
+    $('#state').on('change', function() {
+        $('.ajax-loader').hide();
+        $('.citymsg').text("Please wait while fetching Cities...").show();
+        let stateID = $(this).val();
+        $.ajax({
+            url: '/city/get-cities-by-state',
+            type: 'post',
+            data: 'stateID=' + stateID + '&_token={{ csrf_token() }}',
+            success: function(result) {
+                $('.ajax-loader').show();
+                $('.citymsg').hide();
+                $('#city').html(result);
             }
-        }
+        });
     });
+});
+$(function() {
+    $('.select2').select2()
+});
 </script>
 @endpush
 @endsection
