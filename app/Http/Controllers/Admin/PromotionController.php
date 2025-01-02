@@ -530,11 +530,10 @@ class PromotionController extends Controller
                       throw new \Exception('Stock not available for model: ' . $value->model_no);
                   }
 
-                  if (!Carbon::parse(Carbon::now())->between( $value->from_date, $value->to_date)) {
+                  if (!Carbon::parse(Carbon::now())->between( $value->from_date, date('Y-m-d', strtotime($value->to_date. ' +1 day')))) {
                     throw new \Exception('Promotion has been ended: ' . $value->model_no);
                   }
 
-                  
                   if ($value->status=="closed") {
                     throw new \Exception('Promotion has been closed: ' . $value->model_no);
                   }
