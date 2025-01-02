@@ -93,5 +93,7 @@ defined('PROMO_CC') OR define('PROMO_CC', [
  defined('PROMO_FOLLOWUP_CC') OR define('PROMO_FOLLOWUP_CC',['jeanlobo94@gmail.com'=>'']);
 
  defined('MakitaSendGridFrom') OR define('MakitaSendGridFrom','it_pm@makita.in');
+ 
+ defined('MakitaERPApiKey') OR define('MakitaERPApiKey','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');
 
 ?>

@@ -152,7 +152,7 @@ class PromoJob implements ShouldQueue
                 <td>" . (isset($offer['wb01']) ? $offer['wb01'] : '-') . "</td>
             </tr>";
         }
-
+        if (!empty($this->details['focproduct'])) {
         $emailContent .= <<<HTML
                 </tbody>
             </table>
@@ -199,9 +199,14 @@ class PromoJob implements ShouldQueue
         $emailContent .= <<<HTML
                 </tbody>
             </table>
-        </body>
-        </html>
-        HTML;
+        HTML; // Close the Heredoc block
+
+        } // Close the if condition
+$emailContent .= <<<HTML
+</body>
+</html>
+HTML; // Continue the Heredoc block
+
      
         // $sendemail->addContent("text/html", $emailContent);
 

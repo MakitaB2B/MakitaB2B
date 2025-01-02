@@ -696,9 +696,20 @@ class PromotionController extends Controller
             fn($item) => "{$item['qty']} {$suffix} {$item['model_no']}",
             $items
         ));
+     
+        // $finalString = "Buy " . $formatItems($buyItems, "No(s) of",$and_or) . ", Get " . $formatItems($freeItems, "set(s) of",$and) . " FREE";
 
-        $finalString = "Buy " . $formatItems($buyItems, "No(s) of",$and_or) . ", Get " . $formatItems($freeItems, "set(s) of",$and) . " FREE";
+        // return $finalString;
 
+        $buyText = $formatItems($buyItems, "No(s) of", $and_or);
+        $freeText = $formatItems($freeItems, "set(s) of", $and);
+    
+        $finalString = "Buy $buyText";
+    
+        if (!empty($freeText)) {
+            $finalString .= ", Get $freeText FREE";
+        }
+    
         return $finalString;
       
       }
