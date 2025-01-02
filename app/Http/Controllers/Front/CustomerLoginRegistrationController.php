@@ -198,7 +198,6 @@ class CustomerLoginRegistrationController extends Controller
         ]);
         if($data){
             $cxslug=Auth::guard('customer')->user()->customer_slug;
-            dd($cxslug);
             $model = Customer::where('customer_slug',$cxslug)->first();
             $model->name = $request->name;
             $model->email = $request->email;
@@ -236,6 +235,7 @@ class CustomerLoginRegistrationController extends Controller
             'password' => 'required|confirmed|min:6',
             'password_confirmation' => 'required'
         ]);
+        $customer_slug = $request->cxslug;
         $decryptCXSlug= Crypt::decrypt($request->cxslug);
         $cxInfo=Customer::where('customer_slug',$decryptCXSlug)->first();
         $model=new CustomerLogin();
@@ -246,7 +246,8 @@ class CustomerLoginRegistrationController extends Controller
         $model->customer_login_slug=Str::slug($request->mobile_number.rand().rand());
         if($model->save()){
             // return redirect()->route('cxlogin')->with('message','You can login now! Use Phone number as in user ID');
-            return redirect()->route('cx-signup-details');
+            // return redirect()->route('cx-signup-details',['customer_slug' => $request->cxslug]);
+            return view('Front.customer_signup_details', compact('customer_slug'));   
         }
     }
     public function cxLoginView(){

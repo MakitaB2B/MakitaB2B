@@ -217,17 +217,17 @@ if(!empty($flag)){
                             </div>
                             <button type="submit" class="btn-primary">Complete Registration</button>
                         </form> --}}
-
+                        @dd({{ $customer_slug }})
                         <form class="step-form active" id="step4Form" method="post" action="{{ route('cx-profile-manage') }}">
                             @csrf
                             <div class="f-col">
                               <div class="form-group">
                                   <label for="name">Full Name</label>
-                                  <input type="text" id="name" placeholder="Enter your full name" name="name" value="{{ $name }}"  required>
+                                  <input type="text" id="name" placeholder="Enter your full name" name="name" value="{{ $name??"" }}"  required>
                               </div>
                               <div class="form-group">
                                   <label for="email">Email Address</label>
-                                  <input type="email" id="email" placeholder="Enter your email" name="email" value="{{ $email }}" required>
+                                  <input type="email" id="email" placeholder="Enter your email" name="email" value="{{ $email??"" }}" required>
                               </div>
                             </div>
                             <div class="f-col">
