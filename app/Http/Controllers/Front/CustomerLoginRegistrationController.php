@@ -198,6 +198,7 @@ class CustomerLoginRegistrationController extends Controller
         ]);
         if($data){
             $cxslug=Auth::guard('customer')->user()->customer_slug;
+            dd($cxslug);
             $model = Customer::where('customer_slug',$cxslug)->first();
             $model->name = $request->name;
             $model->email = $request->email;
@@ -206,7 +207,7 @@ class CustomerLoginRegistrationController extends Controller
             $model->address = $request->address;
             if($model->save()){
                 $cxSlug=$model->customer_slug;
-                return redirect('cx-warranty-registration-fairmsg/');
+                return redirect('/cx-login/')->with('message','You can login now! Use Phone number as in user ID'); //return redirect('cx-warranty-registration-fairmsg/');
             }else{
                 return redirect('/cx-signup-details');
             }

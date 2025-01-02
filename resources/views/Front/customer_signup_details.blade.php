@@ -16,6 +16,9 @@ if(!empty($flag)){
         $route="cx-login-password-dbinsert";
 }
 @endphp
+@push('styles')
+<link rel="stylesheet" href="{{ asset('admin_assets/plugins/select2/css/select2.min.css') }}">
+@endpush
 <main class="main-content bg-grey">
     <div class="container">
         <div class="content">
@@ -220,11 +223,11 @@ if(!empty($flag)){
                             <div class="f-col">
                               <div class="form-group">
                                   <label for="name">Full Name</label>
-                                  <input type="text" id="name" placeholder="Enter your full name" value="{{ $name }}"  required>
+                                  <input type="text" id="name" placeholder="Enter your full name" name="name" value="{{ $name }}"  required>
                               </div>
                               <div class="form-group">
                                   <label for="email">Email Address</label>
-                                  <input type="email" id="email" placeholder="Enter your email" value="{{ $email }}" required>
+                                  <input type="email" id="email" placeholder="Enter your email" name="email" value="{{ $email }}" required>
                               </div>
                             </div>
                             <div class="f-col">
@@ -234,12 +237,10 @@ if(!empty($flag)){
                                       {{-- <input type="text" class="custom-select-input" readonly placeholder="Select an option..."> --}}
                                       {{-- <div class="dropdown-arrow"></div>
                                       <div class="custom-select-dropdown"> --}}
-                                        <select class="form-control select2" name="state" style="width: 100%;" id="state"
-                                        required>
+                                       <select class="form-control select2" name="state" style="width: 100%;" id="state" required>
                                         <option value="0">Please Select State</option>
                                         @foreach ($states as $stateList)
-                                            <option @if ($stateList->id == $state_id) selected @endif value="{{ $stateList->id }}">
-                                                {{ ucfirst(trans($stateList->name)) }}</option>
+                                        <option @if ($stateList->id == $state_id) selected @endif value="{{ $stateList->id }}">{{ucfirst(trans($stateList->name))}}</option>
                                         @endforeach
                                         </select>
                                           {{-- <input type="text" class="search-box" placeholder="Type to search..."> --}}
@@ -289,7 +290,7 @@ if(!empty($flag)){
                             </div>
                             <div class="form-group">
                               <label>Address</label>
-                              <textarea placeholder="Enter your comment here" name="comment">{{ $address }}</textarea>
+                              <textarea placeholder="Enter your comment here" name="address">{{ $address }}</textarea>
                               </div>
                             <button type="submit" class="btn-primary">Complete Registration</button>
                         </form>
@@ -312,6 +313,7 @@ if(!empty($flag)){
     </div>
 </main>
 @push('scripts')
+<script src="{{ asset('admin_assets/plugins/select2/js/select2.full.min.js') }}"></script>
 <script>
     $(document).ready(function() {
         if ($('#signupPage').length > 0) {
@@ -324,9 +326,11 @@ if(!empty($flag)){
 <script>
 $(document).ready(function() {
     $('#state').on('change', function() {
+        console.log("1");
         $('.ajax-loader').hide();
         $('.citymsg').text("Please wait while fetching Cities...").show();
         let stateID = $(this).val();
+        console.log("2");
         $.ajax({
             url: '/city/get-cities-by-state',
             type: 'post',
@@ -334,9 +338,11 @@ $(document).ready(function() {
             success: function(result) {
                 $('.ajax-loader').show();
                 $('.citymsg').hide();
+                console.log(result);
                 $('#city').html(result);
             }
         });
+        console.log("3");
     });
 });
 $(function() {

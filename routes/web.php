@@ -134,13 +134,13 @@ Route::post('/cx-login-password-reset',[CustomerLoginRegistrationController::cla
 Route::get('/cxtoolsrepaircostestimation/{tsSlug}',[WarrantyController::class,'cxConfirmRejectToolsRepairCostEstimation'])->name('cxtoolsrepaircostestimation');
 Route::post('/accept-reject-cost-estimation-cx-wl',[WarrantyController::class,'acceptRejectTRCostEstimationWithoutLogin'])->name('accept-reject-cost-estimation-cx-wl');
 Route::get('/cx-signup-details',[CustomerLoginRegistrationController::class,'customerSignupPersonalDetails'])->name('cx-signup-details');
+Route::post('/city/get-cities-by-state',[CustomerLoginRegistrationController::class,'prepCitiesByStates']);
+Route::post('/cx-profile-manage',[CustomerLoginRegistrationController::class,'manageCustomerProfileProcess'])->name('cx-profile-manage');
 
 Route::group(['middleware' => ['customer']], function() {
 Route::get('/warranty-registration/{modelID?}/{slno?}',[WarrantyController::class,'warrantyCard'])->name('warranty-card');
 Route::post('/warranty-registration-process',[WarrantyController::class,'warrantyCardProcess'])->name('warranty-registration-process');
 Route::get('/cx-warranty-registration-fairmsg',[WarrantyController::class,'warrantyRegistrationUtterMsg'])->name('cx-warranty-registration-fairmsg');
-Route::post('/cx-profile-manage',[CustomerLoginRegistrationController::class,'manageCustomerProfileProcess'])->name('cx-profile-manage');
-Route::post('/city/get-cities-by-state',[CustomerLoginRegistrationController::class,'prepCitiesByStates']);
 Route::get('/warranty-scan-machine',[WarrantyController::class,'scanningMachineBcode'])->name('warranty-scan-machine');
 Route::post('/prod-model-details',[WarrantyController::class,'getProductSpecificModelDetails']);
 Route::post('/check-serialnumber-existence',[WarrantyController::class,'checkSerialNumberExistence'])->name('check-serialnumber-existence');
