@@ -53,162 +53,184 @@ class PromoJob implements ShouldQueue
         // $sendgrid->setFrom("it_pm@makita.in", "Makita ERP");
 
         $emailContent = <<<HTML
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    color: #333;
-                    line-height: 1.6;
-                    background-color: #f9f9f9;
-                    padding: 20px;
-                }
-                p {
-                    font-size: 16px;
-                }
-                a {
-                    color: #007bff;
-                    text-decoration: none;
-                }
-                a:hover {
-                    text-decoration: underline;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 20px;
-                    background-color: #fff;
-                    border: 1px solid #ddd;
-                }
-                th, td {
-                    border: 1px solid #ddd;
-                    padding: 2px;
-                    font-size: 12px;
-                    text-align: left;
-                }
-                th {
-                    background-color: #f4f4f4;
-                    font-weight: bold;
-                    color: #555;
-                }
-                td {
-                    background-color: #fafafa;
-                }
-                .table-heading {
-                    margin-top: 20px;
-                    font-size: 18px;
-                    font-weight: bold;
-                    color: #444;
-                }
-            </style>
-        </head>
-        <body>
-            <p><b>Note - This is a test mail</b></p>
-            <p>We would like to approve the following promotion.</p>
-            <p>{$this->details['textfromatmodelqty']}</p>
-            <p>{$this->details['offerproduct'][0]['stock']} No's of {$this->details['offerproduct'][0]['model_no']} available.</p>
-            <p>
-                <a href="" class="link-black text-sm">Promotion Preview</a>
-            </p>
-            <p style="color:orange;">PROMO NO - {$this->details['offerproduct'][0]['promo_code']}</p>
-
-            <h3 class="table-heading">Offer Product(s)</h3>
-            <table>
-                <thead>
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Special Promotion Announcement</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+                <!-- Email Container -->
+                <table role="presentation" style="width: 100%; max-width: 1000px; margin: 0 auto; background-color: #ffffff; border-spacing: 0; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                    <!-- Header -->
                     <tr>
-                        <th>Offer Model</th>
-                        <th>MRP</th>
-                        <th>DLP</th>
-                        <th>BEST</th>
-                        <th>SPECIAL</th>
-                        <th>TOTAL STOCK</th>
-                        <th>HO</th>
-                        <th>DELHI</th>
-                        <th>Gujarat</th>
-                        <th>Kerala</th>
-                        <th>Chennai</th>
-                        <th>Kolkata</th>
+                        <td style="padding: 20px;">
+                            <img src="https://makita.in/wp-content/themes/Makita/img/logo.jpg" alt="Company Logo" style="max-width: 200px; height: auto; display: block;">
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-        HTML;
 
-        foreach ($this->details['offerproduct'] as $offer) {
-            $emailContent .= "<tr>
-                <td>{$offer['model_no']}</td>
-                <td>{$offer['mrp']}</td>
-                <td style='color: " . ($offer['price_type'] === 'DLP' ? 'orange' : '#444') . ";'>{$offer['dlp']}</td>
-                <td style='color: " . ($offer['price_type'] === 'Best Price' ? 'orange' : '#444') . ";'>{$offer['best']}</td>
-                <td style='color: " . ($offer['price_type'] === 'Special Price' ? 'orange' : '#444') . ";'>" . (isset($offer['price']) ? $offer['price'] : '-') . "</td>
-                <td>{$offer['stock']}</td>
-                <td>" . (isset($offer['ka01']) ? $offer['ka01'] : '-') . "</td>
-                <td>" . (isset($offer['dl01']) ? $offer['dl01'] : '-') . "</td>
-                <td>" . (isset($offer['gj01']) ? $offer['gj01'] : '-') . "</td>
-                <td>" . (isset($offer['kl01']) ? $offer['kl01'] : '-') . "</td>
-                <td>" . (isset($offer['tn01']) ? $offer['tn01'] : '-') . "</td>
-                <td>" . (isset($offer['wb01']) ? $offer['wb01'] : '-') . "</td>
-            </tr>";
-        }
+                    <!-- Main Content -->
+                    <tr>
+                        <td style="padding: 20px 20px;">
+                            <!-- Promotion Title -->
+                            <h1 style="color: #008290; font-size: 24px; margin: 0 0 20px; text-align: center; font-family: Arial, sans-serif;">Special Promotion Announcement</h1>
+                            
+                            <!-- Test Environment Notice -->
+                            <!-- <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <tr>
+                                    <td style="background-color: #f5f5f5; padding: 15px; text-align: center;">
+                                        <p style="margin: 0; color: #ff0000; font-weight: bold;">Note - This is a test mail</p>
+                                    </td>
+                                </tr>
+                            </table> -->
 
-        $emailContent .= <<<HTML
-        </tbody>
-    </table>
-    HTML;
-        if ($this->details['focproduct']->isNotEmpty()) {
+                            <!-- Promotion Number -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <tr>
+                                    <td align="center" style="background-color: #008290;">
+                                        <p style="color: #ffffff; font-size: 18px; font-weight: bold; text-align: center; width: 200px; margin: 20px auto; background-color: #008290; line-height: 1; border-radius: 5px;">PROMO NO - {$this->details['offerproduct'][0]['promo_code']}</p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Promotion Details -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 30px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <tr>
+                                    <td style="background-color: #f5f5f5; padding: 20px;">
+                                        <p style="margin: 0 0 15px; color: #333333; line-height: 1.6;">We would like to approve the following promotion:</p>
+                                        <p style="margin: 0 0 10px; color: #333333; line-height: 1.6;">{$this->details['textfromatmodelqty']}</p>
+                                        <p style="margin: 0; color: #333333; line-height: 1.6;">{$this->details['offerproduct'][0]['stock']} No's of {$this->details['offerproduct'][0]['model_no']} available.</p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Offer Products Table -->
+                            <h2 style="color: #008290; font-size: 20px; margin: 30px 0 15px; font-family: Arial, sans-serif;">Offer Product(s)</h2>
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <thead>
+                                        <tr style="background-color: #008290;">
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">MODEL</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">MRP</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">DLP</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">BEST</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">SPECIAL</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">STOCK</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">HO</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">DELHI</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">GUJARAT</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">KERALA</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">CHENNAI</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">KOLKATA</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+            HTML;
+
+            foreach ($this->details['offerproduct'] as $offer) {
+                $emailContent .= "
+                        <tr>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['model_no']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['mrp']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'DLP' ? 'orange' : '#444') . ";'>{$offer['dlp']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'Best Price' ? 'orange' : '#444') . ";'>{$offer['best']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'Special Price' ? 'orange' : '#444') . ";'>" . (isset($offer['price']) ? $offer['price'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['stock']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['ka01']) ? $offer['ka01'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['dl01']) ? $offer['dl01'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['gj01']) ? $offer['gj01'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['kl01']) ? $offer['kl01'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['tn01']) ? $offer['tn01'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['wb01']) ? $offer['wb01'] : '-') . "</td>
+                        </tr>";
+            }
+
+            $emailContent .= "</tbody></table></div>";
+
+            if ($this->details['focproduct']->isNotEmpty()) {
+                $emailContent .= <<<HTML
+                            <!-- FOC Products Table -->
+                            <h2 style="color: #008290; font-size: 20px; margin: 30px 0 15px; font-family: Arial, sans-serif;">FOC Product(s)</h2>
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <thead>
+                                        <tr style="background-color: #008290;">
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">MODEL</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">MRP</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">DLP</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">BEST</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">SPECIAL</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">STOCK</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">HO</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">DELHI</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">GUJARAT</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">KERALA</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">CHENNAI</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">KOLKATA</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+            HTML;
+
+                foreach ($this->details['focproduct'] as $offer) {
+                    $emailContent .= "
+                        <tr>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['model_no']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['mrp']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'DLP' ? 'orange' : '#444') . ";'>{$offer['dlp']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'Best Price' ? 'orange' : '#444') . ";'>{$offer['best']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'Special Price' ? 'orange' : '#444') . ";'>" . (isset($offer['price']) ? $offer['price'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['stock']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['ka01']) ? $offer['ka01'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['dl01']) ? $offer['dl01'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['gj01']) ? $offer['gj01'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['kl01']) ? $offer['kl01'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['tn01']) ? $offer['tn01'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['wb01']) ? $offer['wb01'] : '-') . "</td>
+                        </tr>";
+                }
+
+                $emailContent .= "</tbody></table></div>";
+            }
+
             $emailContent .= <<<HTML
-
-            <h3 class="table-heading">FOC Product(s)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>FOC Model</th>
-                        <th>MRP</th>
-                        <th>DLP</th>
-                        <th>BEST</th>
-                        <th>SPECIAL</th>
-                        <th>TOTAL STOCK</th>
-                        <th>HO</th>
-                        <th>DELHI</th>
-                        <th>Gujarat</th>
-                        <th>Kerala</th>
-                        <th>Chennai</th>
-                        <th>Kolkata</th>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
+
+                    <tr>
+                        <td style="padding: 10px; padding-bottom: 40px;">
+                            <!-- Preview Link -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <tr>
+                                    <td align="center">
+                                        <div style="width: 250px; margin: 0 auto;">
+                                            <table role="presentation" style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                                                <tr>
+                                                    <td align="center" style="border-radius: 8px;">
+                                                        <a href="#" style="display: block; padding: 12px 20px; color: #008290; font-size: 16px;">View Promotion Preview</a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px; background-color: #008290; color: #ffffff; text-align: center;">
+                            <p style="margin: 0 0 10px;">Contact us for more information</p>
+                            <p style="margin: 0;">©2025 Makita India. All rights reserved.</p>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
         HTML;
-
-
-        foreach ($this->details['focproduct'] as $offer) {
-            $emailContent .= "<tr>
-                <td>{$offer['model_no']}</td>
-                <td>{$offer['mrp']}</td>
-                <td style='color: " . ($offer['price_type'] === 'DLP' ? 'orange' : '#444') . ";'>{$offer['dlp']}</td>
-                <td style='color: " . ($offer['price_type'] === 'Best Price' ? 'orange' : '#444') . ";'>{$offer['best']}</td>
-                <td style='color: " . ($offer['price_type'] === 'Special Price' ? 'orange' : '#444') . ";'>" . (isset($offer['price']) ? $offer['price'] : '-') . "</td>
-                <td>{$offer['stock']}</td>
-                <td>" . (isset($offer['ka01']) ? $offer['ka01'] : '-') . "</td>
-                <td>" . (isset($offer['dl01']) ? $offer['dl01'] : '-') . "</td>
-                <td>" . (isset($offer['gj01']) ? $offer['gj01'] : '-') . "</td>
-                <td>" . (isset($offer['kl01']) ? $offer['kl01'] : '-') . "</td>
-                <td>" . (isset($offer['tn01']) ? $offer['tn01'] : '-') . "</td>
-                <td>" . (isset($offer['wb01']) ? $offer['wb01'] : '-') . "</td>
-            </tr>";
-        }
-
-        $emailContent .= <<<HTML
-                </tbody>
-            </table>
-        HTML; // Close the Heredoc block
-
-        } // Close the if condition
-$emailContent .= <<<HTML
-</body>
-</html>
-HTML; // Continue the Heredoc block
 
      
         // $sendemail->addContent("text/html", $emailContent);

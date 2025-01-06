@@ -43,146 +43,140 @@ class PromoTransactionFollowUpJob implements ShouldQueue
         $email->setFrom(MakitaSendGridFrom, "Makita ERP");
         $details=$this->details;
  
-        $emailContent = '
+        $emailContent = <<<HTML
         <!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <style>
-                /* General Styling */
-                body {
-                    font-family: Arial, sans-serif;
-                    color: #333;
-                    line-height: 1.6;
-                    background-color: #f9f9f9;
-                    padding: 20px;
-                }
-                p {
-                    font-size: 16px;
-                }
-                a {
-                    color: #007bff;
-                    text-decoration: none;
-                }
-                a:hover {
-                    text-decoration: underline;
-                }
-                /* Table Styling */
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 20px;
-                    background-color: #fff;
-                    border: 1px solid #ddd;
-                }
-                th, td {
-                    border: 1px solid #ddd;
-                    padding: 5px;
-                    text-align: left;
-                }
-                th {
-                    background-color: #f4f4f4;
-                    font-weight: bold;
-                    color: #555;
-                }
-                td {
-                    background-color: #fafafa;
-                }
-                .table-heading {
-                    margin-top: 20px;
-                    font-size: 18px;
-                    font-weight: bold;
-                    color: #444;
-                }
-                /* Sub-table styling */
-                .sub-table {
-                    margin-top: 10px;
-                    width: 90%;
-                    border-collapse: collapse;
-                }
-                .sub-table th, .sub-table td {
-                    padding: 5px;
-                    border: 1px solid #ddd;
-                }
-                .sub-table th {
-                    background-color: #e8e8e8;
-                }
-            </style>
+            <title>Promo Transaction Follow Up</title>
         </head>
-        <body>';
-        if (!app()->environment('production')) {
-            $emailContent .= '<p><b>Note - This is a test mail</b></p>';
-        }
-    
-        $emailContent .= '
-            <p>List of Dealers to be followed up for today - ' . date('d-m-Y') . '.</p>
-        
-            <h3 class="table-heading">Follow Up List</h3>
-             <p class="rm-name">RM Name - '.$details[0]['rm_name'].'</p>
-            <table>
-            <thead>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+            <!-- Email Container -->
+            <table role="presentation" style="width: 100%; max-width: 1000px; margin: 0 auto; background-color: #ffffff; border-spacing: 0; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                <!-- Header -->
                 <tr>
-                <th>Transaction ID</th>
-                <th>Promo Code</th>
-                <th>Order Date</th>
-                <th>Order Status</th>
-                <th>Cancelling By</th>
-                <th>Dealer Code</th>
-                <th>Dealer Name</th>
-                <th>Dealer Email</th>
-                <th>Order Details</th>
+                    <td style="padding: 20px;">
+                        <img src="https://makita.in/wp-content/themes/Makita/img/logo.jpg" alt="Company Logo" style="max-width: 200px; height: auto; display: block;">
+                    </td>
                 </tr>
-            </thead>
-            <tbody>';
-
-        // Assuming $details is already an array of arrays
-        foreach ($details as $offer) {
-            $emailContent .= '<tr>
-                <td>' . $offer['order_id'] . '</td>
-                <td>' . $offer['promo_code'] . '</td>
-                <td>' . $offer['order_date'] . '</td>
-                <td>' . $offer['status'] . '</td>
-                <td>' . \Carbon\Carbon::parse($offer['order_date'])->addDays(3)->format('d-m-Y') . '</td>
-                <td>' . $offer['dealer_code'] . '</td>
-                <td>' . $offer['dealer_name'] . '</td>
-                <td>' . $offer['dealer_email'] . '</td>
-                <td>';
-
-            // Decode merged_data as an array
-            $merged_data = json_decode($offer['merged_data'], true);
-
-            $emailContent .= '<table class="sub-table">
-                    <thead>
-                        <tr>
-                        <th>Model No</th>
-                        <th>Order Qty</th>
-                        <th>Billed Qty</th>
-                        <th>Product Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>';
-
-            foreach ($merged_data as $item) {
-                $emailContent .= '<tr>
-                        <td>' . $item['model_no'] . '</td>
-                        <td>' . $item['order_qty'] . '</td>
-                        <td>' . ($item['billed_qty'] ?? 'N/A') . '</td>
-                        <td>' . $item['product_type'] . '</td>
-                        </tr>';
-            }
-
-            $emailContent .= '</tbody>
-                    </table>';
-            $emailContent .= '</td>
-                </tr>';
-        }
-
-        $emailContent .= '</tbody>
+        
+                <!-- Main Content -->
+                <tr>
+                    <td style="padding: 20px 20px;">
+                        <!-- Title -->
+                        <h1 style="color: #008290; font-size: 24px; margin: 0 0 20px; text-align: center; font-family: Arial, sans-serif;">Promo Transaction Follow Up</h1>
+        
+                        <!-- Environment Notice -->
+                    </td>
+                </tr>
             </table>
         </body>
-        </html>';
+        </html>
+        HTML;
+        if (!app()->environment('production')) {
+            $emailContent .= <<<HTML
+                        <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                            <tr>
+                                <td style="background-color: #f5f5f5; padding: 15px; text-align: center;">
+                                    <p style="margin: 0; color: #ff0000; font-weight: bold;">Note - This is a test mail</p>
+                                </td>
+                            </tr>
+                        </table>
+        HTML;
+        }
+
+        $emailContent .= <<<HTML
+                        <!-- Follow Up Details -->
+                        <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 30px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                            <tr>
+                                <td style="background-color: #f5f5f5; padding: 20px;">
+                                    <p style="margin: 0 0 15px; color: #333333; line-height: 1.6;">List of Dealers to be followed up for today - {$details[0]['rm_name']}</p>
+                                    <p style="margin: 0; color: #008290; font-weight: bold;">RM Name - {$details[0]['rm_name']}</p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Follow Up List Table -->
+                        <h2 style="color: #008290; font-size: 20px; margin: 30px 0 15px; font-family: Arial, sans-serif;">Follow Up List</h2>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <thead>
+                                    <tr style="background-color: #008290;">
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">TRANSACTION ID</th>
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">PROMO CODE</th>
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">ORDER DATE</th>
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">ORDER STATUS</th>
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">CANCELLING BY</th>
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">DEALER CODE</th>
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">DEALER NAME</th>
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">DEALER EMAIL</th>
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">ORDER DETAILS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+        HTML;
+
+        foreach ($details as $offer) {
+            $merged_data = json_decode($offer['merged_data'], true);
+            
+            $emailContent .= "
+                    <tr>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_id']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['promo_code']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_date']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['status']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>" . \Carbon\Carbon::parse($offer['order_date'])->addDays(3)->format('d-m-Y') . "</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['dealer_code']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['dealer_name']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['dealer_email']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>
+                            <table style='width: 100%; border-collapse: collapse; margin: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt;'>
+                                <thead>
+                                    <tr style='background-color: #f0f9fa;'>
+                                        <th style='padding: 8px; text-align: left; border: 1px solid #dddddd; color: #008290; font-size: 12px;'>MODEL NO</th>
+                                        <th style='padding: 8px; text-align: left; border: 1px solid #dddddd; color: #008290; font-size: 12px;'>ORDER QTY</th>
+                                        <th style='padding: 8px; text-align: left; border: 1px solid #dddddd; color: #008290; font-size: 12px;'>BILLED QTY</th>
+                                        <th style='padding: 8px; text-align: left; border: 1px solid #dddddd; color: #008290; font-size: 12px;'>PRODUCT TYPE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>";
+
+                                foreach ($merged_data as $item) {
+                                    $emailContent .= "
+                                                        <tr>
+                                                            <td style='padding: 8px; border: 1px solid #dddddd; font-size: 12px;'>{$item['model_no']}</td>
+                                                            <td style='padding: 8px; border: 1px solid #dddddd; font-size: 12px;'>{$item['order_qty']}</td>
+                                                            <td style='padding: 8px; border: 1px solid #dddddd; font-size: 12px;'>" . ($item['billed_qty'] ?? 'N/A') . "</td>
+                                                            <td style='padding: 8px; border: 1px solid #dddddd; font-size: 12px;'>{$item['product_type']}</td>
+                                                        </tr>";
+                                }
+
+                                $emailContent .= "
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>";
+                            }
+
+                            $emailContent .= <<<HTML
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px; background-color: #008290; color: #ffffff; text-align: center;">
+                            <p style="margin: 0 0 10px;">Contact us for more information</p>
+                            <p style="margin: 0;">©2025 Makita India. All rights reserved.</p>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+            HTML;
 
         
         $email->addContent("text/html", $emailContent);

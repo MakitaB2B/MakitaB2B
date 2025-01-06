@@ -72,166 +72,221 @@ class TransactionJob implements ShouldQueue
         $details=$this->details;
         // $emailContent = view('mails.transactionmail', compact('details'))->render();
 
+        $orderId = \Crypt::encrypt($details['offerproduct'][0]['order_id']);
+        $orderIdEncoded = urlencode($orderId);
 
-
-        $emailContent = '
+        $emailContent = <<<HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <style>
-        /* General Styling */
-        body {
-            font-family: Arial, sans-serif;
-            color: #333;
-            line-height: 1.6;
-            background-color: #f9f9f9;
-            padding: 20px;
-        }
-        p {
-            font-size: 16px;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        /* Table Styling */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 2px;
-            font-size: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-            font-weight: bold;
-            color: #555;
-        }
-        td {
-            background-color: #fafafa;
-        }
-        .table-heading {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #444;
-        }
-        .red{
-            color:red;
-        }
-    </style>
+    <title>Promotion Transaction Details</title>
 </head>
-<body>
-    <p><b>Dear MD,</b></p>
-
-    <p>I have applied for the following PROMO.</p>
-    <p class="red">**This is Auto Approval Applicable PROMO.**</p>
-    <p><small>Auto Approved by system.</small></p>
-    <p class="red"><b>'.$details['offerproduct'][0]["stock"].' set(s) / no(s) left for the promotional campaign.</b></p>
-
-    <p><u>Detail</u></p>
-
-    <table>
-        <thead>
-          <tr>
-            <th>Promo Code</th>
-            <th>RM Name</th>
-            <th>Dealer Code</th>
-            <th>Dealer Name</th>
-            <th>Region</th>
-            <th>Transaction ID</th>
-            <th>Customer PO</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="color:orange;">'.$details['offerproduct'][0]['promo_code'].'</td>
-            <td style="color:orange;">'.$details['offerproduct'][0]['rm_name'].'</td>
-            <td>'.$details['offerproduct'][0]['dealer_code'].'</td>
-            <td>'.$details['offerproduct'][0]['dealer_name'].'</td>
-            <td style="color:orange;">'.$details['offerproduct'][0]['region'].'</td>
-            <td style="color:orange;">'.$details['offerproduct'][0]['order_id'].'</td>
-            <td style="color:orange;">PR'.$details['offerproduct'][0]['promo_code'].'-'.$details['offerproduct'][0]['order_id'].'|</td>
-          </tr>
-        </tbody>
-    </table>
-
-    <h3 class="table-heading">Offer Product(s)</h3>
-    <table>
-      <thead>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+    <!-- Email Container -->
+    <table role="presentation" style="width: 100%; max-width: 1000px; margin: 0 auto; background-color: #ffffff; border-spacing: 0; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+        <!-- Header -->
         <tr>
-          <th>Offer Model</th>
-          <th>Description</th>
-          <th>Offer Type</th>
-          <th>Product Type</th>
-          <th>Price Type</th>
-          <th>Unit Price</th>
-          <th>Qty</th>
-          <th>Total Price</th>
+            <td style="padding: 20px;">
+                <img src="https://makita.in/wp-content/themes/Makita/img/logo.jpg" alt="Company Logo" style="max-width: 200px; height: auto; display: block;">
+            </td>
         </tr>
-      </thead>
-      <tbody>';
-        foreach ($details['offerproduct'] as $offer) {
-            $emailContent .= '<tr>
-                <td>'.$offer["model_no"].'</td>
-                <td>'.$offer["description"].'</td>
-                <td>'.$offer["offer_type"].'</td>
-                <td>'.$offer["product_type"].'</td>
-                <td>'.$offer["price_type"].'</td>
-                <td>'.$offer["offer_price"].'</td>
-                <td>'.$offer["order_qty"].'</td>
-                <td>'.$offer["order_price"].'</td>
-            </tr>';
-        }
-    $emailContent .= '</tbody>
-    </table>
 
-    <h3 class="table-heading">FOC Product(s)</h3>
-    <table>
-      <thead>
+        <!-- Main Content -->
         <tr>
-          <th>Offer Model</th>
-          <th>Description</th>
-          <th>Offer Type</th>
-          <th>Product Type</th>
-          <th>Price Type</th>
-          <th>Unit Price</th>
-          <th>Qty</th>
-        <th>Total Price</th>
-        </tr>
-      </thead>
-      <tbody>';
-        foreach ($details['focproduct'] as $offer) {
-            $emailContent .= '<tr>
-                <td>'.$offer["model_no"].'</td>
-                <td>'.$offer["description"].'</td>
-                <td>'.$offer["offer_type"].'</td>
-                <td>'.$offer["product_type"].'</td>
-                <td>'.($offer["order_price"] == 0 ? ' - ' : $offer["price_type"]).'</td>
-                <td>'.$offer["offer_price"].'</td>
-                <td>'.$offer["order_qty"].'</td>
-                <td>'.$offer["order_price"].'</td>
-            </tr>';
-        }
-    $emailContent .= '</tbody>
-    </table>
+            <td style="padding: 20px;">
+                <!-- Promotion Title -->
+                <h1 style="color: #008290; font-size: 24px; margin: 0 0 20px; text-align: center;">Promotion Transaction Details</h1>
+                
+                <!-- Promotion Number -->
+                <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td align="center" style="background-color: #008290;">
+                            <p style="color: #ffffff; font-size: 18px; font-weight: bold; margin: 20px auto;">PROMO NO - {$details['offerproduct'][0]['promo_code']}</p>
+                        </td>
+                    </tr>
+                </table>
 
-    <p>Please check here.</p>
-    <p><a href="'.url(request()->getSchemeAndHttpHost().'/admin/promotions/transaction-preview').'/'.\Crypt::encrypt($details['offerproduct'][0]['order_id']).'" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Transaction View</a></p>
+                <!-- Auto Approval Details -->
+                <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                    <tr>
+                        <td style="background-color: #f5f5f5; padding: 20px;">
+                            <p style="margin: 0 0 15px; color: #333;">I have applied for the following PROMO.</p>
+                            <p style="margin: 0 0 5px; color: #ff0000; font-weight: bold;">**This is Auto Approval Applicable PROMO.**</p>
+                            <p style="margin: 0 0 15px; color: #666; font-size: 14px;"><small>Auto Approved by system.</small></p>
+                            <p style="margin: 0; color: #ff0000; font-weight: bold;">{$details['offerproduct'][0]["stock"]} set(s) / no(s) left for the promotional campaign.</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Transaction Details Table -->
+                <h2 style="color: #008290; font-size: 20px; margin: 30px 0 15px;">Transaction Details</h2>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background-color: #008290; color: #fff;">
+                                <th style="padding: 10px;">Promo Code</th>
+                                <th style="padding: 10px;">RM Name</th>
+                                <th style="padding: 10px;">Dealer Code</th>
+                                <th style="padding: 10px;">Dealer Name</th>
+                                <th style="padding: 10px;">Region</th>
+                                <th style="padding: 10px;">Transaction ID</th>
+                                <th style="padding: 10px;">Customer PO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['promo_code']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['rm_name']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['dealer_code']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['dealer_name']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['region']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['order_id']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">PR{$details['offerproduct'][0]['promo_code']}-{$details['offerproduct'][0]['order_id']}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Offer Products Table -->
+                <h2 style="color: #008290; font-size: 20px; margin: 30px 0 15px;">Offer Product(s)</h2>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background-color: #008290; color: #fff;">
+                                <th style="padding: 10px;">MODEL</th>
+                                <th style="padding: 10px;">DESCRIPTION</th>
+                                <th style="padding: 10px;">OFFER TYPE</th>
+                                <th style="padding: 10px;">PRODUCT TYPE</th>
+                                <th style="padding: 10px;">PRICE TYPE</th>
+                                <th style="padding: 10px;">UNIT PRICE</th>
+                                <th style="padding: 10px;">QTY</th>
+                                <th style="padding: 10px;">TOTAL PRICE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+HTML;
+
+foreach ($details['offerproduct'] as $offer) {
+    $emailContent .= <<<HTML
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$offer['model_no']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$offer['description']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$offer['offer_type']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$offer['product_type']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$offer['price_type']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$offer['offer_price']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$offer['order_qty']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{$offer['order_price']}</td>
+                            </tr>
+HTML;
+}
+
+$emailContent .= <<<HTML
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
 </body>
-</html>';
+</html>
+HTML;
+
+
+                                foreach ($details['offerproduct'] as $offer) {
+                                    $emailContent .= "
+                                        <tr>
+                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['model_no']}</td>
+                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['description']}</td>
+                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['offer_type']}</td>
+                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['product_type']}</td>
+                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['price_type']}</td>
+                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['offer_price']}</td>
+                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_qty']}</td>
+                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_price']}</td>
+                                        </tr>";
+                                }
+
+                $emailContent .= <<<HTML
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- FOC Products Table -->
+                            <h2 style="color: #008290; font-size: 20px; margin: 30px 0 15px; font-family: Arial, sans-serif;">FOC Product(s)</h2>
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <thead>
+                                        <tr style="background-color: #008290;">
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">MODEL</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">DESCRIPTION</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">OFFER TYPE</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">PRODUCT TYPE</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">PRICE TYPE</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">UNIT PRICE</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">QTY</th>
+                                            <th style="padding: 10px; text-align: left; border: 1px solid #dddddd; color: #ffffff;">TOTAL PRICE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        HTML;
+
+            foreach ($details['focproduct'] as $offer) {
+                $emailContent .= "
+                    <tr>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['model_no']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['description']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['offer_type']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['product_type']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>" . ($offer['order_price'] == 0 ? ' - ' : $offer['price_type']) . "</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['offer_price']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_qty']}</td>
+                        <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_price']}</td>
+                    </tr>";
+            }
+
+            $emailContent .= <<<HTML
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 10px; padding-bottom: 40px;">
+                            <!-- Preview Link -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <tr>
+                                    <td align="center">
+                                        <div style="width: 250px; margin: 0 auto;">
+                                            <table role="presentation" style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                                                <tr>
+                                                    <td align="center" style="border-radius: 8px;">
+                                                    <a href="' . url(request()->getSchemeAndHttpHost() . '/admin/promotions/transaction-preview/' . $orderIdEncoded) . '"
+                                                        style="display: block; padding: 12px 20px; color: #008290; font-size: 16px;">Transaction View</a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px; background-color: #008290; color: #ffffff; text-align: center;">
+                            <p style="margin: 0 0 10px;">Contact us for more information</p>
+                            <p style="margin: 0;">©2025 Makita India. All rights reserved.</p>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+        HTML;
 
 
         $email->addContent("text/html", $emailContent);
