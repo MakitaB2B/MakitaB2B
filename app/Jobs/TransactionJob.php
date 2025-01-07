@@ -60,8 +60,6 @@ class TransactionJob implements ShouldQueue
         $email->addCcs($ccEmail);
         $email->addBccs($bccEmails);
 
-       
-
         // $email->setReplyTo(PROMO_TRANSACTION_FROM_EMAILS, "");
       
         // $email->setFrom(PROMO_TRANSACTION_FROM_EMAILS, "Makita ERP");
@@ -74,15 +72,14 @@ class TransactionJob implements ShouldQueue
 
         $orderId = \Crypt::encrypt($details['offerproduct'][0]['order_id']);
         $orderIdEncoded = urlencode($orderId);
-
         $emailContent = <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Promotion Transaction Details</title>
-</head>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Promotion Transaction Details</title>
+        </head>
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
     <!-- Email Container -->
     <table role="presentation" style="width: 100%; max-width: 1000px; margin: 0 auto; background-color: #ffffff; border-spacing: 0; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
@@ -137,13 +134,13 @@ class TransactionJob implements ShouldQueue
                         </thead>
                         <tbody>
                             <tr>
-                                <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['promo_code']}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['rm_name']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;color: #008290;">{$details['offerproduct'][0]['promo_code']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;color: #008290;">{$details['offerproduct'][0]['rm_name']}</td>
                                 <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['dealer_code']}</td>
                                 <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['dealer_name']}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['region']}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">{$details['offerproduct'][0]['order_id']}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">PR{$details['offerproduct'][0]['promo_code']}-{$details['offerproduct'][0]['order_id']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;color: #008290;">{$details['offerproduct'][0]['region']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;color: #008290;">{$details['offerproduct'][0]['order_id']}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;color: #008290;">PR{$details['offerproduct'][0]['promo_code']}-{$details['offerproduct'][0]['order_id']}|</td>
                             </tr>
                         </tbody>
                     </table>
@@ -183,38 +180,12 @@ foreach ($details['offerproduct'] as $offer) {
 HTML;
 }
 
-$emailContent .= <<<HTML
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>
-HTML;
-
-
-                                foreach ($details['offerproduct'] as $offer) {
-                                    $emailContent .= "
-                                        <tr>
-                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['model_no']}</td>
-                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['description']}</td>
-                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['offer_type']}</td>
-                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['product_type']}</td>
-                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['price_type']}</td>
-                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['offer_price']}</td>
-                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_qty']}</td>
-                                            <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_price']}</td>
-                                        </tr>";
-                                }
-
-                $emailContent .= <<<HTML
-                                    </tbody>
+                $emailContent .= "</tbody>
                                 </table>
-                            </div>
+                            </div>";
 
-                            <!-- FOC Products Table -->
+                            if ($this->details['focproduct']->isNotEmpty()) {
+            $emailContent .= <<<HTML
                             <h2 style="color: #008290; font-size: 20px; margin: 30px 0 15px; font-family: Arial, sans-serif;">FOC Product(s)</h2>
                             <div style="overflow-x: auto;">
                                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
@@ -247,16 +218,14 @@ HTML;
                     </tr>";
             }
 
-            $emailContent .= <<<HTML
-                                    </tbody>
-                                </table>
-                            </div>
+            $emailContent .= "</tbody></table></div>";
+        }
+                             $emailContent .= <<<HTML
                         </td>
                     </tr>
 
-                    <tr>
+                    <!-- <tr>
                         <td style="padding: 10px; padding-bottom: 40px;">
-                            <!-- Preview Link -->
                             <table role="presentation" style="width: 100%; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                 <tr>
                                     <td align="center">
@@ -264,7 +233,7 @@ HTML;
                                             <table role="presentation" style="width: 100%; border-collapse: separate; border-spacing: 0;">
                                                 <tr>
                                                     <td align="center" style="border-radius: 8px;">
-                                                    <a href="' . url(request()->getSchemeAndHttpHost() . '/admin/promotions/transaction-preview/' . $orderIdEncoded) . '"
+                                                    <a href="{{ url(request()->getSchemeAndHttpHost() . '/admin/promotions/transaction-preview/' . $orderIdEncoded) }}"
                                                         style="display: block; padding: 12px 20px; color: #008290; font-size: 16px;">Transaction View</a>
                                                     </td>
                                                 </tr>
@@ -274,7 +243,7 @@ HTML;
                                 </tr>
                             </table>
                         </td>
-                    </tr>
+                    </tr> -->
 
                     <!-- Footer -->
                     <tr>
@@ -288,20 +257,18 @@ HTML;
             </html>
         HTML;
 
-
         $email->addContent("text/html", $emailContent);
 
-  
-        // try {
+        try {
             $apiKey = MakitaERPApiKey;// env('MakitaERPApiKey');
             $sendgrid = new \SendGrid($apiKey);
             $response = $sendgrid->send($email);
-            // print $response->statusCode() . "\n";
-            // print_r($response->headers());
-            // print $response->body() . "\n";
-        // } catch (Exception $e) {
-        //     echo 'Caught exception: '.  $e->getMessage(). "\n";
-        // }
+            print $response->statusCode() . "\n";
+            print_r($response->headers());
+            print $response->body() . "\n";
+        } catch (Exception $e) {
+            echo 'Caught exception: '.  $e->getMessage(). "\n";
+        }
 
     }
 

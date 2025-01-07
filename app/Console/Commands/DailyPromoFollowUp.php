@@ -187,7 +187,7 @@ class DailyPromoFollowUp extends Command
         $employeeNames = $employees->pluck('full_name')->toArray();
       
         $employeeEmails = $employees->pluck('official_email', 'full_name')->toArray();
-
+        \Log::info('Step 1');
         // \DB::enableQueryLog();
         // $transactions = Transaction::selectRaw('
         //         transactions.order_id, 
@@ -214,7 +214,8 @@ class DailyPromoFollowUp extends Command
         //     ->get()
         //     ->groupBy('rm_name');  
 
-
+        \Log::info('Step 2');
+        \DB::enableQueryLog();
             $transactions = Transaction::selectRaw('
             transactions.order_id, 
             transactions.promo_code, 
@@ -239,8 +240,8 @@ class DailyPromoFollowUp extends Command
         ->groupBy('transactions.order_id', 'transactions.promo_code', 'transactions.status', 'transactions.dealer_code', 'transactions.dealer_name', 'transactions.rm_name')
         ->get()
         ->groupBy('rm_name');
-
-
+        dd(\DB::getQueryLog());
+        \Log::info('Step 3');
         // $transactions = Transaction::get();
 
 
@@ -251,7 +252,7 @@ class DailyPromoFollowUp extends Command
             //     Mail::to($email)->send(new PromoTransactionFollowUpMail($transactionGroup));
             // }
 
-
+dd($transactions);
             foreach ($transactions as $rm_name => $transactionGroup) {
                 $email = $employeeEmails[$rm_name]; 
               
@@ -260,7 +261,7 @@ class DailyPromoFollowUp extends Command
                 ];
                 
                 try {
-
+                    \Log::info('Step 4');
                     $promotransactionfollowup = PromoTransactionFollowUpJob::dispatch($convertedEmailFormat,$transactionGroup->toArray());
                   } catch (\Exception $e) {
             
@@ -269,7 +270,7 @@ class DailyPromoFollowUp extends Command
                   }
                 
             }
-            
+            \Log::info('Step 5');
             $this->info('Follow Up Mail Sent Successfully!');
 
     //------working code with sendgrid

@@ -106,7 +106,7 @@ class TransactionCancelJob implements ShouldQueue
                             <tr>
                                 <td style="background-color: #f5f5f5; padding: 20px;">
                                     <p style="margin: 0 0 15px; color: #ff0000; font-weight: bold; font-size: 18px;">Cancelled!</p>
-                                    <p style="margin: 0; color: #333333; line-height: 1.6;">Order has been cancelled by {$details['canceledby']}.</p>
+                                    <p style="margin: 0; color: #ff0000; line-height: 1.6;">Order has been cancelled by {$details['canceledby']}.</p>
                                 </td>
                             </tr>
                         </table>
@@ -155,7 +155,7 @@ class TransactionCancelJob implements ShouldQueue
                                 </thead>
                                 <tbody>
         HTML;
-
+                              
                                 foreach ($details['offerproduct'] as $offer) {
                                     $emailContent .= "
                                         <tr>
@@ -168,7 +168,7 @@ class TransactionCancelJob implements ShouldQueue
                                             <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_qty']}</td>
                                         </tr>";
                                 }
-
+                                if ($this->details['focproduct']->isNotEmpty()) {
                                 $emailContent .= <<<HTML
                                                         </tbody>
                                                     </table>
@@ -204,16 +204,12 @@ class TransactionCancelJob implements ShouldQueue
                                             <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_qty']}</td>
                                         </tr>";
                                 }
-                                $emailContent .= <<<HTML
-                                </tbody>
+                                $emailContent .= "</tbody>
                                 </table>
-                                </div>
-                                </td>
-                                </tr>
-
-                                <tr>
+                                </div>";}
+                                $emailContent .= <<<HTML
+                                <!-- <tr>
                                 <td style="padding: 10px; padding-bottom: 40px;">
-                                    <!-- Preview Link -->
                                     <table role="presentation" style="width: 100%; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                         <tr>
                                             <td align="center">
@@ -231,15 +227,16 @@ class TransactionCancelJob implements ShouldQueue
                                         </tr>
                                     </table>
                                 </td>
-                                </tr>
+                                </tr> -->
 
                                 <!-- Footer -->
-                                <tr>
+                               
+                                <!-- <tr>
                                 <td style="padding: 20px; background-color: #008290; color: #ffffff; text-align: center;">
                                     <p style="margin: 0 0 10px;">Contact us for more information</p>
                                     <p style="margin: 0;">&copy;2025 Makita India. All rights reserved.</p>
                                 </td>
-                                </tr>
+                                </tr> -->
                                 </table>
                                 </body>
                                 </html>
@@ -248,18 +245,17 @@ class TransactionCancelJob implements ShouldQueue
                                 
         $email->addContent("text/html", $emailContent);
 
-  
-        // try {
+        try {
 
             $apiKey = MakitaERPApiKey;//env('MakitaERPApiKey');
             $sendgrid = new \SendGrid($apiKey);
             $response = $sendgrid->send($email);
-            // print $response->statusCode() . "\n";
-            // print_r($response->headers());
-            // print $response->body() . "\n";
-        // } catch (Exception $e) {
-        //     echo 'Caught exception: '.  $e->getMessage(). "\n";
-        // }
+            print $response->statusCode() . "\n";
+            print_r($response->headers());
+            print $response->body() . "\n";
+        } catch (Exception $e) {
+            echo 'Caught exception: '.  $e->getMessage(). "\n";
+        }
 
     }
 

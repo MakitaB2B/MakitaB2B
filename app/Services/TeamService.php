@@ -74,6 +74,9 @@ class TeamService{
     }
 
     public function getTeamOwner($teamMember){
+ 
+        // $abc=TeamMembers::where('team_member',$teamMember)->orWhere('team_owner', $teamMember)->select('team_owner')->first();
+
 
         return TeamMembers::with(['employee:employee_slug,full_name,employee_no'])->where('team_member',$teamMember)->orWhere('team_owner', $teamMember)->select('team_owner')->first();
 

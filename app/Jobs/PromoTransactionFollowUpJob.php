@@ -36,7 +36,7 @@ class PromoTransactionFollowUpJob implements ShouldQueue
 
         $toEmails = $this->email;
         $ccEmails = PROMO_FOLLOWUP_CC;
-    
+         dd($toEmails,$ccEmails);
         $email->addTos($toEmails);
         $email->addCcs($ccEmails);
 

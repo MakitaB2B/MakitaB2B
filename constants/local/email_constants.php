@@ -33,7 +33,7 @@ defined('PROMO_TRANSACTION_CC_EMAILS') OR define('PROMO_TRANSACTION_CC_EMAILS', 
     // 'vanan@makita.in'=>'',
     // 'veena@makita.in'=>''
 
-    'jeanlobo@makita.in'=>'',
+    'lobojeanz@gmail.com'=>'',
  ]);
  
  defined('PROMO_TRANSACTION_TO_EMAILS') OR define('PROMO_TRANSACTION_TO_EMAILS',['jeanlobo94@gmail.com'=>'']);
@@ -41,7 +41,7 @@ defined('PROMO_TRANSACTION_CC_EMAILS') OR define('PROMO_TRANSACTION_CC_EMAILS', 
 
  defined('PROMO_TRANSACTION_FROM_EMAILS') OR define('PROMO_TRANSACTION_FROM_EMAILS',['it_security@makita.in'=>'']);
 
- defined('PROMO_TRANSACTION_BCC') OR define('PROMO_TRANSACTION_BCC',['it_pm@makita.in'=>'']);
+ defined('PROMO_TRANSACTION_BCC') OR define('PROMO_TRANSACTION_BCC',['jean.lobowork@gmail.com'=>'']);
 // ----------
 
 defined('PROMO_TO') OR define('PROMO_TO', [
@@ -94,5 +94,14 @@ defined('PROMO_CC') OR define('PROMO_CC', [
 
  defined('MakitaSendGridFrom') OR define('MakitaSendGridFrom','it_pm@makita.in');
  
+ defined('MakitaERPApiKey') OR define('MakitaERPApiKey','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');
+
+// defined('MakitaSendGridFrom') OR define('MakitaSendGridFrom','pbi_dev@makita.in');
+ 
+//  defined('MakitaERPApiKey') OR define('MakitaERPApiKey','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');
+
+ defined('MakitaERPResendApiKey') OR define('MakitaERPResendApiKey','re_Wxbce7Tr_9YpeuQ5kb7CqKtNkAGSkGHbB');
+
+ defined('MakitaResendFrom') OR define('MakitaResendFrom','pbi_dev@makita.in');
 
 ?>

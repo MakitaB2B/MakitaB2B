@@ -36,21 +36,25 @@ class PromoJob implements ShouldQueue
         //----------------------------
 
 
-        $email = new Mail();
+        // $email = new Mail();
 
-        $email->setSubject('MakitaERP - Promotion Mail '.'(Promo Code -'.$this->details['offerproduct'][0]['promo_code'].')');
+        // $email->setSubject('MakitaERP - Promotion Mail '.'(Promo Code -'.$this->details['offerproduct'][0]['promo_code'].')');
 
         $toEmails = PROMO_TO;
-        $email->addTos($toEmails);
+        // $email->addTos($toEmails);
 
-        $ccEmails = PROMO_CC;
-        $email->addCcs($ccEmails);
+        // $ccEmails = PROMO_CC;
+        // $email->addCcs($ccEmails);
 
-        $bccEmails = PROMO_BCC;
-        $email->addBccs($bccEmails);
+        // $bccEmails = PROMO_BCC;
+        // $email->addBccs($bccEmails);
       
-        $email->setFrom(MakitaSendGridFrom,"Makita ERP");
-        // $sendgrid->setFrom("it_pm@makita.in", "Makita ERP");
+        // $email->setFrom(MakitaSendGridFrom,"Makita ERP");
+
+
+        $resend = \Resend::client(MakitaERPResendApiKey);
+
+ 
 
         $emailContent = <<<HTML
             <!DOCTYPE html>
@@ -133,9 +137,9 @@ class PromoJob implements ShouldQueue
                         <tr>
                             <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['model_no']}</td>
                             <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['mrp']}</td>
-                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'DLP' ? '#008290' : '#444') . ";'>{$offer['dlp']}</td>
-                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'Best Price' ? '#008290' : '#444') . ";'>{$offer['best']}</td>
-                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'Special Price' ? '#008290' : '#444') . ";'>" . (isset($offer['price']) ? $offer['price'] : '-') . "</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'DLP' ? 'orange' : '#444') . ";'>{$offer['dlp']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'Best Price' ? 'orange' : '#444') . ";'>{$offer['best']}</td>
+                            <td style='padding: 10px; border: 1px solid #dddddd; color: " . ($offer['price_type'] === 'Special Price' ? 'orange' : '#444') . ";'>" . (isset($offer['price']) ? $offer['price'] : '-') . "</td>
                             <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['stock']}</td>
                             <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['ka01']) ? $offer['ka01'] : '-') . "</td>
                             <td style='padding: 10px; border: 1px solid #dddddd;'>" . (isset($offer['dl01']) ? $offer['dl01'] : '-') . "</td>
@@ -232,15 +236,22 @@ class PromoJob implements ShouldQueue
         HTML;
 
      
-        // $sendemail->addContent("text/html", $emailContent);
+        // $email->addContent("text/html", $emailContent);
 
-        $email->addContent("text/html", $emailContent);
+        $resend->emails->send([
+            'from' => 'MakitaERP <it_pm@makita.in>',
+            'to' => 'jeanlobo@makita.in',
+            'subject' => 'MakitaERP - Promotion Mail '.'(Promo Code -'.$this->details['offerproduct'][0]['promo_code'].')',
+            'html' =>  $emailContent ,
+          ]);
 
   
         // try {
-            $apiKey = MakitaERPApiKey; //env('MakitaERPApiKey');
-            $sendgrid = new \SendGrid($apiKey);
-            $response = $sendgrid->send($email);
+           // $apiKey = MakitaERPResendApiKey; //env('MakitaERPApiKey');
+            //$sendgrid = \Resend::client($apiKey);//new \Resend($apiKey);
+           // $response = $sendgrid->send($email);
+
+            dd( $response);
         //     print $response->statusCode() . "\n";
         //     print_r($response->headers());
         //     print $response->body() . "\n";

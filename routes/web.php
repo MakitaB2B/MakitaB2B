@@ -118,7 +118,6 @@ Route::get('/send-email', function () {
 
 
 
-
 Route::get('/', function () {
     return view('welcome');
 });
