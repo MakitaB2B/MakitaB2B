@@ -240,7 +240,7 @@ class DailyPromoFollowUp extends Command
         ->groupBy('transactions.order_id', 'transactions.promo_code', 'transactions.status', 'transactions.dealer_code', 'transactions.dealer_name', 'transactions.rm_name')
         ->get()
         ->groupBy('rm_name');
-        dd(\DB::getQueryLog());
+        // dd(\DB::getQueryLog());
         \Log::info('Step 3');
         // $transactions = Transaction::get();
 
@@ -252,7 +252,7 @@ class DailyPromoFollowUp extends Command
             //     Mail::to($email)->send(new PromoTransactionFollowUpMail($transactionGroup));
             // }
 
-dd($transactions);
+// dd($transactions);
             foreach ($transactions as $rm_name => $transactionGroup) {
                 $email = $employeeEmails[$rm_name]; 
               

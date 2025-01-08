@@ -80,25 +80,25 @@
                                             {{-- <th>Order Qty</th>
                                             <th>Billed Qty</th> --}}
                                             <th>Order Date</th>
-                                            <th>Action</th> 
+                                            <th>Customer PO</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($transactions as $key => $list)
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
-                                                <td>{{ $list->order_id }}</td>
+                                                <td><a href="{{ url('admin/promotions/transaction-preview/') }}/{{ Crypt::encrypt($list->order_id) }}"
+                                                    title="Edit"><b>{{ $list->order_id }}</b></a></td>
                                                 <td>{{ $list->promo_code}}</td>
-                                               <td>{{ $list->total_price }}</td>
-                                                <td>{{ $list->status }}</td>
+                                                <td>{{ $list->total_price }}</td>
+                                                <td>{{ ucwords(strtolower($list->status)) }}</td>
                                                 <td>{{ $list->rm_name }}</td>
                                                 <td>{{ $list->dealer_code }}</td>
                                                 <td>{{ $list->dealer_name }}</td>
                                                 {{-- <td>{{ $list->order_qty }}</td>
                                                 <td>{{ $list->billed_qty }}</td> --}}
-                                                <td>{{$list->order_date}}</td>
-                                                <td><a href="{{ url('admin/promotions/transaction-preview/') }}/{{ Crypt::encrypt($list->order_id) }}"
-                                                        title="Edit"> <i class="nav-icon fas fa-edit"></i></a></td> 
+                                                <td>{{ \Carbon\Carbon::parse($list->order_date)->format('d-m-Y H:i') }}</td>  
+                                                <td>PR{{$list->promo_code}}-{{$list->order_id}}|</td>
                                             </tr>
                                         @endforeach
 
@@ -116,7 +116,7 @@
                                             {{-- <th>Order Qty</th>
                                             <th>Billed Qty</th> --}}
                                             <th>Order Date</th>
-                                            <th>Action</th> 
+                                            <th>Customer PO</th>
                                         </tr>
                                     </tfoot>
                                 </table>

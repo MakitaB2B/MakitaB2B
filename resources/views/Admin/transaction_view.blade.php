@@ -88,7 +88,7 @@
             <div class="col-12 col-md-12 order-2 order-md-1">
                 {{-- col-lg-8 --}}
               <div class="row">
-                <div class="col-12 col-sm-4">
+                <div class="col-12 col-sm-3">
                   <div class="info-box bg-light">
                     <div class="info-box-content">
                       <span class="info-box-text text-center text-muted">Transaction Id</span>
@@ -96,7 +96,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-12 col-sm-4">
+                <div class="col-12 col-sm-3">
                   <div class="info-box bg-light">
                     <div class="info-box-content">
                       <span class="info-box-text text-center text-muted">Promo Code</span>
@@ -104,11 +104,19 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-12 col-sm-4">
+                <div class="col-12 col-sm-3">
                   <div class="info-box bg-light">
                     <div class="info-box-content">
                       <span class="info-box-text text-center text-muted">Order Date</span>
                       <span class="info-box-number text-center text-muted mb-0">{{\Carbon\Carbon::parse($offerproduct[0]["order_date"] ?? null)->format('d-m-Y') ?? null}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-3">
+                  <div class="info-box bg-light">
+                    <div class="info-box-content">
+                      <span class="info-box-text text-center text-muted">Customer PO</span>
+                      <span class="info-box-number text-center text-muted mb-0">PR{{$offerproduct[0]["promo_code"]}}-{{$offerproduct[0]["order_id"]}}|</span>
                     </div>
                   </div>
                 </div>
@@ -138,7 +146,11 @@
                         <input type="text" id="inputName" class="form-control" value="{{ $offer->rm_name }}" readonly>
                       </div>
                       <div class="form-group col-md-6">
-                        <label for="inputName">Region</label>
+                        <label for="inputName">Order Placed By</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->employee->full_name }}" readonly>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">RM Region</label>
                         <input type="text" id="inputName" class="form-control" value="{{ $offer->region }}" readonly>
                       </div>
                       <div class="form-group col-md-6">
@@ -218,7 +230,11 @@
                         <input type="text" id="inputName" class="form-control" value="{{ $offer->rm_name }}" readonly>
                       </div>
                       <div class="form-group col-md-6">
-                        <label for="inputName">Region</label>
+                        <label for="inputName">Order Placed By</label>
+                        <input type="text" id="inputName" class="form-control" value="{{ $offer->employee->full_name }}" readonly>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputName">RM Region</label>
                         <input type="text" id="inputName" class="form-control" value="{{ $offer->region }}" readonly>
                       </div>
                       <div class="form-group col-md-6">

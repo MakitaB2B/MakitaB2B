@@ -478,6 +478,7 @@ class PromotionController extends Controller
         $model_offer_qty_array=array_combine($model_qty, $model_offer_qty);
         $model_qty_array=array_combine($model_qty, $qty);
         $region=explode("-",$request->rm_region) ?? $request->rm_region;
+      
         $order_id = $this->transactionService->order_id();
         
         $qtytomultiply = array_map(function($key) use ($model_offer_qty_array, $model_qty_array) {
@@ -489,7 +490,7 @@ class PromotionController extends Controller
           $qtytomultiply = array_filter($qtytomultiply);
           $qtytomultiply = array_unique($qtytomultiply);
           $qtytomultiply = implode(" ",   $qtytomultiply);
-
+          
         $promodata = $this->promotionService->getPromoDeatils($promocode);
         $producttype=$request->product_type;
 
@@ -498,7 +499,7 @@ class PromotionController extends Controller
         });
         $offer = array_unique($offer);
         $offer_type=implode(" ",  $offer);
-       
+        
         $combinedata = [];
 
         foreach ( $model as $key => $m) {
@@ -513,19 +514,19 @@ class PromotionController extends Controller
 
         $filteredbyoffer= $this->filter_data_by_offer_type($offer_type, $combinedata);
         $filteredbyoffer = array_values( $filteredbyoffer);
-
+      
         if($offer_type=="Buy One Of The Product" && count($filteredbyoffer) != 1 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0){
           return 'You can only buy one of the product or product should be multiple of offer quantity';
         }else if($offer_type=="Combo Offer" && count($filteredbyoffer) > 1 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0){
           return 'Combo Offer should have atleast 2 products  or product should be multiple of offer quantity';
         }
-         
+      
         try {
               $mapped = $promodata->map(function($value) use ($region,$offer_type,$combinedata, $qtytomultiply,$rm_name,$dealer_code,$order_id,$filteredbyoffer) {
 
-                  // $singlemodel = $this->filter_data_by_model($combinedata, $value->model_no);
-                 
-                  $userInputQty =  $value->qty * $qtytomultiply;
+                  $singlemodel = $this->filter_data_by_model($combinedata, $value->model_no);
+                  $userInputQty = $singlemodel[0]["offer_qty"] * $qtytomultiply;
+                
                   if(($offer_type== "Buy One Of The Product" && $filteredbyoffer[0]["model_no"]==$value->model_no ||$value->product_type=="FOC") || $offer_type== "Combo Offer") {
                     if ( $value->stock < $userInputQty) {
                       throw new \Exception('Stock not available for model: ' . $value->model_no);
@@ -576,6 +577,7 @@ class PromotionController extends Controller
                 return $e->getMessage();
           }
 
+            dd($mapped);
           $this->transactionService->createOrUpdateTransac($mapped);
           
           return redirect('admin/promotions/promotion-transaction');
@@ -676,17 +678,17 @@ class PromotionController extends Controller
         return $filtereddata;
       }
 
-      // public function filter_data_by_model($data,$model){
+      public function filter_data_by_model($data,$model){
 
-      //   $filtereddata = array_reduce($data, function ($carry, $item) use($model) {
-      //     if ($item['model_no']==$model) {
-      //         $carry[] = $item;
-      //     }
-      //     return $carry;
-      //     }, []);
+        $filtereddata = array_reduce($data, function ($carry, $item) use($model) {
+          if ($item['model_no']==$model) {
+              $carry[] = $item;
+          }
+          return $carry;
+          }, []);
       
-      //   return $filtereddata;
-      // }
+        return $filtereddata;
+      }
 
       public function textFormatModelQty($buyItems,$freeItems){
 
