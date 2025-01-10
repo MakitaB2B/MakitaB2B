@@ -21,7 +21,8 @@
         <style>
         .power-bi-div iframe 
         {
-            height: 1000px;
+            /* height: 1000px; */
+            height: 800px;
             width: 100%;
         }
         </style>
@@ -224,7 +225,8 @@
                 {{-- <iframe title="ghfhg" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=97a9b768-8a53-4583-b3fb-927a51dde861&autoAuth=true&ctid=8715ac1b-06d2-4be8-b329-9677c562cce2" frameborder="0" allowFullScreen="true"></iframe> --}}
 
                 <div class="power-bi-div">
-                <iframe title="powebi_dashboard_23-24" width="" height="" src="https://app.powerbi.com/reportEmbed?reportId=8abfc810-3a40-4793-87a1-b56d5c9f302d&autoAuth=true&ctid=8715ac1b-06d2-4be8-b329-9677c562cce2" frameborder="0" allowFullScreen="true"></iframe>
+                {{-- <iframe title="powebi_dashboard_23-24" width="" height="" src="https://app.powerbi.com/reportEmbed?reportId=8abfc810-3a40-4793-87a1-b56d5c9f302d&autoAuth=true&ctid=8715ac1b-06d2-4be8-b329-9677c562cce2" frameborder="0" allowFullScreen="true"></iframe> --}}
+                <iframe title="Makita Sales Dashboard" width="" height="" src="https://app.powerbi.com/reportEmbed?reportId=293a8fa1-4387-4ad7-b993-bfb76815f17f&autoAuth=true&ctid=8715ac1b-06d2-4be8-b329-9677c562cce2" frameborder="0" allowFullScreen="true"></iframe>
                 </div>
                                 <!-- /.card-body -->
                 <div class="row">
