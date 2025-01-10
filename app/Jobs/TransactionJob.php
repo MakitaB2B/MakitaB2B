@@ -52,10 +52,7 @@ class TransactionJob implements ShouldQueue
                 $ccEmail[$key] = $value; // Keep the already existing associative pair
             }
         }
-        
-     
         $bccEmails = $this->details['bcc'];
-      
         $email->addTos($toEmails);
         $email->addCcs($ccEmail);
         $email->addBccs($bccEmails);

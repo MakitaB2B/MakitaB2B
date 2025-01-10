@@ -620,9 +620,9 @@ class PromotionController extends Controller
       $rm_name=$this->employeeService->getOfficialMailByName($transaction[0]['rm_name']);
       $createdby=$this->employeeService->findEmployeeEmailByEmpNo( $transaction[0]['ordered_by']);
       $promo_transaction_cc_emails = PROMO_TRANSACTION_CC_EMAILS;
-      $additionalEmails = array_filter([$sales_mail, $rm_name, $createdby]);  // array_push($promo_transaction_cc_emails,$sales_mail, $rm_name, $createdby);
-      $promo_transaction_cc_emails = array_unique(array_merge($promo_transaction_cc_emails, $additionalEmails));
-     
+      $additionalEmails = array_filter([$sales_mail, $rm_name, $createdby]);
+      $promo_transaction_cc_emails = array_merge(array_keys($promo_transaction_cc_emails), $additionalEmails);
+      $promo_transaction_cc_emails = array_unique($promo_transaction_cc_emails);
       $details['cc'] = $promo_transaction_cc_emails;  
       try {
         $transactionjob = TransactionJob::dispatch($details);
