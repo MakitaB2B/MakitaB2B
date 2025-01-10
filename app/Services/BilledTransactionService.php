@@ -14,7 +14,7 @@ class BilledTransactionService{
 
     public function getBilledTransactions(){
 
-        return BilledTransaction::orderBy('created_at')->paginate(20,['Invoice','Name','Invoice Date','order_id','promo_code','Order','Item','Description','Qty Invoiced','Price','created_at','updated_at']);  //,'commercial_status',
+        return BilledTransaction::orderBy('create_date','desc')->paginate(20,['Invoice','Name','Invoice Date','order_id','promo_code','Order','Item','Description','Qty Invoiced','Price','create_date','updated_at']);  //,'commercial_status',
    
     }
 

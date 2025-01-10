@@ -157,8 +157,7 @@ class TransactionService{
     }
 
     public function UpdateTransaction($orderid,$status,$emp_no){
-
-        Transaction::where('order_id',$orderid)->update(['status'=> $status,'modified_by'=>$emp_no]);
+        $transaction=Transaction::where('order_id',$orderid)->update(['status'=> $status,'modified_by'=>$emp_no]);
         return Transaction::where('order_id',$orderid) ->groupBy('order_id', 'status')->get(['order_id', 'status']);
        
     }

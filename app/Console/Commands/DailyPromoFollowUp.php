@@ -252,7 +252,6 @@ class DailyPromoFollowUp extends Command
             //     Mail::to($email)->send(new PromoTransactionFollowUpMail($transactionGroup));
             // }
 
-// dd($transactions);
             foreach ($transactions as $rm_name => $transactionGroup) {
                 $email = $employeeEmails[$rm_name]; 
               

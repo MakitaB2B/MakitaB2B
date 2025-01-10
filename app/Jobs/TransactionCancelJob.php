@@ -52,9 +52,6 @@ class TransactionCancelJob implements ShouldQueue
         $email->addTos($toEmails);
         $email->addCcs($ccEmail);
         $email->addBccs($bccEmails);
-
-       
-
         // $email->setReplyTo(PROMO_TRANSACTION_FROM_EMAILS, "");
       
         // $email->setFrom(PROMO_TRANSACTION_FROM_EMAILS, "Makita ERP");
@@ -168,12 +165,15 @@ class TransactionCancelJob implements ShouldQueue
                                             <td style='padding: 10px; border: 1px solid #dddddd;'>{$offer['order_qty']}</td>
                                         </tr>";
                                 }
-                                if ($this->details['focproduct']->isNotEmpty()) {
-                                $emailContent .= <<<HTML
-                                                        </tbody>
-                                                    </table>
-                                                </div>
 
+                                $emailContent .= <<<HTML
+                                </tbody>
+                            </table>
+                        </div>
+                        HTML;
+                                if ($this->details['focproduct']->isNotEmpty()) {
+
+                                    $emailContent .= <<<HTML
                                                 <!-- FOC Products Table -->
                                                 <h2 style="color: #008290; font-size: 20px; margin: 30px 0 15px; font-family: Arial, sans-serif;">FOC Product(s)</h2>
                                                 <div style="overflow-x: auto;">
@@ -208,6 +208,8 @@ class TransactionCancelJob implements ShouldQueue
                                 </table>
                                 </div>";}
                                 $emailContent .= <<<HTML
+                                         </td>
+                                         </tr>
                                 <!-- <tr>
                                 <td style="padding: 10px; padding-bottom: 40px;">
                                     <table role="presentation" style="width: 100%; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
@@ -231,12 +233,12 @@ class TransactionCancelJob implements ShouldQueue
 
                                 <!-- Footer -->
                                
-                                <!-- <tr>
+                                <tr>
                                 <td style="padding: 20px; background-color: #008290; color: #ffffff; text-align: center;">
                                     <p style="margin: 0 0 10px;">Contact us for more information</p>
                                     <p style="margin: 0;">&copy;2025 Makita India. All rights reserved.</p>
                                 </td>
-                                </tr> -->
+                                </tr>
                                 </table>
                                 </body>
                                 </html>

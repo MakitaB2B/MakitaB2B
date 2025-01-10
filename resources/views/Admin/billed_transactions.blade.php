@@ -93,8 +93,9 @@
                                             <th>Description</th> 
                                             <th>Qty Invoiced</th> 
                                             <th>Price</th> 
-                                            <th>Created At</th>
-                                            <th>Updated At</th>
+                                            <th>Create Date</th> 
+                                            {{-- <th>Created At</th>
+                                            <th>Updated At</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
@@ -110,8 +111,9 @@
                                                 <td>{{ $data->Description }}</td>
                                                 <td>{{ ($data->{"Qty Invoiced"}) }}</td>
                                                 <td>{{ $data->Price }}</td>
-                                                <td>{{ $data->created_at }}</td>
-                                                <td>{{ $data->updated_at }}</td>
+                                                <td>{{ $data->create_date}}</td>
+                                                {{-- <td>{{ $data->created_at }}</td>
+                                                <td>{{ $data->updated_at }}</td> --}}
                                             </tr>
                                     @endforeach 
                                     </tbody>

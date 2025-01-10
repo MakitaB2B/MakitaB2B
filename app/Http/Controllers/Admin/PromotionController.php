@@ -333,12 +333,13 @@ class PromotionController extends Controller
         $promo_code = $request->input('promo_code');
         $cancelled_date = date('Y-m-d H:i:s');
         $statusarray = explode('-', $status);
+        $result = $this->transactionService->UpdateTransaction($statusarray[0],$statusarray[1], $emp_no);
         if($statusarray[1]=='cancel'){
           $addcount = $this->dealerService->addcounts($dealer_code, $emp_no);
           $this->dealerCancelledService->Create($dealer_code, $promo_code,$cancelled_date);
           $this->transactionCancelMail($statusarray[0]);
         }
-        $result = $this->transactionService->UpdateTransaction($statusarray[0],$statusarray[1], $emp_no);
+
         return response()->json(['data' => $result]);
     }
     public function transactionCreation(){
@@ -649,10 +650,9 @@ class PromotionController extends Controller
         $sales_mail=$this->transactionEmailService->getEmailId($transaction[0]['sales_slug']);
         $rm_name=$this->employeeService->getOfficialMailByName($transaction[0]['rm_name']);
         $promo_transaction_cc_emails = PROMO_TRANSACTION_CC_EMAILS;
-        array_push($promo_transaction_cc_emails,$sales_mail, $rm_name);
+        // array_push($promo_transaction_cc_emails,$sales_mail, $rm_name);
         $details['cc'] = $promo_transaction_cc_emails;
         $details['canceledby']=$this->employeeService->findEmployeeByEmpNo( $transaction[0]['modified_by']);
-
       
         try {
           $transactioncanceljob = TransactionCancelJob::dispatch($details);

@@ -41,6 +41,8 @@ class PromoTransactionFollowUpJob implements ShouldQueue
 
         $email->setFrom(MakitaSendGridFrom, "Makita ERP");
         $details=$this->details;
+
+        $date = date('d-m-Y');
  
         $emailContent = <<<HTML
         <!DOCTYPE html>
@@ -64,33 +66,13 @@ class PromoTransactionFollowUpJob implements ShouldQueue
                 <tr>
                     <td style="padding: 20px 20px;">
                         <!-- Title -->
-                        <h1 style="color: #008290; font-size: 24px; margin: 0 0 20px; text-align: center; font-family: Arial, sans-serif;">Promo Transaction Follow Up</h1>
-        
-                        <!-- Environment Notice -->
-                    </td>
-                </tr>
-            </table>
-        </body>
-        </html>
-        HTML;
-        if (!app()->environment('production')) {
-            $emailContent .= <<<HTML
-                        <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
-                            <tr>
-                                <td style="background-color: #f5f5f5; padding: 15px; text-align: center;">
-                                    <p style="margin: 0; color: #ff0000; font-weight: bold;">Note - This is a test mail</p>
-                                </td>
-                            </tr>
-                        </table>
-        HTML;
-        }
+                        <h1 style="color: #008290; font-size: 24px; margin: 0 0 20px; text-align: center; font-family: Arial, sans-serif;">Promo Transaction Follow Up</h1>  
 
-        $emailContent .= <<<HTML
                         <!-- Follow Up Details -->
                         <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 30px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                             <tr>
                                 <td style="background-color: #f5f5f5; padding: 20px;">
-                                    <p style="margin: 0 0 15px; color: #333333; line-height: 1.6;">List of Dealers to be followed up for today - {$details[0]['rm_name']}</p>
+                                    <p style="margin: 0 0 15px; color: #333333; line-height: 1.6;">List of Dealers to be followed up for today - {$date}</p>
                                     <p style="margin: 0; color: #008290; font-weight: bold;">RM Name - {$details[0]['rm_name']}</p>
                                 </td>
                             </tr>
@@ -177,7 +159,6 @@ class PromoTransactionFollowUpJob implements ShouldQueue
             </html>
             HTML;
 
-        
         $email->addContent("text/html", $emailContent);
         $apiKey = MakitaERPApiKey; // env('MakitaERPApiKey');
         $sendgrid = new \SendGrid($apiKey);
