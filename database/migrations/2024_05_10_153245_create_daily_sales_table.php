@@ -44,6 +44,10 @@ return new class extends Migration
                 $table->string('sales_person_name',30)->nullable()->after('sales_person');
             }
 
+            if (!Schema::hasColumn('daily_sales', 'sub_category')) {
+                $table->string('sub_category',30)->nullable()->after('category');
+            }
+
         });
     }
 

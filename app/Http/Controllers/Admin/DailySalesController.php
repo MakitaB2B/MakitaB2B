@@ -72,10 +72,8 @@ class DailySalesController extends Controller
     public function uploadDailySalesReport() {
         if(request()->has('dailysalesreport')){
             $data=array_map('str_getcsv', file(request()->dailysalesreport));
-        
             $header=$data[0];
             $header = array_map('strtolower', $header);
-           
             $header = array_map(function($value) {
                 $value = preg_replace('/^\x{FEFF}/u', '', $value);
                 $value = preg_replace('/[^\w\s]/u', '', $value);  //preg_replace('/[^\w\s.-]/u', '', $value);
@@ -117,7 +115,6 @@ class DailySalesController extends Controller
                 $stockData=array_combine($headerValues,$value);
                 unset($stockData["sl_no"]);
                 DailySales::create($stockData);
-
             }
             return redirect('admin/daily-sales');
         }else{

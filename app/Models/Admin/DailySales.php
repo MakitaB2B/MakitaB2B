@@ -67,7 +67,8 @@ class DailySales extends Model
 
     public function setDateAttribute($value)
     {
-        $this->attributes['date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
+        $this->attributes['date'] = \Carbon\Carbon::parse($value)->format('Y-m-d');
+        // $this->attributes['date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
     }
 
     public function getDateAttribute($value)
@@ -99,6 +100,60 @@ class DailySales extends Model
     {
         return $value ? strtoupper($value) : null; // Convert to uppercase if not null
     }
-    
-   
+
+    public function setSubCategoryAttribute($value)
+    {
+        $this->attributes['sub_category'] = ($value === '0' || $value === ' ') ? null : $value;
+    }
+
+    public function getSubCategoryAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setCategoryAttribute($value)
+    {
+        $this->attributes['category'] = match (strtolower(trim($value))) {
+            'a', '' => null, 
+            'acc','accessories' => 'acc', 
+            'tool','tools' => 'tool',           
+            'spares','spare' => 'spare',        
+            default => $value,   
+        };
+    }
+
+    public function getCategoryAttribute($value)
+    {
+        return strtoupper($value);  
+    }
+
+    public function setCustomerNameAttribute($value)
+    { 
+        $this->attributes['customer_name'] = ($value === 'N/A' || '0' || ' ') ? null : $value; 
+    }
+
+    public function getCustomerNameAttribute($value)
+    {
+        return $value;  
+    }
+
+    public function setRegionAttribute($value)
+    { 
+        $this->attributes['region'] = ($value === 'N/A' || '0' || ' ') ? null : $value; 
+    }
+
+    public function getRegionAttribute($value)
+    {
+        return $value;  
+    }
+
+    public function setStateAttribute($value)
+    { 
+        $this->attributes['customer_name'] = ($value === 'N/A' || '0' || ' ') ? null : $value; 
+    }
+
+    public function getStateAttribute($value)
+    {
+        return $value;  
+    }
 }
