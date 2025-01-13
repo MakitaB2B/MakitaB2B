@@ -278,6 +278,12 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     ->name('travelmanagement.ltc-dashboard');
     Route::view('/travelmanagement/ltc-details', 'Admin.travel-management.ltc-portal.ltc-details')
     ->name('travelmanagement.ltc-details');
+    Route::view('/travelmanagement/btc-application-form', 'Admin.travel-management.btc-portal.btc_application')
+    ->name('travelmanagement.btc-application-form');
+    Route::view('/travelmanagement/btc-listing', 'Admin.travel-management.btc-portal.btc_listing')
+    ->name('travelmanagement.btc-listing');
+    Route::view('/travelmanagement/btc-details', 'Admin.travel-management.btc-portal.btc_details')
+    ->name('travelmanagement.btc-details');
     
 
 

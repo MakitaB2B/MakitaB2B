@@ -61,6 +61,36 @@ a, a:hover{color: #008290;}
     grid-template-rows: auto auto;
     gap: 10px;
 }
+.btc-table .exp-card-wrapper{
+    grid-template-columns:1fr;
+}
+.exp-data-wrapper.main-wrap > .exp-card-title {
+    font-size: 14px;
+    top: -15px;
+    background: #ff0018;
+    border: 1px solid #ff0018;
+    padding: 4px 16px;
+}
+
+.exp-data-wrapper.main-wrap {
+    display: grid;
+    gap: 20px;
+    background: #fff;
+    border: 0;
+    padding: 58px 20px 20px 20px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.exp-data-wrapper.dd-data {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    gap: 20px;
+    width: 69%;
+    padding: 20px 40px 20px 20px;
+    margin-bottom: 20px;
+}
+.dd-data .exp-data{
+    grid-template-columns:60% 30%;
+}
 .travel-exp-data{
     margin-top: 10px;
     grid-column: 1/4;
@@ -82,7 +112,7 @@ a, a:hover{color: #008290;}
 .travel-exp-data .exp-row .exp-value:first-child, .travel-exp-data .exp-title:first-child {text-align: left;}
 .exp-data + .exp-data {border-top: 1px solid #008290;}
 .exp-bill-copy{text-align: right;}
-.exp-value, .exp-bill-copy a{font-size: 13px; line-height: 1;}
+.exp-value, .exp-bill-copy a, .exp-card-btns a{font-size: 13px; line-height: 1;}
 .exp-bill-copy {line-height: 0;}
 .exp-title {
     font-size: 14px;
@@ -720,6 +750,624 @@ span.d-stat {
 }
 .exp-row .exp-value .exp-title {display: none;}
 
+.day-details {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 0 0 5px 5px;
+}
+.expense-details-g {
+    display: flex;
+    gap: 20px;
+}
+.top-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.exp-data-wrapper.main-wrap.common-details{
+    padding: 20px 6%;
+    padding-top: 66px;
+}
+.trip-info-title a{
+    color: #008290;
+    background: #fff;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-weight: 700;
+    font-size: 22px;
+    border-radius: 8px;
+    text-decoration: none;
+}
+.top-card-title .text-primary {
+    margin: 0;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.day-no {
+    display: grid;
+    height: 60px;
+    justify-content: center;
+    align-items: center;
+    background: antiquewhite;
+    border: 1px solid;
+    border-radius: 5px;
+    text-decoration: none;
+    width: 100%;
+    cursor: pointer ;
+}
+#expenseModal .food-expense-wrapper{
+    grid-template-columns:1fr;
+}
+.exp-details-box, .exp-data-wrapper.main-wrap.exp-wrapper,.food-exp-data, .misc-exp-data, .travel-exp-data{
+    display: none;
+}
+
+.exp-wrapper .exp-bill-copy a + a{
+    margin-left: 10px;
+}
+.exp-wrapper .food-exp-data .exp-data, .exp-wrapper .misc-exp-data .exp-data {
+    grid-template-columns: 50% calc(50% - 140px) 80px 60px;
+}
+.err-common {
+    background: #ff0018;
+}
+.display-block{
+    display: block;
+}
+
+.btc-application .datepicker{
+    width: 350px;
+    height: 100% !important;
+}
+.btc-application .datepicker .table tr th{
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+.btc-application li.collapse.show {
+    width: 350px;
+}
+.btc-application .datepicker tr:first-child th {
+    padding: 13px;
+    background: #fff;
+    color: #008290;
+}
+.btc-application .datepicker table.table.table-sm, .btc-application .bootstrap-datetimepicker-widget.dropdown-menu.bottom  {
+    padding: 0;
+    margin: 0;
+}
+.btc-application .datepicker .table tr td {
+    padding: 12px 15px;
+    text-align: center;
+    border: 1px solid #eee;
+    font-size: 16px;
+}
+.btc-application .datepicker td.day.disabled {
+    color: #bbb;
+    background: #f5f5f5;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+}
+.btc-application .timepicker {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+.btc-application .timepicker tr td{
+    text-align: center;
+    padding: 0 14px;
+}
+.btc-application .datepicker .table tr td:not(.disabled):hover{
+    background: #f0f7f7;
+    color: #008290
+}
+.btc-application .datepicker .table tr td.today {
+    background: #e6f3f3;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+.btc-application .table tr td.active {
+    background:#008290;
+    color: white;
+}
+li.picker-switch.accordion-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 42px;
+}
+
+.day-button {
+    min-width: 160px;
+    padding: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background-color: #FFF7ED;
+    color: #008290;
+    transition: all 0.2s;
+    border:1px solid #008290;
+}
+
+.day-button:hover {
+    background-color: #E6F7F5;
+}
+
+.day-button.selected, .day-button.is-selected {
+    background-color: #008290;
+    color: white;
+}
+
+.day-number {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.day-date {
+    font-size: 14px;
+}
+.btc-application .exp-wrapper {
+    min-width: 150px;
+    min-height: 100px;
+    margin-top: 20px;
+}
+.btc-application .food-exp-data,  .btc-application .misc-exp-data{
+    width: fit-content;
+    min-width: 350px;
+}
+.btc-application .action-btns {
+    text-align: center;
+    margin-bottom: 8px;
+}
+.btc-application .action-btns .btn{
+    border-radius: 8px;
+    min-width: 100px;
+    padding: 8px 24px;
+}
+.btc-application .action-btns .btn + .btn{
+    margin-left: 8px;
+}
+.btc-application .exp-data.add-data-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+a.add-more-btn {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 40px;
+    justify-content: center;
+    align-items: flex-start;
+    background: #008290;
+    color: #fff;
+    border-radius: 10px;
+    position: relative;
+    max-width: 242px;
+    text-align: left;
+    padding-left: 35px;
+    white-space: nowrap;
+    padding-right: 16px;
+}
+.common-details .exp-data + .exp-data, .common-details .trip-info-box .exp-data-wrapper {
+    border: 0;
+}
+/* .common-details .exp-details-box  .exp-data {
+    grid-template-columns: 160px calc(100% - 160px);
+} */
+.common-details .trip-info-box .exp-data .exp-value{
+    text-align: left;
+}
+.exp-details-box {
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 5px;
+}
+
+.add-more-btn .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 52px;
+    border-radius: 50%;
+    border: 4px solid #f5f5f5;
+    font-weight: 700;
+    font-size: 21px;
+    margin-bottom: 4px;
+    position: absolute;
+    left: -6px;
+    top: -7px;
+}
+.add-more-btn .btn-txt{
+    text-transform: uppercase;
+    font-size: 12px;
+    padding-left: 7px;
+}
+
+span.exp-card-btns span{
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+}
+
+span.exp-card-btns a .fa-pencil{
+    color: #404042;
+}
+span.exp-card-btns a .fa-trash{
+    color: #ff0018;
+}
+span.exp-card-btns a .fa-close{
+    color: #ff0018;
+    display: none;
+}
+span.exp-card-btns a .fa-check-double{
+    color: #009688;
+    display: none;  
+}
+
+span.exp-card-btns a + a{
+    margin-left: 4px;
+}
+.exp-data-wrapper.main-wrap.exp-wrapper {
+    flex-direction: column;
+    margin-top: 40px;
+}
+.f-m-details {
+    display: flex;
+    gap: 20px;
+}
+
+/* .trip-infographic {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 5%;
+}
+.starting-point, .ending-point {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.starting-point .icon, .ending-point .icon {
+    width: 132px;
+    height: 69px;
+    background: #008290;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 24px;
+}
+.mid-point {
+    font-size: 32px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:#fff;
+}
+.mid-point span{
+    height: 60px;
+    width: 60px;
+    background: #008290;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+.flight-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-family: Arial, sans-serif;
+    gap: 20px;
+    position: relative;
+    width: 82%;
+}
+.trip-info-title{
+    color: #ffff;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 18px;
+    padding-left: 20px;
+    position: absolute;
+    background: #008290;
+    width: 100%;
+    padding: 8px 20px;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 5px 5px 0 0;
+}
+.common-details, .day-details-box {
+    position: relative;
+}
+.toggle-box{
+    padding-top: 64px;
+}
+.trip-info-title.type-2 {
+    position: relative;
+    padding: 20px;
+    background: #f5f5f5;
+    color: #008290;
+    padding-bottom: 0;
+    border-radius: 5px 5px 0 0;
+}
+.toggle-container + .toggle-container {
+    margin-top: 46px;
+}
+
+.flight-segment {
+    background-color: #008290;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+}
+
+.flight-icon {
+    background-color: #008290;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    color: #fff;
+}
+
+.time {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.date {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+.terminal-icon {
+    width: 24px;
+    height: 24px;
+    fill: white;
+    margin-bottom: 10px;
+}
+
+.connecting-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 150px);
+    height: 2px;
+    background: linear-gradient(to right, #008290 50%, transparent 50%);
+    background-size: 20px 1px;
+    background-repeat: repeat-x;
+    z-index: 1;
+}
+
+.flight-container.vertical {
+    flex-direction: column;
+    gap:36px;
+    width: 100px;
+    padding: 0 20px;
+}
+
+.flight-container.vertical .connecting-line{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: calc(100% - 150px);
+    width: 2px;
+    background: linear-gradient(to bottom, #008B8B 50%, transparent 50%);
+    background-size: 1px 20px;
+    background-repeat: repeat-y;
+    z-index: 1;
+}
+.common-details.type-2{
+    padding-bottom: 20px;
+}
+.common-details.type-2 .tavel-info-details {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+}
+.common-details.type-2 .exp-data-wrapper.trip-info {
+    padding: 20px;
+    background: #f5f5f5;
+    margin-bottom: 16px;
+}
+.common-details.type-2 .exp-data-wrapper.trip-info .exp-data {
+    justify-content: flex-start;
+    padding: 0;
+    margin: 0;
+}
+.segment-label {
+    font-size: 0.8em;
+    margin-top: 5px;
+    opacity: 0.9;
+}
+.exp-data-wrapper.trip-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding-bottom: 0;
+    gap: 20px;
+}
+/* .common-details.type-2 .exp-data-wrapper.trip-info {
+    gap: 144px;
+} */
+.exp-data-wrapper.trip-info .exp-data {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+.exp-data-wrapper.trip-info .exp-data .exp-title {
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+.exp-data-wrapper.trip-info .exp-data .exp-value {
+    margin-bottom: 4px;
+    font-size: 16px;
+    color: #444;
+}
+
+
+
+
+#daysContainer .date-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    max-width: 1200px;
+}
+
+#daysContainer .date-card {
+    background: white;
+    border-radius: 5px;
+    padding: 20px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    border: 2px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#daysContainer .date-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 0;
+    background: #008290;
+    transition: height 0.3s ease;
+    border-radius: 4px;
+}
+
+#daysContainer .date-card:hover {
+    border-color: #008290;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 130, 144, 0.15);
+    transform: translateY(-1px);
+}
+
+#daysContainer .date-card:hover::before,
+#daysContainer .date-card.selected::before {
+    height: 100%;
+}
+
+#daysContainer .date-card.selected {
+    background: #f0fbfc;
+    border-color: #008290;
+    box-shadow: 0 4px 12px rgba(0, 130, 144, 0.2);
+}
+
+#daysContainer .icon-wrapper {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(0, 130, 144, 0.12);
+    color: #008290;
+    transition: all 0.2s ease;
+}
+
+/* #daysContainer .date-card:hover .icon-wrapper,
+#daysContainer .date-card.selected .icon-wrapper {
+    background: rgba(0, 130, 144, 0.18);
+    transform: scale(1.05);
+} */
+#daysContainer  .date-card:hover .icon-wrapper {
+    background: rgba(0, 130, 144, 0.18);
+    transform: scale(1.05);
+}
+#daysContainer  .date-card.selected .icon-wrapper {
+    background: #008290;
+    color: white;
+}
+
+#daysContainer .content {
+    flex: 1;
+    padding-top: 2px;
+}
+
+#daysContainer .day {
+    color: #006d78;
+    font-size: 17px;
+    font-weight: 600;
+    text-align: left;
+}
+
+#daysContainer .date {
+    color: #444;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    opacity: 1;
+}
+
+#daysContainer .status-icon {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: all 0.2s ease;
+    background: #008290;
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#daysContainer .date-card.selected .status-icon {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
+
+#daysContainer .date-card.selected .date {
+    color: #333;
+}
+.main-submit-btn {
+    text-align: right;
+    margin-top: 20px;
+}
+.main-submit-btn .btn{
+    white-space: nowrap;
+}
+@media (max-width: 768px) {
+    #daysContainer .date-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+    }
+}
+
+
 @media (max-width: 768px) {
     .mobile-accordion .accordion-header{
         display: block;
@@ -760,10 +1408,11 @@ span.d-stat {
         border-top: 0;
         padding: 15px;
         margin-bottom: 15px;
+        position: relative;
     }
 
     .step-container.active {
-        display: block;
+        display: block;       
     }
 
     .custom-container{padding: 8px;}
@@ -814,6 +1463,7 @@ span.d-stat {
     .exp-data-wrapper {
         width: 100%;
         margin: 8px 0;
+        position: relative;
     }
     .custom-table .accordion-body {
         padding: 1rem;
@@ -854,4 +1504,5 @@ span.d-stat {
     .action-grp .btn-grp a.btn{width: calc(100% / 2 - 8px);}
     .action-grp .btn-grp a.btn + a.btn{margin-left: 10px;}
 }
+
 

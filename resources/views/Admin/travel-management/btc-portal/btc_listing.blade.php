@@ -1,5 +1,5 @@
 @extends('Admin/layout')
-@section('page_title', 'LTC DASHBOARD | MAKITA')
+@section('page_title', 'BTC DETAILS | MAKITA')
 @section('travelmanagement-expandable', 'menu-open')
 @section('travelmanagement-expandable', 'active')
 @section('business-trips-select', 'active')
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('admin_assets/css/custom-styles.css') }}">
 @endpush
-<div class="content-wrapper"> 
+<div class="content-wrapper rescss"> 
     <div class="custom-container">
         <div class="action-grp">
             <div class="info-group color-info-box">
@@ -29,7 +29,7 @@
             </div>   
                
         </div>
-        <table class="table table-bordered custom-table ltc-table">
+        <table class="table table-bordered custom-table btc-table">
             <thead>
                 <tr>
                     <th width="30">
@@ -37,13 +37,10 @@
                             <input type="checkbox" class="form-check-input" id="selectAll">
                         </div>
                     </th>
-                    <th>Date</th>
-                    <th class="td-hide">In Time</th>
-                    <th class="td-hide">Out Time</th>
-                    <th class="td-hide">Travel Exp.(Total)</th>
-                    <th class="td-hide">Food Exp.(Total)</th>
-                    <th class="td-hide">Misc. Exp.(Total)</th>
-                    <th class="td-hide">Total</th>
+                    <th>Start Date & Time</th>
+                    <th>End Date & Time</th>
+                    <th>Visited Places</th>
+                    <th>No. of Days</th>
                     <th>Status</th>
                     <th width="30"></th>
                 </tr>
@@ -60,4 +57,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('admin_assets/js/custom-js/custom.js') }}"></script>
+
 @endpush

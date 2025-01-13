@@ -212,12 +212,12 @@ const ExpenseApp = {
 
         initializeFileUploaders: function() {
             // Initialize food expense uploaders
-            ['breakfast', 'lunch', 'dinner'].forEach(meal => {
+            ['breakfast', 'lunch', 'dinner','food'].forEach(meal => {
                 FileUploader.init({
                     container: `#${meal}-attachments`,
                     moduleId: 'food-expenses',
                     sectionId: meal,
-                    maxFiles: 1,
+                    maxFiles: meal=='food'?5:1,
                     buttonText: 'Add Receipt',
                     uploadIcon: 'bi-receipt',
                     onChange: () => {
@@ -260,6 +260,10 @@ const ExpenseApp = {
             return ['breakfast', 'lunch', 'dinner'].every(meal => 
                 this.validateMealExpense(meal)
             );
+        },
+        validateLTCExpenses: function(){
+            const $input = $(`#${meal}Claim`);
+            const value = $input.val();
         }
     },
 
