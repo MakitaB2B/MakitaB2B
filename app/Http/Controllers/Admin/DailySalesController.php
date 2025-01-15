@@ -82,16 +82,14 @@ class DailySalesController extends Controller
                 $value =str_replace(' ', '_', $value);
                 return $value;//str_replace(' ', '_', $value);
             }, $header);
-
             $headerValues=$header;
             
             $indexToRemove = array_search('sl_no', $header); // Find the index of 'sl_no'
             unset($header[$indexToRemove]); 
             $header = array_values($header);
-     
             $databaseName = env('DB_DATABASE');
             $tableName = "{$databaseName}.daily_sales";
-
+           
             $columns = DB::select("SHOW COLUMNS FROM $tableName");
 
             $columnNames = array_map(function($column) {
@@ -103,18 +101,17 @@ class DailySalesController extends Controller
              
             $header_diff = array_diff($header, $columnNames);
 
-          
             if(!empty($header_diff)){
                 $header_diff_text=implode(', ', $header_diff);
                 return 'These columns cannont be uploaded  - '.$header_diff_text;
             }
-        
             unset($data[0]);
             foreach ($data as $value) {
                 set_time_limit(0);
                 $stockData=array_combine($headerValues,$value);
                 unset($stockData["sl_no"]);
                 DailySales::create($stockData);
+                die();
             }
             return redirect('admin/daily-sales');
         }else{

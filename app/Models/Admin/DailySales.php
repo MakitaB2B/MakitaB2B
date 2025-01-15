@@ -34,6 +34,7 @@ class DailySales extends Model
 
     public function setSalesValueAttribute($value)
     {
+        dump($value);
         $cleanedValue = str_replace(',', '', $value);
         $this->attributes['sales_value'] = is_numeric($cleanedValue) ? $cleanedValue : 0;
     }
@@ -45,6 +46,7 @@ class DailySales extends Model
 
     public function setUnitCostAttribute($value)
     {
+        dump($value);
         $cleanedValue = str_replace(',', '', $value);
         $this->attributes['unit_cost'] = is_numeric($cleanedValue) ? $cleanedValue : 0;
     }
@@ -56,6 +58,7 @@ class DailySales extends Model
 
     public function setSalesQtyAttribute($value)
     {
+        dump($value);
         $cleanedValue = str_replace(',', '', $value);
         $this->attributes['sales_qty'] = is_numeric($cleanedValue) ? $cleanedValue : 0;
     }
@@ -67,6 +70,7 @@ class DailySales extends Model
 
     public function setDateAttribute($value)
     {
+        dump($value);
         $this->attributes['date'] = \Carbon\Carbon::parse($value)->format('Y-m-d');
         // $this->attributes['date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
     }
@@ -78,6 +82,7 @@ class DailySales extends Model
 
     public function setSalesPersonAttribute($value)
     {   
+        dump($value);
         $this->attributes['sales_person'] = ($value === '0') ? null : $value;
     }
 
@@ -86,8 +91,20 @@ class DailySales extends Model
         return $value ?: null; 
     }
 
+    public function setQAttribute($value)
+    {   
+        dump($value);
+        $this->attributes['sales_person'] = ($value === '0') ? null : strtolower($value);
+    }
+
+    public function getQAttribute($value)
+    {
+        return strtoupper($value) ?: null; 
+    }
+
     public function setSalesPersonNameAttribute($value)
     {
+        dump($value);
         
         if (preg_match('/^[a-zA-Z\s]+$/', $value)) {
             $this->attributes['sales_person_name'] = strtolower($value);
@@ -103,16 +120,17 @@ class DailySales extends Model
 
     public function setSubCategoryAttribute($value)
     {
-        $this->attributes['sub_category'] = ($value === '0' || $value === ' ') ? null : $value;
+        $this->attributes['sub_category'] = ($value === '0' || $value === ' ') ? null : strtolower($value);
     }
 
     public function getSubCategoryAttribute($value)
     {
-        return $value;
+        return $value ? strtoupper($value) : null;
     }
 
     public function setCategoryAttribute($value)
     {
+        dump($value);
         $this->attributes['category'] = match (strtolower(trim($value))) {
             'a', '' => null, 
             'acc','accessories' => 'acc', 
@@ -129,7 +147,8 @@ class DailySales extends Model
 
     public function setCustomerNameAttribute($value)
     { 
-        $this->attributes['customer_name'] = ($value === 'N/A' || '0' || ' ') ? null : $value; 
+        dump($value);
+        $this->attributes['customer_name'] = ($value === 'N/A' || $value ==='0' || $value ===' ') ? null : $value; 
     }
 
     public function getCustomerNameAttribute($value)
@@ -139,7 +158,8 @@ class DailySales extends Model
 
     public function setRegionAttribute($value)
     { 
-        $this->attributes['region'] = ($value === 'N/A' || '0' || ' ') ? null : $value; 
+        dump($value);
+        $this->attributes['region'] = ($value === 'N/A' || $value ==='0' || $value ===' ') ? null : strtolower($value); 
     }
 
     public function getRegionAttribute($value)
@@ -149,11 +169,23 @@ class DailySales extends Model
 
     public function setStateAttribute($value)
     { 
-        $this->attributes['customer_name'] = ($value === 'N/A' || '0' || ' ') ? null : $value; 
+        dump($value);
+        $this->attributes['state'] = ($value === 'N/A' || $value ==='0' || $value ===' ') ? null : $value; 
     }
 
-    public function getStateAttribute($value)
+    public function getStateAttribute($value)  
     {
         return $value;  
+    }
+
+    public function setWhBranchAttribute($value)
+    { 
+        dump($value);
+        $this->attributes['wh_branch'] = ($value === 'N/A' || $value ==='0' || $value ===' ') ? null : strtolower($value); 
+    }
+
+    public function getWhBranchAttribute($value)
+    {
+        return strtoupper($value);   
     }
 }
