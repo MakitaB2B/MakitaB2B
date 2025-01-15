@@ -224,11 +224,11 @@ class PromotionService{
       //     return $item;
       // });
     //-----------worked on test server for many days only adding  cancelled order stock substract condition
-
-      return Promotion::with('reservedStock:id,item,reserved')
+  // DB::enableQueryLog();
+     return Promotion::with('reservedStock:id,item,reserved')
       ->join('item_prices', 'promotions.model_no', '=', 'item_prices.Item')
       ->join('branch_stocks', 'promotions.model_no', '=', 'branch_stocks.item')
-      ->leftJoin(DB::raw('(SELECT model_no, IFNULL(SUM(order_qty), 0) as total_order_qty FROM transactions WHERE status != "cancel" GROUP BY model_no) as t'), function ($join) {
+      ->leftJoin(DB::raw('(SELECT model_no, IFNULL(SUM(order_qty), 0) as total_order_qty FROM transactions WHERE status != "cancel"  AND DATE(order_date) = CURDATE() GROUP BY model_no) as t'), function ($join) {
           $join->on('promotions.model_no', '=', 't.model_no');
       })
       ->where('promotions.promo_code', $promocode)
@@ -251,6 +251,7 @@ class PromotionService{
           return $item;
       });
 
+    //  dd(DB::getQueryLog());
 
 
     }
