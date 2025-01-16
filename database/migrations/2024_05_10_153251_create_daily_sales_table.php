@@ -16,29 +16,27 @@ return new class extends Migration
             $table->id();
             $table->string('date',20)->index();
             $table->string('fy',15)->comment('Financial Year');
-            $table->string('year',10)->index();
+            $table->string('year',10)->index()->nullable()->after('fy');
             $table->string('month',10)->index();
             $table->string('q',10)->index()->comment('quarter');
-            $table->string('category',20)->index()->comment('Tools Category');
+            $table->string('category',20)->nullable()->index()->comment('Tools Category')->after('q');
             $table->string('model_no_part_no',50)->index();
             $table->string('description')->index();
             $table->string('customer_no',50)->index();
-            $table->string('customer_name')->index();
-            $table->string('wh_branch',50)->index();
+            $table->string('customer_name')->nullable()->index()->after('customer_no');
+            $table->string('wh_branch',50)->nullable()->index()->after('customer_name');
             $table->string('region',20)->nullable()->index()->after('wh_branch');
             $table->string('state',25)->nullable()->index()->after('region');
             $table->string('sales_qty',10);
             $table->string('unit_cost',10)->index();
             $table->string('sales_value',50)->index();
             $table->string('invoice_no',50)->index();
-            $table->string('category_type',15)->index();
+            $table->string('category_type',15)->nullable()->index()->after('invoice_no');
             $table->string('customer_order_number',25)->index();
             $table->timestamps();
             }
 
-            $table->string('customer_name')->nullable()->after('customer_no')->change();
-            $table->string('wh_branch',50)->nullable()->after('customer_name')->change();
-            $table->string('category_type',15)->nullable()->after('invoice_no')->change();
+            $table->string('month',10)->nullable()->after('year')->change();
            
             if (!Schema::hasColumn('daily_sales', 'sales_person')) {
                 $table->string('sales_person',10)->nullable()->after('customer_order_number');

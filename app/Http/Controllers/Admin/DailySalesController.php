@@ -98,7 +98,6 @@ class DailySalesController extends Controller
             }
             }, $columns);
             $columnNames = array_filter($columnNames);
-             
             $header_diff = array_diff($header, $columnNames);
 
             if(!empty($header_diff)){

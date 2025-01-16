@@ -159,7 +159,7 @@ class DailySales extends Model
 
     public function setSalesPersonNameAttribute($value)
     {
-        if (preg_match('/^[a-zA-Z\s]+$/', $value)) {
+        if (preg_match('/^[a-zA-Z.\s]+$/', $value)) {
             $this->attributes['sales_person_name'] = ucwords(strtolower($value));
         } else {
             $this->attributes['sales_person_name'] = null;
@@ -177,7 +177,7 @@ class DailySales extends Model
     $cleanedValue = strtolower(trim($value));
 
     $this->attributes['sub_category'] = match ($cleanedValue) {
-        'xgt', 'hwg', 'lxt' => $cleanedValue,
+        'xgt', 'hwg', 'lxt' => strtoupper($cleanedValue),
         '', '-', '0', 'n/a', '#n/a' => null,      
         default => throw new \InvalidArgumentException("Invalid sub-category. Allowed values are 'xgt', 'xwg', 'lxt'."),
     };
@@ -190,13 +190,12 @@ class DailySales extends Model
 
     public function setCategoryAttribute($value)
     {
-     $cleanedValue = strtolower(trim($value));
-
+     $cleanedValue = strtolower($value);
     $this->attributes['category'] = match ($cleanedValue) {
         '', '-', '0', 'n/a',' ' => null,              
-        'acc', 'accessories' => 'acc',         
-        'tool', 'tools' => 'tool',           
-        'spare', 'spares' => 'spare',          
+        'acc', 'accessories' => 'ACC',         
+        'tool', 'tools' => 'TOOL',           
+        'spare', 'spares' => 'SPARE',          
         default => throw new \InvalidArgumentException("Invalid category. Allowed values are 'acc', 'tool', 'spare'."),
     };
    }
@@ -242,7 +241,7 @@ class DailySales extends Model
         $cleanedValue = strtolower(trim($value));
     
         if (preg_match('/^[a-zA-Z]{2}$/', $cleanedValue)) {
-            $this->attributes['wh_branch'] = $cleanedValue; 
+            $this->attributes['wh_branch'] = strtoupper($cleanedValue); 
         } elseif ($cleanedValue === 'n/a' || $cleanedValue === '0' || $cleanedValue === '' || $cleanedValue === '#n/a') {
             $this->attributes['wh_branch'] = null; 
         } else {
