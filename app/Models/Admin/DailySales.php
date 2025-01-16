@@ -30,11 +30,11 @@ class DailySales extends Model
         'customer_order_number',
         'sales_person',
         'sales_person_name',
+        'sub_category'
     ];
 
     public function setSalesValueAttribute($value)
     {
-        dump($value);
         $cleanedValue = str_replace(',', '', $value);
         $this->attributes['sales_value'] = is_numeric($cleanedValue) ? $cleanedValue : 0;
     }
@@ -46,7 +46,6 @@ class DailySales extends Model
 
     public function setUnitCostAttribute($value)
     {
-        dump($value);
         $cleanedValue = str_replace(',', '', $value);
         $this->attributes['unit_cost'] = is_numeric($cleanedValue) ? $cleanedValue : 0;
     }
@@ -58,7 +57,6 @@ class DailySales extends Model
 
     public function setSalesQtyAttribute($value)
     {
-        dump($value);
         $cleanedValue = str_replace(',', '', $value);
         $this->attributes['sales_qty'] = is_numeric($cleanedValue) ? $cleanedValue : 0;
     }
@@ -70,9 +68,8 @@ class DailySales extends Model
 
     public function setDateAttribute($value)
     {
-        dump($value);
-        $this->attributes['date'] = \Carbon\Carbon::parse($value)->format('Y-m-d');
-        // $this->attributes['date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
+        $this->attributes['date'] = \Carbon\Carbon::parse($value)->format('Y-m-d');   // $this->attributes['date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
+    
     }
 
     public function getDateAttribute($value)
@@ -82,8 +79,9 @@ class DailySales extends Model
 
     public function setSalesPersonAttribute($value)
     {   
-        dump($value);
-        $this->attributes['sales_person'] = ($value === '0') ? null : $value;
+
+        $pattern = '/^MIN-\d{3}$/';
+        $this->attributes['sales_person'] = preg_match($pattern,$value) === 1 ?  $value : null;
     }
 
     public function getSalesPersonAttribute($value)
@@ -93,8 +91,7 @@ class DailySales extends Model
 
     public function setQAttribute($value)
     {   
-        dump($value);
-        $this->attributes['sales_person'] = ($value === '0') ? null : strtolower($value);
+        $this->attributes['q'] = ($value === '0') ? null : strtolower($value);
     }
 
     public function getQAttribute($value)
@@ -104,8 +101,6 @@ class DailySales extends Model
 
     public function setSalesPersonNameAttribute($value)
     {
-        dump($value);
-        
         if (preg_match('/^[a-zA-Z\s]+$/', $value)) {
             $this->attributes['sales_person_name'] = strtolower($value);
         } else {
@@ -120,7 +115,7 @@ class DailySales extends Model
 
     public function setSubCategoryAttribute($value)
     {
-        $this->attributes['sub_category'] = ($value === '0' || $value === ' ') ? null : strtolower($value);
+        $this->attributes['sub_category'] = (preg_match('/^[a-zA-Z\s]+$/', trim($value))) ? null : strtolower(trim($value));
     }
 
     public function getSubCategoryAttribute($value)
@@ -130,7 +125,6 @@ class DailySales extends Model
 
     public function setCategoryAttribute($value)
     {
-        dump($value);
         $this->attributes['category'] = match (strtolower(trim($value))) {
             'a', '' => null, 
             'acc','accessories' => 'acc', 
@@ -147,8 +141,7 @@ class DailySales extends Model
 
     public function setCustomerNameAttribute($value)
     { 
-        dump($value);
-        $this->attributes['customer_name'] = ($value === 'N/A' || $value ==='0' || $value ===' ') ? null : $value; 
+        $this->attributes['customer_name'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A') ? null : $value; 
     }
 
     public function getCustomerNameAttribute($value)
@@ -158,8 +151,7 @@ class DailySales extends Model
 
     public function setRegionAttribute($value)
     { 
-        dump($value);
-        $this->attributes['region'] = ($value === 'N/A' || $value ==='0' || $value ===' ') ? null : strtolower($value); 
+        $this->attributes['region'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A') ? null : strtolower($value); 
     }
 
     public function getRegionAttribute($value)
@@ -169,23 +161,32 @@ class DailySales extends Model
 
     public function setStateAttribute($value)
     { 
-        dump($value);
-        $this->attributes['state'] = ($value === 'N/A' || $value ==='0' || $value ===' ') ? null : $value; 
+        $this->attributes['state'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A') ? null : strtolower($value); 
     }
 
     public function getStateAttribute($value)  
     {
-        return $value;  
+        return ucwords(strtolower($value)) ?? null;    
     }
 
     public function setWhBranchAttribute($value)
     { 
-        dump($value);
-        $this->attributes['wh_branch'] = ($value === 'N/A' || $value ==='0' || $value ===' ') ? null : strtolower($value); 
+        $this->attributes['wh_branch'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A') ? null : strtolower($value); 
     }
 
     public function getWhBranchAttribute($value)
     {
         return strtoupper($value);   
     }
+
+    public function setCategoryTypeAttribute($value)
+    { 
+        $this->attributes['category_type'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A') ? null : strtolower($value); 
+    }
+
+    public function getCategoryTypeAttribute($value)
+    {
+        return strtoupper($value);   
+    }
+
 }

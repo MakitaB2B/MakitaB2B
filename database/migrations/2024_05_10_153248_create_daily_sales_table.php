@@ -25,8 +25,8 @@ return new class extends Migration
             $table->string('customer_no',50)->index();
             $table->string('customer_name')->index();
             $table->string('wh_branch',50)->index();
-            $table->string('region',20)->index();
-            $table->string('state',25)->index();
+            $table->string('region',20)->nullable()->index()->after('wh_branch');
+            $table->string('state',25)->nullable()->index()->after('region');
             $table->string('sales_qty',10);
             $table->string('unit_cost',10)->index();
             $table->string('sales_value',50)->index();
@@ -36,6 +36,10 @@ return new class extends Migration
             $table->timestamps();
             }
 
+            $table->string('customer_name')->nullable()->after('customer_no')->change();
+            $table->string('wh_branch',50)->nullable()->after('customer_name')->change();
+            $table->string('category_type',15)->nullable()->after('invoice_no')->change();
+           
             if (!Schema::hasColumn('daily_sales', 'sales_person')) {
                 $table->string('sales_person',10)->nullable()->after('customer_order_number');
             }

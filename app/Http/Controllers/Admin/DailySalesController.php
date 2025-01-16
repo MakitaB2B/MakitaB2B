@@ -111,7 +111,6 @@ class DailySalesController extends Controller
                 $stockData=array_combine($headerValues,$value);
                 unset($stockData["sl_no"]);
                 DailySales::create($stockData);
-                die();
             }
             return redirect('admin/daily-sales');
         }else{
