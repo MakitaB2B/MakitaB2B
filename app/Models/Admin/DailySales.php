@@ -115,7 +115,7 @@ class DailySales extends Model
 
     public function setSubCategoryAttribute($value)
     {
-        $this->attributes['sub_category'] = (preg_match('/^[a-zA-Z\s]+$/', trim($value))) ? null : strtolower(trim($value));
+        $this->attributes['sub_category'] = (preg_match('/^[a-zA-Z\s]+$/', trim($value))) ? strtolower(trim($value)) : null;
     }
 
     public function getSubCategoryAttribute($value)
