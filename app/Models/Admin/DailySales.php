@@ -33,6 +33,58 @@ class DailySales extends Model
         'sub_category'
     ];
 
+    public function setFyAttribute($value)
+    {
+    $cleanedValue = preg_replace('/[^0-9\-]/', '', $value);
+    if (preg_match('/^\d{4}-\d{4}$/', $cleanedValue)) {
+        $parts = explode('-', $cleanedValue);
+        $cleanedValue = $parts[0] . '-' . substr($parts[1], 2); // Extract 'YYYY' and 'YY'
+        $this->attributes['fy'] = $cleanedValue;
+    }
+    else if (preg_match('/^\d{4}-\d{2}$/', $cleanedValue)) {
+        $this->attributes['fy'] = $cleanedValue;
+    } 
+    else {
+        throw new \InvalidArgumentException("Invalid FY format. Expected 'YYYY-YY' or 'YYYY-YYYY'.");
+    }
+    }
+    
+    public function getFyAttribute($value)
+    {
+        return $value;
+    }
+
+    public function setYearAttribute($value)
+    {
+        $cleanedValue = preg_replace('/[^0-9]/', '', $value);
+    
+        if (preg_match('/^\d{4}$/', $cleanedValue)) {
+            $this->attributes['year'] = $cleanedValue;
+        } else {
+            $this->attributes['year'] = null; 
+        }
+    }
+    
+    public function getYearAttribute($value)
+    {
+        return $value; 
+    }
+
+    public function setMonthAttribute($value)
+    {
+        $cleanedValue = preg_replace('/[^0-9]/', '', $value);
+        if (preg_match('/^([1-9]|1[0-2])$/', $cleanedValue)) {
+            $this->attributes['month'] = intval($cleanedValue); 
+        } else {
+            $this->attributes['month'] = null; 
+        }
+    }
+
+    public function getMonthAttribute($value)
+    {
+        return $value; 
+    }
+
     public function setSalesValueAttribute($value)
     {
         $cleanedValue = str_replace(',', '', $value);
@@ -90,19 +142,25 @@ class DailySales extends Model
     }
 
     public function setQAttribute($value)
-    {   
-        $this->attributes['q'] = ($value === '0') ? null : strtolower($value);
+    {
+        $cleanedValue = strtoupper($value);
+
+    if (preg_match('/^Q[1-4]$/', $cleanedValue)) {
+        $this->attributes['q'] = $cleanedValue; 
+    } else {
+        throw new \InvalidArgumentException("Invalid value for Q. Allowed values are Q1, Q2, Q3, Q4.");
+    }
     }
 
     public function getQAttribute($value)
     {
-        return strtoupper($value) ?: null; 
+        return $value; // Return the stored value
     }
 
     public function setSalesPersonNameAttribute($value)
     {
         if (preg_match('/^[a-zA-Z\s]+$/', $value)) {
-            $this->attributes['sales_person_name'] = strtolower($value);
+            $this->attributes['sales_person_name'] = ucwords(strtolower($value));
         } else {
             $this->attributes['sales_person_name'] = null;
         }
@@ -115,28 +173,37 @@ class DailySales extends Model
 
     public function setSubCategoryAttribute($value)
     {
-        $this->attributes['sub_category'] = (preg_match('/^[a-zA-Z\s]+$/', trim($value))) ? strtolower(trim($value)) : null;
+
+    $cleanedValue = strtolower(trim($value));
+
+    $this->attributes['sub_category'] = match ($cleanedValue) {
+        'xgt', 'hwg', 'lxt' => $cleanedValue,
+        '', '-', '0', 'n/a', '#n/a' => null,      
+        default => throw new \InvalidArgumentException("Invalid sub-category. Allowed values are 'xgt', 'xwg', 'lxt'."),
+    };
     }
 
     public function getSubCategoryAttribute($value)
     {
-        return $value ? strtoupper($value) : null;
+        return $value ? strtoupper($value) : null; 
     }
 
     public function setCategoryAttribute($value)
     {
-        $this->attributes['category'] = match (strtolower(trim($value))) {
-            'a', '' => null, 
-            'acc','accessories' => 'acc', 
-            'tool','tools' => 'tool',           
-            'spares','spare' => 'spare',        
-            default => $value,   
-        };
-    }
+     $cleanedValue = strtolower(trim($value));
+
+    $this->attributes['category'] = match ($cleanedValue) {
+        '', '-', '0', 'n/a',' ' => null,              
+        'acc', 'accessories' => 'acc',         
+        'tool', 'tools' => 'tool',           
+        'spare', 'spares' => 'spare',          
+        default => throw new \InvalidArgumentException("Invalid category. Allowed values are 'acc', 'tool', 'spare'."),
+    };
+   }
 
     public function getCategoryAttribute($value)
     {
-        return strtoupper($value);  
+        return $value ? strtoupper($value) : null; 
     }
 
     public function setCustomerNameAttribute($value)
@@ -151,7 +218,8 @@ class DailySales extends Model
 
     public function setRegionAttribute($value)
     { 
-        $this->attributes['region'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A') ? null : strtolower($value); 
+        $value = strtoupper(trim($value));
+        $this->attributes['region'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A' || $value === '-') ? null : $value; 
     }
 
     public function getRegionAttribute($value)
@@ -161,7 +229,7 @@ class DailySales extends Model
 
     public function setStateAttribute($value)
     { 
-        $this->attributes['state'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A') ? null : strtolower($value); 
+        $this->attributes['state'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A' || $value === '-') ? null : ucwords(strtolower($value)); 
     }
 
     public function getStateAttribute($value)  
@@ -170,23 +238,40 @@ class DailySales extends Model
     }
 
     public function setWhBranchAttribute($value)
-    { 
-        $this->attributes['wh_branch'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A') ? null : strtolower($value); 
+    {
+        $cleanedValue = strtolower(trim($value));
+    
+        if (preg_match('/^[a-zA-Z]{2}$/', $cleanedValue)) {
+            $this->attributes['wh_branch'] = $cleanedValue; 
+        } elseif ($cleanedValue === 'n/a' || $cleanedValue === '0' || $cleanedValue === '' || $cleanedValue === '#n/a') {
+            $this->attributes['wh_branch'] = null; 
+        } else {
+            throw new \InvalidArgumentException("Invalid branch code. Must be exactly 2 alphabetic characters.");
+        }
     }
-
+    
     public function getWhBranchAttribute($value)
     {
-        return strtoupper($value);   
+        return $value ? strtoupper($value) : null; 
     }
-
+    
     public function setCategoryTypeAttribute($value)
-    { 
-        $this->attributes['category_type'] = ($value === 'N/A' || $value ==='0' || $value ===' ' || $value === '#N/A') ? null : strtolower($value); 
+    {
+        $cleanedValue = strtolower(trim($value));
+    
+        if (preg_match('/^[a-zA-Z]+$/', $cleanedValue)) {
+            $this->attributes['category_type'] = strtoupper($cleanedValue); 
+        } elseif ($cleanedValue === 'n/a' || $cleanedValue === '0' || $cleanedValue === '' || $cleanedValue === '#n/a' || $cleanedValue === '-') {
+            $this->attributes['category_type'] = null;
+        } else {
+            throw new \InvalidArgumentException("Invalid category type. Only alphabetic characters are allowed.");
+        }
     }
-
+    
     public function getCategoryTypeAttribute($value)
     {
-        return strtoupper($value);   
+        return $value ? strtoupper($value) : null; 
     }
+    
 
 }
