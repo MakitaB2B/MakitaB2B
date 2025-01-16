@@ -50,7 +50,7 @@
         <div class="card-body">
         <div class="row">
                 <div class="col-12">
-                  <h4>Change Order status</h4>
+                  <h4>Change Order status (Open/Cancel Order)</h4>
                 <div class="post">
                   <div class="card-top">
                     <div class="row">
@@ -65,12 +65,12 @@
                       </div>
                   
                       <div class="form-group col-md-4 d-flex align-items-end">
-                          <button type="submit" class="btn btn-primary" id="changeStatusButton">Change Status</button>
+                          <button type="submit" class="btn btn-primary" id="changeStatusButton">Change Status(OPEN/CANCEL ORDER)</button>
                           <span id="changeStatusButtonText"></span>
                       </div>
                   
                       <div class="form-group col-md-4 d-flex align-items-end  justify-content-end">
-                          <button type="submit" class="btn btn-primary float-right" id="sendMailButton" data-order-id="{{Crypt::encrypt($offerproduct[0]["order_id"] ?? null)}}"><i class="fa fa-envelope"></i> Send Mail</button>
+                          <button type="submit" class="btn btn-primary float-right" id="sendMailButton" data-order-id="{{Crypt::encrypt($offerproduct[0]["order_id"] ?? null)}}"><i class="fa fa-envelope"></i> Send Transaction Mail</button>
                           <span id="sendMailButtonText"></span>
                       </div>
 
