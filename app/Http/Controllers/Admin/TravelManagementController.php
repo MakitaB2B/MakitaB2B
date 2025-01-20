@@ -161,6 +161,10 @@ class TravelManagementController extends Controller
 
      }
 
+     public function ltc_application_form(){
+        return view('Admin.travel-management.ltc-portal.ltc_application');
+     }
+
     public function createLtcClaimApplication(Request $request){
 
         $employeeSlug=Auth::guard('admin')->user()->employee_slug;

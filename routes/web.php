@@ -270,10 +270,9 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
  
     Route::get('/roi', function () {  return view('Admin/roi');  });
 
-
+    Route::get('/travelmanagement/ltc-application-form', [TravelManagementController::class, 'ltc_application_form'])->name('travelmanagement.ltc-application-form');
     // Admin Travel Portal Routes
-    Route::view('/travelmanagement/ltc-application-form', 'Admin.travel-management.ltc-portal.ltc_application')
-    ->name('travelmanagement.ltc-application-form');
+  
     Route::view('/travelmanagement/ltc-dashboard', 'Admin.travel-management.ltc-portal.ltc_dashboard')
     ->name('travelmanagement.ltc-dashboard');
     Route::view('/travelmanagement/ltc-details', 'Admin.travel-management.ltc-portal.ltc-details')

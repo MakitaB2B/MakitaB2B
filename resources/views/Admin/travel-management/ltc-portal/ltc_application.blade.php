@@ -375,5 +375,23 @@
         function showInfo(e){
             $(e.target).closest(".food-wrapper").find(".alert-info").toggle();
         }
+
+        $(document).ready(function () {
+        $("#ltcModal").click(function () {
+            $.ajax({
+                url: "/travelmanagement/ltc-application-form", 
+                method: "GET",
+                success: function (response) {
+                    console.log("AJAX call successful:", response);
+                    window.location.href = window.location.origin + "/travelmanagement/ltc-application-form";
+                },
+                error: function (error) {
+                    console.error("AJAX call failed:", error);
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        });
+        });
+
     </script>
 @endpush

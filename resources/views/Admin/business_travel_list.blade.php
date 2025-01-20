@@ -623,8 +623,7 @@
                     </div>
                     <!-- /.col -->
                     {{-- data-toggle="modal" data-target="#ltcModal" --}}
-                    {{-- <a href="https://example.com">Visit Example</a> --}}
-                    <div class="col-md-3 col-sm-6 col-12 cursorpointer">
+                    <div class="col-md-3 col-sm-6 col-12 cursorpointer" id="ltcModal" onclick="window.location.href = window.location.origin + '/admin/travelmanagement/ltc-application-form';">
                         <div class="info-box bg-makita-til btcardbs">
                             <span class="info-box-icon"><i class="far fa fa-motorcycle color-white"></i></span>
 
@@ -1027,6 +1026,6 @@
                     }
                 });
             });
-        </script>
+    </script>
     @endpush
 @endsection
