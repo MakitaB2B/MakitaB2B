@@ -20,16 +20,16 @@
 
 defined('PROMO_TRANSACTION_CC_EMAILS') OR define('PROMO_TRANSACTION_CC_EMAILS', [
     'lobojeanz@gmail.com',
-    'it_security@makita.in',
+    // 'it_security@makita.in',
     'it_pm@makita.in',
     // 'jileesh@makita.in',
     // 'kamalraj@makita.in',
     // 'bm_east@makita.in',
     // 'sunil@makita.in',
     // 'hara@makita.in',
-    'accounting@makita.in',
-    'vanan@makita.in',
-    'veena@makita.in'
+    // 'accounting@makita.in',
+    // 'vanan@makita.in',
+    // 'veena@makita.in'
     // 'sales@makita.in',
     // 'veena@makita.in'
  ]);
