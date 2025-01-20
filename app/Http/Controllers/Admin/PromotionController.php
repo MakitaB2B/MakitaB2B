@@ -694,10 +694,18 @@ class PromotionController extends Controller
 
         $and = ' and '; 
 
-        $formatItems = fn($items, $suffix,$and_or) => implode($and_or, array_map(
-            fn($item) => "{$item['qty']} {$suffix} {$item['model_no']}",
-            $items
-        ));
+        // $formatItems = fn($items, $suffix,$and_or) => implode($and_or, array_map(
+        //     fn($item) => "{$item['qty']} {$suffix} {$item['model_no']}",
+        //     $items
+        // ));
+
+        $formatItems = fn($items, $suffix, $and_or) => implode($and_or, array_map(
+          fn($item) => "{$item['qty']} {$suffix} {$item['model_no']}" .
+                       (($item['product_type'] === 'FOC') 
+                          ? (($item['price'] != 0) ? " at Special Price" : " FREE") 
+                          : ""),
+          $items
+      ));
      
         // $finalString = "Buy " . $formatItems($buyItems, "No(s) of",$and_or) . ", Get " . $formatItems($freeItems, "set(s) of",$and) . " FREE";
 
@@ -705,11 +713,12 @@ class PromotionController extends Controller
 
         $buyText = $formatItems($buyItems, "No(s) of", $and_or);
         $freeText = $formatItems($freeItems, "set(s) of", $and);
+
     
         $finalString = "Buy $buyText";
     
         if (!empty($freeText)) {
-            $finalString .= ", Get $freeText FREE";
+            $finalString .= ", Get $freeText";
         }
     
         return $finalString;

@@ -151,7 +151,7 @@ class PromoJob implements ShouldQueue
             if ($this->details['focproduct']->isNotEmpty()) {
                 $emailContent .= <<<HTML
                             <!-- FOC Products Table -->
-                            <h2 style="color: #008290; font-size: 20px; margin: 30px 0 15px; font-family: Arial, sans-serif;">FOC Product(s)</h2>
+                            <h2 style="color: #008290; font-size: 20px; margin: 30px 0 15px; font-family: Arial, sans-serif;">FOC Product(s) / Special Offer Product(s)</h2>
                             <div style="overflow-x: auto;">
                                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                     <thead>
