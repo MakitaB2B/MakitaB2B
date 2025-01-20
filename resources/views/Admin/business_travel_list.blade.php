@@ -622,7 +622,9 @@
                         <!-- /.info-box -->
                     </div>
                     <!-- /.col -->
-                    <div class="col-md-3 col-sm-6 col-12 cursorpointer" data-toggle="modal" data-target="#ltcModal">
+                    {{-- data-toggle="modal" data-target="#ltcModal" --}}
+                    {{-- <a href="https://example.com">Visit Example</a> --}}
+                    <div class="col-md-3 col-sm-6 col-12 cursorpointer">
                         <div class="info-box bg-makita-til btcardbs">
                             <span class="info-box-icon"><i class="far fa fa-motorcycle color-white"></i></span>
 
@@ -637,9 +639,7 @@
                                     Apply LTC
                                 </span>
                             </div>
-                            <!-- /.info-box-content -->
                         </div>
-                        <!-- /.info-box -->
                     </div>
                     <!-- /.col -->
 
