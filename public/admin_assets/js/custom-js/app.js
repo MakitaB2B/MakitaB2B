@@ -1415,6 +1415,7 @@ ExpenseApp.formSubmission = {
             $('#submit-form').prop('disabled', true).html(
                 '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...'
             );
+            const token = $('#csrfToken').val();
 
             // Make AJAX request
             const response = await $.ajax({
@@ -1423,6 +1424,9 @@ ExpenseApp.formSubmission = {
                 data: formData,
                 processData: false,
                 contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': token
+                },
                 xhr: function() {
                     const xhr = new window.XMLHttpRequest();
                     xhr.upload.addEventListener('progress', function(evt) {

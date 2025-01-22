@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="{{ asset('admin_assets/css/custom-styles.css') }}">
 @endpush
 <div class="content-wrapper"> 
+    <input type="hidden" name="" id="csrfToken" value="{{ csrf_token() }}">
+ 
         <div class="custom-container">
         <div>
             <!-- Step Indicator -->
