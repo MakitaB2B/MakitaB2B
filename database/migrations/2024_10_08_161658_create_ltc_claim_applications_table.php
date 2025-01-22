@@ -30,9 +30,11 @@ return new class extends Migration
             // $table->timestamps();
           
 
-
+            $table->Date('ltc_application_date')->after('ltc_year')->change();
 
             // $table->enum('status', [0, 1, 2,3 ,4 , 5, 6,7,8,9])->default(0); 
+
+
         });
     }
 

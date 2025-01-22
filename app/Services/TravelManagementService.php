@@ -367,7 +367,7 @@ class TravelManagementService{
     }
 
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
-  
+
         try {
 
             DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
@@ -376,26 +376,33 @@ class TravelManagementService{
 
                 $teamManager = count($teamDetails)>0 ? $teamDetails[0]->team_owner : null ;
 
-                $date = $request->post("date");
+                    $data = $request->input('timeInfo');
+                    $decodedData = json_decode($data);
+                    $date = $decodedData->date;
+                    $dateObject = \DateTime::createFromFormat('d-M-Y', $date);
+                    dd($decodedData ,$dateObject);
+                    
                 $ltcappslug = Str::slug(rand().rand());
 
-                $total_claim_amount=array_sum($request['claim_amount'] ?? []) +
-                array_sum($request['lunch_exp'] ?? []) +
-                array_sum($request['fuel_exp'] ?? []) +
-                array_sum($request['toll_charge'] ?? []) +
-                ($request['courier_bill'] ?? 0) +
-                ($request['xerox_stationary'] ?? 0) +
-                ($request['office_expense'] ?? 0) +
-                ($request['monthly_mobile_bill'] ?? 0);
+                // $total_claim_amount=array_sum($request['claim_amount'] ?? []) +
+                // array_sum($request['lunch_exp'] ?? []) +
+                // array_sum($request['fuel_exp'] ?? []) +
+                // array_sum($request['toll_charge'] ?? []) +
+                // ($request['courier_bill'] ?? 0) +
+                // ($request['xerox_stationary'] ?? 0) +
+                // ($request['office_expense'] ?? 0) +
+                // ($request['monthly_mobile_bill'] ?? 0);
+
+                dd($ltcappslug,$ltc_id, $employeeSlug,$teamManager,$total_claim_amount);
 
                 $ltcClaimapp = new LtcClaimApplication([
                     'ltc_claim_applications_slug' =>  $ltcappslug,
                     'ltc_claim_id' => $ltc_id,
                     'employee_slug' => $employeeSlug,
-                    'ltc_month' => Carbon::parse($request->ltc_month)->month,
-                    'ltc_year' => $request->ltc_year,
+                    'ltc_month' => (int)$dateObject->format('m'),
+                    'ltc_year' => (int)$dateObject->format('Y'),
                     'manager_slug' => $teamManager,
-                    'total_claim_amount' => $total_claim_amount
+                    // 'total_claim_amount' => $total_claim_amount
                 ]);
 
                 $ltcClaimapp->save();
