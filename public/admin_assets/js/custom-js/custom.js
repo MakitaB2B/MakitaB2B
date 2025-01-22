@@ -15,6 +15,12 @@ $(document).ready(function() {
                 // Create main data row
                 let statusClass = `status-${row.status.toLowerCase()}`
                 const dayOfWeek = new Date(row.date).toLocaleDateString('en-US', { weekday: 'long' }).toLocaleLowerCase();
+                const hasAttachments = checkForAttachments(row);
+                const toggleIcon = hasAttachments ? 
+                `<i class="bi bi-chevron-down toggle-icon" data-bs-toggle="collapse" data-bs-target="#collapse${index}"></i>
+                 <i class="bi bi-paperclip text-primary" style="margin-left: 5px;" title="Has attachments"></i>` :
+                `<i class="bi bi-chevron-down toggle-icon" data-bs-toggle="collapse" data-bs-target="#collapse${index}"></i>`;
+
                 let dayClass, daystat;
                 if(dayOfWeek == 'sunday'){
                     dayClass = 'sunday-blue';
@@ -24,15 +30,13 @@ $(document).ready(function() {
                     dayClass = '';
                 }
                 if(row.daystat != '' ){
-                    daystat = row.daystat=='leave'?' L':row.daystat=='holiday'?'H':'W';
+                    daystat = row.daystat=='leave'?'L':row.daystat=='holiday'?'H':'W';
                 } else{
-                    daystat = 'W'
+                    daystat = row.dayOfWeek == 'sunday'?'WH':'W';
                 }
                 const totalFoodExpense = row.foodExpense.reduce((sum, expense) => {
                             return sum +
-                                parseFloat(expense.breakfast.amount) +
-                                parseFloat(expense.lunch.amount) +
-                                parseFloat(expense.dinner.amount);
+                                parseFloat(expense.breakfast.amount) 
                 }, 0);
                 const totalTravelExp = row.travelEntries.reduce((sum, expense) => {
                             return sum +
@@ -61,9 +65,16 @@ $(document).ready(function() {
                         <td class="td-hide">${totalFoodExpense}</td>
                         <td class="td-hide">${totalMiscExp}</td>
                         <td class="td-hide">${grandTotal}</td>
-                        <td><span class="${statusClass}">${row.status}</span></td>
+                        <td class="status-cell">                           
+                            <a href="javascript:;" class="${statusClass}">${row.status}<i class="bi bi-chevron-down toggle-icon"></i></a>
+                            <ul class="dropdown-menu">
+                                <li>Pending</li>
+                                <li>Approved</li>
+                                <li>Rejected</li>
+                            </ul>
+                        </td>
                         <td>
-                            <i class="bi bi-chevron-down toggle-icon" data-bs-toggle="collapse" data-bs-target="#collapse${index}"></i>
+                            ${toggleIcon}
                         </td>
                     </tr>`;
     
@@ -94,18 +105,10 @@ $(document).ready(function() {
                                             <div class="exp-data">
                                                 <span class="exp-title">Breakfast</span>
                                                 <span class="exp-value">&#8377;${row.foodExpense[0].breakfast.amount || 0}</span>
-                                                <span class="exp-bill-copy"><a href="${baseURL}${row.foodExpense[0].breakfast.files[0].name}"><i class="fa-solid fa-file"></i></a></span>
-                                            </div>
-                                            <div class="exp-data">
-                                                <span class="exp-title">Lunch</span>
-                                                <span class="exp-value">&#8377;${row.foodExpense[0].lunch.amount || 0}</span>
-                                                <span class="exp-bill-copy"><a href="${baseURL}${row.foodExpense[0].lunch.files[0].name}"><i class="fa-solid fa-file"></i></a></span>
-                                            </div>
-                                            <div class="exp-data">
-                                                <span class="exp-title">Dinner</span>
-                                                <span class="exp-value">&#8377;${row.foodExpense[0].dinner.amount || 0}</span>
-                                                <span class="exp-bill-copy"><a href="${baseURL}${row.foodExpense[0].dinner.files[0].name}"><i class="fa-solid fa-file"></i></a></span>
-                                            </div>                
+                                                ${row.foodExpense[0].breakfast.files?.length ? 
+                                                `<span class="exp-bill-copy"><a href="${baseURL}${row.foodExpense[0].breakfast.files[0].name}"><i class="fa-solid fa-file"></i></a></span>`:''
+                                                }
+                                            </div>              
                                         </div>
                                         <div class="exp-data-wrapper misc-exp-data">
                                             <div class="exp-card-title">Miscellaneous Expense</div>
@@ -165,6 +168,24 @@ $(document).ready(function() {
     
                 tableBody.append(mainRow + contentRow);
             });
+        }
+        function checkForAttachments(row) {
+            // Check food expense attachments
+            const hasFoodAttachments = row.foodExpense.some(expense => 
+                expense.breakfast.files?.length > 0
+            );
+        
+            // Check travel expense attachments
+            const hasTravelAttachments = row.travelEntries.some(entry => 
+                entry.files?.length > 0
+            );
+        
+            // Check misc expense attachments
+            const hasMiscAttachments = row.miscExpense.some(expense => 
+                expense.files?.length > 0
+            );
+        
+            return hasFoodAttachments || hasTravelAttachments || hasMiscAttachments;
         }
         if($(".btc-table").length){
             tableBody = $('.btc-table tbody');
@@ -312,7 +333,7 @@ $(document).ready(function() {
         }
     }
 
-    const ltcData = [
+    const btcDATA = [
         {
             sartDataTime: '01-Jan-2024 10:00 AM',
             endDataTime:"03-Jan-2024 10:00 AM",
@@ -480,7 +501,7 @@ $(document).ready(function() {
                     tollCharges:"100",
                     fuelCharges:"745",
                     placesVisited:"Koralur",
-                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                    files:[]
                 },
                 {
                     modeOfTransport:"Demo Van",
@@ -491,27 +512,28 @@ $(document).ready(function() {
                     tollCharges:"100",
                     fuelCharges:"745",
                     placesVisited:"Koralur",
-                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
+                    files:[]
                 }],
                 foodExpense: [{
-                    breakfast:{"amount":"10.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
-                    lunch:{"amount":"100.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
-                    dinner:{"amount":"20.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
+                    breakfast:{
+                        "amount":"10.00",
+                        files:[]
+                    }
                 }],
                 miscExpense: [{
                     type:"Courier Bill",
                     amount:"10.00",
-                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                    files:[]
                 },
                 {
                     type:"Xerox & Stationary",
                     amount:"200.00",
-                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                    files:[]
                 },
                 {
                     type:"Office Expense",
                     amount:"982.00",
-                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                    files:[]
                 }],
                 total: '₹1200',
                 status: 'Pending'
@@ -682,17 +704,18 @@ $(document).ready(function() {
                 tollCharges:"200",
                 fuelCharges:"245",
                 placesVisited:"Koralur",
-                files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                files:[]
             }],
             foodExpense: [{
-                breakfast:{"amount":"0.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
-                lunch:{"amount":"0.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
-                dinner:{"amount":"0.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
+                breakfast:{
+                    "amount":"0.00",
+                    files:[]
+            }
             }],
             miscExpense: [{
                 type:"",
                 amount:"0.00",
-                files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                files:[]
             }],
             total: '₹1200',
             status: 'Pending'
@@ -1084,7 +1107,7 @@ $(document).ready(function() {
 
     // Initialize table with data
     if($(".btc-table").length){
-        createTableRows(ltcData);
+        createTableRows(btcDATA);
     }
     if($(".ltc-table").length){
         createTableRows(expenseData);

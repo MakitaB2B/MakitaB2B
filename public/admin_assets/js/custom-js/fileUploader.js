@@ -1,78 +1,82 @@
 /**
  * FileUploader Module
  * Handles file uploads with preview and storage management
- * Supports single/multiple files and multi-step uploads
  */
 const FileUploader = {
-    files: new Map(),
-    stepHandlers: new Map(),
-    
-    init: function(options) {
-        const defaults = {
-            container: null,         // Container element (optional)
-            moduleId: 'default',     // Default module identifier
-            sectionId: 'default',    // Default section identifier
-            maxFileSize: 5,          // Maximum file size in MB
-            maxFiles: 5,             // Maximum number of files
-            acceptedTypes: '.pdf,.jpg,.jpeg,.png',
-            onChange: null,          // Callback when files change
-            buttonText: 'Add Files', // Custom button text
-            uploadIcon: 'bi-upload', // Bootstrap icon class
-            multiple: true,          // Allow multiple files
-            required: false,         // Is file upload required
-            requiredMessage: 'Please upload required files', // Message for required validation
-            steps: null,             // Array of step configurations
-            stepValidation: null,    // Step validation function
-            onStepComplete: null,    // Callback when step is completed
-            showStepIndicator: true  // Show step indicator
-        };
+    // File storage
+    db: null,
+    dbName: 'file_uploader_db',
+    storeName: 'files',
+    dbVersion: 1,
 
-        const settings = { ...defaults, ...options };
-
-        // More flexible container handling
-        if (!settings.container) {
-            console.warn('No container specified for FileUploader, creating a new one');
-            settings.container = document.createElement('div');
-            settings.container.className = 'file-upload-container';
-            if (options && options.appendTo) {
-                options.appendTo.appendChild(settings.container);
-            } else {
-                document.body.appendChild(settings.container);
-            }
-        }
-
-        // Create unique identifiers if not provided
-        if (settings.moduleId === 'default') {
-            settings.moduleId = `module-${Math.random().toString(36).substr(2, 9)}`;
-        }
-        if (settings.sectionId === 'default') {
-            settings.sectionId = `section-${Math.random().toString(36).substr(2, 9)}`;
-        }
-
-        // Store step handlers if provided
-        if (settings.steps) {
-            this.stepHandlers.set(`${settings.moduleId}-${settings.sectionId}`, settings.steps);
-        }
-
-        this.createUploader(settings);
-        return this;
+    // Default settings
+    defaults: {
+        container: null,         // Container element (optional)
+        moduleId: 'default',     // Default module identifier
+        sectionId: 'default',    // Default section identifier
+        maxFileSize: 5,          // Maximum file size in MB
+        maxFiles: 5,             // Maximum number of files
+        acceptedTypes: '.pdf,.jpg,.jpeg,.png',
+        onChange: null,          // Callback when files change
+        buttonText: 'Add Files', // Custom button text
+        uploadIcon: 'bi-upload', // Bootstrap icon class
+        multiple: true,          // Allow multiple files
+        required: false,         // Is file upload required
+        requiredMessage: 'Please upload required files', // Message for required validation
+        steps: null,             // Array of step configurations
+        stepValidation: null,    // Step validation function
+        onStepComplete: null,    // Callback when step is completed
+        showStepIndicator: true  // Show step indicator
     },
 
-    createUploader: function(settings) {
+    // Initialize the module
+    async init(options) {
+        try {
+            await this.initDB();
+            
+            const settings = { ...this.defaults, ...options };
+            if (!settings.container) {
+                console.error('Container element is required');
+                return null;
+            }
+
+            await this.createUploader(settings);
+            return this;
+        } catch (error) {
+            console.error('Error initializing FileUploader:', error);
+            throw error;
+        }
+    },
+
+    // Initialize IndexedDB
+    async initDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, this.dbVersion);
+            
+            request.onerror = () => reject(request.error);
+            
+            request.onsuccess = (event) => {
+                this.db = event.target.result;
+                resolve(this.db);
+            };
+            
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(this.storeName)) {
+                    db.createObjectStore(this.storeName, { keyPath: 'key' });
+                }
+            };
+        });
+    },
+
+    // Create uploader UI
+    async createUploader(settings) {
         const $container = $(settings.container);
         const uploaderId = `${settings.moduleId}-${settings.sectionId}-uploader`;
-
-        // Create step indicator if steps are provided and indicator is enabled
-        let stepIndicator = '';
-        if (settings.steps && settings.showStepIndicator) {
-            stepIndicator = this.createStepIndicator(settings.steps);
-        }
 
         // Create uploader structure
         const $uploader = $(`
             <div class="file-uploader" data-module="${settings.moduleId}" data-section="${settings.sectionId}">
-                ${stepIndicator}
-                
                 <input type="file" 
                        id="${uploaderId}" 
                        class="file-input" 
@@ -80,7 +84,6 @@ const FileUploader = {
                        accept="${settings.acceptedTypes}"
                        style="display: none;">
                 <div class="preview-wrapper">
-                    
                     <div class="upload-button-container">
                         <button type="button" class="btn btn-outline-primary btn-sm upload-trigger">
                             <i class="bi ${settings.uploadIcon} me-2"></i>${settings.buttonText}
@@ -96,74 +99,40 @@ const FileUploader = {
                 ${settings.required ? 
                     '<div class="required-indicator text-danger small mt-1">* Required</div>' : 
                     ''}
-                ${settings.steps ? `
-                    <div class="step-navigation mt-3">
-                        <button class="btn btn-secondary btn-sm prev-step" style="display: none;">Previous</button>
-                        <button class="btn btn-primary btn-sm next-step">Next</button>
-                    </div>
-                ` : ''}
             </div>
         `);
 
+        // Store settings and attach events
         $uploader.data('settings', settings);
-        $uploader.data('currentStep', 1);
         this.attachEvents($uploader);
+        
+        // Replace container contents
         $container.empty().append($uploader);
 
         // Load existing files if any
-        const existingFiles = this.getFiles(settings.moduleId, settings.sectionId);
-        if (existingFiles && existingFiles.length > 0) {
-            this.updateFilePreviews($uploader);
-        }
-
-        // Initialize first step if steps are provided
-        if (settings.steps) {
-            this.initializeStep($uploader, 1);
+        const files = await this.getFiles(settings.moduleId, settings.sectionId);
+        if (files?.length) {
+            this.updateFilePreviews($uploader, files);
         }
     },
 
-    createStepIndicator: function(steps) {
-        return `
-            <div class="step-indicator mb-3">
-                ${steps.map((step, index) => `
-                    <div class="step ${index === 0 ? 'active' : ''}" data-step="${index + 1}">
-                        <span class="step-number">${index + 1}</span>
-                        <span class="step-title">${step.title}</span>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    },
-
-        attachEvents: function($uploader) {
-        const fileUploader = this;
+    // Attach event handlers
+    attachEvents($uploader) {
+        const self = this;
         const settings = $uploader.data('settings');
         const $fileInput = $uploader.find('.file-input');
-        
 
         // Trigger file input when button is clicked
         $uploader.find('.upload-trigger').on('click', function() {
-            $fileInput.click();
+            if (!$(this).prop('disabled')) {
+                $fileInput.click();
+            }
         });
 
         // Handle file selection
-        $fileInput.on('change', (e) => {
-            fileUploader.handleFileSelect(e.target.files, $uploader);
-        });
-    
-        // Handle file input change
-        $uploader.find('.file-input').on('change', function(e) {
-            fileUploader.handleFileSelect(e.target.files, $uploader);
-        });
-        // Handle remove file click using event delegation
-        $uploader.on('click', '.remove-file', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const $item = $(this).closest('.file-preview-item');
-            const index = $item.index();
-            
-            fileUploader.removeFile(index, $uploader);
+        $fileInput.on('change', async function(e) {
+            await self.handleFileSelect(e.target.files, $uploader);
+            this.value = ''; // Reset file input
         });
 
         // Handle drag and drop
@@ -175,281 +144,249 @@ const FileUploader = {
             e.preventDefault();
             e.stopPropagation();
             $(this).removeClass('drag-over');
-        }).on('drop', function(e) {
+        }).on('drop', async function(e) {
             const files = e.originalEvent.dataTransfer.files;
-            FileUploader.handleFileSelect(files, $(this));
+            await self.handleFileSelect(files, $(this));
         });
 
-        // Handle step navigation if steps are provided
-        if (settings.steps) {
-            $uploader.find('.next-step').on('click', () => this.handleNextStep($uploader));
-            $uploader.find('.prev-step').on('click', () => this.handlePrevStep($uploader));
-        }
+        // Handle remove file clicks
+        $uploader.on('click', '.remove-file', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const index = $(this).closest('.file-preview-item').index();
+            await self.removeFileFromDB(settings.moduleId, settings.sectionId, index, $uploader);
+        });
     },
-
-    handleFileSelect: function(files, $uploader) {
-        const settings = $uploader.data('settings');
-        const moduleId = settings.moduleId;
-        const sectionId = settings.sectionId;
-
-        let existingFiles = this.getFiles(moduleId, sectionId) || [];
-
-        // Handle single file mode
-        if (!settings.multiple) {
-            existingFiles = [];
-            if (files.length > 1) {
-                this.showMessage('Only one file can be uploaded', 'warning', $uploader);
-                return;
-            }
-        }
-
-        const totalFiles = existingFiles.length + files.length;
-        if (totalFiles > settings.maxFiles && settings.multiple) {
-            this.showMessage(`Maximum ${settings.maxFiles} files allowed`, 'warning', $uploader);
+    async removeFileFromDB(moduleId, sectionId, index, $uploader) {
+        if (!this.db) {
+            console.error('Database not initialized');
             return;
         }
+    
+        try {
+            // Get the key for the files in the database
+            const key = `${moduleId}-${sectionId}`;
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+    
+            // Retrieve existing files
+            const request = store.get(key);
+            const record = await new Promise((resolve, reject) => {
+                request.onsuccess = () => resolve(request.result || null);
+                request.onerror = () => reject(request.error);
+            });
+    
+            if (record?.files?.length > index) {
+                // Remove the file at the specified index
+                record.files.splice(index, 1);
+    
+                // Update the database
+                const updateRequest = store.put(record);
+                await new Promise((resolve, reject) => {
+                    updateRequest.onsuccess = () => resolve();
+                    updateRequest.onerror = () => reject(updateRequest.error);
+                });
+    
+                console.log(`File removed from IndexedDB: Key=${key}, Index=${index}`);
+            } else {
+                console.warn(`No file found at index ${index} for Key=${key}`);
+            }
+    
+            // Update the UI
+            this.updateFilePreviews($uploader, record?.files || []);
+        } catch (error) {
+            console.error('Error removing file from IndexedDB:', error);
+        }
+    },    
+    // Handle file selection
+    async handleFileSelect(files, $uploader) {
+        const settings = $uploader.data('settings');
+        try {
+            let existingFiles = await this.getFiles(settings.moduleId, settings.sectionId) || [];
 
-        Array.from(files).forEach(file => {
-            if (file.size > settings.maxFileSize * 1024 * 1024) {
-                this.showMessage(`File "${file.name}" exceeds ${settings.maxFileSize}MB limit`, 'warning', $uploader);
+            // Handle single file mode
+            if (!settings.multiple) {
+                existingFiles = [];
+                if (files.length > 1) {
+                    this.showMessage('Only one file can be uploaded', 'warning', $uploader);
+                    return;
+                }
+            }
+
+            const totalFiles = existingFiles.length + files.length;
+            if (totalFiles > settings.maxFiles && settings.multiple) {
+                this.showMessage(`Maximum ${settings.maxFiles} files allowed`, 'warning', $uploader);
                 return;
             }
 
-            const isDuplicate = existingFiles.some(existing => existing.name === file.name);
-            if (isDuplicate) {
-                this.showMessage(`File "${file.name}" already exists`, 'warning', $uploader);
-                return;
-            }
+            for (const file of Array.from(files)) {
+                if (file.size > settings.maxFileSize * 1024 * 1024) {
+                    this.showMessage(`File "${file.name}" exceeds ${settings.maxFileSize}MB limit`, 'warning', $uploader);
+                    continue;
+                }
 
-            if (file.type.match('image.*')) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
+                if (existingFiles.some(existing => existing.name === file.name)) {
+                    this.showMessage(`File "${file.name}" already exists`, 'warning', $uploader);
+                    continue;
+                }
+
+                if (file.type.match('image.*')) {
+                    const data = await this.readFileAsDataURL(file);
                     existingFiles.push({
                         name: file.name,
                         type: file.type,
-                        data: e.target.result,
+                        data: data,
                         size: file.size,
-                        timestamp: new Date().getTime()
+                        timestamp: Date.now()
                     });
-                    this.saveFiles(moduleId, sectionId, existingFiles);
-                    this.updateFilePreviews($uploader);
-                    if (settings.onChange) settings.onChange(existingFiles);
-                    this.validateStep($uploader);
-                };
-                reader.readAsDataURL(file);
-            } else if (file.type === 'application/pdf') {
-                existingFiles.push({
-                    name: file.name,
-                    type: file.type,
-                    size: file.size,
-                    timestamp: new Date().getTime()
-                });
-                this.saveFiles(moduleId, sectionId, existingFiles);
-                this.updateFilePreviews($uploader);
-                if (settings.onChange) settings.onChange(existingFiles);
-                this.validateStep($uploader);
+                } else if (file.type === 'application/pdf') {
+                    existingFiles.push({
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        timestamp: Date.now()
+                    });
+                }
             }
-        });
 
-        $uploader.find('.file-input').val('');
-    },
-    loadExistingFiles: function($uploader) {
-        const settings = $uploader.data('settings');
-        const files = this.getFiles(settings.moduleId, settings.sectionId);
-        
-        if (files && files.length > 0) {
-            this.updateFilePreviews($uploader);
-            // Update file count or other UI elements if needed
+            await this.saveFiles(settings.moduleId, settings.sectionId, existingFiles);
+            this.updateFilePreviews($uploader, existingFiles);
+
+            if (settings.onChange) {
+                settings.onChange(existingFiles);
+            }
+        } catch (error) {
+            console.error('Error handling file selection:', error);
+            this.showMessage('Error uploading files', 'danger', $uploader);
         }
     },
-    updateFilePreviews: function($uploader) {
-        const settings = $uploader.data('settings');
-        const files = this.getFiles(settings.moduleId, settings.sectionId) || [];
-        const $preview = $uploader.find('.file-preview');
+
+    // Save files to storage
+    async saveFiles(moduleId, sectionId, files) {
+        if (!this.db) throw new Error('Database not initialized');
         
-        $preview.empty();
+        const key = `${moduleId}-${sectionId}`;
+        const transaction = this.db.transaction([this.storeName], 'readwrite');
+        const store = transaction.objectStore(this.storeName);
         
-        files.forEach((file, index) => {
-            const $item = $('<div>').addClass('file-preview-item');
+        return new Promise((resolve, reject) => {
+            const request = store.put({
+                key,
+                files: files.map(file => ({
+                    ...file,
+                    timestamp: file.timestamp || Date.now()
+                }))
+            });
             
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    },
+
+    // Get files from storage
+    async getFiles(moduleId, sectionId) {
+        if (!this.db) {
+            console.error('Database not initialized');
+            return [];
+        }
+    
+        const key = `${moduleId}-${sectionId}`;
+        const transaction = this.db.transaction([this.storeName], 'readonly');
+        const store = transaction.objectStore(this.storeName);
+    
+        return new Promise((resolve, reject) => {
+            const request = store.get(key);
+            request.onsuccess = () => resolve(request.result?.files || []);
+            request.onerror = () => reject(request.error);
+        });
+    },
+
+    // Clear files from storage
+    async clearFiles(moduleId, sectionId) {
+        if (!this.db) return;
+        
+        const key = `${moduleId}-${sectionId}`;
+        const transaction = this.db.transaction([this.storeName], 'readwrite');
+        const store = transaction.objectStore(this.storeName);
+        
+        return new Promise((resolve, reject) => {
+            const request = store.delete(key);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    },
+
+    // Remove a single file
+    // async removeFile(index, $uploader) {
+    //     const settings = $uploader.data('settings');
+    //     try {
+    //         let files = await this.getFiles(settings.moduleId, settings.sectionId);
+    //         if (files?.length > index) {
+    //             files.splice(index, 1);
+    //             await this.saveFiles(settings.moduleId, settings.sectionId, files);
+    //             this.updateFilePreviews($uploader, files);
+
+    //             if (settings.onChange) {
+    //                 settings.onChange(files);
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('Error removing file:', error);
+    //         this.showMessage('Error removing file', 'danger', $uploader);
+    //     }
+    // },
+
+    // Update file previews
+    async updateFilePreviews($uploader, files) {
+        // Always fetch files from IndexedDB
+        const settings = $uploader.data('settings');
+        files = await this.getFiles(settings.moduleId, settings.sectionId);
+        
+        // Proceed with preview updates
+        const $preview = $uploader.find('.file-preview');
+        $preview.empty();
+    
+        files.forEach((file) => {
+            const $item = $('<div>').addClass('file-preview-item');
             if (file.type.startsWith('image/')) {
-                $('<img>')
-                    .attr('src', file.data)
-                    .appendTo($item);
+                $item.append($('<img>').attr('src', file.data));
             } else if (file.type === 'application/pdf') {
                 $item.addClass('pdf')
                     .append($('<i>').addClass('bi bi-file-pdf'))
                     .append($('<span>').addClass('file-name').text(file.name));
             }
-
-            // Add remove button
-            $('<button>')
-                .addClass('remove-file')
-                .html('&times;')
-                .appendTo($item);
-
-            const fileSize = this.formatFileSize(file.size);
-            const uploadDate = new Date(file.timestamp).toLocaleDateString();
-            $item.attr('title', `${file.name}\nSize: ${fileSize}\nUploaded: ${uploadDate}`);
-
+            $item.append(
+                $('<button>')
+                    .addClass('remove-file')
+                    .html('&times;')
+            );
             $preview.append($item);
         });
+    },
+    
 
-        // Update validation
-        if (settings.onChange) {
-            settings.onChange(files);
-        }
+    // Get uploader instance
+    getInstance(moduleId, sectionId) {
+        return $(`.file-uploader[data-module="${moduleId}"][data-section="${sectionId}"]`);
     },
 
-    createPreviewItem: function(file, index, $uploader) {
-        const $item = $('<div>').addClass('file-preview-item');
+    // Enable uploader
+    enable($uploader) {
+        if (!$uploader || !$uploader.length) return;
         
-        if (file.type.match('image.*')) {
-            $item.append($('<img>').attr('src', file.data));
-        } else if (file.type === 'application/pdf') {
-            $item.addClass('pdf')
-                .append($('<i>').addClass('bi bi-file-pdf'))
-                .append($('<span>').addClass('file-name').text(file.name));
-        }
-
-        const fileSize = this.formatFileSize(file.size);
-        const uploadDate = new Date(file.timestamp).toLocaleDateString();
-        $item.attr('title', `${file.name}\nSize: ${fileSize}\nUploaded: ${uploadDate}`);
-        
-        $item.append(
-            $('<button>')
-                .addClass('remove-file')
-                .text('×')
-                .click(() => this.removeFile(index, $uploader))
-        );
-        
-        return $item;
+        $uploader.removeClass('disabled')
+                .find('.upload-trigger').prop('disabled', false);
+        $uploader.find('.file-input').prop('disabled', false);
+        $uploader.css({
+            'opacity': '',
+            'pointer-events': ''
+        });
     },
 
-    removeFile: function(index, $uploader) {
-        const settings = $uploader.data('settings');
-        const moduleId = settings.moduleId;
-        const sectionId = settings.sectionId;
-        const files = this.getFiles(moduleId, sectionId) || [];
+    // Disable uploader
+    disable($uploader) {
+        if (!$uploader || !$uploader.length) return;
         
-        if (index >= 0 && index < files.length) {
-            // Remove file from array
-            files.splice(index, 1);
-            
-            // Update storage
-            this.saveFiles(moduleId, sectionId, files);
-            
-            // Update UI
-            this.updateFilePreviews($uploader);
-            
-            // Trigger change callback if exists
-            if (settings.onChange) {
-                settings.onChange(files);
-            }
-        }
-    },
-
-    initializeStep: function($uploader, stepNumber) {
-        const settings = $uploader.data('settings');
-        const steps = settings.steps;
-        
-        if (!steps || stepNumber > steps.length) return;
-
-        const step = steps[stepNumber - 1];
-        $uploader.find('.upload-trigger').text(step.buttonText || settings.buttonText);
-        
-        if (step.maxFiles !== undefined) {
-            settings.maxFiles = step.maxFiles;
-        }
-        if (step.acceptedTypes !== undefined) {
-            $uploader.find('.file-input').attr('accept', step.acceptedTypes);
-        }
-        if (step.required !== undefined) {
-            settings.required = step.required;
-            $uploader.find('.required-indicator').toggle(step.required);
-        }
-
-        // Update step indicator
-        $uploader.find('.step').removeClass('active completed');
-        $uploader.find(`.step[data-step="${stepNumber}"]`).addClass('active');
-        for (let i = 1; i < stepNumber; i++) {
-            $uploader.find(`.step[data-step="${i}"]`).addClass('completed');
-        }
-
-        // Update navigation buttons
-        $uploader.find('.prev-step').toggle(stepNumber > 1);
-        $uploader.find('.next-step').toggle(stepNumber < steps.length);
-        if (stepNumber === steps.length) {
-            $uploader.find('.next-step').text('Complete');
-        }
-
-        this.validateStep($uploader);
-    },
-
-    validateStep: function($uploader) {
-        const settings = $uploader.data('settings');
-        const currentStep = $uploader.data('currentStep');
-        const files = this.getFiles(settings.moduleId, settings.sectionId) || [];
-
-        let isValid = true;
-
-        // Check required validation
-        if (settings.required && files.length === 0) {
-            isValid = false;
-            this.showMessage(settings.requiredMessage, 'danger', $uploader);
-        }
-
-        // Check step-specific validation
-        if (settings.steps) {
-            const step = settings.steps[currentStep - 1];
-            if (step.validate) {
-                isValid = step.validate(files);
-                if (!isValid && step.errorMessage) {
-                    this.showMessage(step.errorMessage, 'danger', $uploader);
-                }
-            }
-        }
-
-        // Enable/disable next button if steps are present
-        if (settings.steps) {
-            $uploader.find('.next-step').prop('disabled', !isValid);
-        }
-
-        return isValid;
-    },
-
-    handleNextStep: function($uploader) {
-        const settings = $uploader.data('settings');
-        const currentStep = $uploader.data('currentStep');
-        
-        if (!this.validateStep($uploader)) {
-            return;
-        }
-
-        if (settings.onStepComplete) {
-            settings.onStepComplete(currentStep, this.getFiles(settings.moduleId, settings.sectionId));
-        }
-
-        const nextStep = currentStep + 1;
-        if (nextStep <= settings.steps.length) {
-            $uploader.data('currentStep', nextStep);
-            this.initializeStep($uploader, nextStep);
-            this.clearFiles(settings.moduleId, settings.sectionId);
-        }
-    },
-
-    handlePrevStep: function($uploader) {
-        const currentStep = $uploader.data('currentStep');
-        const prevStep = currentStep - 1;
-        
-        if (prevStep >= 1) {
-            $uploader.data('currentStep', prevStep);
-            this.initializeStep($uploader, prevStep);
-        }
-    },
-
-    // State management methods
-    disable: function($uploader) {
         $uploader.addClass('disabled')
                 .find('.upload-trigger').prop('disabled', true);
         $uploader.find('.file-input').prop('disabled', true);
@@ -459,51 +396,8 @@ const FileUploader = {
         });
     },
 
-    enable: function($uploader) {
-        $uploader.removeClass('disabled')
-                .find('.upload-trigger').prop('disabled', false);
-        $uploader.find('.file-input').prop('disabled', false);
-        $uploader.css({
-            'opacity': '','pointer-events': ''
-        });
-    },
-
-    // Storage methods
-    getFiles: function(moduleId, sectionId) {
-        const key = `${moduleId}-${sectionId}`;
-        return this.files.get(key);
-    },
-
-    saveFiles: function(moduleId, sectionId, files) {
-        const key = `${moduleId}-${sectionId}`;
-        // Ensure each file has the necessary properties
-        const processedFiles = files.map(file => ({
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            data: file.data, // This might be base64 data for images
-            timestamp: file.timestamp || new Date().getTime()
-        }));
-        this.files.set(key, processedFiles);
-    },
-    processStoredFiles: function(files) {
-        return files.map(file => ({
-            ...file,
-            timestamp: file.timestamp || new Date().getTime()
-        }));
-    },
-
-    clearFiles: function(moduleId, sectionId) {
-        const key = `${moduleId}-${sectionId}`;
-        this.files.delete(key);
-    },
-
-    getInstance: function(moduleId, sectionId) {
-        return $(`.file-uploader[data-module="${moduleId}"][data-section="${sectionId}"]`);
-    },
-
-    // Message handling
-    showMessage: function(message, type, $uploader) {
+    // Show message
+    showMessage(message, type, $uploader) {
         const $message = $(`
             <div class="alert alert-${type} alert-dismissible fade show mt-2" role="alert">
                 ${message}
@@ -519,13 +413,37 @@ const FileUploader = {
         }, 3000);
     },
 
-    // Utility methods
-    formatFileSize: function(bytes) {
+    // Helper: Read file as data URL
+    readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(file);
+        });
+    },
+
+    // Helper: Format file size
+    formatFileSize(bytes) {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    },
+
+    // Helper: Clear all files
+    async clearAllFiles() {
+        if (!this.db) return;
+        
+        const transaction = this.db.transaction([this.storeName], 'readwrite');
+        const store = transaction.objectStore(this.storeName);
+        
+        return new Promise((resolve, reject) => {
+            const request = store.clear();
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
     }
 };
 
@@ -534,10 +452,9 @@ const style = document.createElement('style');
 style.textContent = `
     .file-uploader {
         border: 2px dashed #ccc;
-        padding: 0 16px 10px;
+        padding: 16px;
         border-radius: 0.5rem;
         transition: all 0.3s ease;
-        padding:16px;
     }
     
     .file-uploader.drag-over {
@@ -549,6 +466,7 @@ style.textContent = `
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
+        margin-top: 1rem;
     }
     
     .file-preview-item {
@@ -605,28 +523,45 @@ style.textContent = `
         background: rgba(0, 0, 0, 0.7);
     }
    
-    /* Navigation styles */
-    .step-navigation {
+    .preview-wrapper {
         display: flex;
-        justify-content: space-between;
+        align-items: flex-end;
         gap: 0.5rem;
-        margin-top: 1rem;
     }
 
-    /* Disabled state styles */
+    .upload-button-container {
+        flex-shrink: 0;
+    }
+
+    .upload-info {
+        margin-top: 0.5rem;
+        color: #6c757d;
+    }
+
     .file-uploader.disabled {
         opacity: 0.6;
         pointer-events: none;
     }
 
-    /* Required indicator styles */
+    .file-uploader.disabled .upload-trigger {
+        opacity: 0.65;
+        pointer-events: none;
+    }
+
+    .file-uploader.disabled .file-preview-item {
+        opacity: 0.7;
+    }
+
+    .file-uploader.disabled .remove-file {
+        display: none;
+    }
+
     .required-indicator {
         color: #dc3545;
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
 
-    /* Error state styles */
     .file-uploader.has-error {
         border-color: #dc3545;
     }
@@ -634,6 +569,14 @@ style.textContent = `
     .file-uploader.has-error .upload-trigger {
         border-color: #dc3545;
         color: #dc3545;
+    }
+
+    .alert {
+        margin-top: 1rem;
+    }
+
+    .alert-dismissible .btn-close {
+        padding: 0.5rem;
     }
 `;
 

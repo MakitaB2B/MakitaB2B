@@ -32,7 +32,8 @@ const ExpenseApp = {
         dayTypes: [
             { value: 'L', text: 'On Leave' },
             { value: 'H', text: 'Holiday' },
-            { value: 'W', text: 'Working Day' }
+            { value: 'W', text: 'Working Day' },
+            { value: 'WH', text: 'Working on Holiday' }
         ]
     },
 
@@ -212,7 +213,7 @@ const ExpenseApp = {
 
         initializeFileUploaders: function() {
             // Initialize food expense uploaders
-            ['breakfast', 'lunch', 'dinner','food'].forEach(meal => {
+            ['breakfast','food'].forEach(meal => {
                 FileUploader.init({
                     container: `#${meal}-attachments`,
                     moduleId: 'food-expenses',
@@ -227,29 +228,27 @@ const ExpenseApp = {
             });
         },
 
-        validateMealExpense: function(meal) {
+        validateMealExpense: async function(meal) {
             const $input = $(`#${meal}Claim`);
-            const value = $input.val();
-            
-            if (!/^\d{1,3}(\.\d{0,2})?$/.test(value)) {
-                $input.val('0.00');
-                return false;
-            }
-            
-            const amount = parseFloat(value) || 0;
-            const files = FileUploader.getFiles('food-expenses', meal) || [];
-            
-            const isValid = amount === 0 || (amount > 0 && files.length > 0);
-            $(`#${meal}Row`).find('.expense-message')
+            const value = parseFloat($input.val()) || 0;
+            // Fetch files from IndexedDB
+            const files = await FileUploader.getFiles('food-expenses', meal);
+
+            // Validation logic
+            const isValid = value === 0 || (value <= 100) || (value > 100 && files.length > 0);
+
+            const $row = $(`#${meal}Row`);
+            $row.find('.expense-message')
                 .text(!isValid ? 'Please attach receipt for the expense claim' : '')
-                .toggle(!isValid).addClass("text-danger ").removeClass("text-muted");
-    
+                .toggleClass('text-danger', !isValid)
+                .toggleClass('text-muted', isValid);
+
             return isValid;
         },
     
         updateTotalFoodExpenses: function() {
             let total = 0;            
-            ['breakfast', 'lunch', 'dinner'].forEach(meal => {
+            ['breakfast'].forEach(meal => {
                 const value = parseFloat($(`#${meal}Claim`).val()) || 0;
                 total += value;
             });
@@ -257,7 +256,7 @@ const ExpenseApp = {
         },
 
         validateAllExpenses: function() {
-            return ['breakfast', 'lunch', 'dinner'].every(meal => 
+            return ['breakfast'].every(meal => 
                 this.validateMealExpense(meal)
             );
         },
@@ -328,11 +327,33 @@ const ExpenseApp = {
                 childData: transportData.childData,
                 required: true,
                 onChange: (parentValue, childValue) => {
-                    const currentEntry = $(parentContainer).closest('.travel-entry');
-                    this.toggleMeterFields(currentEntry, parentValue === 'private');
+                    const $entry = $(parentContainer).closest('.travel-entry');
+                    this.toggleMeterFields($entry, parentValue === 'private');
+                    this.toggleApprovalUploader($entry, parentValue === 'private' && childValue === 'car');
                     this.validateEntry($entry);
                 }
             });
+            FileUploader.init({
+                container: $entry.find('.approval-documents-uploader')[0],
+                moduleId: 'travel-expenses',
+                sectionId: `travel-approval-${$entry.find('.entry-number').text()}`,
+                maxFiles: 1,
+                required: true,
+                buttonText: 'Add Approval Document',
+                uploadIcon: 'bi-file-earmark-text',
+                onChange: () => this.validateEntry($entry)
+            });
+        },
+        // Add this new function
+        toggleApprovalUploader: function($entry, show) {
+            const $approvalSection = $entry.find('.approval-documents-section');
+            if (show) {
+                $approvalSection.show();
+                $approvalSection.find('input').prop('required', true);
+            } else {
+                $approvalSection.hide();
+                $approvalSection.find('input').prop('required', false);
+            }
         },
         toggleMeterFields: function($entry, show) {
             // Use find to get to the card from the mode-transport-container
@@ -363,7 +384,7 @@ const ExpenseApp = {
             }
         },
 
-        validateEntry: function($entry) {
+        validateEntry: async function($entry) {
             let isValid = true;
             
             // Reset previous error states
@@ -416,14 +437,11 @@ const ExpenseApp = {
                 }
             }
         
-          // Validate file attachments
+            // Validate file attachments
             const entryNumber = $entry.find('.entry-number').text();
-            console.log("Entry number for files:", entryNumber);
-
-            const files = FileUploader.getFiles('travel-expenses', `travel-${entryNumber}`);
-            console.log("Files attached:", files);
-
-            if (!files || !files.length || !files[0]) {
+            const files = await FileUploader.getFiles('travel-expenses', `travel-${entryNumber}`);
+        
+            if (!files || files.length === 0) {
                 isValid = false;
                 $entry.find('.travel-documents-uploader').addClass('has-error');
                 if (!$entry.find('.documents-error').length) {
@@ -444,8 +462,19 @@ const ExpenseApp = {
             const start = parseFloat($entry.find('.starting-meter').val()) || 0;
             const end = parseFloat($entry.find('.closing-meter').val()) || 0;
             const total = Math.max(0, end - start);
-            
+            const transportMode = $(".mode-transport-container .dropdown-value").val();
+            const transportType = $(".type-transport-container .dropdown-value").val();
+            let fuelCharge=0;
+         
             $entry.find('.total-kms').val(total.toFixed(2));
+           
+            if(total > 0 && transportMode == 'private' && transportType == 'car'){
+                fuelCharge = total * 8;
+            }
+            if(total > 0 && transportMode == 'private' && transportType == 'motorcycle'){
+                fuelCharge = total * 6;
+            }
+            $entry.find('.fuel-charges').val(fuelCharge.toFixed(2));
 
             this.validateEntry($entry);
             $entry.find('.starting-meter, .closing-meter')
@@ -656,7 +685,7 @@ const ExpenseApp = {
 
 
         // Form Navigation
-        $('.next-step').click(function(e) {
+        $('.next-step').click(async function(e) {
             const $currentStep = $(this).closest('.step-container');
             const currentStepNumber = parseInt($currentStep.data('step'));
 
@@ -671,23 +700,30 @@ const ExpenseApp = {
                     break;
                     
                 case 2: // Food Expenses
-                    isValid = ExpenseApp.expenseManager.validateAllExpenses();
+                    const meals = ['breakfast'];
+                    for (const meal of meals) {
+                        const result = await ExpenseApp.expenseManager.validateMealExpense(meal);
+                        isValid = isValid && result;
+                    }
                     if (!isValid) {
                         showToast('Please attach receipts for all expense claims', 'danger');
+                        return;
                     }
                     break;
                     
                 case 3: // Travel Expenses
-                    $('.travel-entry').each(function() {
-                        if (!ExpenseApp.travelManager.validateEntry($(this))) {
-                            isValid = false;
-                        }
-                    });
+                    const $entries = $('.travel-entry');
+                    for (const entry of $entries) {
+                        const result = await ExpenseApp.travelManager.validateEntry($(entry));
+                        isValid = isValid && result;
+                    }
+        
                     if (!isValid) {
                         showToast('Please complete all travel entry details', 'danger');
+                        return;
                     }
                     break;
-            }
+                }
 
             if (!isValid) {
                 return;
@@ -970,9 +1006,9 @@ $(document).ready(function() {
     
         // Convert to number and check max value
         let numValue = parseFloat(value) || 0;
-        if (numValue > 100) {
-            numValue = 100;
-            value = "100.00";
+        if (numValue > 150) {
+            numValue = 150;
+            value = "150.00";
         }
     
         // Only update if value has changed

@@ -19,17 +19,29 @@ a, a:hover{color: #008290;}
     border-top: 1px solid #dee2e6;
     padding: 2rem 1rem;
 }
+.mb-3 {
+    position: relative;
+}
 .status-pending {
     color: #a53d04 !important;
     background:#ffd620 ;
     display: inline-block;
-    padding: 0 8px;
-    border-radius: 8px;
+    padding: 0 8px !important;
+    border-radius: 16px;
     text-transform: uppercase;
     font-size: 10px;
     font-weight: 500;
     min-width: 68px;
     text-align: center;
+    text-decoration: none;
+}
+.status-approved{
+    background: rgb(32, 146, 3);
+    color: #025015;
+}
+.status-rejected{
+    background: #ff0018;
+    color: #59030c;
 }
 .status-approved {
     background: #9beaad;
@@ -667,7 +679,7 @@ a, a:hover{color: #008290;}
 .food-wrapper .alert.alert-info.mb-4{font-size: 12px;}
 .food-expense-wrapper {
     display: grid;
-    grid-template-columns:repeat(3, 1fr);
+    grid-template-columns:1fr;
     gap: 24px;
     margin-top: 15px;
 }
@@ -804,9 +816,9 @@ span.d-stat {
 #expenseModal .food-expense-wrapper{
     grid-template-columns:1fr;
 }
-.exp-details-box, .exp-data-wrapper.main-wrap.exp-wrapper,.food-exp-data, .misc-exp-data, .travel-exp-data{
+/* .exp-details-box, .exp-data-wrapper.main-wrap.exp-wrapper,.food-exp-data, .misc-exp-data, .travel-exp-data{
     display: none;
-}
+} */
 
 .exp-wrapper .exp-bill-copy a + a{
     margin-left: 10px;
@@ -1359,6 +1371,150 @@ span.exp-card-btns a + a{
 }
 .main-submit-btn .btn{
     white-space: nowrap;
+}
+.approval-documents-section {
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.approval-documents-section .file-uploader {
+    border-color: #008290;
+}
+
+.approval-documents-section.has-error .file-uploader {
+    border-color: #dc3545;
+}
+/* Attachment icon styles */
+.bi-paperclip {
+    font-size: 14px;
+    position: relative;
+    top: -1px;
+}
+
+/* Adjust the last column to fit both icons */
+.table td:last-child {
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+/* Make both icons align nicely */
+td i {
+    vertical-align: middle;
+}
+
+/* Button states */
+.btn-primary:disabled, .btn-secondary:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Modal styles */
+#rejectModal textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Toast container */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+}
+/* Rejection remarks styles */
+.rejection-remarks {
+    border: 2px solid #dc3545;
+    margin: 10px 0;
+}
+
+.rejection-remarks .exp-card-title {
+    background: #dc3545;
+    border-color: #dc3545;
+}
+
+.rejection-remarks .exp-data {
+    padding: 10px;
+    grid-template-columns: 1fr;  /* Full width for remarks */
+}
+
+.rejection-remarks .fa-circle-exclamation {
+    font-size: 14px;
+}
+
+.status-cell {
+    position: relative;
+}
+.status-pending {
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.status-cell .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    width: 120px;
+    list-style: none;
+    margin: 0;
+    padding: 5px 0;
+    z-index: 10;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.status-cell i {
+    padding: 0;
+    margin-left: 8px;
+}
+
+.status-cell .dropdown-menu li {
+    padding: 5px 10px;
+    cursor: pointer;
+    color: #333;
+    transition: all 0.2s ease;
+}
+.status-cell .dropdown-menu li + li{
+    border-top: 1px solid #ddd;
+}
+
+.status-cell .dropdown-menu li:hover {
+    background-color: #008290;
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .rejection-remarks {
+        margin: 15px 0;
+    }
+    
+    .rejection-remarks .exp-data {
+        padding: 8px;
+    }
+}
+.common-error {
+    background: #f7c9c9;
+    padding: 16px;
+    margin-bottom: 24px;
+    border-radius: 5px;
+    color: #8f0a0a;
+    position: relative;
+}
+.common-error p, .common-error ul {
+    margin: 0;
+}
+.error-close{
+    color: #8f0a0a;
+    position: absolute;
+    right: 10px;
+    top: 5px;
+}
+.error-close:hover{
+    color: #6d0505;
 }
 @media (max-width: 768px) {
     #daysContainer .date-grid {
