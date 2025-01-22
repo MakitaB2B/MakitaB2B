@@ -249,28 +249,30 @@ const LTCStateManager = {
         if (!$entry?.length) return;
         
         try {
-            // Set basic fields first
             if (type === 'travel') {
-                // Set dropdowns with delay
-                await new Promise(resolve => {
-                    CustomDropdown.setValue($entry.find('.mode-transport-container'), data.modeOfTransport);
-                    setTimeout(() => {
-                        CustomDropdown.setValue($entry.find('.type-transport-container'), data.typeOfTransport);
-                        resolve();
-                    }, 100);
-                });
+                // For travel entries, handle dependent dropdowns
+                const $modeContainer = $entry.find('.mode-transport-container');
+                const $typeContainer = $entry.find('.type-transport-container');
                 
-                $entry.find('.starting-meter').val(data.startingMeter);
-                $entry.find('.closing-meter').val(data.closingMeter);
-                $entry.find('.total-kms').val(data.totalKms);
-                $entry.find('.toll-charges').val(data.tollCharges);
-                $entry.find('.fuel-charges').val(data.fuelCharges);
-                $entry.find('.places-visited').val(data.placesVisited);
-            } else {
-                CustomDropdown.setValue($entry.find('.expense-type-container'), data.type);
-                $entry.find('.claim-amount').val(data.amount);
-            }
+                // First set the mode of transport
+                CustomDropdown.setValue($modeContainer, data.modeOfTransport);
+                $modeContainer.find(`.select-option[data-value="${data.modeOfTransport}"]`).click()
+                $typeContainer.find(`.select-option[data-value="${data.typeOfTransport}"]`).click()
 
+                
+                // Set other travel entry fields
+                $entry.find('.starting-meter').val(data.startingMeter || '0');
+                $entry.find('.closing-meter').val(data.closingMeter || '0');
+                $entry.find('.total-kms').val(data.totalKms || '0');
+                $entry.find('.toll-charges').val(data.tollCharges || '0');
+                $entry.find('.fuel-charges').val(data.fuelCharges || '0');
+                $entry.find('.places-visited').val(data.placesVisited || '');
+            } else {
+                // Handle misc entries
+                CustomDropdown.setValue($entry.find('.expense-type-container'), data.type);
+                $entry.find('.claim-amount').val(data.amount || '0');
+            }
+    
             // Handle file preview
             const entryNumber = $entry.find('.entry-number').text();
             const moduleId = type === 'travel' ? 'travel-expenses' : 'misc-expenses';

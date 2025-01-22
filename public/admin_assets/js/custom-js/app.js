@@ -318,6 +318,7 @@ const ExpenseApp = {
             };
             const parentContainer = $entry.find('.mode-transport-container')[0];  // Store reference
             const childContainer = $entry.find('.type-transport-container')[0];   // Store reference
+            
         
 
             DependentDropdown.init({
@@ -550,7 +551,7 @@ const ExpenseApp = {
             });
         },
     
-        validateEntry: function($entry) {
+        validateEntry: async function($entry) {
             let isValid = true;
             
             // Reset previous error states
@@ -578,9 +579,9 @@ const ExpenseApp = {
     
             // Validate file attachments
             const entryNumber = $entry.find('.entry-number').text();
-            const files = FileUploader.getFiles('misc-expenses', `misc-${entryNumber}`);
-    
-            if (!files || !files.length) {
+            const files = await FileUploader.getFiles('misc-expenses', `misc-${entryNumber}`);
+        
+            if (!files || files.length === 0) {
                 isValid = false;
                 $entry.find('.misc-documents-uploader').addClass('has-error');
                 if (!$entry.find('.documents-error').length) {
@@ -588,6 +589,10 @@ const ExpenseApp = {
                         '<div class="invalid-feedback documents-error">Supporting documents are required</div>'
                     );
                 }
+            } else {
+                // Clear error state if files exist
+                $entry.find('.misc-documents-uploader').removeClass('has-error');
+                $entry.find('.documents-error').remove();
             }
     
             return isValid;
@@ -684,108 +689,109 @@ const ExpenseApp = {
         this.expenseManager.initializeFileUploaders();
 
 
-        // Form Navigation
-        $('.next-step').click(async function(e) {
+        // In app.js, update the step navigation handlers
+        $('.next-step, .prev-step').click(async function(e) {
             const $currentStep = $(this).closest('.step-container');
             const currentStepNumber = parseInt($currentStep.data('step'));
-
-            // Validate current step
-            let isValid = true;
-            switch(currentStepNumber) {
-                case 1: // Time Info
-                    isValid = ExpenseApp.timeManager.validateAndUpdate();
-                    if (!isValid) {
-                        showToast('Please fix the errors', 'danger');
-                    }
-                    break;
-                    
-                case 2: // Food Expenses
-                    const meals = ['breakfast'];
-                    for (const meal of meals) {
-                        const result = await ExpenseApp.expenseManager.validateMealExpense(meal);
-                        isValid = isValid && result;
-                    }
-                    if (!isValid) {
-                        showToast('Please attach receipts for all expense claims', 'danger');
-                        return;
-                    }
-                    break;
-                    
-                case 3: // Travel Expenses
-                    const $entries = $('.travel-entry');
-                    for (const entry of $entries) {
-                        const result = await ExpenseApp.travelManager.validateEntry($(entry));
-                        isValid = isValid && result;
-                    }
-        
-                    if (!isValid) {
-                        showToast('Please complete all travel entry details', 'danger');
-                        return;
-                    }
-                    break;
+            const isNext = $(this).hasClass('next-step');
+            
+            // Validate current step if moving forward
+            if (isNext) {
+                let isValid = true;
+                switch(currentStepNumber) {
+                    case 1: // Time Info
+                        isValid = ExpenseApp.timeManager.validateAndUpdate();
+                        if (!isValid) {
+                            showToast('Please fix the errors', 'danger');
+                            return;
+                        }
+                        break;
+                        
+                    case 2: // Food Expenses
+                        const meals = ['breakfast'];
+                        for (const meal of meals) {
+                            const result = await ExpenseApp.expenseManager.validateMealExpense(meal);
+                            isValid = isValid && result;
+                        }
+                        if (!isValid) {
+                            showToast('Please attach receipts for all expense claims', 'danger');
+                            return;
+                        }
+                        break;
+                        
+                    case 3: // Travel Expenses
+                        const $entries = $('.travel-entry');
+                        for (const entry of $entries) {
+                            const result = await ExpenseApp.travelManager.validateEntry($(entry));
+                            isValid = isValid && result;
+                        }
+                        if (!isValid) {
+                            showToast('Please complete all travel entry details', 'danger');
+                            return;
+                        }
+                        break;
                 }
-
-            if (!isValid) {
-                return;
             }
 
-            // Proceed to next step
-            const nextStepNumber = currentStepNumber + 1;
-            
+            // Save current step data
+            const stepData = ExpenseApp.collectCurrentStepData(currentStepNumber);
+            await LTCStateManager.saveCurrentState();
+
+            // Calculate next/previous step number
+            const nextStepNumber = isNext ? currentStepNumber + 1 : currentStepNumber - 1;
+
+            // Update UI based on viewport
             if ($(window).width() <= 768) {
-                // Mobile View: Update accordion headers and show content
+                // Mobile View
                 $('.mobile-accordion .accordion-header').removeClass('active');
                 $(`.mobile-accordion .accordion-section[data-step="${currentStepNumber}"] .accordion-header`)
                     .removeClass('active')
-                    .addClass('completed');
+                    .toggleClass('completed', isNext);
                 $(`.mobile-accordion .accordion-section[data-step="${nextStepNumber}"] .accordion-header`)
                     .addClass('active');
                     
-                // Hide all step containers and show next
                 $('.mobile-accordion .step-container').hide();
-                $(`.mobile-accordion .step-container[data-step="${nextStepNumber}"]`).show();
+                const $nextStep = $(`.mobile-accordion .step-container[data-step="${nextStepNumber}"]`);
+                $nextStep.show();
+                
+                // Populate next step data if needed
+                if (nextStepNumber === 3) { // Travel step
+                    const savedState = LTCStateManager.loadState();
+                    if (savedState.travelEntries?.length) {
+                        savedState.travelEntries.forEach((entryData, index) => {
+                            const $entry = $('.travel-entry').eq(index);
+                            if ($entry.length) {
+                                LTCStateManager.populateEntry('travel', $entry, entryData);
+                            }
+                        });
+                    }
+                }
             } else {
-                // Desktop View: Update stepper UI
+                // Desktop View
                 $(`.step[data-step="${currentStepNumber}"]`)
                     .removeClass('active')
-                    .addClass('completed');
+                    .toggleClass('completed', isNext);
                 $(`.step[data-step="${nextStepNumber}"]`).addClass('active');
                 
-                // Show next step
                 $currentStep.removeClass('active');
-                $(`.step-container[data-step="${nextStepNumber}"]`).addClass('active');
+                const $nextStep = $(`.step-container[data-step="${nextStepNumber}"]`);
+                $nextStep.addClass('active');
+                
+                // Populate next step data if needed
+                if (nextStepNumber === 3) { // Travel step
+                    const savedState = LTCStateManager.loadState();
+                    if (savedState.travelEntries?.length) {
+                        savedState.travelEntries.forEach((entryData, index) => {
+                            const $entry = $('.travel-entry').eq(index);
+                            if ($entry.length) {
+                                LTCStateManager.populateEntry('travel', $entry, entryData);
+                            }
+                        });
+                    }
+                }
             }
         });
 
-        // Previous step navigation
-        $('.prev-step').click(function() {
-            const $currentStep = $(this).closest('.step-container');
-            const currentStepNumber = parseInt($currentStep.data('step'));
-            const prevStepNumber = currentStepNumber - 1;
-            
-            if ($(window).width() <= 768) {
-                // Mobile View: Update accordion headers and show content
-                $('.mobile-accordion .accordion-header').removeClass('active');
-                $(`.mobile-accordion .accordion-section[data-step="${currentStepNumber}"] .accordion-header`)
-                    .removeClass('active completed');
-                $(`.mobile-accordion .accordion-section[data-step="${prevStepNumber}"] .accordion-header`)
-                    .addClass('active');
-                    
-                // Hide all step containers and show previous
-                $('.mobile-accordion .step-container').hide();
-                $(`.mobile-accordion .step-container[data-step="${prevStepNumber}"]`).show();
-            } else {
-                // Desktop View: Update stepper UI
-                $(`.step[data-step="${currentStepNumber}"]`).removeClass('active');
-                $(`.step[data-step="${prevStepNumber}"]`)
-                    .addClass('active')
-                    .removeClass('completed');
-                
-                // Show previous step
-                $currentStep.removeClass('active');
-                $(`.step-container[data-step="${prevStepNumber}"]`).addClass('active');
-            }
-        });
 
         // Travel entry handlers
         $('#addTravelEntry').click(() => {
@@ -903,16 +909,6 @@ const ExpenseApp = {
         return entries;
     },
 
-    submitForm: function(formData) {
-        // Here you would typically send the data to your server
-        console.log('Submitting form data:', formData);
-        showToast('Form submitted successfully!', 'success');
-        
-        // Reset form
-        setTimeout(() => {
-            location.reload();
-        }, 2000);
-    },
 
     /**
      * Utility Functions
@@ -1119,11 +1115,346 @@ $(document).ready(function() {
 
     
 
-    $('#submit-form').click(function() {
-        if (ExpenseApp.validateForm()) {
-            const formData = ExpenseApp.collectFormData();
-            ExpenseApp.submitForm(formData);
-            // Clear state after successful submission
+    // Add this to your document ready handler or where you initialize event handlers
+// Add this to your document ready handler or where you initialize event handlers
+
+$('#submit-form').click(async function(e) {
+    e.preventDefault();
+
+    // Validate all steps first
+    let isValid = true;
+
+    // 1. Validate Time Info
+    if (!ExpenseApp.timeManager.validateAndUpdate()) {
+        isValid = false;
+        showToast('Please complete time information', 'danger');
+        return;
+    }
+
+    // 2. Validate Food Expenses
+    const meals = ['breakfast'];
+    for (const meal of meals) {
+        const result = await ExpenseApp.expenseManager.validateMealExpense(meal);
+        if (!result) {
+            isValid = false;
+            showToast('Please complete food expenses', 'danger');
+            return;
         }
-    });
+    }
+
+    // 3. Validate Travel Entries
+    const $travelEntries = $('.travel-entry');
+    for (const entry of $travelEntries) {
+        const result = await ExpenseApp.travelManager.validateEntry($(entry));
+        if (!result) {
+            isValid = false;
+            showToast('Please complete travel entries', 'danger');
+            return;
+        }
+    }
+
+    // 4. Validate Misc Expenses
+    const $miscEntries = $('.misc-entry');
+    let miscValid = true;
+    for (const entry of $miscEntries) {
+        const result = await ExpenseApp.miscManager.validateEntry($(entry));
+        if (!result) {
+            miscValid = false;
+            break;
+        }
+    }
+    
+    if (!miscValid) {
+        isValid = false;
+        showToast('Please complete miscellaneous expenses', 'danger');
+        return;
+    }
+
+    if (isValid) {
+        if (confirm('Are you sure you want to submit this expense claim?')) {
+            await ExpenseApp.formSubmission.submitForm();
+        }
+    }
 });
+});
+
+
+// Add this to ExpenseApp object
+
+/**
+ * Form submission handler
+ */
+ExpenseApp.formSubmission = {
+    prepareFormData: async function() {
+        console.group('Preparing Form Data');
+        const formData = new FormData();
+        
+        // 1. Time Information
+        const timeInfo = {
+            date: Calendar.getDate('#calendarBody'),
+            dayType: CustomDropdown.getValue('#dayTypeDropdown'),
+            inTime: {
+                hours: CustomDropdown.getValue('#inHoursDropdown') || '00',
+                minutes: CustomDropdown.getValue('#inMinutesDropdown') || '00'
+            },
+            outTime: {
+                hours: CustomDropdown.getValue('#outHoursDropdown') || '00',
+                minutes: CustomDropdown.getValue('#outMinutesDropdown') || '00'
+            }
+        };
+        console.log('Time Information:', timeInfo);
+        formData.append('timeInfo', JSON.stringify(timeInfo));
+    
+        // 2. Food Expenses
+        console.group('Food Expenses');
+        const foodExpense = {
+            breakfast: {
+                amount: $('#breakfastClaim').val() || '0.00',
+                fileReferences: []
+            }
+        };
+    
+        const breakfastFiles = await FileUploader.getFiles('food-expenses', 'breakfast');
+        if (breakfastFiles?.length) {
+            console.log('Breakfast Files Found:', breakfastFiles.length);
+            for (const [index, file] of breakfastFiles.entries()) {
+                const fileKey = `food_breakfast_${index}`;
+                formData.append(fileKey, this.dataURLtoFile(file.data, file.name));
+                foodExpense.breakfast.fileReferences.push({
+                    key: fileKey,
+                    name: file.name,
+                    type: file.type
+                });
+                console.log(`Breakfast File ${index + 1}:`, {
+                    name: file.name,
+                    type: file.type,
+                    size: this.formatFileSize(file.data?.length || 0)
+                });
+            }
+        } else {
+            console.log('No breakfast files found');
+        }
+        console.log('Final Food Expense Data:', foodExpense);
+        console.groupEnd();
+        
+        formData.append('foodExpense', JSON.stringify(foodExpense));
+    
+        // 3. Travel Expenses
+        console.group('Travel Expenses');
+        const travelEntries = [];
+        const $travelEntries = $('.travel-entry');
+        
+        console.log('Total Travel Entries:', $travelEntries.length);
+        for (let i = 0; i < $travelEntries.length; i++) {
+            console.group(`Travel Entry #${i + 1}`);
+            const $entry = $($travelEntries[i]);
+            const entryNum = i + 1;
+            
+            const travelEntry = {
+                modeOfTransport: CustomDropdown.getValue($entry.find('.mode-transport-container')),
+                typeOfTransport: CustomDropdown.getValue($entry.find('.type-transport-container')),
+                startingMeter: $entry.find('.starting-meter').val(),
+                closingMeter: $entry.find('.closing-meter').val(),
+                totalKms: $entry.find('.total-kms').val(),
+                tollCharges: $entry.find('.toll-charges').val(),
+                fuelCharges: $entry.find('.fuel-charges').val(),
+                placesVisited: $entry.find('.places-visited').val(),
+                fileReferences: []
+            };
+            console.log('Entry Details:', { ...travelEntry });
+    
+            // Get travel files
+            const travelFiles = await FileUploader.getFiles('travel-expenses', `travel-${entryNum}`);
+            if (travelFiles?.length) {
+                console.log('Travel Documents Found:', travelFiles.length);
+                for (const [index, file] of travelFiles.entries()) {
+                    const fileKey = `travel_${entryNum}_${index}`;
+                    formData.append(fileKey, this.dataURLtoFile(file.data, file.name));
+                    travelEntry.fileReferences.push({
+                        key: fileKey,
+                        name: file.name,
+                        type: file.type
+                    });
+                    console.log(`Travel Document ${index + 1}:`, {
+                        name: file.name,
+                        type: file.type,
+                        size: this.formatFileSize(file.data?.length || 0)
+                    });
+                }
+            }
+    
+            // Get approval document if exists
+            const approvalFiles = await FileUploader.getFiles('travel-expenses', `travel-approval-${entryNum}`);
+            if (approvalFiles?.length) {
+                const file = approvalFiles[0];
+                const fileKey = `travel_approval_${entryNum}`;
+                formData.append(fileKey, this.dataURLtoFile(file.data, file.name));
+                travelEntry.approvalDocument = {
+                    key: fileKey,
+                    name: file.name,
+                    type: file.type
+                };
+                console.log('Approval Document:', {
+                    name: file.name,
+                    type: file.type,
+                    size: this.formatFileSize(file.data?.length || 0)
+                });
+            } else {
+                console.log('No approval document found');
+            }
+    
+            travelEntries.push(travelEntry);
+            console.groupEnd();
+        }
+        console.groupEnd();
+        
+        formData.append('travelEntries', JSON.stringify(travelEntries));
+    
+        // 4. Misc Expenses
+        console.group('Miscellaneous Expenses');
+        const miscExpenses = [];
+        const $miscEntries = $('.misc-entry');
+        
+        console.log('Total Misc Entries:', $miscEntries.length);
+        for (let i = 0; i < $miscEntries.length; i++) {
+            console.group(`Misc Entry #${i + 1}`);
+            const $entry = $($miscEntries[i]);
+            const entryNum = i + 1;
+            
+            const miscEntry = {
+                type: CustomDropdown.getValue($entry.find('.expense-type-container')),
+                amount: $entry.find('.claim-amount').val(),
+                fileReferences: []
+            };
+            console.log('Entry Details:', { ...miscEntry });
+    
+            // Get misc files
+            const miscFiles = await FileUploader.getFiles('misc-expenses', `misc-${entryNum}`);
+            if (miscFiles?.length) {
+                console.log('Documents Found:', miscFiles.length);
+                for (const [index, file] of miscFiles.entries()) {
+                    const fileKey = `misc_${entryNum}_${index}`;
+                    formData.append(fileKey, this.dataURLtoFile(file.data, file.name));
+                    miscEntry.fileReferences.push({
+                        key: fileKey,
+                        name: file.name,
+                        type: file.type
+                    });
+                    console.log(`Document ${index + 1}:`, {
+                        name: file.name,
+                        type: file.type,
+                        size: this.formatFileSize(file.data?.length || 0)
+                    });
+                }
+            } else {
+                console.log('No documents found');
+            }
+    
+            miscExpenses.push(miscEntry);
+            console.groupEnd();
+        }
+        console.groupEnd();
+        
+        formData.append('miscExpenses', JSON.stringify(miscExpenses));
+    
+        // Log final FormData contents
+        console.group('Final FormData Contents');
+        for (const pair of formData.entries()) {
+            if (pair[1] instanceof File) {
+                console.log(pair[0], ':', {
+                    type: 'File',
+                    name: pair[1].name,
+                    size: this.formatFileSize(pair[1].size),
+                    mimeType: pair[1].type
+                });
+            } else {
+                try {
+                    const value = JSON.parse(pair[1]);
+                    console.log(pair[0], ':', value);
+                } catch {
+                    console.log(pair[0], ':', pair[1]);
+                }
+            }
+        }
+        console.groupEnd();
+    
+        console.groupEnd(); // End Preparing Form Data
+        return formData;
+    },
+    formatFileSize: function(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    },
+
+    // Helper function to convert Data URL to File object
+    dataURLtoFile: function(dataurl, filename) {
+        if (!dataurl) return null;
+        
+        const arr = dataurl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        
+        while(n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        
+        return new File([u8arr], filename, {type: mime});
+    },
+
+    // Submit form data
+    submitForm: async function() {
+        try {
+            const formData = await this.prepareFormData();
+            
+            // Show loading state
+            $('#submit-form').prop('disabled', true).html(
+                '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...'
+            );
+
+            // Make AJAX request
+            const response = await $.ajax({
+                url: '/admin/travelmanagement/create-ltc-claim-application',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                xhr: function() {
+                    const xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener('progress', function(evt) {
+                        if (evt.lengthComputable) {
+                            const percentComplete = (evt.loaded / evt.total) * 100;
+                            // Update progress if needed
+                            console.log('Upload progress:', percentComplete + '%');
+                        }
+                    }, false);
+                    return xhr;
+                }
+            });
+
+            // Handle success
+            showToast('Form submitted successfully!', 'success');
+            
+            // Clear form data
+            // await LTCStateManager.clearAllData();
+            
+            // Redirect or reset form
+            // setTimeout(() => {
+            //     window.location.href = '/dashboard';  // Replace with your dashboard URL
+            // }, 2000);
+
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            showToast('Error submitting form. Please try again.', 'danger');
+            
+            // Reset submit button
+            $('#submit-form').prop('disabled', false).html(
+                'Submit Claim<i class="bi bi-send ms-2"></i>'
+            );
+        }
+    }
+};
