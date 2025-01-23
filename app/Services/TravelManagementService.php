@@ -373,14 +373,11 @@ class TravelManagementService{
             DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
 
                 $teamDetails = TeamMembers::WHERE('team_member','=',$employeeSlug)->get(['team_owner']);
-
                 $teamManager = count($teamDetails)>0 ? $teamDetails[0]->team_owner : null ;
 
-                    $data = $request->input('timeInfo');
-                    $decodedData = json_decode($data);
-                    $date = $decodedData->date;
-                    $dateObject = \DateTime::createFromFormat('d-M-Y', $date);
-                    dd($decodedData ,$dateObject);
+                $timeInfo = $request->input('timeInfo') ? json_decode($request->input('timeInfo'), true) : [];
+                $foodExpense = $request->input('foodExpense') ? json_decode($request->input('foodExpense'), true) : [];
+                $travelEntries = $request->input('travelEntries') ? json_decode($request->input('travelEntries'), true) : [];
                     
                 $ltcappslug = Str::slug(rand().rand());
 

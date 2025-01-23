@@ -166,8 +166,7 @@ class TravelManagementController extends Controller
      }
 
     public function createLtcClaimApplication(Request $request){
-        $data = $request->input('timeInfo');
-        dd($request->all());
+
         $employeeSlug=Auth::guard('admin')->user()->employee_slug;
 
         $ltc_id = $this->travelManagementService->ltc_claim_id();
