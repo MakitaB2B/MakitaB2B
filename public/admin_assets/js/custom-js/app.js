@@ -1185,202 +1185,96 @@ $('#submit-form').click(async function(e) {
  * Form submission handler
  */
 ExpenseApp.formSubmission = {
+    // In your form submission code
     prepareFormData: async function() {
-        console.group('Preparing Form Data');
-        const formData = new FormData();
-        
-        // 1. Time Information
-        const timeInfo = {
-            date: Calendar.getDate('#calendarBody'),
-            dayType: CustomDropdown.getValue('#dayTypeDropdown'),
-            inTime: {
-                hours: CustomDropdown.getValue('#inHoursDropdown') || '00',
-                minutes: CustomDropdown.getValue('#inMinutesDropdown') || '00'
-            },
-            outTime: {
-                hours: CustomDropdown.getValue('#outHoursDropdown') || '00',
-                minutes: CustomDropdown.getValue('#outMinutesDropdown') || '00'
-            }
-        };
-        console.log('Time Information:', timeInfo);
-        formData.append('timeInfo', JSON.stringify(timeInfo));
+        try {
+            console.log('============ STARTING FORM DATA PREPARATION ============');
+            const formData = new FormData();
+            const savedState = LTCStateManager.loadState();
+            console.log('Loaded saved state:', savedState);
     
-        // 2. Food Expenses
-        console.group('Food Expenses');
-        const foodExpense = {
-            breakfast: {
-                amount: $('#breakfastClaim').val() || '0.00',
-                fileReferences: []
+            if (savedState.timeInfo) {
+                formData.append('timeInfo', JSON.stringify(savedState.timeInfo));
             }
-        };
-    
-        const breakfastFiles = await FileUploader.getFiles('food-expenses', 'breakfast');
-        if (breakfastFiles?.length) {
-            console.log('Breakfast Files Found:', breakfastFiles.length);
-            for (const [index, file] of breakfastFiles.entries()) {
-                const fileKey = `food_breakfast_${index}`;
-                formData.append(fileKey, this.dataURLtoFile(file.data, file.name));
-                foodExpense.breakfast.fileReferences.push({
-                    key: fileKey,
-                    name: file.name,
-                    type: file.type
-                });
-                console.log(`Breakfast File ${index + 1}:`, {
-                    name: file.name,
-                    type: file.type,
-                    size: this.formatFileSize(file.data?.length || 0)
-                });
+            if (savedState.foodExpense) {
+                formData.append('foodExpense', JSON.stringify(savedState.foodExpense));
             }
-        } else {
-            console.log('No breakfast files found');
-        }
-        console.log('Final Food Expense Data:', foodExpense);
-        console.groupEnd();
-        
-        formData.append('foodExpense', JSON.stringify(foodExpense));
-    
-        // 3. Travel Expenses
-        console.group('Travel Expenses');
-        const travelEntries = [];
-        const $travelEntries = $('.travel-entry');
-        
-        console.log('Total Travel Entries:', $travelEntries.length);
-        for (let i = 0; i < $travelEntries.length; i++) {
-            console.group(`Travel Entry #${i + 1}`);
-            const $entry = $($travelEntries[i]);
-            const entryNum = i + 1;
+            if (savedState.travelEntries) {
+                formData.append('travelEntries', JSON.stringify(savedState.travelEntries));
+            }
+            if (savedState.miscExpenses) {
+                formData.append('miscExpenses', JSON.stringify(savedState.miscExpenses));
+            }
             
-            const travelEntry = {
-                modeOfTransport: CustomDropdown.getValue($entry.find('.mode-transport-container')),
-                typeOfTransport: CustomDropdown.getValue($entry.find('.type-transport-container')),
-                startingMeter: $entry.find('.starting-meter').val(),
-                closingMeter: $entry.find('.closing-meter').val(),
-                totalKms: $entry.find('.total-kms').val(),
-                tollCharges: $entry.find('.toll-charges').val(),
-                fuelCharges: $entry.find('.fuel-charges').val(),
-                placesVisited: $entry.find('.places-visited').val(),
-                fileReferences: []
-            };
-            console.log('Entry Details:', { ...travelEntry });
+            // Food files
+            console.log('\nProcessing Food Files:');
+            const breakfastFiles = await FileUploader.getFiles('food-expenses', 'breakfast') || [];
+            for (let i = 0; i < breakfastFiles.length; i++) {
+                formData.append('breakfast_files[]', breakfastFiles[i]);
+                console.log('Added breakfast file:', { name: breakfastFiles[i].name, type: breakfastFiles[i].type });
+            }
     
-            // Get travel files
-            const travelFiles = await FileUploader.getFiles('travel-expenses', `travel-${entryNum}`);
-            if (travelFiles?.length) {
-                console.log('Travel Documents Found:', travelFiles.length);
-                for (const [index, file] of travelFiles.entries()) {
-                    const fileKey = `travel_${entryNum}_${index}`;
-                    formData.append(fileKey, this.dataURLtoFile(file.data, file.name));
-                    travelEntry.fileReferences.push({
-                        key: fileKey,
-                        name: file.name,
-                        type: file.type
-                    });
-                    console.log(`Travel Document ${index + 1}:`, {
-                        name: file.name,
-                        type: file.type,
-                        size: this.formatFileSize(file.data?.length || 0)
-                    });
+            // Travel files
+            if (savedState.travelEntries && savedState.travelEntries.length) {
+                console.log('\nProcessing Travel Files:');
+                for (let i = 0; i < savedState.travelEntries?.length || 0; i++) {
+                    const entryNum = i + 1;
+                    
+                    const travelFiles = await FileUploader.getFiles('travel-expenses', `travel-${entryNum}`) || [];
+                    for (const file of travelFiles) {
+                        formData.append(`travel_files_${entryNum}[]`, file);
+                        console.log(`Added travel file for entry ${entryNum}:`, { name: file.name, type: file.type });
+                    }
+        
+                    const approvalFiles = await FileUploader.getFiles('travel-expenses', `travel-approval-${entryNum}`) || [];
+                    if (approvalFiles.length) {
+                        formData.append(`travel_approval_${entryNum}`, approvalFiles[0]);
+                        console.log(`Added approval file for entry ${entryNum}:`, { name: approvalFiles[0].name, type: approvalFiles[0].type });
+                    }
                 }
             }
     
-            // Get approval document if exists
-            const approvalFiles = await FileUploader.getFiles('travel-expenses', `travel-approval-${entryNum}`);
-            if (approvalFiles?.length) {
-                const file = approvalFiles[0];
-                const fileKey = `travel_approval_${entryNum}`;
-                formData.append(fileKey, this.dataURLtoFile(file.data, file.name));
-                travelEntry.approvalDocument = {
-                    key: fileKey,
-                    name: file.name,
-                    type: file.type
-                };
-                console.log('Approval Document:', {
-                    name: file.name,
-                    type: file.type,
-                    size: this.formatFileSize(file.data?.length || 0)
-                });
-            } else {
-                console.log('No approval document found');
-            }
-    
-            travelEntries.push(travelEntry);
-            console.groupEnd();
-        }
-        console.groupEnd();
-        
-        formData.append('travelEntries', JSON.stringify(travelEntries));
-    
-        // 4. Misc Expenses
-        console.group('Miscellaneous Expenses');
-        const miscExpenses = [];
-        const $miscEntries = $('.misc-entry');
-        
-        console.log('Total Misc Entries:', $miscEntries.length);
-        for (let i = 0; i < $miscEntries.length; i++) {
-            console.group(`Misc Entry #${i + 1}`);
-            const $entry = $($miscEntries[i]);
-            const entryNum = i + 1;
-            
-            const miscEntry = {
-                type: CustomDropdown.getValue($entry.find('.expense-type-container')),
-                amount: $entry.find('.claim-amount').val(),
-                fileReferences: []
-            };
-            console.log('Entry Details:', { ...miscEntry });
-    
-            // Get misc files
-            const miscFiles = await FileUploader.getFiles('misc-expenses', `misc-${entryNum}`);
-            if (miscFiles?.length) {
-                console.log('Documents Found:', miscFiles.length);
-                for (const [index, file] of miscFiles.entries()) {
-                    const fileKey = `misc_${entryNum}_${index}`;
-                    formData.append(fileKey, this.dataURLtoFile(file.data, file.name));
-                    miscEntry.fileReferences.push({
-                        key: fileKey,
-                        name: file.name,
-                        type: file.type
-                    });
-                    console.log(`Document ${index + 1}:`, {
-                        name: file.name,
-                        type: file.type,
-                        size: this.formatFileSize(file.data?.length || 0)
-                    });
-                }
-            } else {
-                console.log('No documents found');
-            }
-    
-            miscExpenses.push(miscEntry);
-            console.groupEnd();
-        }
-        console.groupEnd();
-        
-        formData.append('miscExpenses', JSON.stringify(miscExpenses));
-    
-        // Log final FormData contents
-        console.group('Final FormData Contents');
-        for (const pair of formData.entries()) {
-            if (pair[1] instanceof File) {
-                console.log(pair[0], ':', {
-                    type: 'File',
-                    name: pair[1].name,
-                    size: this.formatFileSize(pair[1].size),
-                    mimeType: pair[1].type
-                });
-            } else {
-                try {
-                    const value = JSON.parse(pair[1]);
-                    console.log(pair[0], ':', value);
-                } catch {
-                    console.log(pair[0], ':', pair[1]);
+            // Misc files
+            if (savedState.miscExpenses && savedState.miscExpenses.length) {
+                console.log('\nProcessing Misc Files:');
+                for (let i = 0; i < savedState.miscExpenses?.length || 0; i++) {
+                    const entryNum = i + 1;
+                    const miscFiles = await FileUploader.getFiles('misc-expenses', `misc-${entryNum}`) || [];
+                    for (const file of miscFiles) {
+                        formData.append(`misc_files_${entryNum}[]`, file);
+                        console.log(`Added misc file for entry ${entryNum}:`, { name: file.name, type: file.type });
+                    }
                 }
             }
-        }
-        console.groupEnd();
     
-        console.groupEnd(); // End Preparing Form Data
-        return formData;
+            // Log final FormData contents
+            console.log('\n============ FINAL FORM DATA CONTENTS ============');
+            for (const [key, value] of formData.entries()) {
+                if (value instanceof File) {
+                    console.log(`${key}:`, {
+                        type: 'File',
+                        name: value.name,
+                        size: this.formatFileSize(value.size),
+                        mimeType: value.type
+                    });
+                } else {
+                    try {
+                        console.log(`${key}:`, typeof value === 'string' ? JSON.parse(value) : value);
+                    } catch (err) {
+                        console.log(`${key}:`, value);
+                    }
+                }
+            }
+    
+            console.log('============ FORM DATA PREPARATION COMPLETE ============');
+            return formData;
+        } catch (error) {
+            console.error('============ ERROR IN FORM DATA PREPARATION ============');
+            console.error('Error:', error);
+            throw error;
+        }
     },
+    
     formatFileSize: function(bytes) {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
@@ -1388,6 +1282,7 @@ ExpenseApp.formSubmission = {
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     },
+    
 
     // Helper function to convert Data URL to File object
     dataURLtoFile: function(dataurl, filename) {
