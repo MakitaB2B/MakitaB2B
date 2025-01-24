@@ -13,7 +13,7 @@ class LtcMiscellaneousExp extends Model
         'ltc_miscellaneous_slug',
         'ltc_claim_applications_slug',
         'employee_slug',
-        'ltc_claim_id',  // Ensure this is added
+        'ltc_claim_id', 
         'courier_bill',
         'xerox_stationary',
         'office_expense',
@@ -21,11 +21,11 @@ class LtcMiscellaneousExp extends Model
         'remarks',
     ];
 
-    public function employee(){
-        return $this->belongsTo('App\Models\Admin\Employee','employee_slug','full_name','employee_slug');
-    }
+    // public function employee(){
+    //     return $this->belongsTo('App\Models\Admin\Employee','employee_slug','full_name','employee_slug');
+    // }
 
-    public function ltcClaimApplication(){
-        return $this->belongsTo('App\Models\Admin\LtcClaimApplication', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
-    }
+    // public function ltcClaimApplication(){
+    //     return $this->belongsTo('App\Models\Admin\LtcClaimApplication', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
+    // }
 }

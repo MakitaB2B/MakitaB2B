@@ -5,7 +5,7 @@ namespace App\Models\Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LtcClaim extends Model
+class LtcTravelClaim extends Model
 {
     use HasFactory;
 
@@ -14,13 +14,16 @@ class LtcClaim extends Model
     // }
 
 
-    public function employee(){
-        return $this->belongsTo('App\Models\Admin\Employee','employee_slug','full_name','employee_slug');
-    }
 
-    public function ltcClaimApplication(){
-        return $this->belongsTo('App\Models\Admin\LtcClaimApplication', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
-    }
+
+    
+    // public function employee(){
+    //     return $this->belongsTo('App\Models\Admin\Employee','employee_slug','full_name','employee_slug');
+    // }
+
+    // public function ltcClaimApplication(){
+    //     return $this->belongsTo('App\Models\Admin\LtcClaimApplication', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
+    // }
 
 
 }

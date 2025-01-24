@@ -179,8 +179,7 @@ class TravelManagementService{
                     'slug' => $item->bta_slug,
                 ];
         });
-    
-       $allApplications = $ltcApplications->merge($btaApplications);
+       $allApplications = $ltcApplications->toBase()->merge($btaApplications);       //$ltcApplications->merge($btaApplications);
 
        return $allApplications;
     }

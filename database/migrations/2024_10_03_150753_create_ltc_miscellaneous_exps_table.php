@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('ltc_miscellaneous_exps', function (Blueprint $table) {
-            // $table->id();
-            // $table->string('ltc_miscellaneous_slug',50)->unique();
-            // $table->string('ltc_claim_applications_slug',50);
-            // $table->string('employee_slug',50);
+            $table->id();
+            $table->string('ltc_miscellaneous_slug',50)->unique();
+            $table->string('ltc_claim_applications_slug',50);
+            $table->string('employee_slug',50);
             // $table->string('ltc_claim_id')->index();
             // $table->unsignedDecimal('courier_bill', 21, 4);
             // $table->unsignedDecimal('xerox_stationary', 21, 4);
