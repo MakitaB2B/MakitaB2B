@@ -352,6 +352,14 @@
                             <input type="text" class="form-control" name="mrp[]" value="${option.mrp}" id="examplePromoMrp${loop_count}" placeholder="MRP" readonly>
                         </div>
                         <div class="form-group col-md-1">
+                            <label for="exampleLp${loop_count}">LP</label>
+                            <input type="text" class="form-control" name="lp[]" value="${option.lp}" id="examplePromoLp${loop_count}" placeholder="LP" readonly>
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="exampleLp${loop_count}">BEST</label>
+                            <input type="text" class="form-control" name="best[]" value="${option.best}" id="examplePromoBest${loop_count}" placeholder="LP" readonly>
+                        </div>
+                        <div class="form-group col-md-1">
                             <label for="examplePromoDlp${loop_count}">DLP</label>
                             <input type="text" class="form-control" name="promodlp[]" value="${option.dlp}" id="examplePromoDlp${loop_count}" placeholder="DLP" readonly>
                         </div>

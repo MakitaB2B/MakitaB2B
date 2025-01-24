@@ -407,7 +407,7 @@ class PromotionController extends Controller
       $promoID = $request->input('promoID');
 
       $result["data"] = $this->promotionService->getPromoDeatils($promoID);
-      
+
       return response()->json($result);
     }
 
@@ -539,6 +539,11 @@ class PromotionController extends Controller
                   if ($value->status=="closed") {
                     throw new \Exception('Promotion has been closed: ' . $value->model_no);
                   }
+
+                  if($value->price_type =="Best Price" && $value->best!=$value->price || $value->price_type =="DLP" && $value->dlp!=$value->price ){
+                    throw new \Exception('<h3>Promo price do not match with item prices . Please <b>contact HO - Sales Co-ordinator / Ms.Agila </b> for more information. For Promo Code -' . $value->promo_code.'<h3>'); 
+                  }
+
                   // $formattedDate = Carbon::now()->format('Y-m-d H:i:s');
 
                   $value->from_date;
@@ -565,7 +570,7 @@ class PromotionController extends Controller
                   $value->sales_slug=$region[1];
                   // $value->created_at =  Carbon::parse($formattedDate)->format('Y-m-d H:i:s');
                   // $value->updated_at = $formattedDate;
-                  unset($value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc,$value->total_order_qty);      
+                  unset($value->best,$value->lp,$value->qty,$value->price,$value->total_reserved,$value->total_stock,$value->total_reserved,$value->model_desc,$value->total_order_qty);      
                   return collect($value)->except('reserved_stock');
                   }
               

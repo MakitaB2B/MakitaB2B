@@ -236,7 +236,7 @@ class PromotionService{
       ->select(
           'promotions.from_date', 'promotions.promo_code', 'promotions.to_date', 'promotions.product_type',
           'promotions.model_no', 'promotions.model_desc', 'promotions.price_type', 'promotions.offer_type',
-          'item_prices.mrp', 'item_prices.dlp', 'promotions.qty', 'promotions.price'
+          'item_prices.mrp', 'item_prices.dlp', 'promotions.qty', 'promotions.price','item_prices.lp','item_prices.best'
       )
       ->addSelect(DB::raw('
           (branch_stocks.cb01 + branch_stocks.dl01 + branch_stocks.gh01 + branch_stocks.gj01 + branch_stocks.id01 +
