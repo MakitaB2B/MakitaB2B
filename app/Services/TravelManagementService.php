@@ -7,6 +7,7 @@ use App\Models\Admin\BtaGroupBt;
 use App\Models\Admin\TeamMembers;
 use App\Models\Admin\LtcClaim;
 use App\Models\Admin\LtcClaimApplication;
+use App\Models\Admin\LtcFoodClaim;
 use App\Models\Admin\LtcMiscellaneousExp;
 use App\Models\Admin\BtAccountLedger;
 use App\Models\Admin\BtaDcEntertainmentExpenses;
@@ -368,7 +369,7 @@ class TravelManagementService{
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
 
         try {
-
+              
             DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
 
                 $teamDetails = TeamMembers::WHERE('team_member','=',$employeeSlug)->get(['team_owner']);
@@ -377,8 +378,23 @@ class TravelManagementService{
                 $timeInfo = $request->input('timeInfo') ? json_decode($request->input('timeInfo'), true) : [];
                 $foodExpense = $request->input('foodExpense') ? json_decode($request->input('foodExpense'), true) : [];
                 $travelEntries = $request->input('travelEntries') ? json_decode($request->input('travelEntries'), true) : [];
-                    
+                dump( $timeInfo,$foodExpense,$travelEntries);
                 $ltcappslug = Str::slug(rand().rand());
+
+                $total_claim_amount=0;
+            
+                $ltcFoodClaim = new LtcFoodClaim([
+                    'ltc_food_claims_slug' => Str::slug(rand().rand()),
+                    'ltc_claim_applications_slug' =>  $ltcappslug,
+                    // 'ltc_claim_id' => $ltc_id,
+                    'employee_slug' => $employeeSlug,
+                    'ltc_date' => $timeInfo["date"],
+                    'ltc_day' => $timeInfo["dayType"],
+                    'in_time' => $timeInfo["inTime"],
+                    'out_time' => $timeInfo["outTime"],
+                    'food_exp'=>  $foodExpense["breakfast"]["amount"],
+                    'food_exp_bill' =>  $foodExpense["breakfast"]["files"]
+                ]);
 
                 // $total_claim_amount=array_sum($request['claim_amount'] ?? []) +
                 // array_sum($request['lunch_exp'] ?? []) +
@@ -389,67 +405,68 @@ class TravelManagementService{
                 // ($request['office_expense'] ?? 0) +
                 // ($request['monthly_mobile_bill'] ?? 0);
 
-                dd($ltcappslug,$ltc_id, $employeeSlug,$teamManager,$total_claim_amount);
 
-                $ltcClaimapp = new LtcClaimApplication([
-                    'ltc_claim_applications_slug' =>  $ltcappslug,
-                    'ltc_claim_id' => $ltc_id,
-                    'employee_slug' => $employeeSlug,
-                    'ltc_month' => (int)$dateObject->format('m'),
-                    'ltc_year' => (int)$dateObject->format('Y'),
-                    'manager_slug' => $teamManager,
+                // $ltcClaimapp = new LtcClaimApplication([
+                //     'ltc_claim_applications_slug' =>  $ltcappslug,
+                //     'ltc_claim_id' => $ltc_id,
+                //     'employee_slug' => $employeeSlug,
+                    // 'ltc_month' => (int)$dateObject->format('m'),
+                    // 'ltc_year' => (int)$dateObject->format('Y'),
+                    // 'manager_slug' => $teamManager,
                     // 'total_claim_amount' => $total_claim_amount
-                ]);
+                // ]);
 
-                $ltcClaimapp->save();
+                // $ltcClaimapp->save();
               
-                $ltcClaimData = [];
+                // $ltcClaimData = [];
 
-                foreach ($date as $index => $dateData) {
-                    $ltcClaimData[] = [
-                        'ltc_claim_slug' => Str::slug(rand().rand()),
-                        'ltc_claim_applications_slug' =>  $ltcappslug,
-                        'ltc_claim_id' => $ltc_id,
-                        'employee_slug' => $employeeSlug,
-                        'date' => $request->date[$index],
-                        'mode_of_transport' =>$request->mode_of_transport[$index],
-                        'demo_van_no'=> ($request->extra_option[$index] == "null") ? null : $request->extra_option[$index],//$request->mode_of_transport[$index],
-                        'opening_meter' => $request->opening_meter[$index]?? 0,
-                        'closing_meter'=> $request->closing_meter[$index]?? 0,
-                        'total_km' => $request->total_km[$index] ?? 0,//$request->total_km[$index],//isset($request->total_km[$index]) ? $request->total_km[$index] : 0.0 ,//$request->total_km[$index],
-                        'place_visited' => $request->place_visited[$index],
-                        'claim_amount' => $request->claim_amount[$index]?? 0,
-                        'lunch_exp' => $request->lunch_exp[$index],
-                        'fuel_exp' => $request->fuel_exp[$index] ?? 0,
-                        'toll_charge' => $request->toll_charge[$index],
-                        'created_at' => date('Y-m-d H:i:s'),
-                        'updated_at' => date('Y-m-d H:i:s')
+                // foreach ($date as $index => $dateData) {
+                //     $ltcClaimData[] = [
+                //         'ltc_claim_slug' => Str::slug(rand().rand()),
+                //         'ltc_claim_applications_slug' =>  $ltcappslug,
+                //         'ltc_claim_id' => $ltc_id,
+                //         'employee_slug' => $employeeSlug,
+                //         'date' => $request->date[$index],
+                //         'mode_of_transport' =>$request->mode_of_transport[$index],
+                //         'demo_van_no'=> ($request->extra_option[$index] == "null") ? null : $request->extra_option[$index],//$request->mode_of_transport[$index],
+                //         'opening_meter' => $request->opening_meter[$index]?? 0,
+                //         'closing_meter'=> $request->closing_meter[$index]?? 0,
+                //         'total_km' => $request->total_km[$index] ?? 0,//$request->total_km[$index],//isset($request->total_km[$index]) ? $request->total_km[$index] : 0.0 ,//$request->total_km[$index],
+                //         'place_visited' => $request->place_visited[$index],
+                //         'claim_amount' => $request->claim_amount[$index]?? 0,
+                //         'lunch_exp' => $request->lunch_exp[$index],
+                //         'fuel_exp' => $request->fuel_exp[$index] ?? 0,
+                //         'toll_charge' => $request->toll_charge[$index],
+                //         'created_at' => date('Y-m-d H:i:s'),
+                //         'updated_at' => date('Y-m-d H:i:s')
 
-                    ];
-                }
+                //     ];
+                // }
            
-                if (!empty($ltcClaimData)) {
-                    LtcClaim::insert($ltcClaimData);
-                }
+                // if (!empty($ltcClaimData)) {
+                //     LtcClaim::insert($ltcClaimData);
+                // }
 
-                $ltcMiscellaneousExp = new LtcMiscellaneousExp([
-                    'ltc_miscellaneous_slug' => Str::slug(rand().rand()),
-                    'ltc_claim_applications_slug' => $ltcappslug,  // Add this back
-                    'ltc_claim_id' => $ltc_id,
-                    'employee_slug' => $employeeSlug,
-                    'courier_bill' =>  $request->courier_bill,
-                    'xerox_stationary' => $request->xerox_stationary,
-                    'office_expense' => $request->office_expense,
-                    'monthly_mobile_bills' => $request->monthly_mobile_bill,
-                    'remarks' => $request->remarks
-                ]);
+                // $ltcMiscellaneousExp = new LtcMiscellaneousExp([
+                //     'ltc_miscellaneous_slug' => Str::slug(rand().rand()),
+                //     'ltc_claim_applications_slug' => $ltcappslug,  // Add this back
+                //     'ltc_claim_id' => $ltc_id,
+                //     'employee_slug' => $employeeSlug,
+                //     'courier_bill' =>  $request->courier_bill,
+                //     'xerox_stationary' => $request->xerox_stationary,
+                //     'office_expense' => $request->office_expense,
+                //     'monthly_mobile_bills' => $request->monthly_mobile_bill,
+                //     'remarks' => $request->remarks
+                // ]);
 
-                $ltcMiscellaneousExp->save();
+                // $ltcMiscellaneousExp->save();
 
             });
 
             return true;
         } catch (Exception $e) {
+
+            dd($e->getMessage());
             return false;
         }
        

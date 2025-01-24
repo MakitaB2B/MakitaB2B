@@ -177,8 +177,10 @@ class TravelManagementController extends Controller
         $msg = $createUpdateAction ? 'Yes! You Have Sucessfully Applied for LTC' : 'Error! LTC Application Not Executed';
         
         $request->session()->flash('message',$msg);
+
+        return true;
             
-        return redirect('admin/travelmanagement/applyviewclaimtravelexpenses');
+        // return redirect('admin/travelmanagement/applyviewclaimtravelexpenses');
       
     }
 
