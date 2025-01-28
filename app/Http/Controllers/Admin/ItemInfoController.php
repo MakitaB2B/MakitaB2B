@@ -58,48 +58,61 @@ class ItemInfoController extends Controller
         }
     }
 
-    public function uploadDailyItem() {
+//     public function uploadDailyItem() {
 
-   if (request()->has('mycsv')) {
-    $data = array_map('str_getcsv', file(request()->mycsv));
+//    if (request()->has('mycsv')) {
+//     $data = array_map('str_getcsv', file(request()->mycsv));
     
-    $header = array_map('trim', array_shift($data));
+//     $header = array_map('trim', array_shift($data));
     
-    ItemPrice::truncate(); // Clear the table before inserting new data
-    set_time_limit(0);
-    $batchSize = 5000;
-    $allStockData = [];
+//     ItemPrice::truncate(); 
+//     set_time_limit(0);
+//     $batchSize = 5000;
+//     $allStockData = [];
 
-    foreach ($data as $index => $row) {
+//     foreach ($data as $index => $row) {
        
-        $stockData = array_combine($header, $row);
+//         $stockData = array_combine($header, $row);
 
-       
-        // Ensure numeric values are properly converted, and empty fields are treated as NULL
-        foreach ($stockData as $key => $value) {
+//         foreach ($stockData as $key => $value) {
 
-            if(!empty($key)){
-                        $consistentRecord[$key] = $key=="MRP" ||$key=="LP" || $key=="DLP" || $key=="BEST" ? intval(str_replace(',', '', $stockData[$key])) : $stockData[$key] ;
+//             if(!empty($key)){
+//                         $consistentRecord[$key] = $key=="MRP" ||$key=="LP" || $key=="DLP" || $key=="BEST" ? intval(str_replace(',', '', $stockData[$key])) : $stockData[$key] ;
                          
-                        }
-        }
+//                         }
+//         }
 
        
-        $allStockData[] = $consistentRecord;
+//         $allStockData[] = $consistentRecord;
 
        
 
-        if (count($allStockData) >= $batchSize) {
-            ItemPrice::insert($allStockData);
-            $allStockData = []; // Reset the batch array
-        }
-    }
+//         if (count($allStockData) >= $batchSize) {
+//             ItemPrice::insert($allStockData);
+//             $allStockData = []; 
+//         }
+//     }
 
-    // Insert any remaining data
-    if (!empty($allStockData)) {
-        ItemPrice::insert($allStockData);
-    }
-    return redirect('admin/items');
-   }}
+//     if (!empty($allStockData)) {
+//         ItemPrice::insert($allStockData);
+//     }
+//     return redirect('admin/items');
+//    }}
+
+
+
+    public function uploadDailyItem() {
+        if (request()->has('mycsv')) {
+
+        }
+        $data = array_map('str_getcsv', file(request()->mycsv));
+
+        dd($data);
+
+
+    }    
+
+
+
     
 }
