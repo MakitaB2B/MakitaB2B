@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin\ItemPrice;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ItemInfoController extends Controller
 {
@@ -101,13 +102,67 @@ class ItemInfoController extends Controller
 
 
 
-    public function uploadDailyItem() {
-        if (request()->has('mycsv')) {
+    public function uploadDailyItem(Request $request) {
 
+        $validator = Validator::make($request->all(), [
+            'mycsv' => 'required|file|mimes:csv,txt', // Ensure it's a CSV file
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
-        $data = array_map('str_getcsv', file(request()->mycsv));
+        // if (request()->has('mycsv')) {
 
-        dd($data);
+        // }
+        $data = array_map('str_getcsv', file(request()->mycsv));
+        $header=$data[0];
+      
+        $header = array_map(function($value) {
+            $value = preg_replace('/^\x{FEFF}/u', '', $value);
+            return trim($value); 
+        }, $header);
+
+        $databaseName = env('DB_DATABASE');
+        $tableName = "{$databaseName}.item_prices";
+
+        $columns = \DB::select("SHOW COLUMNS FROM $tableName");
+
+        $columnNames = array_map(function($column) {
+            if(!in_array($column->Field, ['created_at', 'updated_at'])){
+            return $column->Field;
+        }
+        }, $columns);
+        $columnNames = array_filter($columnNames);
+
+        $header_diff = array_diff($header, $columnNames);
+
+        $filteredData = array_map(function ($row) use ( $header,$data, $header_diff) {
+            if ($row === $data[0]) {
+                return array_map('trim',array_values(array_diff($row, $header_diff)));
+            }
+            $indexesToRemove = array_keys(array_intersect($data[0], $header_diff));
+            foreach ($indexesToRemove as $index) {
+                unset($row[$index]);
+            }
+            dd(count($header),count(array_map('trim',array_values($row))));
+            return array_combine($header,array_map('trim',array_values($row)));  
+            }, $data);
+
+
+
+        dd(      $header_diff ,   $filteredData);
+
+        ItemPrice::truncate(); 
+        set_time_limit(0);
+        $batchSize = 5000;
+        $allStockData = [];
+
+        // if(!empty($header_diff)){
+        //     $header_diff_text=implode(', ', $header_diff);
+        //     return 'These columns cannont be uploaded  - '.$header_diff_text;
+        // }
+
+        dd($header, $header_diff);
 
 
     }    
