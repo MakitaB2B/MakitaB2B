@@ -35,36 +35,69 @@ class LtcFoodClaim extends Model
         public function setLtcDayAttribute($value)  
         {
          $cleanedValue = strtolower($value);
-        $this->attributes['category'] = match ($cleanedValue) {
-            '', '-', '0', 'n/a',' ' => null,              
-            'acc', 'accessories' => 'ACC',        
-            'tool', 'tools' => 'TOOL',          
-            'spare', 'spares' => 'SPARE',          
-            default => throw new \InvalidArgumentException("Invalid category. Allowed values are 'acc', 'tool', 'spare'."),
-        };
-       }
+            $this->attributes['ltc_day'] = match ($cleanedValue) {
+                '', '-', '0', 'n/a',' ' => null,              
+                'l' => 'On Leave',        
+                'h' => 'Holiday',          
+                'w' => 'Working Day', 
+                'wh' => 'Working on Holiday',            
+                default => throw new \InvalidArgumentException("Invalid category. Allowed values are L,H,W,WH"),
+            };
+        }
      
         public function getLtcDayAttribute($value)
         {
-            return $value ? strtoupper($value) : null;
+            return match ($value) {           
+                'On Leave' => 'l',        
+                'Holiday' => 'h',          
+                'Working Day' => 'w', 
+                'Working on Holiday' => 'wh',            
+                default => throw new \InvalidArgumentException("Invalid category. Allowed values are On Leave,Holiday,Working Day,Working on Holiday"),
+            };
         }
 
+        public function setInTimeAttribute($value)    
+        {
+            $seconds = strtotime($value);
+            $this->attributes['in_time'] = $seconds;
+        }  
         
+        public function getInTimeAttribute($value)
+        {
+            return $value ? date("i:s", $timestamp) : null;
+        }
+
+        public function setOutTimeAttribute($value)    
+        {
+            $seconds = strtotime($value);
+            $this->attributes['out_time'] = $seconds;
+        }  
+        
+        public function getOutTimeAttribute($value)
+        {
+            return $value ? date("i:s", $timestamp) : null;
+        }
+
+        public function setFoodExpAttribute($value)   
+        {
+            $this->attributes['food_exp'] = (int)$value;
+        }  
+        
+        public function getFoodExpAttribute($value)
+        {
+            return $value ? $value : null;
+        }
+
+        public function setFoodExpBillAttribute($value)    
+        {
+            $this->attributes['food_exp_bill'] = $value ?? null;
+        }  
+        
+        public function getFoodExpBillAttribute($value)
+        {
+            return $value ? $value : null;
+        }
+
 }
 
 
-// public function setYearAttribute($value)
-// {
-//     $cleanedValue = preg_replace('/[^0-9]/', '', $value);
-
-//     if (preg_match('/^\d{4}$/', $cleanedValue)) {
-//         $this->attributes['year'] = $cleanedValue;
-//     } else {
-//         $this->attributes['year'] = null;
-//     }
-// }
-
-// public function getYearAttribute($value)
-// {
-//     return $value;
-// }

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Auth;
+use App\Models\Admin\LtcFoodClaim;
 
 class TravelManagementController extends Controller
 {
@@ -173,6 +174,10 @@ class TravelManagementController extends Controller
         $status=0;
 
         $createUpdateAction=$this->travelManagementService->createLtcClaim($request,$employeeSlug,$ltc_id,$status);
+
+        $ltc=LtcFoodClaim::all();
+
+        dd($ltc);
 
         $msg = $createUpdateAction ? 'Yes! You Have Sucessfully Applied for LTC' : 'Error! LTC Application Not Executed';
         
