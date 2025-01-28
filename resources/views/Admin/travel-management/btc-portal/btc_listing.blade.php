@@ -12,45 +12,45 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('admin_assets/css/custom-styles.css') }}">
 @endpush
-<div class="content-wrapper rescss"> 
-    <div class="custom-container">
-        <div class="action-grp">
-            <div class="info-group color-info-box">
-                <div><span class="color-box saturday-color"></span>Saturday</div>
-                <div><span class="color-box sunday-color"></span>Sunday</div>
+<div class="content-wrapper"> 
+        <div class="custom-container">
+            <div class="action-grp">
+                <div class="info-group color-info-box">
+                    <div><span class="color-box saturday-color"></span>Saturday</div>
+                    <div><span class="color-box sunday-color"></span>Sunday</div>
+                </div>
+                <div class="info-group">
+                    <div>**L - On Leave</div>
+                    <div>**H - Holiday Today</div>
+                </div> 
+                <div class="btn-grp">
+                    <a href="javascript:;" class="btn btn-primary">Accept / Accept All</a>
+                    <a href="javascript:;" class="btn btn-secondary">Reject / Reject All</a>     
+                </div>   
+                   
             </div>
-            <div class="info-group">
-                <div>**L - On Leave</div>
-                <div>**H - Holiday Today</div>
-            </div> 
-            <div class="btn-grp">
-                <a href="javascript:;" class="btn btn-primary">Accept / Accept All</a>
-                <a href="javascript:;" class="btn btn-secondary">Reject / Reject All</a>     
-            </div>   
-               
+            <table class="table table-bordered custom-table btc-table">
+                <thead>
+                    <tr>
+                        <th width="30">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="form-check-input" id="selectAll">
+                            </div>
+                        </th>
+                        <th>Start Date & Time</th>
+                        <th>End Date & Time</th>
+                        <th>Visited Places</th>
+                        <th>No. of Days</th>
+                        <th>Status</th>
+                        <th width="30"></th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                </tbody>
+            </table>        
         </div>
-        <table class="table table-bordered custom-table btc-table">
-            <thead>
-                <tr>
-                    <th width="30">
-                        <div class="checkbox-wrapper">
-                            <input type="checkbox" class="form-check-input" id="selectAll">
-                        </div>
-                    </th>
-                    <th>Start Date & Time</th>
-                    <th>End Date & Time</th>
-                    <th>Visited Places</th>
-                    <th>No. of Days</th>
-                    <th>Status</th>
-                    <th width="30"></th>
-                </tr>
-            </thead>
-            
-            <tbody>
-            </tbody>
-        </table>        
     </div>
-</div>
 @endsection
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>

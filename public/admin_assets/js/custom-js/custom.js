@@ -501,7 +501,7 @@ $(document).ready(function() {
                     tollCharges:"100",
                     fuelCharges:"745",
                     placesVisited:"Koralur",
-                    files:[]
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
                 },
                 {
                     modeOfTransport:"Demo Van",
@@ -512,28 +512,27 @@ $(document).ready(function() {
                     tollCharges:"100",
                     fuelCharges:"745",
                     placesVisited:"Koralur",
-                    files:[]
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
                 }],
                 foodExpense: [{
-                    breakfast:{
-                        "amount":"10.00",
-                        files:[]
-                    }
+                    breakfast:{"amount":"10.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    lunch:{"amount":"100.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    dinner:{"amount":"20.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
                 }],
                 miscExpense: [{
                     type:"Courier Bill",
                     amount:"10.00",
-                    files:[]
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
                 },
                 {
                     type:"Xerox & Stationary",
                     amount:"200.00",
-                    files:[]
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
                 },
                 {
                     type:"Office Expense",
                     amount:"982.00",
-                    files:[]
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
                 }],
                 total: '₹1200',
                 status: 'Pending'
@@ -632,7 +631,305 @@ $(document).ready(function() {
                 total: '₹1200',
                 status: 'Pending'
             }]
-        }
+        },
+        {
+            sartDataTime: '01-Jan-2024 10:00 AM',
+            endDataTime:"03-Jan-2024 10:00 AM",
+            placesVisited:"New Delhi",
+            preApproved:1,
+            noOfDays:3,
+            purpose:"Client Meet",
+            details:[{
+                day:1,
+                travelEntries:[{
+                    modeOfTransport:"Personal Vehicle",
+                    typeOfTransport:"Bike",
+                    startingMeter:"10003",
+                    closingMeter:"10303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    modeOfTransport:"Demo Van",
+                    typeOfTransport:"Bike",
+                    startingMeter:"20003",
+                    closingMeter:"80303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
+                }],
+                foodExpense: [{
+                    breakfast:{"amount":"10.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    lunch:{"amount":"100.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    dinner:{"amount":"20.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
+                }],
+                miscExpense: [{
+                    type:"Courier Bill",
+                    amount:"10.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Xerox & Stationary",
+                    amount:"200.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Office Expense",
+                    amount:"982.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                }],
+                total: '₹1200',
+                status: 'Pending'
+            },
+            {   
+                day:2,
+                travelEntries:[{
+                    modeOfTransport:"Personal Vehicle",
+                    typeOfTransport:"Bike",
+                    startingMeter:"10003",
+                    closingMeter:"10303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    modeOfTransport:"Demo Van",
+                    typeOfTransport:"Bike",
+                    startingMeter:"20003",
+                    closingMeter:"80303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
+                }],
+                foodExpense: [{
+                    breakfast:{"amount":"10.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    lunch:{"amount":"100.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    dinner:{"amount":"20.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
+                }],
+                miscExpense: [{
+                    type:"Courier Bill",
+                    amount:"10.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Xerox & Stationary",
+                    amount:"200.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Office Expense",
+                    amount:"982.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                }],
+                total: '₹1200',
+                status: 'Pending'
+            },
+            {
+                day:3,
+                travelEntries:[{
+                    modeOfTransport:"Personal Vehicle",
+                    typeOfTransport:"Bike",
+                    startingMeter:"10003",
+                    closingMeter:"10303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    modeOfTransport:"Demo Van",
+                    typeOfTransport:"Bike",
+                    startingMeter:"20003",
+                    closingMeter:"80303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
+                }],
+                foodExpense: [{
+                    breakfast:{"amount":"10.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    lunch:{"amount":"100.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    dinner:{"amount":"20.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
+                }],
+                miscExpense: [{
+                    type:"Courier Bill",
+                    amount:"10.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Xerox & Stationary",
+                    amount:"200.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Office Expense",
+                    amount:"982.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                }],
+                total: '₹1200',
+                status: 'Pending'
+            }]
+        },
+        {
+            sartDataTime: '01-Jan-2024 10:00 AM',
+            endDataTime:"03-Jan-2024 10:00 AM",
+            placesVisited:"New Delhi",
+            preApproved:1,
+            noOfDays:3,
+            purpose:"Client Meet",
+            details:[{
+                day:1,
+                travelEntries:[{
+                    modeOfTransport:"Personal Vehicle",
+                    typeOfTransport:"Bike",
+                    startingMeter:"10003",
+                    closingMeter:"10303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    modeOfTransport:"Demo Van",
+                    typeOfTransport:"Bike",
+                    startingMeter:"20003",
+                    closingMeter:"80303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
+                }],
+                foodExpense: [{
+                    breakfast:{"amount":"10.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    lunch:{"amount":"100.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    dinner:{"amount":"20.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
+                }],
+                miscExpense: [{
+                    type:"Courier Bill",
+                    amount:"10.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Xerox & Stationary",
+                    amount:"200.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Office Expense",
+                    amount:"982.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                }],
+                total: '₹1200',
+                status: 'Pending'
+            },
+            {   
+                day:2,
+                travelEntries:[{
+                    modeOfTransport:"Personal Vehicle",
+                    typeOfTransport:"Bike",
+                    startingMeter:"10003",
+                    closingMeter:"10303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    modeOfTransport:"Demo Van",
+                    typeOfTransport:"Bike",
+                    startingMeter:"20003",
+                    closingMeter:"80303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
+                }],
+                foodExpense: [{
+                    breakfast:{"amount":"10.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    lunch:{"amount":"100.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    dinner:{"amount":"20.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
+                }],
+                miscExpense: [{
+                    type:"Courier Bill",
+                    amount:"10.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Xerox & Stationary",
+                    amount:"200.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Office Expense",
+                    amount:"982.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                }],
+                total: '₹1200',
+                status: 'Pending'
+            },
+            {
+                day:3,
+                travelEntries:[{
+                    modeOfTransport:"Personal Vehicle",
+                    typeOfTransport:"Bike",
+                    startingMeter:"10003",
+                    closingMeter:"10303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    modeOfTransport:"Demo Van",
+                    typeOfTransport:"Bike",
+                    startingMeter:"20003",
+                    closingMeter:"80303",
+                    totalKms:"300",
+                    tollCharges:"100",
+                    fuelCharges:"745",
+                    placesVisited:"Koralur",
+                    files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
+                }],
+                foodExpense: [{
+                    breakfast:{"amount":"10.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    lunch:{"amount":"100.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                    dinner:{"amount":"20.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
+                }],
+                miscExpense: [{
+                    type:"Courier Bill",
+                    amount:"10.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Xerox & Stationary",
+                    amount:"200.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                },
+                {
+                    type:"Office Expense",
+                    amount:"982.00",
+                    files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                }],
+                total: '₹1200',
+                status: 'Pending'
+            }]
+        },
     ];
 
 

@@ -669,6 +669,10 @@ a, a:hover{color: #008290;}
     border: 1px solid #008290;
     min-height: 294px;
 }
+.expense-container .expense-message {
+    width: 100%;
+    font-size: .85em;
+}
 .misc-entry , .travel-entry{box-shadow: unset;}
 .misc-entry .card-body , .travel-entry .card-body{border:2px solid #008290; border-radius:5px; position:relative; margin: 10px 0;}
 .misc-entry .card-body .card-title, .travel-entry .card-body .card-title{background: #008290; padding:2px 8px; border-radius: 3px; color: #fff; text-transform: uppercase; font-size: 12px; position:absolute;top:-10px}.misc-entry button.btn.btn-danger.btn-floating.remove-misc-entry, .travel-entry button.btn.btn-danger.btn-floating.remove-misc-entry{
@@ -676,8 +680,8 @@ a, a:hover{color: #008290;}
     right: 0;
     border-radius: 0;
 }
-.food-wrapper .alert.alert-info.mb-4{font-size: 12px;}
-.food-expense-wrapper {
+.food-wrapper .alert.alert-info.mb-4, .hotel-wrapper .alert.alert-info.mb-4{font-size: 12px;}
+.food-expense-wrapper, .hotel-expense-wrapper {
     display: grid;
     grid-template-columns:1fr;
     gap: 24px;
@@ -691,7 +695,7 @@ a, a:hover{color: #008290;}
         width: 50px;
         height: 50px;
     }
-    .food-expense-wrapper{
+    .food-expense-wrapper, .hotel-expense-wrapper{
         grid-template-columns: repeat(1, 1fr);
     }
 }
@@ -726,7 +730,13 @@ button.btn.btn-outline-primary.btn-sm.upload-trigger:hover{
     right: 0;
     z-index: 999999;
 }
-.expense-message{color: #ff0018;}
+.expense-message{
+    color: #ff0018; 
+    font-size: .85em;
+    margin-top: 5px;
+    line-height: 1.2;
+    width: 100%;
+}
 .travel-documents-uploader.has-error .file-uploader{
     border-color: #dc3545;
 }
@@ -813,8 +823,11 @@ span.d-stat {
     width: 100%;
     cursor: pointer ;
 }
-#expenseModal .food-expense-wrapper{
+#expenseModal .food-expense-wrapper, #expenseModal .hotel-expense-wrapper{
     grid-template-columns:1fr;
+}
+.hotel-exp-data .exp-value:first-child{
+    text-align: left !important;
 }
 /* .exp-details-box, .exp-data-wrapper.main-wrap.exp-wrapper,.food-exp-data, .misc-exp-data, .travel-exp-data{
     display: none;
@@ -823,7 +836,7 @@ span.d-stat {
 .exp-wrapper .exp-bill-copy a + a{
     margin-left: 10px;
 }
-.exp-wrapper .food-exp-data .exp-data, .exp-wrapper .misc-exp-data .exp-data {
+.exp-wrapper .food-exp-data .exp-data, .exp-wrapper .hotel-exp-data .exp-data, .exp-wrapper .misc-exp-data .exp-data {
     grid-template-columns: 50% calc(50% - 140px) 80px 60px;
 }
 .err-common {
@@ -917,11 +930,11 @@ li.picker-switch.accordion-toggle {
     color: white;
 }
 
-.day-number {
+/* .day-number {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 8px;
-}
+} */
 
 .day-date {
     font-size: 14px;
@@ -931,7 +944,7 @@ li.picker-switch.accordion-toggle {
     min-height: 100px;
     margin-top: 20px;
 }
-.btc-application .food-exp-data,  .btc-application .misc-exp-data{
+.btc-application .food-exp-data, .btc-application .hotel-exp-data,  .btc-application .misc-exp-data{
     width: fit-content;
     min-width: 350px;
 }
@@ -1033,6 +1046,7 @@ span.exp-card-btns a + a{
     margin-left: 4px;
 }
 .exp-data-wrapper.main-wrap.exp-wrapper {
+    display: flex;
     flex-direction: column;
     margin-top: 40px;
 }
@@ -1149,10 +1163,9 @@ span.exp-card-btns a + a{
     font-weight: bold;
     margin-bottom: 5px;
 }
-
-.date {
-    font-size: 0.9em;
-    opacity: 0.9;
+.input-group.date .input-group-text{
+    height: 100%;
+    border-radius: 0 3px 3px 0;
 }
 
 .terminal-icon {
@@ -1417,10 +1430,11 @@ td i {
 
 /* Toast container */
 .toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
     z-index: 1050;
+    width: 100%;
 }
 /* Rejection remarks styles */
 .rejection-remarks {
@@ -1661,4 +1675,40 @@ td i {
     .action-grp .btn-grp a.btn + a.btn{margin-left: 10px;}
 }
 
+/* ======================== */
+/* BTC STYLES */
+/* ======================= */
+.exp-details-box {
+    display: none;
+}
+.go-next-step {
+    margin-top: 10px;
+}
+.btc-application .step-container .row {
+    margin-top: 20px;
+}
+.top-header-section.simple-header {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.top-header-section.simple-header .top-card-title {
+    margin-bottom: 20px;
+}
+.is-invalid .file-uploader, .is-invalid .upload-info.small.text-muted, .file-uploader.is-invalid{
+    border-color: #ff0018;
+    color: #ff0018 !important;
+}
+.is-invalid button.btn.btn-outline-primary.btn-sm.upload-trigger{
+    border-color: #ff0018;
+    color: #ff0018;
+}
 
+.is-invalid button.btn.btn-outline-primary.btn-sm.upload-trigger:hover{ 
+    background: #ff0018;
+    color: #fff;
+}
+.is-invalid + .text-muted, .travel-documents-uploader:has(.is-invalid) + .text-muted {display: none;}
+.btc-application .e-grp {
+    margin-top: 10px;
+}

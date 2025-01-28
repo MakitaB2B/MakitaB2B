@@ -96,9 +96,6 @@ const FileUploader = {
                         'Single file only'} (${settings.maxFileSize}MB each)
                 </div>
                 <div class="file-preview"></div>
-                ${settings.required ? 
-                    '<div class="required-indicator text-danger small mt-1">* Required</div>' : 
-                    ''}
             </div>
         `);
 
@@ -201,8 +198,10 @@ const FileUploader = {
     // Handle file selection
     async handleFileSelect(files, $uploader) {
         const settings = $uploader.data('settings');
+        console.log('Settings:', settings);
         try {
             let existingFiles = await this.getFiles(settings.moduleId, settings.sectionId) || [];
+            console.log('Existing files:', existingFiles);
 
             // Handle single file mode
             if (!settings.multiple) {
@@ -220,6 +219,7 @@ const FileUploader = {
             }
 
             for (const file of Array.from(files)) {
+                console.log('Processing file:', file.name);
                 if (file.size > settings.maxFileSize * 1024 * 1024) {
                     this.showMessage(`File "${file.name}" exceeds ${settings.maxFileSize}MB limit`, 'warning', $uploader);
                     continue;
@@ -232,6 +232,7 @@ const FileUploader = {
 
                 if (file.type.match('image.*')) {
                     const data = await this.readFileAsDataURL(file);
+                    console.log('File data loaded:', data.slice(0, 100) + '...'); 
                     existingFiles.push({
                         name: file.name,
                         type: file.type,
@@ -250,6 +251,7 @@ const FileUploader = {
             }
 
             await this.saveFiles(settings.moduleId, settings.sectionId, existingFiles);
+            console.log('Files saved successfully');
             this.updateFilePreviews($uploader, existingFiles);
 
             if (settings.onChange) {
