@@ -389,9 +389,8 @@
     </script>
     <script src="{{ asset('admin_assets/js/custom-js/fileUploader.js') }}"></script>
     <script src="{{ asset('admin_assets/js/custom-js/dropdown.js') }}"></script>
-    <script src="{{ asset('admin_assets/js/custom-js/calendar.js') }}"></script>
-    <script src="{{ asset('admin_assets/js/custom-js/app.js') }}"></script>
-    <script src="{{ asset('admin_assets/js/expense-handler.js') }}"></script>
+    <script src="{{ asset('admin_assets/js/custom-js/btc-storage.js') }}"></script>
+    <script src="{{ asset('admin_assets/js/custom-js/expense-handler.js') }}"></script>
     <script>
 
         // Initialize when document is ready
@@ -515,6 +514,5 @@
                 event.target.nextElementSibling.style.display = 'block';
             }
         }
-        
     </script>
 @endpush

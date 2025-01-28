@@ -49,9 +49,14 @@ const ExpenseAppBTC = {
         // Edit and delete expense events
         $(document).on('click', '.exp-card-btns .fa-pencil', (e) => this.handleExpenseEdit(e));
         $(document).on('click', '.exp-card-btns .fa-trash', (e) => this.handleExpenseDelete(e));
- 
-        // Submit application button
-        $('.main-submit-btn .btn-primary').on('click', () => this.submitApplication());
+
+        $(() => {
+            $('.main-submit-btn .btn-primary').on('click', async () => {
+                if (confirm('Are you sure you want to submit this application?')) {
+                    await ExpenseAppBTC.formSubmission.submitForm();
+                }
+            });
+        });
         
         // Clear validation errors on input
         $('input, textarea').on('input', function() {
@@ -610,382 +615,363 @@ const ExpenseAppBTC = {
         BTCStateManager.saveCurrentState(state);
     },
 
-handleDaySelect(e) {
-    const $button = $(e.currentTarget);
-    $('.day-button').removeClass('selected');
-    $button.addClass('selected');
+    handleDaySelect(e) {
+        const $button = $(e.currentTarget);
+        $('.day-button').removeClass('selected');
+        $button.addClass('selected');
 
-    this.state.currentDay = $button.find('.day-number').text();
-    this.state.currentDate = $button.find('.day-date').text();
+        this.state.currentDay = $button.find('.day-number').text();
+        this.state.currentDate = $button.find('.day-date').text();
 
-    this.clearExpenseForm(); 
-    this.loadDayExpenses();
-    this.updateMainSubmitButton();
-},
+        this.clearExpenseForm(); 
+        this.loadDayExpenses();
+        this.updateMainSubmitButton();
+    },
 
-loadDayExpenses() {
-    const state = BTCStateManager.loadState();
-    this.toggleDateList(false);
-    this.updateTripInfo();
+    loadDayExpenses() {
+        const state = BTCStateManager.loadState();
+        this.toggleDateList(false);
+        this.updateTripInfo();
 
-    if (state?.dayDetails?.[this.state.currentDay]) {
-        this.displayExpenses(state.dayDetails[this.state.currentDay]);
-    } else {
-        $('.exp-wrapper').hide();
-        $('.hotel-exp-data, .misc-exp-data, .travel-exp-data').hide();
-    }
-},
+        if (state?.dayDetails?.[this.state.currentDay]) {
+            this.displayExpenses(state.dayDetails[this.state.currentDay]);
+        } else {
+            $('.exp-wrapper').hide();
+            $('.hotel-exp-data, .misc-exp-data, .travel-exp-data').hide();
+        }
+    },
 
-displayExpenses(dayData) {
-    const $wrapper = $('.exp-wrapper').show();
-    $('.exp-wrapper > .exp-card-title').html(`${this.state.currentDay} : ${this.state.currentDate}`);
-    
-    // Show/hide expense sections based on data
-    const hotelHasData = this.toggleExpenseSection('hotel', dayData.hotelExpenses);
-    const travelHasData = this.toggleExpenseSection('travel', dayData.travelExpenses);
-    const miscHasData = this.toggleExpenseSection('misc', dayData.miscExpenses);
-    if (hotelHasData || travelHasData || miscHasData) {
-        $wrapper.show();
-        $(".top-header-section").removeClass("simple-header")
-    } else {
-        $wrapper.hide();
-        $(".top-header-section").addClass("simple-header")
-    }
-    
-    
-    $('.exp-details-box').show();
-},
+    displayExpenses(dayData) {
+        const $wrapper = $('.exp-wrapper').show();
+        $('.exp-wrapper > .exp-card-title').html(`${this.state.currentDay} : ${this.state.currentDate}`);
+        
+        // Show/hide expense sections based on data
+        const hotelHasData = this.toggleExpenseSection('hotel', dayData.hotelExpenses);
+        const travelHasData = this.toggleExpenseSection('travel', dayData.travelExpenses);
+        const miscHasData = this.toggleExpenseSection('misc', dayData.miscExpenses);
+        if (hotelHasData || travelHasData || miscHasData) {
+            $wrapper.show();
+            $(".top-header-section").removeClass("simple-header")
+        } else {
+            $wrapper.hide();
+            $(".top-header-section").addClass("simple-header")
+        }
+        
+        
+        $('.exp-details-box').show();
+    },
 
-toggleExpenseSection(type, expenses) {
-    const $section = $(`.${type}-exp-data`);
-    const $button = $(`.${type[0]}-expense`);
-    
-    if (!expenses?.length) {
-        $section.hide();
-        $(".top-header-section").addClass("simple-header")
-        $button.closest('.expense-details-g').removeClass('extended');
-        $button.find('.icon').html('<i class="fa-solid fa-plus"></i>');
-        $button.find('.btn-txt').html(`Add ${type.charAt(0).toUpperCase() + type.slice(1)} Expense`);
-        return false;
-    }
-    $section.show();
-    this.updateExpenseSection(type, expenses);
-    return true;
-},
+    toggleExpenseSection(type, expenses) {
+        const $section = $(`.${type}-exp-data`);
+        const $button = $(`.${type[0]}-expense`);
+        
+        if (!expenses?.length) {
+            $section.hide();
+            $(".top-header-section").addClass("simple-header")
+            $button.closest('.expense-details-g').removeClass('extended');
+            $button.find('.icon').html('<i class="fa-solid fa-plus"></i>');
+            $button.find('.btn-txt').html(`Add ${type.charAt(0).toUpperCase() + type.slice(1)} Expense`);
+            return false;
+        }
+        $section.show();
+        this.updateExpenseSection(type, expenses);
+        return true;
+    },
 
-updateExpenseSection(type, expenses) {
-    
-    const $section = $(`.${type}-exp-data`);
-    const $button = $(`.${type[0]}-expense`);
-    const $content = type === 'travel' ? 
-        $section.find('.row-body') : 
-        $section.find('.exp-data-container');
+    updateExpenseSection(type, expenses) {
+        
+        const $section = $(`.${type}-exp-data`);
+        const $button = $(`.${type[0]}-expense`);
+        const $content = type === 'travel' ? 
+            $section.find('.row-body') : 
+            $section.find('.exp-data-container');
 
-    if (!expenses?.length) {
-        $section.hide();
-        $button.closest('.expense-details-g').removeClass('extended');
-        $button.find('.icon').html('<i class="fa-solid fa-plus"></i>');
-        $button.find('.btn-txt').html(`Add ${type.charAt(0).toUpperCase() + type.slice(1)} Expense`);
-        return;
-    }
+        if (!expenses?.length) {
+            $section.hide();
+            $button.closest('.expense-details-g').removeClass('extended');
+            $button.find('.icon').html('<i class="fa-solid fa-plus"></i>');
+            $button.find('.btn-txt').html(`Add ${type.charAt(0).toUpperCase() + type.slice(1)} Expense`);
+            return;
+        }
 
-    $section.show();
-    $button.closest('.expense-details-g').addClass('extended');
-    $button.find('.icon').html('<i class="fa-solid fa-check-double"></i>');
-    $button.find('.btn-txt').html(`Add More ${type.charAt(0).toUpperCase() + type.slice(1)} Expense`);
+        $section.show();
+        $button.closest('.expense-details-g').addClass('extended');
+        $button.find('.icon').html('<i class="fa-solid fa-check-double"></i>');
+        $button.find('.btn-txt').html(`Add More ${type.charAt(0).toUpperCase() + type.slice(1)} Expense`);
 
-    $content.empty();
-    expenses.forEach((expense, index) => this.renderExpense(type, expense, index, $content));
-},
+        $content.empty();
+        expenses.forEach((expense, index) => this.renderExpense(type, expense, index, $content));
+    },
 
-async loadExpenseForEdit(type, index) {
-    const state = BTCStateManager.loadState();
-    const typeKey = this.config.expenseTypes[type];
-    const expense = state.dayDetails[this.state.currentDay][typeKey][index];
+    async loadExpenseForEdit(type, index) {
+        const state = BTCStateManager.loadState();
+        const typeKey = this.config.expenseTypes[type];
+        const expense = state.dayDetails[this.state.currentDay][typeKey][index];
 
-    this.state.editing = index;
-    this.showExpenseModal(type);
+        this.state.editing = index;
+        this.showExpenseModal(type);
 
-    setTimeout(() => {
-        this.populateExpenseForm(type, expense);
-    }, 100);
-},
+        setTimeout(() => {
+            this.populateExpenseForm(type, expense);
+        }, 100);
+    },
 
-renderExpense(type, expense, index, $container) {
-    const templates = {
-        hotel: (expense, index) => `
-            <div class="exp-data" data-index="${index}" data-fileid="${expense.fileId}">
-                <span class="exp-value">Hotel Fare</span>
-                <span class="exp-value">₹${expense.amount}</span>
-                <span class="exp-bill-copy"><a href="javascript:;" title="test">
-            <i class="fa-solid fa-file"></i>
-        </a></span>
-                ${this.renderActionButtons()}
-            </div>
-        `,
-        travel: (expense, index) => `
-            <div class="exp-row" data-index="${index}" data-fileid="${expense.fileId}">
-                <span class="exp-value">
-                    <span class="exp-title">Travel Expense #${expense.number}</span>
-                    ${expense.modeOfTransport} - ${expense.transportType}
-                </span>
-                <span class="exp-value">
-                    <span class="exp-title">Starting Meter</span>
-                    ${expense.startingMeter || 0}
-                </span>
-                <span class="exp-value">
-                    <span class="exp-title">Closing Meter</span>
-                    ${expense.closingMeter || 0}
-                </span>
-                <span class="exp-value">
-                    <span class="exp-title">Places Visited</span>
-                    ${expense.placesVisited || 'N/A'}
-                </span>
-                <span class="exp-value">
-                    <span class="exp-title">Fuel Charges</span>
-                    ₹${expense.fuelCharges || 0}
-                </span>
-                <span class="exp-value">    
-                    <span class="exp-title">Toll Charges</span>
-                    ₹${expense.tollCharges || 0}
-                </span>
-                <span class="exp-bill-copy">
-                    <a href="javascript:;" title="test">
-            <i class="fa-solid fa-file"></i>
-        </a>
-                </span>
-                ${this.renderActionButtons()}
-            </div>
-        `,
-        misc: (expense, index) => `
-            <div class="exp-data" data-index="${index}" data-fileid="${expense.fileId}">
-                <span class="exp-title">${expense.type!='other'?expense.type:expense.otherType}</span>
-                <span class="exp-value">₹${expense.amount}</span>
-                <span class="exp-bill-copy"><a href="javascript:;" title="test">
-            <i class="fa-solid fa-file"></i>
-        </a></span>
-                ${this.renderActionButtons()}
-            </div>
-        `
-    };
-
-    $container.append(templates[type](expense, index));
-},
-renderFileLinks(files) {
-    return (files || [])
-        .map(file => `
-            <a href="javascript:;" title="${file.name}">
+    renderExpense(type, expense, index, $container) {
+        const templates = {
+            hotel: (expense, index) => `
+                <div class="exp-data" data-index="${index}" data-fileid="${expense.fileId}">
+                    <span class="exp-value">Hotel Fare</span>
+                    <span class="exp-value">₹${expense.amount}</span>
+                    <span class="exp-bill-copy"><a href="javascript:;" title="test">
+                <i class="fa-solid fa-file"></i>
+            </a></span>
+                    ${this.renderActionButtons()}
+                </div>
+            `,
+            travel: (expense, index) => `
+                <div class="exp-row" data-index="${index}" data-fileid="${expense.fileId}">
+                    <span class="exp-value">
+                        <span class="exp-title">Travel Expense #${expense.number}</span>
+                        ${expense.modeOfTransport} - ${expense.transportType}
+                    </span>
+                    <span class="exp-value">
+                        <span class="exp-title">Starting Meter</span>
+                        ${expense.startingMeter || 0}
+                    </span>
+                    <span class="exp-value">
+                        <span class="exp-title">Closing Meter</span>
+                        ${expense.closingMeter || 0}
+                    </span>
+                    <span class="exp-value">
+                        <span class="exp-title">Places Visited</span>
+                        ${expense.placesVisited || 'N/A'}
+                    </span>
+                    <span class="exp-value">
+                        <span class="exp-title">Fuel Charges</span>
+                        ₹${expense.fuelCharges || 0}
+                    </span>
+                    <span class="exp-value">    
+                        <span class="exp-title">Toll Charges</span>
+                        ₹${expense.tollCharges || 0}
+                    </span>
+                    <span class="exp-bill-copy">
+                        <a href="javascript:;" title="test">
                 <i class="fa-solid fa-file"></i>
             </a>
-        `).join('');
-},
-
-renderActionButtons() {
-    return `
-        <span class="exp-card-btns">
-            <span class="o-icons">
-                <a href="javascript:;"><i class="fa-solid fa-pencil"></i></a>
-                <a href="javascript:;"><i class="fa-solid fa-trash"></i></a>
-            </span>
-            <span class="a-icons">
-                <a href="javascript:;"><i class="fa-solid fa-check-double"></i></a>
-                <a href="javascript:;"><i class="fa-solid fa-close"></i></a>
-            </span>
-        </span>
-    `;
-},
-handleExpenseEdit(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const $target = $(e.target);
-    const $expenseElement = $target.closest('.exp-data, .exp-row');
-    const index = $expenseElement.data('index');
-    const type = this.getExpenseType($expenseElement);
-    
-    if (type) {
-        this.loadExpenseForEdit(type, index);
-    }
-},
-
-handleExpenseDelete(e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!confirm('Are you sure you want to delete this expense?')) {
-        return;
-    }
-    
-    const $target = $(e.target);
-    const $expenseElement = $target.closest('.exp-data, .exp-row');
-    const index = $expenseElement.data('index');
-    const type = this.getExpenseType($expenseElement);
-    
-    if (type) {
-        this.deleteExpense(type, index);
-    }
-},
-
-getExpenseType($element) {
-    const $wrapper = $element.closest('.exp-data-wrapper');
-    if ($wrapper.hasClass('hotel-exp-data')) return 'hotel';
-    if ($wrapper.hasClass('travel-exp-data')) return 'travel';
-    if ($wrapper.hasClass('misc-exp-data')) return 'misc';
-    return null;
-},
-
-deleteExpense(type, index) {
-    const state = BTCStateManager.loadState();
-    const typeKey = this.config.expenseTypes[type];
-    
-    if (state.dayDetails?.[this.state.currentDay]?.[typeKey]) {
-        state.dayDetails[this.state.currentDay][typeKey].splice(index, 1);
-        BTCStateManager.saveCurrentState(state);
-        
-        this.loadDayExpenses();
-        this.showToast('Expense deleted successfully', 'success');
-    }
-},
-populateExpenseForm(type, expense) {
-    const populators = {
-        hotel: () => $('#hotelClaim').val(expense.amount),
-        travel: () => {           
-            $(`.mode-transport-container .select-option[data-value="${expense.modeOfTransport}"]`).click();
-            $(`.type-transport-container .select-option[data-value="${expense.transportType}"]`).click();
-            $('.starting-meter').val(expense.startingMeter || 0);
-            $('.closing-meter').val(expense.closingMeter || 0);
-            $('.total-kms').val(expense.totalKms || 0);
-            $('.toll-charges').val(expense.tollCharges || 0);
-            $('.fuel-charges').val(expense.fuelCharges || 0);
-            $('.places-visited').val(expense.placesVisited || '');
-        },
-        misc: () => {
-            $('.claim-amount').val(expense.amount || 0);
-            CustomDropdown.setValue('.expense-type-container', expense.type);
-        }
-    };
-
-    populators[type]();
-    
-    if (expense.files?.length) {
-        const config = {
-            moduleId: expense.fileId,
-            sectionId: expense.fileId,
-            maxFiles: type === 'hotel' ? 3 : 5,
-            buttonText: 'Add Receipt',
-            uploadIcon: 'bi-receipt',
-            acceptedTypes: '.pdf,.jpg,.jpeg,.png',
-            container: type === 'hotel' ? '#hotel-attachments' : 
-                      type === 'travel' ? '.travel-documents-uploader' : 
-                      '.misc-documents-uploader'
+                    </span>
+                    ${this.renderActionButtons()}
+                </div>
+            `,
+            misc: (expense, index) => `
+                <div class="exp-data" data-index="${index}" data-fileid="${expense.fileId}">
+                    <span class="exp-title">${expense.type!='other'?expense.type:expense.otherType}</span>
+                    <span class="exp-value">₹${expense.amount}</span>
+                    <span class="exp-bill-copy"><a href="javascript:;" title="test">
+                <i class="fa-solid fa-file"></i>
+            </a></span>
+                    ${this.renderActionButtons()}
+                </div>
+            `
         };
+
+        $container.append(templates[type](expense, index));
+    },
+    renderFileLinks(files) {
+        return (files || [])
+            .map(file => `
+                <a href="javascript:;" title="${file.name}">
+                    <i class="fa-solid fa-file"></i>
+                </a>
+            `).join('');
+    },
+
+    renderActionButtons() {
+        return `
+            <span class="exp-card-btns">
+                <span class="o-icons">
+                    <a href="javascript:;"><i class="fa-solid fa-pencil"></i></a>
+                    <a href="javascript:;"><i class="fa-solid fa-trash"></i></a>
+                </span>
+                <span class="a-icons">
+                    <a href="javascript:;"><i class="fa-solid fa-check-double"></i></a>
+                    <a href="javascript:;"><i class="fa-solid fa-close"></i></a>
+                </span>
+            </span>
+        `;
+    },
+    handleExpenseEdit(e) {
+        e.preventDefault();
+        e.stopPropagation();
         
-        FileUploader.init(config);
-        setTimeout(() => {
-            FileUploader.saveFiles(expense.fileId, expense.fileId, expense.files);
-        }, 200);
-    }
-},
+        const $target = $(e.target);
+        const $expenseElement = $target.closest('.exp-data, .exp-row');
+        const index = $expenseElement.data('index');
+        const type = this.getExpenseType($expenseElement);
+        
+        if (type) {
+            this.loadExpenseForEdit(type, index);
+        }
+    },
 
-toggleApprovalUploader($entry, show) {
-    const $approvalSection = $entry.find('.approval-documents-section');
-    if (show) {
-        $approvalSection.show();
-        $approvalSection.find('input').prop('required', true);
-    } else {
-        $approvalSection.hide();
-        $approvalSection.find('input').prop('required', false);
-    }
-},
+    handleExpenseDelete(e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-toggleMeterFields($entry, show) {
-    const $meterRow = $entry.find('.meter-fields-row');
-    if (show) {
-        $meterRow.css("display","flex");
-        $meterRow.find('.starting-meter').val('0');
-        $meterRow.find('.closing-meter').val('0');
-        $meterRow.find('.total-kms').val('0');
-    } else {
-        $meterRow.hide();
-        $meterRow.find('.starting-meter').val('');
-        $meterRow.find('.closing-meter').val('');
-        $meterRow.find('.total-kms').val('');
-    }
-},
-
-calculateFuelCharges() {
-    const modeOfTransport = $('.mode-transport-container .dropdown-value').val();
-    if (modeOfTransport === 'private') {
-        const transportType = $('.type-transport-container .dropdown-value').val();
-        const startingMeter = parseFloat($('.starting-meter').val()) || 0;
-        const closingMeter = parseFloat($('.closing-meter').val()) || 0;
-        let totalKms, ratePerKm ;
-
-        if(closingMeter > startingMeter){
-            totalKms = closingMeter - startingMeter;
-            ratePerKm = transportType === 'car' ? 8 : 6;
-            $('.closing-meter').removeClass('is-invalid')
-            $('.closing-meter').closest('.e-grp').find('.expense-message').remove();
-        } else{
-            totalKms = 0;
-            this.showValidationError('.closing-meter', 'Closing meter should be greater than starting meter');
+        if (!confirm('Are you sure you want to delete this expense?')) {
+            return;
         }
         
-        $('.total-kms').val(totalKms).removeClass('is-invalid');
-        $('.total-kms').closest('.e-grp').find('.expense-message').remove();
-        $('.fuel-charges').val(totalKms * ratePerKm).removeClass('is-invalid');
-    }
-},
+        const $target = $(e.target);
+        const $expenseElement = $target.closest('.exp-data, .exp-row');
+        const index = $expenseElement.data('index');
+        const type = this.getExpenseType($expenseElement);
+        
+        if (type) {
+            this.deleteExpense(type, index);
+        }
+    },
 
-clearExpenseForm() {
-    $('#hotelClaim').val('');
-    $('.claim-amount').val('');
-    $('.starting-meter, .closing-meter, .total-kms, .toll-charges, .fuel-charges').val('0');
-    $('.places-visited').val('');
-    $('.dropdown-value').val('');
-    $('.select-trigger').text('Select');
-},
+    getExpenseType($element) {
+        const $wrapper = $element.closest('.exp-data-wrapper');
+        if ($wrapper.hasClass('hotel-exp-data')) return 'hotel';
+        if ($wrapper.hasClass('travel-exp-data')) return 'travel';
+        if ($wrapper.hasClass('misc-exp-data')) return 'misc';
+        return null;
+    },
 
-submitDayForm() {
-    if (!confirm('Are you sure you want to submit this day\'s expenses?')) {
-        return;
-    }
+    deleteExpense(type, index) {
+        const state = BTCStateManager.loadState();
+        const typeKey = this.config.expenseTypes[type];
+        
+        if (state.dayDetails?.[this.state.currentDay]?.[typeKey]) {
+            state.dayDetails[this.state.currentDay][typeKey].splice(index, 1);
+            BTCStateManager.saveCurrentState(state);
+            
+            this.loadDayExpenses();
+            this.showToast('Expense deleted successfully', 'success');
+        }
+    },
+    populateExpenseForm(type, expense) {
+        const populators = {
+            hotel: () => $('#hotelClaim').val(expense.amount),
+            travel: () => {           
+                $(`.mode-transport-container .select-option[data-value="${expense.modeOfTransport}"]`).click();
+                $(`.type-transport-container .select-option[data-value="${expense.transportType}"]`).click();
+                $('.starting-meter').val(expense.startingMeter || 0);
+                $('.closing-meter').val(expense.closingMeter || 0);
+                $('.total-kms').val(expense.totalKms || 0);
+                $('.toll-charges').val(expense.tollCharges || 0);
+                $('.fuel-charges').val(expense.fuelCharges || 0);
+                $('.places-visited').val(expense.placesVisited || '');
+            },
+            misc: () => {
+                $('.claim-amount').val(expense.amount || 0);
+                CustomDropdown.setValue('.expense-type-container', expense.type);
+            }
+        };
 
-    const state = BTCStateManager.loadState();
-    if (state?.dayDetails?.[this.state.currentDay]) {
-        state.dayDetails[this.state.currentDay].isSubmitted = true;
-        BTCStateManager.saveCurrentState(state);
-        this.toggleDateList(true);
-        this.generateDays();
-        this.showToast('Day expenses submitted successfully', 'success');
-        this.updateMainSubmitButton();
-    }
-},
+        populators[type]();
+        
+        if (expense.files?.length) {
+            const config = {
+                moduleId: expense.fileId,
+                sectionId: expense.fileId,
+                maxFiles: type === 'hotel' ? 3 : 5,
+                buttonText: 'Add Receipt',
+                uploadIcon: 'bi-receipt',
+                acceptedTypes: '.pdf,.jpg,.jpeg,.png',
+                container: type === 'hotel' ? '#hotel-attachments' : 
+                        type === 'travel' ? '.travel-documents-uploader' : 
+                        '.misc-documents-uploader'
+            };
+            
+            FileUploader.init(config);
+            setTimeout(() => {
+                FileUploader.saveFiles(expense.fileId, expense.fileId, expense.files);
+            }, 200);
+        }
+    },
 
-        updateMainSubmitButton() {
+    toggleApprovalUploader($entry, show) {
+        const $approvalSection = $entry.find('.approval-documents-section');
+        if (show) {
+            $approvalSection.show();
+            $approvalSection.find('input').prop('required', true);
+        } else {
+            $approvalSection.hide();
+            $approvalSection.find('input').prop('required', false);
+        }
+    },
+
+    toggleMeterFields($entry, show) {
+        const $meterRow = $entry.find('.meter-fields-row');
+        if (show) {
+            $meterRow.css("display","flex");
+            $meterRow.find('.starting-meter').val('0');
+            $meterRow.find('.closing-meter').val('0');
+            $meterRow.find('.total-kms').val('0');
+        } else {
+            $meterRow.hide();
+            $meterRow.find('.starting-meter').val('');
+            $meterRow.find('.closing-meter').val('');
+            $meterRow.find('.total-kms').val('');
+        }
+    },
+
+    calculateFuelCharges() {
+        const modeOfTransport = $('.mode-transport-container .dropdown-value').val();
+        if (modeOfTransport === 'private') {
+            const transportType = $('.type-transport-container .dropdown-value').val();
+            const startingMeter = parseFloat($('.starting-meter').val()) || 0;
+            const closingMeter = parseFloat($('.closing-meter').val()) || 0;
+            let totalKms, ratePerKm ;
+
+            if(closingMeter > startingMeter){
+                totalKms = closingMeter - startingMeter;
+                ratePerKm = transportType === 'car' ? 8 : 6;
+                $('.closing-meter').removeClass('is-invalid')
+                $('.closing-meter').closest('.e-grp').find('.expense-message').remove();
+            } else{
+                totalKms = 0;
+                this.showValidationError('.closing-meter', 'Closing meter should be greater than starting meter');
+            }
+            
+            $('.total-kms').val(totalKms).removeClass('is-invalid');
+            $('.total-kms').closest('.e-grp').find('.expense-message').remove();
+            $('.fuel-charges').val(totalKms * ratePerKm).removeClass('is-invalid');
+        }
+    },
+
+    clearExpenseForm() {
+        $('#hotelClaim').val('');
+        $('.claim-amount').val('');
+        $('.starting-meter, .closing-meter, .total-kms, .toll-charges, .fuel-charges').val('0');
+        $('.places-visited').val('');
+        $('.dropdown-value').val('');
+        $('.select-trigger').text('Select');
+    },
+
+    submitDayForm() {
+        if (!confirm('Are you sure you want to submit this day\'s expenses?')) {
+            return;
+        }
+
+        const state = BTCStateManager.loadState();
+        if (state?.dayDetails?.[this.state.currentDay]) {
+            state.dayDetails[this.state.currentDay].isSubmitted = true;
+            BTCStateManager.saveCurrentState(state);
+            this.toggleDateList(true);
+            this.generateDays();
+            this.showToast('Day expenses submitted successfully', 'success');
+            this.updateMainSubmitButton();
+        }
+    },
+
+    updateMainSubmitButton() {
         const state = BTCStateManager.loadState();
         const allDaysSubmitted = Object.values(state.dayDetails).every(day => day.isSubmitted);
         
         $('.main-submit-btn').toggle(allDaysSubmitted);
-    },
-    
-    async submitApplication() {
-        if (!this.validateAllDaysHaveExpenses()) {
-            this.showToast('All days must have at least one expense entry', 'error');
-            return;
-        }
-
-        try {
-            const formData = await this.prepareSubmissionData();
-            // Add your AJAX submission logic here
-            console.log('Form data ready for submission:', formData);
-            this.showToast('Application submitted successfully', 'success');
-            return true;
-        } catch (error) {
-            console.error('Error submitting application:', error);
-            this.showToast('Error submitting application', 'error');
-            return false;
-        }
     },
 
     validateAllDaysHaveExpenses() {
@@ -1019,68 +1005,10 @@ submitDayForm() {
         return true;
     },
 
-    async prepareSubmissionData() {
-        const state = BTCStateManager.loadState();
-        const formData = new FormData();
 
-        // Add basic details
-        formData.append('startDateTime', state.startDateTime);
-        formData.append('endDateTime', state.endDateTime);
-        formData.append('tripTo', state.tripTo);
-        formData.append('foodExpense', state.foodExpense);
-        formData.append('noOfDays', state.noOfDays);
-        formData.append('purposeOfVisit', state.purposeOfVisit);
 
-        // Add day details and files
-        for (const [day, details] of Object.entries(state.dayDetails)) {
-            formData.append(`dayDetails[${day}]`, JSON.stringify({
-                hotelExpenses: details.hotelExpenses,
-                travelExpenses: details.travelExpenses,
-                miscExpense: details.miscExpenses,
-                isSubmitted: details.isSubmitted
-            }));
 
-            // Append files
-            await this.appendFilesToFormData(formData, day, details);
-        }
 
-        return formData;
-    },
-
-    async appendFilesToFormData(formData, day, details) {
-        const appendFiles = async (expenses, type) => {
-            if (!expenses) return;
-            for (let i = 0; i < expenses.length; i++) {
-                const files = expenses[i].files;
-                if (files) {
-                    for (let j = 0; j < files.length; j++) {
-                        const file = files[j];
-                        if (file.data) {
-                            const blob = await this.dataURLtoBlob(file.data);
-                            formData.append(`files[${day}][${type}][${i}][${j}]`, blob, file.name);
-                        }
-                    }
-                }
-            }
-        };
-
-        await appendFiles(details.hotelExpenses, 'hotel');
-        await appendFiles(details.travelExpenses, 'travel');
-        await appendFiles(details.miscExpenses, 'misc');
-    },
-
-    dataURLtoBlob(dataURL) {
-        const arr = dataURL.split(',');
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        return new Blob([u8arr], { type: mime });
-    },
-    
     showToast(message, type = 'info') {
         const toast = `
             <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
@@ -1102,7 +1030,7 @@ submitDayForm() {
             $(this).remove();
         });
     },
-    
+
     generateDays() {
         const state = BTCStateManager.loadState();
         if (!state?.startDateTime) {
@@ -1174,9 +1102,253 @@ submitDayForm() {
         return this.state.editing !== null ? 
             `Edit ${titles[type].substring(4)}` : 
             titles[type];
-    }
-};
+    },
+    /**
+     * Submission handler for ExpenseAppBTC
+     */
+    formSubmission: {
+        async prepareFormData() {
+            try {
+                console.log('============ STARTING FORM DATA PREPARATION ============');
+                const formData = new FormData();
+                const state = BTCStateManager.loadState();
+                console.log('Loaded state:', state);
+    
+                // Add basic form fields
+                const basicFields = {
+                    startDateTime: state.startDateTime,
+                    endDateTime: state.endDateTime,
+                    tripTo: state.tripTo,
+                    foodExpense: state.foodExpense,
+                    noOfDays: state.noOfDays,
+                    purposeOfVisit: state.purposeOfVisit
+                };
+    
+                // Add basic fields to formData
+                Object.entries(basicFields).forEach(([key, value]) => {
+                    formData.append(key, value || '');
+                    console.log(`Added ${key}:`, value);
+                });
+    
+                // Process each day's expenses
+                console.log('\nDay Details:');
+                for (const [day, details] of Object.entries(state.dayDetails)) {
+                    console.log(`\n${day}:`);
+                    // Add day details
+                    console.log(`Date: ${details.date}`);
+                    console.log(`Submitted: ${details.isSubmitted}`);
+                    formData.append(`dayDetails[${day}]`, JSON.stringify({
+                        date: details.date,
+                        isSubmitted: details.isSubmitted
+                    }));
 
+                    // Handle hotel expenses
+                    await this.appendExpenseFiles(formData, day, 'hotel', details.hotelExpenses);
+    
+                    // Handle travel expenses with special handling for approval docs
+                    await this.appendTravelExpenses(formData, day, details.travelExpenses);
+    
+                    // Handle misc expenses
+                    await this.appendExpenseFiles(formData, day, 'misc', details.miscExpenses);
+
+
+                    // Hotel expenses
+                    if (details.hotelExpenses?.length) {
+                        console.log(`\nHotel Expenses (${details.hotelExpenses.length}):`);
+                        details.hotelExpenses.forEach((exp, i) => {
+                            console.log(`  Expense #${i + 1}:`);
+                            console.log(`  - Amount: ${exp.amount}`);
+                            console.log(`  - Number: ${exp.number}`);
+                        });
+                    }
+
+                    // Travel expenses
+                    if (details.travelExpenses?.length) {
+                        console.log(`\nTravel Expenses (${details.travelExpenses.length}):`);
+                        details.travelExpenses.forEach((exp, i) => {
+                            console.log(`  Expense #${i + 1}:`);
+                            console.log(`  - Mode: ${exp.modeOfTransport}`);
+                            console.log(`  - Type: ${exp.transportType}`);
+                            console.log(`  - Starting Meter: ${exp.startingMeter}`);
+                            console.log(`  - Closing Meter: ${exp.closingMeter}`);
+                            console.log(`  - Total KMs: ${exp.totalKms}`);
+                            console.log(`  - Fuel Charges: ${exp.fuelCharges}`);
+                            console.log(`  - Toll Charges: ${exp.tollCharges}`);
+                            console.log(`  - Places: ${exp.placesVisited}`);
+                        });
+                    }
+
+                    // Misc expenses
+                    if (details.miscExpenses?.length) {
+                        console.log(`\nMisc Expenses (${details.miscExpenses.length}):`);
+                        details.miscExpenses.forEach((exp, i) => {
+                            console.log(`  Expense #${i + 1}:`);
+                            console.log(`  - Type: ${exp.type}`);
+                            console.log(`  - Amount: ${exp.amount}`);
+                        });
+                    }             
+    
+                    
+                }
+
+
+                 // Log files being added
+                console.log('\nFILES:');
+                for (const [key, value] of formData.entries()) {
+                    if (value instanceof File) {
+                        console.log(`${key}: ${value.name} (${this.formatFileSize(value.size)})`);
+                    }
+                }
+
+                console.log('\n========== FORM DATA PREPARATION COMPLETE ==========');
+    
+                return formData;
+            } catch (error) {
+                console.error('Error preparing form data:', error);
+                throw error;
+            }
+        },
+
+        async appendExpenseFiles(formData, day, type, expenses) {
+            if (!expenses?.length) return;
+    
+            // Add expense data without file content
+            formData.append(`${type}Expenses[${day}]`, JSON.stringify(
+                expenses.map(exp => ({
+                    ...exp,
+                    files: undefined // Remove file data from JSON
+                }))
+            ));
+    
+            // Add files separately
+            for (let i = 0; i < expenses.length; i++) {
+                const expense = expenses[i];
+                const files = await FileUploader.getFiles(`${type}-expenses`, expense.fileId);
+                
+                if (files?.length) {
+                    files.forEach((file, j) => {
+                        formData.append(
+                            `${type}_files_${day}_${i + 1}[]`, 
+                            file
+                        );
+                    });
+                }
+            }
+        },
+
+        async appendTravelExpenses(formData, day, expenses) {
+            if (!expenses?.length) return;
+    
+            // Add travel expense data without file content
+            formData.append(`travelExpenses[${day}]`, JSON.stringify(
+                expenses.map(exp => ({
+                    ...exp,
+                    files: undefined,
+                    approvalDoc: undefined
+                }))
+            ));
+    
+            // Add regular travel files and approval documents
+            for (let i = 0; i < expenses.length; i++) {
+                const expense = expenses[i];
+                
+                // Regular travel documents
+                const files = await FileUploader.getFiles('travel-expenses', expense.fileId);
+                if (files?.length) {
+                    files.forEach(file => {
+                        formData.append(
+                            `travel_files_${day}_${i + 1}[]`, 
+                            file
+                        );
+                    });
+                }
+    
+                // Approval document if exists
+                if (expense.modeOfTransport === 'private' && expense.transportType === 'car') {
+                    const approvalFiles = await FileUploader.getFiles(
+                        'travel-expenses',
+                        `travel-approval-Day-${day.split(' ')[1]}-${i + 1}`
+                    );
+                    if (approvalFiles?.length) {
+                        formData.append(
+                            `travel_approval_${day}_${i + 1}`,
+                            approvalFiles[0]
+                        );
+                    }
+                }
+            }
+        },
+        formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        },
+
+        // Submit form
+        async submitForm() {
+            const submitBtn = $('.main-submit-btn .btn-primary');
+            
+            try {
+                // Show loading state
+                submitBtn.prop('disabled', true)
+                        .html('<span class="spinner-border spinner-border-sm me-2"></span>Submitting...');
+    
+                const formData = await this.prepareFormData();
+                
+                // Get CSRF token from meta tag
+                const token = $('meta[name="csrf-token"]').attr('content');
+    
+                // Make AJAX request
+                const response = await $.ajax({
+                    url: '/api/travel-expenses/submit',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    },
+                    xhr: () => {
+                        const xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', (evt) => {
+                            if (evt.lengthComputable) {
+                                const percent = Math.round((evt.loaded / evt.total) * 100);
+                                submitBtn.html(
+                                    `<span class="spinner-border spinner-border-sm me-2"></span>Uploading ${percent}%`
+                                );
+                            }
+                        }, false);
+                        return xhr;
+                    }
+                });
+    
+                ExpenseAppBTC.showToast('Application submitted successfully', 'success');
+    
+                // Clear application state
+                await BTCStateManager.clearAllData();
+                
+                // Redirect to success page after short delay
+                setTimeout(() => {
+                    window.location.href = '/travel-claims';
+                }, 2000);
+    
+            } catch (error) {
+                console.error('Submission error:', error);
+                ExpenseAppBTC.showToast(
+                    error.responseJSON?.message || 'Error submitting application',
+                    'danger'
+                );
+                
+                // Reset button
+                submitBtn.prop('disabled', false)
+                        .html('Submit Application');
+            }
+        }
+    }
+
+};
 const ExpenseFileHandler = {
     async getFileStatus(moduleId, sectionId) {
         const files = await FileUploader.getFiles(moduleId, sectionId) || [];

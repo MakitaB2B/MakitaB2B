@@ -25,7 +25,7 @@ const LTCStateManager = {
             breakfast: { amount: '0.00'}
         },
         travelEntries: [],
-        miscExpense: [],
+        miscExpenses: [],
         isSubmitted: false
     },
 
@@ -319,7 +319,7 @@ const LTCStateManager = {
             state.travelEntries = await this.collectTravelEntries();
 
             // Misc Expenses
-            state.miscExpense = await this.collectMiscExpenses();
+            state.miscExpenses = await this.collectMiscExpenses();
 
             return state;
         } catch (error) {
