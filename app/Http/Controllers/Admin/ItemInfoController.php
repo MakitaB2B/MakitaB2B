@@ -13,7 +13,7 @@ class ItemInfoController extends Controller
 
     public function index(Request $request){
 
-        $result=ItemPrice::paginate(20,['Item','Item Description','U/M','DLP','LP','MRP','BEST']);
+        $result=ItemPrice::paginate(20,['Item','Item Description','Effective Date','U/M','DLP','LP','MRP','BEST','created_at']);
         return view('Admin.item_price',compact('result')); 
     }
 
@@ -111,9 +111,9 @@ class ItemInfoController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        // if (request()->has('mycsv')) {
 
-        // }
+        if (request()->has('mycsv')) {
+
         $data = array_map('str_getcsv', file(request()->mycsv));
         $header=$data[0];
       
@@ -136,38 +136,52 @@ class ItemInfoController extends Controller
 
         $header_diff = array_diff($header, $columnNames);
 
-        $filteredData = array_map(function ($row) use ( $header,$data, $header_diff) {
-            if ($row === $data[0]) {
-                return array_map('trim',array_values(array_diff($row, $header_diff)));
-            }
-            $indexesToRemove = array_keys(array_intersect($data[0], $header_diff));
-            foreach ($indexesToRemove as $index) {
-                unset($row[$index]);
-            }
-            dd(count($header),count(array_map('trim',array_values($row))));
-            return array_combine($header,array_map('trim',array_values($row)));  
-            }, $data);
-
-
-
-        dd(      $header_diff ,   $filteredData);
-
+    
+        if(!empty($header_diff)){
+            $header_diff_text=implode(', ', $header_diff);
+            return 'These columns cannont be uploaded  - '.$header_diff_text;
+        }
+           unset($data[0]);
         ItemPrice::truncate(); 
         set_time_limit(0);
         $batchSize = 5000;
         $allStockData = [];
 
-        // if(!empty($header_diff)){
-        //     $header_diff_text=implode(', ', $header_diff);
-        //     return 'These columns cannont be uploaded  - '.$header_diff_text;
-        // }
+        foreach ($data as $index => $row) {
+       
+        $stockData = array_combine($header, $row);
 
-        dd($header, $header_diff);
+        foreach ($stockData as $key => $value) {
+            if(!empty($key) && $key != "Effective Date"){
+            $consistentRecord[$key] = $key=="MRP" ||$key=="LP" || $key=="DLP" || $key=="BEST" ? intval(str_replace(',', '', $stockData[$key])) : $stockData[$key] ;
+                         
+            } 
+            elseif ($key = "Effective Date") {
+                $date = \DateTime::createFromFormat('m/d/Y', $value);
+                $consistentRecord[$key] = $date ? $date->format('Y-m-d') : null;
+            } else {
+               $consistentRecord[$key] = $value;
+            }
+            $consistentRecord["created_at"] = date('Y-m-d H:i:s');
+            $consistentRecord["updated_at"] =  date('Y-m-d H:i:s');
+        }
+         
+        $allStockData[] = $consistentRecord;
 
 
-    }    
+        if (count($allStockData) >= $batchSize) {
+            ItemPrice::insert($allStockData);
+            $allStockData = []; 
+        }
+    }
 
+    if (!empty($allStockData)) {
+        ItemPrice::insert($allStockData);
+    }
+        return redirect('admin/items');
+    }
 
+    }
 
-    
-}
+ }    
+

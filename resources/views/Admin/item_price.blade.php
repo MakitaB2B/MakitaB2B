@@ -22,7 +22,7 @@
                 @endif
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Item Price</h1>
+                        <h1>Item Price</h1> 
                     </div>
                     <div class="col-sm-6">
                         <b style="display: none; color:green" id="hm">File is large, it may take a while, please wait
@@ -33,6 +33,7 @@
                             <input type="submit" value="Upload" class="btn float-right" id="submititem">
                             <label for="inputField" class="btn btn-info float-right">Items File</label>
                             <input type="file" name="mycsv" id="inputField" style="display:none" required>
+                            <p>Note : Allowed File type - csv utf8 delimiter</p>
                         </form>
                     </div>
                 </div>
@@ -71,11 +72,13 @@
                                         <tr>
                                             <th>Item</th>
                                             <th>Description</th>
+                                            <th>Effective Date</th>
                                             <th>U/M</th>
                                             <th>DLP</th>
                                             <th>LP</th>
                                             <th>MRP</th>
                                             <th>BEST</th>
+                                            <th>Created At</th>
                                         </tr>
                                     </thead>
                                     <tbody id="searchresult">
@@ -83,11 +86,13 @@
                                             <tr>
                                                 <td>{{$itemPrice->Item}}</td>
                                                 <td>{{ ($itemPrice->{"Item Description"}) }}</td>
+                                                <td>{{ ($itemPrice->{"Effective Date"}) }}</td>
                                                 <td>{{ ($itemPrice->{"U/M"})  }}</td>
                                                 <td>{{$itemPrice->DLP}}</td>
                                                 <td>{{$itemPrice->LP}}</td>
                                                 <td>{{$itemPrice->MRP}}</td>
                                                 <td>{{$itemPrice->BEST}}</td>
+                                                <td>{{$itemPrice->created_at}}</td>
                                             </tr>
                                         @endforeach 
                                     </tbody>
