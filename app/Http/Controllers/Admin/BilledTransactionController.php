@@ -92,7 +92,7 @@ class BilledTransactionController extends Controller
     {
   
     $validator = \Validator::make(request()->all(), [
-        'mycsv' => 'required|file|mimes:csv,txt|max:2048',
+        'mycsv' => 'required|file|mimes:csv,txt',
     ]);
 
     if ($validator->fails()) {
