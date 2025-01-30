@@ -33,7 +33,7 @@
                             <input type="submit" value="Upload" class="btn float-right" id="submititem">
                             <label for="inputField" class="btn btn-info float-right">Items File</label>
                             <input type="file" name="mycsv" id="inputField" style="display:none" required>
-                            <p>Note : Allowed File type - csv utf8 delimiter</p>
+                            <p>Note : Allowed File type - csv utf8 delimiter <a href="https://makitapowerindia-my.sharepoint.com/:x:/g/personal/jeanlobo_makita_in/EeNLzfEu3kZMpCz7bYwVV44BQOXNs5qBhSLmNmoUKvs6jQ?e=e9IFnK&nav=MTVfezAwMDAwMDAwLTAwMDEtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMH0">View Format</a></p>
                         </form>
                     </div>
                 </div>
