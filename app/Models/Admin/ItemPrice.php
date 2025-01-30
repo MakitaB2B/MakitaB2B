@@ -54,5 +54,16 @@ class ItemPrice extends Model
         return is_numeric($value) ? number_format((float) $value, 2) : null; 
     }
 
+    public function setEffectiveDateAttribute($value)
+    {
+        $this->attributes['Effective Date'] = \Carbon\Carbon::parse($value)->format('Y-m-d');   // $this->attributes['date'] = \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
+   
+    }
+ 
+    public function getEffectiveDateAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('d-m-Y');
+    }
+
     
 }

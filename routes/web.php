@@ -307,7 +307,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
 
 
     Route::get('/dealers', [DealerController::class, 'index'])->name('dealers');
-    Route::post('/dealer-search',[DealerController::class,'dealerSearch'])->name('item-search');
+    Route::post('/dealer-search',[DealerController::class,'dealerSearch'])->name('dealer-search');
     Route::post('/upload-dealer',[DealerController::class,'uploadDealer'])->name('upload-dealer');
 
 
@@ -332,6 +332,7 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::post('/upload-daily-item',[ItemInfoController::class,'uploadDailyItem'])->name('upload-daily-item');
 
     Route::get('/billed-transactions',[BilledTransactionController::class,'index'])->name('billed-transactions');
+    Route::post('/billed-search',[BilledTransactionController::class,'billedSearch'])->name('billed-search');
     Route::post('/upload-billed-transaction',[BilledTransactionController::class,'uploadBilledTransaction'])->name('upload-billed-transaction');
 
 Route::get('/promotions/promomail/{promocode}', [PromotionController::class, 'promomail'])->name('promomail');

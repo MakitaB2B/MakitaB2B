@@ -83,17 +83,22 @@
                                     </thead>
                                     <tbody id="searchresult">
                                      @foreach ($result as $key => $itemPrice)
-                                            <tr>
-                                                <td>{{$itemPrice->Item}}</td>
-                                                <td>{{ ($itemPrice->{"Item Description"}) }}</td>
-                                                <td>{{ ($itemPrice->{"Effective Date"}) }}</td>
-                                                <td>{{ ($itemPrice->{"U/M"})  }}</td>
-                                                <td>{{$itemPrice->DLP}}</td>
-                                                <td>{{$itemPrice->LP}}</td>
-                                                <td>{{$itemPrice->MRP}}</td>
-                                                <td>{{$itemPrice->BEST}}</td>
-                                                <td>{{$itemPrice->created_at}}</td>
-                                            </tr>
+                                     {{-- @dd($itemPrice)
+                                     @if($itemPrice->Item=='E-15481') --}}
+                                     <tr>
+                                        <td>{{$itemPrice->Item}}</td>
+                                        <td>{{ ($itemPrice->{"Item Description"}) }}</td>
+                                        <td>{{ ($itemPrice->{"Effective Date"}) }}</td>
+                                        <td>{{ ($itemPrice->{"U/M"})  }}</td>
+                                        <td>{{$itemPrice->DLP}}</td>
+                                        <td>{{$itemPrice->LP}}</td>
+                                        <td>{{$itemPrice->MRP}}</td>
+                                        <td>{{$itemPrice->BEST}}</td>
+                                        <td>{{$itemPrice->created_at}}</td>
+                                    </tr>
+                                   
+                                     {{-- @endif --}}
+                                         
                                         @endforeach 
                                     </tbody>
                                 </table>

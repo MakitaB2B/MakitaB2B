@@ -35,7 +35,7 @@ class ItemInfoController extends Controller
             $column = 'Item Description';
         }
 
-        $searchResult=ItemPrice::where($column,'LIKE',"$searchQuery")->get(['id','Item','Item Description','U/M','DLP','LP','MRP','BEST']);
+        $searchResult=ItemPrice::where($column,'LIKE',"$searchQuery")->get(['id','Item','Item Description','Effective Date','U/M','DLP','LP','MRP','BEST','created_at']);
         if(($searchResult->count())>0 ){
             $output="";
             if($searchFrom=='itempg'){
@@ -46,11 +46,13 @@ class ItemInfoController extends Controller
                 $output.='<tr>'.
                 '<td>'.$data->Item.'</td>'.
                 '<td>'.$data->{'Item Description'}.'</td>'.
+                '<td>'.$data->{'Effective Date'}.'</td>'.
                 '<td>'.$data->{'U/M'}.'</td>'.
                 '<td>'.$data->{'DLP'}.'</td>'.
-                '<td title="'.$data->{'LP'}.'">'.$data->descriptionsystem.'</td>'.
+                '<td>'.$data->{'LP'}.'</td>'.
                 '<td>'.$data->{'MRP'}.'</td>'.
                 '<td>'.$data->{'BEST'}.'</td>'.
+                '<td>'.$data->created_at.'</td>'.
                 '</tr>';
                 }
         return Response($output);
@@ -135,7 +137,6 @@ class ItemInfoController extends Controller
         $columnNames = array_filter($columnNames);
 
         $header_diff = array_diff($header, $columnNames);
-
     
         if(!empty($header_diff)){
             $header_diff_text=implode(', ', $header_diff);
@@ -153,7 +154,8 @@ class ItemInfoController extends Controller
 
         foreach ($stockData as $key => $value) {
             if(!empty($key) && $key != "Effective Date"){
-            $consistentRecord[$key] = $key=="MRP" ||$key=="LP" || $key=="DLP" || $key=="BEST" ? intval(str_replace(',', '', $stockData[$key])) : $stockData[$key] ;
+
+            $consistentRecord[$key] =  $key=="MRP" ||$key=="LP" || $key=="DLP" || $key=="BEST" ? intval(str_replace(',', '', $stockData[$key])) : $stockData[$key] ;  //$stockData[$key] ;
                          
             } 
             elseif ($key = "Effective Date") {
@@ -165,9 +167,7 @@ class ItemInfoController extends Controller
             $consistentRecord["created_at"] = date('Y-m-d H:i:s');
             $consistentRecord["updated_at"] =  date('Y-m-d H:i:s');
         }
-         
-        $allStockData[] = $consistentRecord;
-
+            $allStockData[] = $consistentRecord;
 
         if (count($allStockData) >= $batchSize) {
             ItemPrice::insert($allStockData);

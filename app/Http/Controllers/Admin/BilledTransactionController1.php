@@ -25,63 +25,6 @@ class BilledTransactionController extends Controller
 
     }
 
-
-    public function billedSearch(Request $request){
-        $searchValue=strtoupper($request->searchtxt);
-        $searchFrom=$request->searchFrom;
-        $searchType=$request->searchtype;
-        $type = match($searchType){
-            'invoice'=>'invoice',
-            'name'=>'name',
-            'invoice date'=>'invoice date',
-            'transaction_id'=>'transaction_id',
-            default => 'invoice',
-        };
-        if($type=='invoice'){
-            $searchQuery=$searchValue.'%';
-            $column = 'Invoice';
-        }
-        if($type=='name'){
-            $searchQuery='%'.$searchValue.'%';
-            $column = 'Name';
-        }
-        if($type=='invoice date'){
-            $searchQuery='%'.$searchValue.'%';
-            $column = 'Invoice Date';
-        }
-        if($type=='transaction_id'){
-            $searchQuery='%'.$searchValue.'%';
-            $column = 'order_id';
-        }
-
-        $searchResult=BilledTransaction::where($column,'LIKE',"$searchQuery")->get(['Invoice','Name','Invoice Date','order_id','promo_code','Order','Item','Description','Qty Invoiced','Price','create_date']);
-        if(($searchResult->count())>0 ){
-            $output="";
-            if($searchFrom=='billedpg'){
-                $routeTo="billed-transactions/";
-            }
-        
-            foreach ($searchResult as $key => $data) {
-                $output.='<tr>'.
-                '<td>'.$data->Invoice.'</td>'.
-                '<td>'.$data->Name.'</td>'.
-                '<td>'.$data->{"Invoice Date"}.'</td>'.
-                '<td>'.$data->order_id.'</td>'.
-                '<td>'.$data->promo_code.'</td>'.
-                '<td>'.$data->Order.'</td>'.
-                '<td>'.$data->Item.'</td>'.
-                '<td>'.$data->Description.'</td>'.
-                '<td>'.$data->{"Qty Invoiced"}.'</td>'.
-                '<td>'.$data->Price.'</td>'.
-                '<td>'.$data->create_date.'</td>'.
-                '</tr>';
-                }
-        return Response($output);
-        }else{
-            echo "No Record Found";
-        }
-    }
-
     // public function uploadBilledTransaction(Request $request){
 
     //     $validator = \Validator::make(request()->all(), [
@@ -149,7 +92,7 @@ class BilledTransactionController extends Controller
     {
   
     $validator = \Validator::make(request()->all(), [
-        'mycsv' => 'required|file|mimes:csv,txt|max:2048',
+        'mycsv' => 'required|file|mimes:csv,txt',
     ]);
 
     if ($validator->fails()) {
@@ -160,19 +103,16 @@ class BilledTransactionController extends Controller
 
         $data = array_map('str_getcsv', file(request()->mycsv));
         // array_shift($data); 
-        
-        // Step 4: Fetch the valid column names from the database
+      
         $tableColumns = \Schema::getColumnListing('billed_transactions');
        
-        // Begin database transaction
         DB::transaction(function () use($data, $tableColumns) {
-            $header = array_map('trim', array_shift($data)); // Get the header row
+            $header = array_map('trim', array_shift($data)); 
             $batchSize = 1000;
             $billedData = [];
             $pattern = '/PR\d{3}-\w{1,10}\|/';  //'/PR\d{3}-\w{10}\|/';
             set_time_limit(0); // Prevent timeout
 
-            // Step 5: Process each row of data
             foreach ($data as $index => $row) {
                 $billData = array_combine($header, $row);
                 $consistentRecord = [];
@@ -180,7 +120,6 @@ class BilledTransactionController extends Controller
                 if (!isset($billData['Cust PO']) || !preg_match($pattern, $billData['Cust PO'])) {
                     continue;
                 }
-                // Step 6: Map and filter the row data to match the database columns
                
             foreach($billData as $key => $value){    //foreach ($billData as $key => $value) {
                     if ($key === "Cust PO") {
@@ -200,20 +139,54 @@ class BilledTransactionController extends Controller
                 $consistentRecord['billed_transaction_slug'] = $this->billedTransactionService->billed_transaction_slug();
                 $consistentRecord['create_date'] = date('Y-m-d H:i:s');
                 $billedData[] = $consistentRecord;
-
-
                 // Step 7: Insert data in batches to optimize performance
                 if (count($billedData) >= $batchSize) {
                     BilledTransaction::insert($billedData);
                     $billedData = [];
                 }
             }
-
+           
             // Step 8: Insert remaining data if any
             if (!empty($billedData)) {
-                BilledTransaction::insert($billedData);
-            }
+                try {
+                    // $databaseName = \DB::connection()->getDatabaseName();
+                    // dd($databaseName);
+                    // dump($billedData);
+                    // BilledTransaction::insert($billedData);
+                    BilledTransaction::insert([
+                        "Invoice" => "KA2425G15451",
+                        "billed_transaction_slug" => "56056133538002096",
+                        "Name" => "M TRADERS",
+                        "Planner Code" => "M",
+                      ]);
 
+
+
+                    //   "Site" => "MAKITA",
+                    //   "Customer" => "27-0079",
+                    //   "Name" => "M TRADERS",
+                    //   "Invoice Date" => "2025-01-15",
+                    //   "order_id" => "1895492688",
+                    //   "promo_code" => "850",
+                    //   "Salesperson" => "MIN-429",
+                    //   "Total Price" => "0",
+                    //   "Order" => "24COFO3142",
+                    //   "Item" => "DF488D002",
+                    //   "Description" => "18V DRIVER DRILL BL1815GX2 DC18WB",
+                    //   "Qty Invoiced" => "1",
+                    //   "Price" => "0",
+                    //   "Extended Price" => "0",
+                    //   "Planner Code" => "M",
+                    //   "billed_transaction_slug" => "56056133538002096",
+                    //   "create_date" => "2025-01-21 17:09:28"
+                    echo "Data inserted successfully!";
+                } catch (\Exception $e) {
+                    dd($e->getMessage());
+                }
+                // dd(DB::getQueryLog());
+                  echo die();
+            }
+      
             // Change status to billed after successful insertion
             $this->changeStatusToBilled();
         });
@@ -341,12 +314,16 @@ class BilledTransactionController extends Controller
                         WHERE bt.order_id = transactions.order_id 
                         AND bt.Item = transactions.model_no 
                         AND bt.promo_code = transactions.promo_code
+                        AND bt.price = transactions.offer_price
+                        AND bt.`Extended Price` = transactions.order_price
                     ) THEN (
                         SELECT SUM(bt.`Qty Invoiced`) 
                         FROM billed_transactions as bt 
                         WHERE bt.order_id = transactions.order_id 
                         AND bt.Item = transactions.model_no 
                         AND bt.promo_code = transactions.promo_code
+                        AND bt.`Price` = transactions.offer_price
+                        AND bt.`Extended Price` = transactions.order_price
                     )
                     ELSE (
                         SELECT SUM(bt.`Qty Invoiced`) 
@@ -354,6 +331,8 @@ class BilledTransactionController extends Controller
                         WHERE bt.order_id = transactions.order_id 
                         AND bt.Item = transactions.model_no 
                         AND bt.promo_code = transactions.promo_code
+                        AND bt.`Price` = transactions.offer_price
+                        AND bt.`Extended Price` = transactions.order_price
                     )
                 END
             "),
@@ -365,9 +344,11 @@ class BilledTransactionController extends Controller
                         WHERE bt.order_id = transactions.order_id 
                         AND bt.Item = transactions.model_no 
                         AND bt.promo_code = transactions.promo_code
+                        AND bt.`Price` = transactions.offer_price
+                        AND bt.`Extended Price` = transactions.order_price
                     ) THEN 'billed'
-                    WHEN transactions.order_date < NOW() - INTERVAL 7 DAY 
-                        AND transactions.billed_qty IS NULL THEN 'cancelled'
+                    WHEN transactions.order_date < NOW() - INTERVAL 5 DAY 
+                        AND transactions.billed_qty IS NULL THEN 'cancel'
                     ELSE transactions.status
                 END
             ")

@@ -45,6 +45,7 @@
                             <input type="submit" value="Upload" class="btn float-right" id="submitstock">
                             <label for="inputField" class="btn btn-info float-right">Billed File</label>
                             <input type="file" name="mycsv" id="inputField" style="display:none" required>
+                            <p>Note : Allowed file csv dos</p>
                         </form>
                     </div>
                 </div>
@@ -137,6 +138,7 @@
             $(document).ready(function() {
                 $('.smi').on('click', function() {
                     let searchType = $.trim($("#stype").val());
+                    console.log(searchType);
                     if (searchType == '') {
                         $("#stype").css({
                             "border": "2px solid red",
@@ -144,7 +146,7 @@
                         });
                     } else {
                         let searchtxt = $.trim($("#searchtxt").val());
-                        let searchFrom = "dealerpg";
+                        let searchFrom = "billedpg";
                         if (searchtxt != '' && searchtxt.length > 0) {
                             $("#searchresultmsg").text('Please Wait while processing....').css({
                                 "color": "green",
@@ -152,7 +154,7 @@
                                 "font-size": "11px"
                             });
                             $.ajax({
-                                url: '/admin/dealer-search',
+                                url: '/admin/billed-search',
                                 type: 'post',
                                 data: 'searchtxt=' + searchtxt + '&searchtype=' + searchType +
                                     '&searchFrom=' + searchFrom +
