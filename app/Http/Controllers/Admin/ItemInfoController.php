@@ -159,9 +159,11 @@ class ItemInfoController extends Controller
                          
             } 
             elseif ($key = "Effective Date") {
-                $date = \DateTime::createFromFormat('m/d/Y', $value);
-                $consistentRecord[$key] = $date ? $date->format('Y-m-d') : null;
-            } else {
+            $consistentRecord[$key] = \Carbon\Carbon::parse($value)->format('Y-m-d');
+                // $date = \DateTime::createFromFormat('m/d/Y', $value);
+                // $consistentRecord[$key] = $date ? $date->format('Y-m-d') : null;
+            } 
+            else {
                $consistentRecord[$key] = $value;
             }
             $consistentRecord["created_at"] = date('Y-m-d H:i:s');
