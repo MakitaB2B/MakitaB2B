@@ -393,10 +393,11 @@ class TravelManagementService{
                     'in_time' => $timeInfo["date"]." ".$timeInfo["inTime"]["hours"].":".$timeInfo["inTime"]["minutes"],
                     'out_time' => $timeInfo["date"]." ".$timeInfo["outTime"]["hours"].":".$timeInfo["outTime"]["minutes"],
                     'food_exp'=> $foodExpense["breakfast"]["amount"] ?? 0, //"hggg", 
-                    'food_exp_bill' => !empty($foodExpense["breakfast"]["files"]) ? $foodExpense["breakfast"]["files"] : null, //$foodExpense["breakfast"]["files"] ?? "No Bill",
+                    'food_exp_bill' => $request->hasFile("breakfast_files") ? $foodExpense["breakfast"]["files"] : null, //$foodExpense["breakfast"]["files"] ?? "No Bill",
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+                dd($ltcFoodClaim);
                 $ltcFoodClaim->save();
 
 
