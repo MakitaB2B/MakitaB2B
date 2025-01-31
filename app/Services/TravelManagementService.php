@@ -35,7 +35,7 @@ class TravelManagementService{
 
      public function ltc_claim_id(){
         
-        $ltcIdExists = LtcClaim::distinct()->pluck('ltc_claim_id')->toArray();
+        $ltcIdExists = LtcFoodClaim::distinct()->pluck('ltc_claim_id')->toArray(); //LtcClaim
 
         do {
 
@@ -369,16 +369,6 @@ class TravelManagementService{
 
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
 
-    //    dd($request->allFiles());
-
-        // if ($request->hasFile('breakfast_files')) {
-        //     dump(1);
-        //     foreach ($request->file('breakfast_files') as $file) {
-        //         dump( json_decode($file[0]), true);
-        //         $filePath = $file[0]->store('uploads/breakfast'); 
-        //     }
-        // }
-
         // try {
               
         //     DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
@@ -391,28 +381,16 @@ class TravelManagementService{
                 $travelEntries = $request->input('travelEntries') ? json_decode($request->input('travelEntries'), true) : [];
                 dump( $timeInfo,$foodExpense,$travelEntries);
                 $ltcappslug = Str::slug(rand().rand());
-
                 $total_claim_amount=0;
 
                 // $foodInfo = $request->hasFile("breakfast_files")
                 //     ? $request->file("breakfast_files")->store('mimes/travel_management/ltc/food_info')
                 //     : null;
 
-                    // $foodInfo= $request->file("breakfast_files");
-                    // $path =   $foodInfo->store("mimes/travel_management/ltc/food_info", 'public');
-               
-
-                    // $data = json_decode($foodInfo, true);
-                    
-                    // foreach($foodInfo as $food){
-                    //     dd($food);
-
-                    // }
-           
                 $ltcFoodClaim = new LtcFoodClaim([
                     'ltc_food_claims_slug' => Str::slug(rand().rand()),
                     'ltc_claim_applications_slug' =>  $ltcappslug,
-                    // 'ltc_claim_id' => $ltc_id,
+                    'ltc_claim_id' => $ltc_id,
                     'employee_slug' => $employeeSlug,
                     'ltc_date' => $timeInfo["date"],
                     'ltc_day' => $timeInfo["dayType"],

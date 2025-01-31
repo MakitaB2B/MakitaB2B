@@ -175,10 +175,6 @@ class TravelManagementController extends Controller
 
         $createUpdateAction=$this->travelManagementService->createLtcClaim($request,$employeeSlug,$ltc_id,$status);
 
-        $ltc=LtcFoodClaim::all();
-
-        dd($ltc);
-
         $msg = $createUpdateAction ? 'Yes! You Have Sucessfully Applied for LTC' : 'Error! LTC Application Not Executed';
         
         $request->session()->flash('message',$msg);
