@@ -161,98 +161,77 @@ const FileUploader = {
         }
     
         try {
-            // Get the key for the files in the database
             const key = `${moduleId}-${sectionId}`;
             const transaction = this.db.transaction([this.storeName], 'readwrite');
             const store = transaction.objectStore(this.storeName);
     
-            // Retrieve existing files
-            const request = store.get(key);
             const record = await new Promise((resolve, reject) => {
+                const request = store.get(key);
                 request.onsuccess = () => resolve(request.result || null);
                 request.onerror = () => reject(request.error);
             });
     
             if (record?.files?.length > index) {
-                // Remove the file at the specified index
+                const removedFile = record.files[index];
+                
+                // Clean up any object URLs if they exist
+                if (removedFile.objectUrl) {
+                    URL.revokeObjectURL(removedFile.objectUrl);
+                }
+                
                 record.files.splice(index, 1);
-    
-                // Update the database
-                const updateRequest = store.put(record);
+                
                 await new Promise((resolve, reject) => {
+                    const updateRequest = store.put(record);
                     updateRequest.onsuccess = () => resolve();
                     updateRequest.onerror = () => reject(updateRequest.error);
                 });
     
-                console.log(`File removed from IndexedDB: Key=${key}, Index=${index}`);
-            } else {
-                console.warn(`No file found at index ${index} for Key=${key}`);
+                console.log(`File removed: ${removedFile.name}`);
+                this.updateFilePreviews($uploader, record.files);
             }
-    
-            // Update the UI
-            this.updateFilePreviews($uploader, record?.files || []);
         } catch (error) {
-            console.error('Error removing file from IndexedDB:', error);
+            console.error('Error removing file:', error);
+            this.showMessage('Error removing file', 'danger', $uploader);
         }
     },    
     // Handle file selection
+    // In FileUploader.js
+    // In the handleFileSelect method, update how files are stored
     async handleFileSelect(files, $uploader) {
         const settings = $uploader.data('settings');
-        console.log('Settings:', settings);
         try {
             let existingFiles = await this.getFiles(settings.moduleId, settings.sectionId) || [];
-            console.log('Existing files:', existingFiles);
 
-            // Handle single file mode
-            if (!settings.multiple) {
-                existingFiles = [];
-                if (files.length > 1) {
-                    this.showMessage('Only one file can be uploaded', 'warning', $uploader);
-                    return;
-                }
-            }
-
-            const totalFiles = existingFiles.length + files.length;
-            if (totalFiles > settings.maxFiles && settings.multiple) {
-                this.showMessage(`Maximum ${settings.maxFiles} files allowed`, 'warning', $uploader);
-                return;
-            }
+            // Handle file limits...
 
             for (const file of Array.from(files)) {
-                console.log('Processing file:', file.name);
                 if (file.size > settings.maxFileSize * 1024 * 1024) {
                     this.showMessage(`File "${file.name}" exceeds ${settings.maxFileSize}MB limit`, 'warning', $uploader);
                     continue;
                 }
 
-                if (existingFiles.some(existing => existing.name === file.name)) {
-                    this.showMessage(`File "${file.name}" already exists`, 'warning', $uploader);
-                    continue;
-                }
+                // Create a blob from the file
+                const blob = await this.fileToBlob(file);
+                
+                existingFiles.push({
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    blob: blob, // Store the blob data
+                    timestamp: Date.now()
+                });
 
-                if (file.type.match('image.*')) {
-                    const data = await this.readFileAsDataURL(file);
-                    console.log('File data loaded:', data.slice(0, 100) + '...'); 
-                    existingFiles.push({
-                        name: file.name,
-                        type: file.type,
-                        data: data,
-                        size: file.size,
-                        timestamp: Date.now()
-                    });
-                } else if (file.type === 'application/pdf') {
-                    existingFiles.push({
-                        name: file.name,
-                        type: file.type,
-                        size: file.size,
-                        timestamp: Date.now()
-                    });
-                }
+                console.log('Added file to storage:', {
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    hasBlob: !!blob
+                });
             }
 
             await this.saveFiles(settings.moduleId, settings.sectionId, existingFiles);
-            console.log('Files saved successfully');
-            this.updateFilePreviews($uploader, existingFiles);
+            await this.updateFilePreviews($uploader, existingFiles);
 
             if (settings.onChange) {
                 settings.onChange(existingFiles);
@@ -263,6 +242,23 @@ const FileUploader = {
         }
     },
 
+    // Helper method to convert File to Blob
+    async fileToBlob(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const blob = new Blob([reader.result], { type: file.type });
+                    resolve(blob);
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            reader.onerror = () => reject(reader.error);
+            reader.readAsArrayBuffer(file);
+        });
+    },
+
     // Save files to storage
     async saveFiles(moduleId, sectionId, files) {
         if (!this.db) throw new Error('Database not initialized');
@@ -271,13 +267,19 @@ const FileUploader = {
         const transaction = this.db.transaction([this.storeName], 'readwrite');
         const store = transaction.objectStore(this.storeName);
         
+        // Ensure we're saving files with proper metadata
+        const filesWithMetadata = files.map(file => ({
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            blob: file.blob,
+            timestamp: file.timestamp || Date.now()
+        }));
+    
         return new Promise((resolve, reject) => {
             const request = store.put({
                 key,
-                files: files.map(file => ({
-                    ...file,
-                    timestamp: file.timestamp || Date.now()
-                }))
+                files: filesWithMetadata
             });
             
             request.onsuccess = () => resolve();
@@ -340,30 +342,77 @@ const FileUploader = {
 
     // Update file previews
     async updateFilePreviews($uploader, files) {
-        // Always fetch files from IndexedDB
         const settings = $uploader.data('settings');
         files = await this.getFiles(settings.moduleId, settings.sectionId);
         
-        // Proceed with preview updates
         const $preview = $uploader.find('.file-preview');
         $preview.empty();
     
-        files.forEach((file) => {
+        if (!files || !files.length) {
+            return; // Exit if no files exist
+        }
+    
+        console.log('Updating previews with files:', files); // Debug log
+    
+        for (const file of files) {
             const $item = $('<div>').addClass('file-preview-item');
-            if (file.type.startsWith('image/')) {
-                $item.append($('<img>').attr('src', file.data));
-            } else if (file.type === 'application/pdf') {
-                $item.addClass('pdf')
-                    .append($('<i>').addClass('bi bi-file-pdf'))
+            
+            try {
+                if (file.type.startsWith('image/') && file.blob) {
+                    // For images with blob data, create the preview
+                    const blob = new Blob([file.blob], { type: file.type });
+                    const objectUrl = URL.createObjectURL(blob);
+                    
+                    const $img = $('<img>')
+                        .attr('src', objectUrl)
+                        .on('load', () => {
+                            URL.revokeObjectURL(objectUrl); // Clean up after load
+                        })
+                        .on('error', () => {
+                            URL.revokeObjectURL(objectUrl);
+                            // Fallback to generic icon on error
+                            $img.replaceWith(
+                                $('<i>').addClass('bi bi-image')
+                            );
+                        });
+                    
+                    $item.append($img);
+                } else {
+                    // For non-image files or when blob isn't available
+                    let iconClass = 'bi-file';
+                    if (file.type === 'application/pdf') {
+                        iconClass = 'bi-file-pdf';
+                    } else if (file.type.startsWith('image/')) {
+                        iconClass = 'bi-file-image';
+                    }
+    
+                    $item.addClass('pdf')
+                        .append($('<i>').addClass(`bi ${iconClass}`))
+                        .append($('<span>').addClass('file-name').text(file.name));
+                }
+    
+                // Add remove button
+                $item.append(
+                    $('<button>')
+                        .addClass('remove-file')
+                        .html('&times;')
+                );
+                
+                $preview.append($item);
+    
+            } catch (error) {
+                console.error('Error creating preview for file:', file, error);
+                // Add fallback preview on error
+                $item.addClass('fallback')
+                    .append($('<i>').addClass('bi bi-file'))
                     .append($('<span>').addClass('file-name').text(file.name));
+                
+                $preview.append($item);
             }
-            $item.append(
-                $('<button>')
-                    .addClass('remove-file')
-                    .html('&times;')
-            );
-            $preview.append($item);
-        });
+        }
+    
+        // Add debug class to show preview container
+        $preview.addClass('debug-border');
     },
     
 
@@ -438,14 +487,32 @@ const FileUploader = {
     async clearAllFiles() {
         if (!this.db) return;
         
-        const transaction = this.db.transaction([this.storeName], 'readwrite');
-        const store = transaction.objectStore(this.storeName);
-        
-        return new Promise((resolve, reject) => {
-            const request = store.clear();
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
-        });
+        try {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            
+            // Get all records to clean up object URLs
+            const request = store.getAll();
+            request.onsuccess = () => {
+                const records = request.result || [];
+                records.forEach(record => {
+                    record.files?.forEach(file => {
+                        if (file.objectUrl) {
+                            URL.revokeObjectURL(file.objectUrl);
+                        }
+                    });
+                });
+            };
+            
+            await new Promise((resolve, reject) => {
+                const clearRequest = store.clear();
+                clearRequest.onsuccess = () => resolve();
+                clearRequest.onerror = () => reject(clearRequest.error);
+            });
+            
+        } catch (error) {
+            console.error('Error clearing files:', error);
+        }
     }
 };
 

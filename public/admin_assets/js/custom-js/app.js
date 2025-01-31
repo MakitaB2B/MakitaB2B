@@ -1178,141 +1178,238 @@ $('#submit-form').click(async function(e) {
 });
 });
 
-
-// Add this to ExpenseApp object
-
 /**
- * Form submission handler
+ * Form Submission Module
+ * Handles preparation and submission of form data including files
  */
 ExpenseApp.formSubmission = {
-    // In your form submission code
+    /**
+     * Prepares form data by combining JSON data and files from IndexedDB
+     * Converts stored blobs back to File objects and adds them to FormData
+     */
     prepareFormData: async function() {
         try {
-            console.log('============ STARTING FORM DATA PREPARATION ============');
+            console.group('Form Data Preparation');
+            console.log('Starting form data preparation process...');
+            
             const formData = new FormData();
             const savedState = LTCStateManager.loadState();
-            console.log('Loaded saved state:', savedState);
-    
-            if (savedState.timeInfo) {
-                formData.append('timeInfo', JSON.stringify(savedState.timeInfo));
-            }
-            if (savedState.foodExpense) {
-                formData.append('foodExpense', JSON.stringify(savedState.foodExpense));
-            }
-            if (savedState.travelEntries) {
-                formData.append('travelEntries', JSON.stringify(savedState.travelEntries));
-            }
-            if (savedState.miscExpenses) {
-                formData.append('miscExpenses', JSON.stringify(savedState.miscExpenses));
-            }
             
-            // Food files
-            console.log('\nProcessing Food Files:');
-            const breakfastFiles = await FileUploader.getFiles('food-expenses', 'breakfast') || [];
-            for (let i = 0; i < breakfastFiles.length; i++) {
-                formData.append('breakfast_files[]', breakfastFiles[i]);
-                console.log('Added breakfast file:', { name: breakfastFiles[i].name, type: breakfastFiles[i].type });
+            // Log the initial state we're working with
+            console.group('Initial State');
+            console.log('Time Info:', savedState.timeInfo);
+            console.log('Food Expense:', savedState.foodExpense);
+            console.log('Travel Entries:', savedState.travelEntries?.length || 0, 'entries');
+            console.log('Misc Expenses:', savedState.miscExpenses?.length || 0, 'entries');
+            console.groupEnd();
+
+            // Step 1: Add Time Information
+            console.group('Processing Time Information');
+            const timeData = {
+                date: savedState.timeInfo.date,
+                dayType: savedState.timeInfo.dayType,
+                inTime: savedState.timeInfo.inTime,
+                outTime: savedState.timeInfo.outTime
+            };
+            formData.append('timeInfo', JSON.stringify(timeData));
+            console.log('Added time data:', timeData);
+            console.groupEnd();
+
+            // Step 2: Process Food Expenses
+            console.group('Processing Food Expenses');
+            const foodExpenseData = {
+                breakfast: {
+                    amount: savedState.foodExpense?.breakfast?.amount || '0.00'
+                }
+            };
+            formData.append('foodExpense', JSON.stringify(foodExpenseData));
+            console.log('Added food expense data:', foodExpenseData);
+
+            // Handle breakfast files
+            const breakfastFiles = await FileUploader.getFiles('food-expenses', 'breakfast');
+            console.log('Retrieved breakfast files:', breakfastFiles?.length || 0, 'files');
+            
+            if (breakfastFiles?.length) {
+                for (const fileData of breakfastFiles) {
+                    if (fileData.blob) {
+                        const file = new File(
+                            [fileData.blob], 
+                            fileData.name, 
+                            {
+                                type: fileData.type,
+                                lastModified: fileData.timestamp
+                            }
+                        );
+                        formData.append('breakfast_files[]', file);
+                        console.log('Added breakfast file:', {
+                            name: file.name,
+                            type: file.type,
+                            size: this.formatFileSize(file.size)
+                        });
+                    }
+                }
             }
-    
-            // Travel files
-            if (savedState.travelEntries && savedState.travelEntries.length) {
-                console.log('\nProcessing Travel Files:');
-                for (let i = 0; i < savedState.travelEntries?.length || 0; i++) {
-                    const entryNum = i + 1;
+            console.groupEnd();
+
+            // Step 3: Process Travel Expenses
+            console.group('Processing Travel Expenses');
+            if (savedState.travelEntries?.length) {
+                // Clean travel data (remove file information)
+                const travelData = savedState.travelEntries.map(entry => ({
+                    modeOfTransport: entry.modeOfTransport,
+                    typeOfTransport: entry.typeOfTransport,
+                    startingMeter: entry.startingMeter || '0',
+                    closingMeter: entry.closingMeter || '0',
+                    totalKms: entry.totalKms || '0',
+                    tollCharges: entry.tollCharges || '0.00',
+                    fuelCharges: entry.fuelCharges || '0.00',
+                    placesVisited: entry.placesVisited || ''
+                }));
+                formData.append('travelEntries', JSON.stringify(travelData));
+                console.log('Added travel entries:', travelData.length, 'entries');
+
+                // Process each travel entry's files
+                for (let i = 0; i < savedState.travelEntries.length; i++) {
+                    console.group(`Travel Entry ${i + 1}`);
                     
-                    const travelFiles = await FileUploader.getFiles('travel-expenses', `travel-${entryNum}`) || [];
-                    for (const file of travelFiles) {
-                        formData.append(`travel_files_${entryNum}[]`, file);
-                        console.log(`Added travel file for entry ${entryNum}:`, { name: file.name, type: file.type });
+                    // Regular travel documents
+                    const travelFiles = await FileUploader.getFiles('travel-expenses', `travel-${i + 1}`);
+                    if (travelFiles?.length) {
+                        for (const fileData of travelFiles) {
+                            if (fileData.blob) {
+                                const file = new File(
+                                    [fileData.blob], 
+                                    fileData.name, 
+                                    {
+                                        type: fileData.type,
+                                        lastModified: fileData.timestamp
+                                    }
+                                );
+                                formData.append(`travel_files_${i}[]`, file);
+                                console.log('Added travel document:', {
+                                    name: file.name,
+                                    type: file.type,
+                                    size: this.formatFileSize(file.size)
+                                });
+                            }
+                        }
                     }
-        
-                    const approvalFiles = await FileUploader.getFiles('travel-expenses', `travel-approval-${entryNum}`) || [];
-                    if (approvalFiles.length) {
-                        formData.append(`travel_approval_${entryNum}`, approvalFiles[0]);
-                        console.log(`Added approval file for entry ${entryNum}:`, { name: approvalFiles[0].name, type: approvalFiles[0].type });
+
+                    // Approval documents (for private car)
+                    const approvalFiles = await FileUploader.getFiles('travel-expenses', `travel-approval-${i + 1}`);
+                    if (approvalFiles?.length && approvalFiles[0].blob) {
+                        const file = new File(
+                            [approvalFiles[0].blob],
+                            approvalFiles[0].name,
+                            {
+                                type: approvalFiles[0].type,
+                                lastModified: approvalFiles[0].timestamp
+                            }
+                        );
+                        formData.append(`travel_approval_${i}`, file);
+                        console.log('Added approval document:', {
+                            name: file.name,
+                            type: file.type,
+                            size: this.formatFileSize(file.size)
+                        });
+                    }
+                    console.groupEnd();
+                }
+            }
+            console.groupEnd();
+
+            // Step 4: Process Misc Expenses
+            console.group('Processing Misc Expenses');
+            if (savedState.miscExpenses?.length) {
+                // Clean misc data
+                const miscData = savedState.miscExpenses.map(expense => ({
+                    type: expense.type,
+                    amount: expense.amount || '0.00'
+                }));
+                formData.append('miscExpenses', JSON.stringify(miscData));
+                console.log('Added misc expenses:', miscData.length, 'entries');
+
+                // Process misc files
+                for (let i = 0; i < savedState.miscExpenses.length; i++) {
+                    const miscFiles = await FileUploader.getFiles('misc-expenses', `misc-${i + 1}`);
+                    if (miscFiles?.length) {
+                        for (const fileData of miscFiles) {
+                            if (fileData.blob) {
+                                const file = new File(
+                                    [fileData.blob],
+                                    fileData.name,
+                                    {
+                                        type: fileData.type,
+                                        lastModified: fileData.timestamp
+                                    }
+                                );
+                                formData.append(`misc_files_${i}[]`, file);
+                                console.log(`Added misc file for entry ${i + 1}:`, {
+                                    name: file.name,
+                                    type: file.type,
+                                    size: this.formatFileSize(file.size)
+                                });
+                            }
+                        }
                     }
                 }
             }
-    
-            // Misc files
-            if (savedState.miscExpenses && savedState.miscExpenses.length) {
-                console.log('\nProcessing Misc Files:');
-                for (let i = 0; i < savedState.miscExpenses?.length || 0; i++) {
-                    const entryNum = i + 1;
-                    const miscFiles = await FileUploader.getFiles('misc-expenses', `misc-${entryNum}`) || [];
-                    for (const file of miscFiles) {
-                        formData.append(`misc_files_${entryNum}[]`, file);
-                        console.log(`Added misc file for entry ${entryNum}:`, { name: file.name, type: file.type });
-                    }
-                }
-            }
-    
-            // Log final FormData contents
-            console.log('\n============ FINAL FORM DATA CONTENTS ============');
+            console.groupEnd();
+
+            // Final Verification
+            console.group('Form Data Verification');
+            let fileCount = 0;
+            let totalSize = 0;
             for (const [key, value] of formData.entries()) {
                 if (value instanceof File) {
-                    console.log(`${key}:`, {
-                        type: 'File',
+                    fileCount++;
+                    totalSize += value.size;
+                    console.log('File Entry:', {
+                        key: key,
                         name: value.name,
-                        size: this.formatFileSize(value.size),
-                        mimeType: value.type
+                        type: value.type,
+                        size: this.formatFileSize(value.size)
                     });
                 } else {
-                    try {
-                        console.log(`${key}:`, typeof value === 'string' ? JSON.parse(value) : value);
-                    } catch (err) {
-                        console.log(`${key}:`, value);
-                    }
+                    console.log('Data Entry:', key);
                 }
             }
-    
-            console.log('============ FORM DATA PREPARATION COMPLETE ============');
+            
+            console.log('Final Summary:', {
+                totalFiles: fileCount,
+                totalSize: this.formatFileSize(totalSize)
+            });
+            console.groupEnd();
+
+            console.groupEnd(); // End Form Data Preparation
             return formData;
+
         } catch (error) {
-            console.error('============ ERROR IN FORM DATA PREPARATION ============');
-            console.error('Error:', error);
+            console.error('Error in form data preparation:', error);
+            console.trace('Stack trace:');
             throw error;
         }
     },
-    
-    formatFileSize: function(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    },
-    
 
-    // Helper function to convert Data URL to File object
-    dataURLtoFile: function(dataurl, filename) {
-        if (!dataurl) return null;
-        
-        const arr = dataurl.split(',');
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        
-        while(n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        
-        return new File([u8arr], filename, {type: mime});
-    },
-
-    // Submit form data
+    /**
+     * Submits the form data to the server with progress tracking
+     */
     submitForm: async function() {
         try {
-            const formData = await this.prepareFormData();
+            console.group('Form Submission');
+            console.time('submission');
             
             // Show loading state
-            $('#submit-form').prop('disabled', true).html(
-                '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...'
-            );
+            const $submitButton = $('#submit-form');
+            $submitButton.prop('disabled', true)
+                .html('<span class="spinner-border spinner-border-sm me-2"></span>Submitting...');
+
+            // Prepare form data
+            console.log('Preparing form data...');
+            const formData = await this.prepareFormData();
             const token = $('#csrfToken').val();
 
-            // Make AJAX request
+            console.log('Starting upload...');
             const response = await $.ajax({
                 url: '/admin/travelmanagement/create-ltc-claim-application',
                 type: 'POST',
@@ -1322,38 +1419,48 @@ ExpenseApp.formSubmission = {
                 headers: {
                     'X-CSRF-TOKEN': token
                 },
-                xhr: function() {
+                xhr: () => {
                     const xhr = new window.XMLHttpRequest();
-                    xhr.upload.addEventListener('progress', function(evt) {
+                    xhr.upload.addEventListener('progress', (evt) => {
                         if (evt.lengthComputable) {
-                            const percentComplete = (evt.loaded / evt.total) * 100;
-                            // Update progress if needed
+                            const percentComplete = Math.round((evt.loaded / evt.total) * 100);
                             console.log('Upload progress:', percentComplete + '%');
+                            // Could update UI progress bar here if needed
                         }
                     }, false);
                     return xhr;
                 }
             });
 
-            // Handle success
+            console.log('Server response:', response);
+            console.timeEnd('submission');
+            
             showToast('Form submitted successfully!', 'success');
-            
-            // Clear form data
-            // await LTCStateManager.clearAllData();
-            
-            // Redirect or reset form
-            // setTimeout(() => {
-            //     window.location.href = '/dashboard';  // Replace with your dashboard URL
-            // }, 2000);
 
         } catch (error) {
             console.error('Error submitting form:', error);
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack
+            });
             showToast('Error submitting form. Please try again.', 'danger');
             
+        } finally {
             // Reset submit button
-            $('#submit-form').prop('disabled', false).html(
-                'Submit Claim<i class="bi bi-send ms-2"></i>'
-            );
+            $('#submit-form').prop('disabled', false)
+                .html('Submit Claim<i class="bi bi-send ms-2"></i>');
+            console.groupEnd();
         }
+    },
+
+    /**
+     * Formats file size in bytes to human-readable format
+     */
+    formatFileSize: function(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 };
