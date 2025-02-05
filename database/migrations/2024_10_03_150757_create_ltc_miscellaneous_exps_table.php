@@ -11,18 +11,36 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ltc_miscellaneous_exps', function (Blueprint $table) {
-            $table->id();
-            $table->string('ltc_miscellaneous_slug',50)->unique();
-            $table->string('ltc_claim_applications_slug',50);
-            $table->string('employee_slug',50);
-            $table->enum('misc_type',['Courier Bill','Xerox Stationary','Office Expense','Monthly Mobile Bills','Dealer Entertainment']);
-            $table->unsignedDecimal('claim_amount', 21, 4);
-            $table->tinyInteger('status')
-                ->default(0)
-                ->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 - Case closed, 8 - Rejected By Account')
-                ->after('remarks')->change();
-            $table->timestamps();
+        Schema::table('ltc_miscellaneous_exps', function (Blueprint $table) {
+            // $table->id();
+            // $table->string('ltc_miscellaneous_slug',50)->unique();
+            // $table->string('ltc_claim_applications_slug',50);
+            // $table->string('employee_slug',50);
+            // $table->enum('misc_type',['Courier Bill','Xerox Stationary','Office Expense','Monthly Mobile Bills','Dealer Entertainment']);
+            // $table->unsignedDecimal('claim_amount', 21, 4);
+            // $table->tinyInteger('status')
+            //     ->default(0)
+            //     ->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 - Case closed, 8 - Rejected By Account')
+            //     ->after('remarks')->change();
+            // $table->timestamps();
+
+
+           
+            // $table->string('ltc_claim_applications_slug',50)->nullable()->change();
+            // $table->string('ltc_claim_id')->after('claim_amount')->index();
+            // $table->string('claim_date')->after('ltc_claim_id');
+            // $table->tinyInteger('status')
+            //     ->default(0)
+            //     ->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 - Case closed, 8 - Rejected By Account')
+            //     ->after('claim_amount');
+
+
+
+            $table->string('misc_type',300)->change();
+
+
+
+
 
 
             // $table->string('ltc_claim_id')->index();

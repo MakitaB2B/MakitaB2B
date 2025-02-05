@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ltc_files', function (Blueprint $table) {
+        Schema::create('ltc_miscellaneous_types', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
-            $table->string('file_type');
-            $table->string('file_path');
+            $table->string('ltc_miscellaneous_types_slug',50)->unique();
+            $table->string('ltc_misc_type',100);
+            $table->string('status',50);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ltc_files');
+        Schema::dropIfExists('ltc_miscellaneous_types');
     }
 };

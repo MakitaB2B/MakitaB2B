@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Auth;
-use App\Models\Admin\LtcFoodClaim;
 
 class TravelManagementController extends Controller
 {

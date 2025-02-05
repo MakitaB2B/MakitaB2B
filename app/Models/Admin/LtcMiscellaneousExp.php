@@ -13,12 +13,16 @@ class LtcMiscellaneousExp extends Model
         'ltc_miscellaneous_slug',
         'ltc_claim_applications_slug',
         'employee_slug',
-        'ltc_claim_id', 
-        'courier_bill',
-        'xerox_stationary',
-        'office_expense',
-        'monthly_mobile_bills',
-        'remarks',
+        'misc_type',
+        'claim_amount',
+        'status',
+        'ltc_claim_id',
+        'claim_date'
+        // 'courier_bill',
+        // 'xerox_stationary',
+        // 'office_expense',
+        // 'monthly_mobile_bills',
+        // 'remarks',
     ];
 
     // public function employee(){
@@ -28,4 +32,9 @@ class LtcMiscellaneousExp extends Model
     // public function ltcClaimApplication(){
     //     return $this->belongsTo('App\Models\Admin\LtcClaimApplication', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
     // }
+
+    public function files()
+    {
+        return $this->morphMany(File::class, 'fileable');
+    }
 }

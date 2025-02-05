@@ -29,8 +29,8 @@ use Exception;
 class TravelManagementService{
 
     private const TRANSPORT_RATES = [
-        'Own Vehicle-4-Wheeler' => 8.0,
-        'Own Vehicle-2-Wheeler' => 6.0
+        'Own Vehicle-4-Wheeler' => 12.0,
+        'Own Vehicle-2-Wheeler' => 8.0
     ];
 
      public function ltc_claim_id(){
@@ -380,7 +380,9 @@ class TravelManagementService{
                 $timeInfo = $request->input('timeInfo') ? json_decode($request->input('timeInfo'), true) : [];
                 $foodExpense = $request->input('foodExpense') ? json_decode($request->input('foodExpense'), true) : [];
                 $travelEntries = $request->input('travelEntries') ? json_decode($request->input('travelEntries'), true) : [];
+                $miscExpenses = $request->input('miscExpenses') ? json_decode($request->input('miscExpenses'), true) : [];
                 $ltcappslug = Str::slug(rand().rand());
+                $FilesData = [];
                 $total_claim_amount=0;
 
 
@@ -429,8 +431,9 @@ class TravelManagementService{
                 $ltcTravelClaimData = [];
 
                 foreach ($travelEntries as $index => $Data) {
+                    $travelClaimSlug = Str::slug(rand().rand());
                     $ltcTravelClaimData[] = [
-                        'ltc_travel_claims_slug' => Str::slug(rand().rand()),
+                        'ltc_travel_claims_slug' =>  $travelClaimSlug,
                         'ltc_claim_applications_slug' =>  null,//$ltcappslug,
                         'ltc_claim_id' => $ltc_id,
                         'mode_of_transport'=> $Data["modeOfTransport"],
@@ -448,11 +451,82 @@ class TravelManagementService{
                         'updated_at' => date('Y-m-d H:i:s')
 
                     ];
+
+                    if ($request->hasFile("travel_files_.{$index}")) {
+
+                        foreach ($request->file("travel_files_.{$index}") as $file) {
+                        $filePath = $file->store('mimes/travel_management/ltc/travel');
+                        
+                        $FilesData[] = [
+                            'ltc_files_slug' =>Str::slug(rand().rand()),
+                            'employee_slug' => $employeeSlug,
+                            'type' => 'travel',
+                            'file_type' => $file->getClientOriginalExtension(),
+                            'file_path' => $filePath,
+                            'ltc_claim_id' => $ltc_id,
+                            'claim_date' => date('Y-m-d H:i:s'),
+                            'status' => 0,
+                            'fileable_id' => $travelClaimSlug, 
+                            'fileable_type' => LtcTravelClaim::class,
+                            'ltc_claim_applications_slug' =>  null,//$ltcappslug,
+                        ];
+                    }
+                }
+
                 }
            
                 if (!empty($ltcTravelClaimData)) {
                     LtcTravelClaim::insert($ltcTravelClaimData);
                 }
+
+                $filteredExpenses = array_filter($miscExpenses, fn($expense) => !empty($expense['type']) && !empty($expense['amount']) && $expense['amount'] > 0);
+
+                // if (empty($filteredExpenses)) {
+                //     return response()->json(['message' => 'No valid expenses to insert.'], 400);
+                // }
+
+                dump($filteredExpenses);
+
+                $recordsToInsert = array_map(fn($expense) => [
+                    'ltc_miscellaneous_slug' => Str::slug(rand().rand()),
+                    'ltc_claim_applications_slug' => null,
+                    'employee_slug' => $employeeSlug,
+                    'ltc_claim_id' => $ltc_id,
+                    'misc_type' => $expense['type'],
+                    'claim_amount' => $expense['amount'],
+                    'status' => 0, 
+                    'claim_date' => date('Y-m-d H:i:s'),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ], $filteredExpenses);
+
+                foreach ($miscExpenses as $index => $Data) {
+
+                    if ($request->hasFile("misc_files_.{$index}")) {
+                    foreach ($request->file("misc_files_.{$index}") as $file) {
+                        $filePath = $file->store('mimes/travel_management/ltc/miscellaneous');
+
+                        $FilesData[] = [
+                            'ltc_files_slug' =>Str::slug(rand().rand()),
+                            'type' => 'miscellaneous',
+                            'employee_slug' => $employeeSlug,
+                            'file_type' => $file->getClientOriginalExtension(),
+                            'file_path' => $filePath,
+                            'ltc_claim_id' => $ltc_id,
+                            'claim_date' => date('Y-m-d H:i:s'),
+                            'status' => 0,
+                            'fileable_id' => null,//$miscSlug, 
+                            'fileable_type' => LtcMiscellaneousExp::class,
+                            'ltc_claim_applications_slug' =>  null,//$ltcappslug,
+                        ];
+                    }}
+
+                }
+
+                
+                dump( $recordsToInsert);
+
+                LtcMiscellaneousExp::insert($recordsToInsert);
 
                 // $ltcMiscellaneousExp = new LtcMiscellaneousExp([
                 //     'ltc_miscellaneous_slug' => Str::slug(rand().rand()),
