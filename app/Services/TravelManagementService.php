@@ -369,6 +369,7 @@ class TravelManagementService{
 
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
 
+            dump($request,$employeeSlug,$ltc_id,$status);
         // try {
               
         //     DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
@@ -379,32 +380,23 @@ class TravelManagementService{
                 $timeInfo = $request->input('timeInfo') ? json_decode($request->input('timeInfo'), true) : [];
                 $foodExpense = $request->input('foodExpense') ? json_decode($request->input('foodExpense'), true) : [];
                 $travelEntries = $request->input('travelEntries') ? json_decode($request->input('travelEntries'), true) : [];
-                dump( $timeInfo,$foodExpense,$travelEntries);
                 $ltcappslug = Str::slug(rand().rand());
                 $total_claim_amount=0;
 
-                // $foodInfo = $request->hasFile("breakfast_files")
-                //     ? $request->file("breakfast_files")->store('mimes/travel_management/ltc/food_info')
-                //     : null;
 
-                $ltcFoodClaim = new LtcFoodClaim([
-                    'ltc_food_claims_slug' => Str::slug(rand().rand()),
-                    'ltc_claim_applications_slug' =>  $ltcappslug,
-                    'ltc_claim_id' => $ltc_id,
-                    'employee_slug' => $employeeSlug,
-                    'ltc_date' => $timeInfo["date"],
-                    'ltc_day' => $timeInfo["dayType"],
-                    'in_time' => $timeInfo["date"]." ".$timeInfo["inTime"]["hours"].":".$timeInfo["inTime"]["minutes"],
-                    'out_time' => $timeInfo["date"]." ".$timeInfo["outTime"]["hours"].":".$timeInfo["outTime"]["minutes"],
-                    'food_exp'=> $foodExpense["breakfast"]["amount"] ?? 0, //"hggg", 
-                    'food_exp_bill' =>  null,  // $request->hasFile("breakfast_files") ? $foodExpense["breakfast"]["files"] : null, //$foodExpense["breakfast"]["files"] ?? "No Bill",
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-                // dd($ltcFoodClaim);
-                $ltcFoodClaim->save();
+                // $ltcClaimapp = new LtcClaimApplication([
+                //'ltc_claim_applications_slug' =>  $ltcappslug,
+                //'ltc_claim_id' => $ltc_id,
+                //'employee_slug' => $employeeSlug,
+                // 'ltc_month' => (int)$dateObject->format('m'),
+                // 'ltc_year' => (int)$dateObject->format('Y'),
+                // 'manager_slug' => $teamManager,
+                // 'total_claim_amount' => $total_claim_amount
+                // ]);
 
+                // $ltcClaimapp->save();
 
+                
                 // $total_claim_amount=array_sum($request['claim_amount'] ?? []) +
                 // array_sum($request['lunch_exp'] ?? []) +
                 // array_sum($request['fuel_exp'] ?? []) +
@@ -413,38 +405,45 @@ class TravelManagementService{
                 // ($request['xerox_stationary'] ?? 0) +
                 // ($request['office_expense'] ?? 0) +
                 // ($request['monthly_mobile_bill'] ?? 0);
+               
+  
+                $ltcFoodClaim = new LtcFoodClaim([
+                    'ltc_food_claims_slug' => Str::slug(rand().rand()),
+                    'ltc_claim_applications_slug' =>  null,//$ltcappslug,
+                    'ltc_claim_id' => $ltc_id,     
+                    'employee_slug' => $employeeSlug,
+                    'ltc_date' => $timeInfo["date"],
+                    'ltc_day' => $timeInfo["dayType"],
+                    'claim_date' => date('Y-m-d H:i:s'),
+                    'in_time' => $timeInfo["date"]." ".$timeInfo["inTime"]["hours"].":".$timeInfo["inTime"]["minutes"],
+                    'out_time' => $timeInfo["date"]." ".$timeInfo["outTime"]["hours"].":".$timeInfo["outTime"]["minutes"],
+                    'food_exp'=> $foodExpense["breakfast"]["amount"] ?? 0, 
+                    'food_exp_bill' =>  $request->hasFile("breakfast_files") ? $request->file("breakfast_files")[0]->store('mimes/travel_management/ltc/food_info') : null,  
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+               
+                $ltcFoodClaim->save();
 
 
-                // $ltcClaimapp = new LtcClaimApplication([
-                //     'ltc_claim_applications_slug' =>  $ltcappslug,
-                //     'ltc_claim_id' => $ltc_id,
-                //     'employee_slug' => $employeeSlug,
-                    // 'ltc_month' => (int)$dateObject->format('m'),
-                    // 'ltc_year' => (int)$dateObject->format('Y'),
-                    // 'manager_slug' => $teamManager,
-                    // 'total_claim_amount' => $total_claim_amount
-                // ]);
-
-                // $ltcClaimapp->save();
-              
                 $ltcTravelClaimData = [];
 
                 foreach ($travelEntries as $index => $Data) {
                     $ltcTravelClaimData[] = [
                         'ltc_travel_claims_slug' => Str::slug(rand().rand()),
-                        'ltc_claim_applications_slug' =>  $ltcappslug,
-                        // 'ltc_claim_id' => $ltc_id,
+                        'ltc_claim_applications_slug' =>  null,//$ltcappslug,
+                        'ltc_claim_id' => $ltc_id,
                         'mode_of_transport'=> $Data["modeOfTransport"],
                         'employee_slug' => $employeeSlug,
                         'type_of_transport' => $Data["typeOfTransport"],
-                        // 'date' => $request->date[$index],
-                        'place_visited' => $Data["placesVisited"],         //$request->mode_of_transport[$index],  
-                        'opening_meter' => $Data["startingMeter"],         //$request->opening_meter[$index]?? 0,
-                         // 'demo_van_no'=> ($request->extra_option[$index] == "null") ? null : $request->extra_option[$index],   //$request->mode_of_transport[$index],
+                        'claim_date' => date('Y-m-d H:i:s'),
+                        'place_visited' => $Data["placesVisited"] ?? null,          
+                        'opening_meter' => $Data["startingMeter"] ?? 0,         
+                        'demo_van_no'=>  null,
                         'closing_meter'=> $Data["closingMeter"] ?? 0,  
-                        'total_km' => $Data["totalKms"] ?? 0,                                                //'total_km' => $request->total_km[$index] ?? 0,//$request->total_km[$index],//isset($request->total_km[$index]) ? $request->total_km[$index] : 0.0 ,//$request->total_km[$index],
-                        'toll_charge' => $Data["tollCharges"] ?? 0,                                                    // 'place_visited' => $request->place_visited[$index],
-                        'claim_amount' => $Data["fuelCharges"] ?? 0,                                                        // 'claim_amount' => $request->claim_amount[$index]?? 0,
+                        'total_km' => $Data["totalKms"] ?? 0,                                                
+                        'toll_charge' => $Data["tollCharges"] ?? 0,                                                   
+                        'claim_amount' => $Data["fuelCharges"] ?? 0,                                                      
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
 

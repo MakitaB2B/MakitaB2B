@@ -12,6 +12,7 @@ class LtcFoodClaim extends Model
     protected $fillable = [
         'ltc_food_claims_slug',
         'ltc_claim_applications_slug',
+        'ltc_claim_id',
         'employee_slug',
         'ltc_date',
         'ltc_day',
@@ -19,6 +20,7 @@ class LtcFoodClaim extends Model
         'out_time',
         'food_exp',
         'food_exp_bill',
+        'claim_date'
         ];
 
         public function setLtcDateAttribute($value)

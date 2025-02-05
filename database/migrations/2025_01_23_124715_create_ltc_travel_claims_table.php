@@ -25,12 +25,18 @@ return new class extends Migration
             // $table->unsignedDecimal('toll_charge', 21, 4);
             // $table->unsignedDecimal('claim_amount', 21, 4);
             // $table->timestamps();
+            //$table->enum('type_of_transport',['Train','Metro','Taxi','Auto','Demo Van','2-Wheeler','4-Wheeler','Bus','Car'])->change();
 
-            // if (!Schema::hasColumn('ltc_travel_claims', 'demo_van_no')) {
-            //     $table->string('demo_van_no',50)->after('mode_of_transport')->nullable();
-            // }
+            
+            $table->string('demo_van_no',50)->after('mode_of_transport')->nullable();
+            $table->string('ltc_claim_id')->after('type_of_transport')->index();
+            $table->string('claim_date')->after('ltc_claim_id');
+            $table->string('ltc_claim_applications_slug',50)->nullable()->change();
+            $table->tinyInteger('status')
+                ->default(0)
+                ->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 - Case closed, 8 - Rejected By Account')
+                ->after('claim_amount');
 
-            $table->enum('type_of_transport',['Train','Metro','Taxi','Auto','Demo Van','2-Wheeler','4-Wheeler','Bus','Car'])->change();
         });
     }
 

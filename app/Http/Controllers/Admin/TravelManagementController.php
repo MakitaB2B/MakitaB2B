@@ -172,7 +172,6 @@ class TravelManagementController extends Controller
 
         $ltc_id = $this->travelManagementService->ltc_claim_id();
         $status=0;
-
         $createUpdateAction=$this->travelManagementService->createLtcClaim($request,$employeeSlug,$ltc_id,$status);
 
         $msg = $createUpdateAction ? 'Yes! You Have Sucessfully Applied for LTC' : 'Error! LTC Application Not Executed';
