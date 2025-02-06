@@ -27,10 +27,11 @@ return new class extends Migration
             // $table->timestamps();
 
 
-            if (!Schema::hasColumn('ltc_claim_applications', 'status')) {
-                $table->enum('status', [0, 1, 2,3 ,4 , 5, 6,7,8,9])->default(0)->after('payment_by');
-            }
+            // if (!Schema::hasColumn('ltc_claim_applications', 'status')) {
+            //     $table->enum('status', [0, 1, 2,3 ,4 , 5, 6,7,8,9])->default(0)->after('payment_by');
+            // }
           
+
 //---------------------------------------
             // $table->string('ltc_claim_id')->index();
             // $table->string('operated_by')->nullable();

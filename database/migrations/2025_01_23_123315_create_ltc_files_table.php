@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ltc_files', function (Blueprint $table) {
-            $table->id()->change();
+            $table->id();
             $table->string('ltc_files_slug', 50)->unique();
             $table->string('ltc_claim_applications_slug',50)->nullable();
             $table->string('employee_slug',50);
@@ -25,7 +25,10 @@ return new class extends Migration
                 ->default(0)
                 ->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 - Case closed, 8 - Rejected By Account')
                 ;
-            $table->morphs('fileable');
+            //$table->morphs('fileable');
+            //$table->stringMorphs('fileable'); 
+            $table->string('fileable_id'); // Change from unsignedBigInteger to string
+            $table->string('fileable_type');
             $table->timestamps();
        
         });

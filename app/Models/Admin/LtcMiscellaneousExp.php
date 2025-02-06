@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class LtcMiscellaneousExp extends Model
 {
     use HasFactory;
+    public $incrementing = false;
+    protected $keyType = 'string'; // Ensures primary key is treated as a string
 
     protected $fillable = [
         'ltc_miscellaneous_slug',

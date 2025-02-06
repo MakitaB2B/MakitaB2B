@@ -23,6 +23,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Admin\MobileExpense;
 use App\Models\Admin\DemoVan;
+use App\Models\Admin\LtcFiles;
 use Exception;
 
 
@@ -369,7 +370,6 @@ class TravelManagementService{
 
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
 
-            dump($request,$employeeSlug,$ltc_id,$status);
         // try {
               
         //     DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
@@ -385,33 +385,44 @@ class TravelManagementService{
                 $FilesData = [];
                 $total_claim_amount=0;
 
+                $date = Carbon::parse($timeInfo["date"]);
+                $month = $date->month;
+                $year = $date->year;
+                 dump(  $timeInfo,$foodExpense,$travelEntries,    $miscExpenses,array_sum(array_column($travelEntries, "fuelCharges"))+array_sum(array_column($travelEntries, "tollCharges")));
 
-                // $ltcClaimapp = new LtcClaimApplication([
-                //'ltc_claim_applications_slug' =>  $ltcappslug,
-                //'ltc_claim_id' => $ltc_id,
-                //'employee_slug' => $employeeSlug,
-                // 'ltc_month' => (int)$dateObject->format('m'),
-                // 'ltc_year' => (int)$dateObject->format('Y'),
-                // 'manager_slug' => $teamManager,
-                // 'total_claim_amount' => $total_claim_amount
-                // ]);
-
-                // $ltcClaimapp->save();
-
+                $total_claim_amount =  (float) $foodExpense["breakfast"]["amount"] +
+                array_sum(array_column($travelEntries, "fuelCharges")) +
+                array_sum(array_column($travelEntries, "tollCharges")) +
+                array_sum(array_column($miscExpenses, "amount"));
                 
-                // $total_claim_amount=array_sum($request['claim_amount'] ?? []) +
-                // array_sum($request['lunch_exp'] ?? []) +
-                // array_sum($request['fuel_exp'] ?? []) +
-                // array_sum($request['toll_charge'] ?? []) +
-                // ($request['courier_bill'] ?? 0) +
-                // ($request['xerox_stationary'] ?? 0) +
-                // ($request['office_expense'] ?? 0) +
-                // ($request['monthly_mobile_bill'] ?? 0);
-               
-  
+                $ltcClaimApp = LtcClaimApplication::where('ltc_month',$month)->where('ltc_year', $year)->where('employee_slug',$employeeSlug)->where('status',0)->get();
+              
+                if($ltcClaimApp->isEmpty()){
+                $ltcClaimapp = new LtcClaimApplication([
+                'ltc_claim_applications_slug' =>  $ltcappslug,
+                'employee_slug' => $employeeSlug,
+                'ltc_month' => (int) $month ,
+                'ltc_year' => (int)  $year,
+                'manager_slug' => $teamManager,
+                'total_claim_amount' => $total_claim_amount
+                ]);
+
+                $ltcClaimapp->save();
+
+                }else{
+                    // dd($ltcClaimApp->total_claim_amount);
+                    // $ltcClaimapp = $ltcClaimApp->update(['total_claim_amount' => $ltcClaimApp->total_claim_amount + $total_claim_amount ]);
+                    //$ltcClaimApp->increment('total_claim_amount', $total_claim_amount);
+
+                    $ltcClaimapp = $ltcClaimApp->update(['total_claim_amount' => \DB::raw("COALESCE(total_claim_amount, 0) + $total_claim_amount") ]);
+
+                    //'total_claim_amount' => $ltcClaimApp->total_claim_amount + $total_claim_amount
+                }
+
+
                 $ltcFoodClaim = new LtcFoodClaim([
                     'ltc_food_claims_slug' => Str::slug(rand().rand()),
-                    'ltc_claim_applications_slug' =>  null,//$ltcappslug,
+                    'ltc_claim_applications_slug' =>  $ltcClaimapp->ltc_claim_applications_slug,
                     'ltc_claim_id' => $ltc_id,     
                     'employee_slug' => $employeeSlug,
                     'ltc_date' => $timeInfo["date"],
@@ -434,7 +445,7 @@ class TravelManagementService{
                     $travelClaimSlug = Str::slug(rand().rand());
                     $ltcTravelClaimData[] = [
                         'ltc_travel_claims_slug' =>  $travelClaimSlug,
-                        'ltc_claim_applications_slug' =>  null,//$ltcappslug,
+                        'ltc_claim_applications_slug' => $ltcClaimapp->ltc_claim_applications_slug,
                         'ltc_claim_id' => $ltc_id,
                         'mode_of_transport'=> $Data["modeOfTransport"],
                         'employee_slug' => $employeeSlug,
@@ -451,12 +462,12 @@ class TravelManagementService{
                         'updated_at' => date('Y-m-d H:i:s')
 
                     ];
+             
+                    if ($request->hasFile("travel_files_{$index}")) {
 
-                    if ($request->hasFile("travel_files_.{$index}")) {
-
-                        foreach ($request->file("travel_files_.{$index}") as $file) {
+                        foreach ($request->file("travel_files_{$index}") as $file) {
                         $filePath = $file->store('mimes/travel_management/ltc/travel');
-                        
+            
                         $FilesData[] = [
                             'ltc_files_slug' =>Str::slug(rand().rand()),
                             'employee_slug' => $employeeSlug,
@@ -468,7 +479,9 @@ class TravelManagementService{
                             'status' => 0,
                             'fileable_id' => $travelClaimSlug, 
                             'fileable_type' => LtcTravelClaim::class,
-                            'ltc_claim_applications_slug' =>  null,//$ltcappslug,
+                            'ltc_claim_applications_slug' =>   $ltcClaimapp->ltc_claim_applications_slug,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'updated_at' => date('Y-m-d H:i:s')
                         ];
                     }
                 }
@@ -481,31 +494,29 @@ class TravelManagementService{
 
                 $filteredExpenses = array_filter($miscExpenses, fn($expense) => !empty($expense['type']) && !empty($expense['amount']) && $expense['amount'] > 0);
 
-                // if (empty($filteredExpenses)) {
-                //     return response()->json(['message' => 'No valid expenses to insert.'], 400);
-                // }
+                $ltcMiscData = [];
 
-                dump($filteredExpenses);
-
-                $recordsToInsert = array_map(fn($expense) => [
-                    'ltc_miscellaneous_slug' => Str::slug(rand().rand()),
-                    'ltc_claim_applications_slug' => null,
+                foreach ($filteredExpenses as $index => $Data) {
+                    $miscClaimSlug = Str::slug(rand().rand());
+                    $ltcMiscData[] = [
+                    'ltc_miscellaneous_slug' => $miscClaimSlug,
+                    'ltc_claim_applications_slug' =>  $ltcClaimapp->ltc_claim_applications_slug,
                     'employee_slug' => $employeeSlug,
                     'ltc_claim_id' => $ltc_id,
-                    'misc_type' => $expense['type'],
-                    'claim_amount' => $expense['amount'],
+                    'misc_type' => $Data['type'],
+                    'claim_amount' => $Data['amount'],
                     'status' => 0, 
                     'claim_date' => date('Y-m-d H:i:s'),
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s')
-                ], $filteredExpenses);
+                    ];
 
-                foreach ($miscExpenses as $index => $Data) {
+                   
+                    if ($request->hasFile("misc_files_{$index}")) {
 
-                    if ($request->hasFile("misc_files_.{$index}")) {
-                    foreach ($request->file("misc_files_.{$index}") as $file) {
+                        foreach ($request->file("misc_files_{$index}") as $file) {
                         $filePath = $file->store('mimes/travel_management/ltc/miscellaneous');
-
+                        
                         $FilesData[] = [
                             'ltc_files_slug' =>Str::slug(rand().rand()),
                             'type' => 'miscellaneous',
@@ -515,32 +526,24 @@ class TravelManagementService{
                             'ltc_claim_id' => $ltc_id,
                             'claim_date' => date('Y-m-d H:i:s'),
                             'status' => 0,
-                            'fileable_id' => null,//$miscSlug, 
+                            'fileable_id' => $miscClaimSlug, 
                             'fileable_type' => LtcMiscellaneousExp::class,
-                            'ltc_claim_applications_slug' =>  null,//$ltcappslug,
+                            'ltc_claim_applications_slug' =>  $ltcClaimapp->ltc_claim_applications_slug,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'updated_at' => date('Y-m-d H:i:s')
                         ];
-                    }}
+
+                            
+                    }
+                }
 
                 }
 
-                
-                dump( $recordsToInsert);
+                LtcMiscellaneousExp::insert($ltcMiscData);
+                $data=LtcFiles::insert($FilesData);
+                dd($data);
 
-                LtcMiscellaneousExp::insert($recordsToInsert);
-
-                // $ltcMiscellaneousExp = new LtcMiscellaneousExp([
-                //     'ltc_miscellaneous_slug' => Str::slug(rand().rand()),
-                //     'ltc_claim_applications_slug' => $ltcappslug,  // Add this back
-                //     'ltc_claim_id' => $ltc_id,
-                //     'employee_slug' => $employeeSlug,
-                //     'courier_bill' =>  $request->courier_bill,
-                //     'xerox_stationary' => $request->xerox_stationary,
-                //     'office_expense' => $request->office_expense,
-                //     'monthly_mobile_bills' => $request->monthly_mobile_bill,
-                //     'remarks' => $request->remarks
-                // ]);
-
-                // $ltcMiscellaneousExp->save();
+          
 
             // });
 
