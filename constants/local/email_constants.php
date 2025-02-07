@@ -67,7 +67,8 @@ defined('PROMO_CC') OR define('PROMO_CC', [
     // 'accounting@makita.in'=>'',
     // 'sales@makita.in'=>'',
     // 'vanan@makita.in'=>'',
-    'it_pm@makita.in'=>''
+    'it_pm@makita.in'=>'',
+    'it_department@makita.in'=>''
  ]);
 
 // defined('PROMO_FROM') OR define('PROMO_FROM','shinichi_goto@makita.in');
