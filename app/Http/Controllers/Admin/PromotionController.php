@@ -493,6 +493,7 @@ class PromotionController extends Controller
 
         $promodata = $this->promotionService->getPromoDeatils($promocode);
         $producttype=$request->product_type;
+        $pricetype=$request->pricetype;
 
         $offer=array_filter($offertype, function($value) {
           return $value !== "null";
@@ -509,24 +510,26 @@ class PromotionController extends Controller
                 'offer_type'=> $offertype[$key],
                 'qty'=>$qty[$key] ?? null,
                 'offer_qty'=>$offerqty[$key],
+                'price_type' => $pricetype[$key]
             ];
         }
 
         $filteredbyoffer= $this->filter_data_by_offer_type($offer_type, $combinedata);
         $filteredbyoffer = array_values( $filteredbyoffer);
 
-        if($offer_type=="Buy One Of The Product" && count($filteredbyoffer) != 1 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0){
+        if($offer_type=="Buy One Of The Product" && count($filteredbyoffer) != 1 && $filteredbyoffer[0]["price_type"] !="Special Price" || $filteredbyoffer[0]["qty"]==0 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0 && $filteredbyoffer[0]["price_type"] !="Special Price" ){
           return 'You can only buy one of the product or product should be multiple of offer quantity';
-        }else if($offer_type=="Combo Offer" && count($filteredbyoffer) > 1 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0){
+        }else if($offer_type=="Combo Offer" && (count($filteredbyoffer) > 1|| $filteredbyoffer[0]["qty"]==0 || $filteredbyoffer[0]["qty"] % $filteredbyoffer[0]["offer_qty"] !=0)){
           return 'Combo Offer should have atleast 2 products  or product should be multiple of offer quantity';
         }
-         
+          
         try {
               $mapped = $promodata->map(function($value) use ($region,$offer_type,$combinedata, $qtytomultiply,$rm_name,$dealer_code,$order_id,$filteredbyoffer) {
 
-                  // $singlemodel = $this->filter_data_by_model($combinedata, $value->model_no);
-                 
-                  $userInputQty =  $value->qty * $qtytomultiply;
+                  $singlemodel = $this->filter_data_by_model($combinedata, $value->model_no , $value->product_type,$value->price_type,$value->offer_type);
+
+                  $userInputQty = ($value->offer_type === "Buy One Of The Product" && $value->price_type === "Special Price" && $value->product_type === "Offer Product") ? $singlemodel[0]["qty"] : $value->qty * (int)floor($qtytomultiply);
+                
                   if(($offer_type== "Buy One Of The Product" && $filteredbyoffer[0]["model_no"]==$value->model_no ||$value->product_type=="FOC") || $offer_type== "Combo Offer") {
                     if ( $value->stock < $userInputQty) {
                       throw new \Exception('Stock not available for model: ' . $value->model_no);
@@ -553,7 +556,7 @@ class PromotionController extends Controller
                   $value->mrp;
                   $value->dlp;
                   $value->stock;
-                  $value->order_qty = $userInputQty;
+                  $value->order_qty = (int)$userInputQty;
                   $value->offer_qty = $value->qty;
                   $value->transaction_slug = $this->transactionService->transaction_slug();
                   $value->rm_name= $rm_name;
@@ -581,8 +584,9 @@ class PromotionController extends Controller
               
                 return $e->getMessage();
           }
-
+        
           $this->transactionService->createOrUpdateTransac($mapped);
+       
           
           return redirect('admin/promotions/promotion-transaction');
 
@@ -681,17 +685,17 @@ class PromotionController extends Controller
         return $filtereddata;
       }
 
-      // public function filter_data_by_model($data,$model){
+      public function filter_data_by_model($data,$model,$product_type,$price_type,$offer_type){
 
-      //   $filtereddata = array_reduce($data, function ($carry, $item) use($model) {
-      //     if ($item['model_no']==$model) {
-      //         $carry[] = $item;
-      //     }
-      //     return $carry;
-      //     }, []);
+        $filtereddata = array_reduce($data, function ($carry, $item) use($model,$product_type,$price_type,$offer_type) {
+          if ($item['model_no']==$model && $item['product_type'] == $product_type && $item['price_type'] == $price_type && $item['offer_type'] ==$offer_type) {
+              $carry[] = $item;
+          }
+          return $carry;
+          }, []);
       
-      //   return $filtereddata;
-      // }
+        return $filtereddata;
+      }
 
       public function textFormatModelQty($buyItems,$freeItems){
 

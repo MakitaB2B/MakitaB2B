@@ -429,11 +429,11 @@
         };
 
         $(document).ready(function() {
-            const validateUserQuantity = (qty, offerQty, stock, modelNo) => {
+            const validateUserQuantity = (qty, offerQty, stock, modelNo,priceType=null,offerType=null,productType=null) => {
             const numQty = parseInt(qty || 0);
             if (!qty) return { isValid: false, error: 'Quantity is required' };
             if (numQty <= 0) return { isValid: false, error: 'Quantity must be greater than 0' };
-            if (numQty % offerQty !== 0) return { isValid: false, error: `Quantity must be multiple of ${offerQty}` };
+            if (numQty % offerQty !== 0 && (priceType!="Special Price" && offerType =="Buy One Of The Product" && productType == "Offer Product")) return { isValid: false, error: `Quantity must be multiple of ${offerQty}` };
             if (numQty > stock) return { isValid: false, error: `Quantity ${numQty} exceeds stock (${stock}) for ${modelNo}` };
             return { isValid: true, error: '' };
         };
@@ -465,7 +465,7 @@
 
         const validateForm = () => {
             let isValid = true, hasComboOffer = false, comboOfferValid = true;
-
+            let modelData = []
             $('.promo_offer .rowdata').each(function () {
                 const row = $(this);
                 const qty = row.find('[id^=exampleQty]').val();
@@ -473,15 +473,26 @@
                 const stock = parseInt(row.find('.stock').val());
                 const modelNo = row.find('[id^=exampleModel]').val();
                 const offerType = row.find('[name="offertype[]"]').val();
+                const priceType = row.find('[id^=examplePromoPriceType]').val();
+                const productType = row.find('[id^=exampleProductType]').val();
 
                 if (offerType === 'Combo Offer') {
                     hasComboOffer = true;
                     if (!qty || parseInt(qty) <= 0) comboOfferValid = false;
                 }
 
-                if (!validateUserQuantity(qty, offerQty, stock, modelNo).isValid) isValid = false;
+                if (!validateUserQuantity(qty, offerQty, stock, modelNo,priceType,offerType,productType).isValid) isValid = false;
+                if (modelNo && qty) {
+                    modelData.push({
+                        model_no: modelNo,
+                        qty: qty,
+                        offertype: offerType
+                    });
+                }
             });
-
+            let modelDataJson = JSON.stringify(modelData);
+            let promocode=$('#examplePromoCode').val();
+            displayModelData(modelDataJson,promocode);
             $('.foc_offer .rowdata').each(function () {
                 const row = $(this);
                 const qty = row.find('[id^=exampleQty]').val();
@@ -503,8 +514,10 @@
             const offerQty = parseInt(row.find('[id^=exampleOfferQty]').val());
             const stock = parseInt(row.find('.stock').val());
             const modelNo = row.find('[id^=exampleModel]').val();
-
-            const validation = validateUserQuantity(qty, offerQty, stock, modelNo);
+            const priceType = row.find('[id^=examplePromoPriceType]').val();
+            const offerType = row.find('[id^=exampleOfferType]').val();
+            const productType = row.find('[id^=exampleProductType]').val();
+            const validation = validateUserQuantity(qty, offerQty, stock, modelNo,priceType,offerType,productType);
             row.find('[id^=exampleQtyStatus]').text(validation.error).css('color', validation.error ? 'red' : '');
 
             updateQuantities(row, parseInt(qty));
@@ -528,7 +541,6 @@
                 type: 'get',
                 data: { data: modelDataJson ,promocode:promocode},  
                 success: function(data) {
-
                     $("#exampleTotalPrice").val(data.total_price);
     
                 }
