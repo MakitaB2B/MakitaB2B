@@ -433,7 +433,12 @@
             const numQty = parseInt(qty || 0);
             if (!qty) return { isValid: false, error: 'Quantity is required' };
             if (numQty <= 0) return { isValid: false, error: 'Quantity must be greater than 0' };
-            if (numQty % offerQty !== 0 && (priceType!="Special Price" && offerType =="Buy One Of The Product" && productType == "Offer Product")) return { isValid: false, error: `Quantity must be multiple of ${offerQty}` };
+            // if(numQty % offerQty !== 0) {
+            //     return { isValid: false, error: `Quantity must be multiple of ${offerQty}` };
+            // }
+            if (numQty % offerQty !== 0 && !(priceType=="Special Price" && offerType =="Buy One Of The Product" && productType == "Offer Product")){
+                return { isValid: false, error: `Quantity must be multiple of ${offerQty}`};
+            } 
             if (numQty > stock) return { isValid: false, error: `Quantity ${numQty} exceeds stock (${stock}) for ${modelNo}` };
             return { isValid: true, error: '' };
         };
