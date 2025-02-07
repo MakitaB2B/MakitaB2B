@@ -740,7 +740,7 @@
                         
                                             @elseif ($list["application_type"] === 'LTC')
                                                 <td>{{ $list["application_type"] }}</td>
-                                                <td>{{ $list["application_id"] }}</td>
+                                                <td>-</td>
                                                 <td>{{ \Carbon\Carbon::parse($formattedStartDate)->format('M Y') }}</td>
                                                 <td>-</td> <!-- LTC applications may not have start/end dates -->
                                                 <td>-</td>

@@ -154,11 +154,10 @@ class TravelManagementService{
         $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
 
         $ltcApplications = LtcClaimApplication::where('employee_slug', '=', $loginUserSlug)
-        ->get(['employee_slug', 'ltc_month', 'ltc_year', 'status', 'ltc_claim_applications_slug', 'ltc_claim_id', 'total_claim_amount'])
+        ->get(['employee_slug', 'ltc_month', 'ltc_year', 'status', 'ltc_claim_applications_slug', 'total_claim_amount'])
         ->map(function ($item) {
             return [
                 'application_type' => 'LTC',
-                'application_id' => $item->ltc_claim_id,
                 'start_date' => $item->ltc_month . ' ' . $item->ltc_year,
                 'end_date' => null, // No end date for LTC applications
                 'place_of_visit' => null, // Not applicable for LTC
@@ -413,8 +412,14 @@ class TravelManagementService{
                     // dd($ltcClaimApp->total_claim_amount);
                     // $ltcClaimapp = $ltcClaimApp->update(['total_claim_amount' => $ltcClaimApp->total_claim_amount + $total_claim_amount ]);
                     //$ltcClaimApp->increment('total_claim_amount', $total_claim_amount);
-
-                    $ltcClaimapp = $ltcClaimApp->update(['total_claim_amount' => \DB::raw("COALESCE(total_claim_amount, 0) + $total_claim_amount") ]);
+       
+                    $ltcClaimapp = LtcClaimApplication::where('ltc_month', $month)
+                    ->where('ltc_year', $year)
+                    ->where('employee_slug', $employeeSlug)
+                    ->where('status', 0)
+                    ->update([
+                        'total_claim_amount' => \DB::raw("COALESCE(total_claim_amount, 0) + $total_claim_amount")
+                    ]);
 
                     //'total_claim_amount' => $ltcClaimApp->total_claim_amount + $total_claim_amount
                 }
