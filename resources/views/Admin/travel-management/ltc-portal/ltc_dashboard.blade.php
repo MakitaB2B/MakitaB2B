@@ -284,6 +284,97 @@
             $(document).on('click', function () {
                 $('.dropdown-menu').hide();
             });
+
+            // $(document).ready(function () {
+                //$("#fetchData").click(function () {
+                  //  let appSlug = {{ $id }}; //$(this).data("id"); // Get the ID from the button
+                    
+                  //  $.ajax({
+                //         url: "/fetch-ltc-application-details", // Laravel route
+                //         type: "GET",
+                //         data: { id: appSlug },
+                //         success: function (response) {
+                //             console.log("Success:", response);
+                //             alert("Data fetched successfully!");
+                //         },
+                //         error: function (xhr, status, error) {
+                //             console.error("Error:", error);
+                //         }
+                //     });
+                // });
+            // });
+
+
+            $(document).ready(function () {
+                var appSlug = "{{ Crypt::encrypt($id) }}";  // Get the ID from the div
+
+            // if (appSlug) {
+                $.ajax({
+                    url: "/admin/travelmanagement/ltc-application-details/", // Laravel route
+                    type: "GET",
+                    data: { id: appSlug },
+                    success: function (response) {
+                        console.log("Success:", response);
+                        $("#applicationData").html(`<p><strong>Application ID:</strong> ${response.id}</p>`);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                    }
+                });
+            // }
+            });
+
+            const expenseData = [{
+                    date: '01-Jan-2024',
+                    inTime:"07:00",
+                    outTime:"21:00",
+                    daystat:"leave",
+                    travelEntries:[{
+                        modeOfTransport:"Personal Vehicle",
+                        typeOfTransport:"Bike",
+                        startingMeter:"10003",
+                        closingMeter:"10303",
+                        totalKms:"300",
+                        tollCharges:"100",
+                        fuelCharges:"745",
+                        placesVisited:"Koralur",
+                        files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                    },
+                    {
+                        modeOfTransport:"Demo Van",
+                        typeOfTransport:"Bike",
+                        startingMeter:"20003",
+                        closingMeter:"80303",
+                        totalKms:"300",
+                        tollCharges:"100",
+                        fuelCharges:"745",
+                        placesVisited:"Koralur",
+                        files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
+                    }],
+                    foodExpense: [{
+                        breakfast:{"amount":"10.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                        lunch:{"amount":"100.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
+                        dinner:{"amount":"20.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
+                    }],
+                    miscExpense: [{
+                        type:"Courier Bill",
+                        amount:"10.00",
+                        files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                    },
+                    {
+                        type:"Xerox & Stationary",
+                        amount:"200.00",
+                        files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                    },
+                    {
+                        type:"Office Expense",
+                        amount:"982.00",
+                        files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+                    }],
+                    total: '₹1200',
+                    status: 'Pending'
+                }
+            ];
         });
     </script>
 @endpush

@@ -23,13 +23,13 @@ class TravelManagementController extends Controller
 
         $result=$this->travelManagementService->getAllBTAppliedByLoggedInEmployeeService();
 
-        $ltcform['grade'] = $this->travelManagementService->fetchGrade($employeeSlug);
+        // $ltcform['grade'] = $this->travelManagementService->fetchGrade($employeeSlug);
 
-        $ltcform['mode_of_transport'] = $this->travelManagementService->modeOfTransport($ltcform['grade']->grade);
+        // $ltcform['mode_of_transport'] = $this->travelManagementService->modeOfTransport($ltcform['grade']->grade);
        
-        $ltcform['mobile_bill'] = $this->travelManagementService->mobileBill($ltcform['grade']->grade);
+        // $ltcform['mobile_bill'] = $this->travelManagementService->mobileBill($ltcform['grade']->grade);
         
-       return view('Admin.business_travel_list',compact('result','ltcform'));
+       return view('Admin.business_travel_list',compact('result'));//,'ltcform'
     }
 
     public function createTravelMangmentApplication(Request $request){
@@ -173,13 +173,11 @@ class TravelManagementController extends Controller
         $status=0;
         $createUpdateAction=$this->travelManagementService->createLtcClaim($request,$employeeSlug,$ltc_id,$status);
 
-        $msg = $createUpdateAction ? 'Yes! You Have Sucessfully Applied for LTC' : 'Error! LTC Application Not Executed';
+        $msg = $createUpdateAction ? 'Yes! You Have Sucessfully Applied for LTC Please click on Edit to view all applications for the month' : 'Error! LTC Application Not Executed';
         
-        $request->session()->flash('message',$msg);
+       // $request->session()->flash('message',$msg);
 
-        return true;
-            
-        // return redirect('admin/travelmanagement/applyviewclaimtravelexpenses');
+       return  $msg;// return redirect('admin/travelmanagement/applyviewclaimtravelexpenses');
       
     }
 
@@ -207,6 +205,7 @@ class TravelManagementController extends Controller
     public function ltcApplicationDetails($id,Request $request){
 
         $ltcappslug = Crypt::decrypt($id);
+        dd( $ltcappslug );
         $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
         $page = 'manager';
 
@@ -262,14 +261,24 @@ class TravelManagementController extends Controller
 
     }
 
-    public function ltcApplicationDetailsEdit($id,Request $request){
+    public function ltcApplicationDetailsEditPage($id,Request $request){
+        $ltcappslug = Crypt::decrypt($id);
+        return view('Admin.travel-management.ltc-portal.ltc_dashboard', [
+           "id"=> $ltcappslug
+        ]);
+    }
+
+    public function ltcApplicationDetailsEdit(Request $request){
+
+        $id=$request->input("id");
 
         $ltcappslug = Crypt::decrypt($id);
         $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
-        return view('Admin.edit_ltc_application_details', [   
+        dd(  $result);
+        return view('Admin.travel-management.ltc-portal.ltc_dashboard', [   //'Admin.edit_ltc_application_details'
             'result' => $result['result']
         ]);
-
+      
     }
 
     public function ltcApplicationDetailsUpdate(Request $request){

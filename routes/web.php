@@ -219,7 +219,8 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/travelmanagement/ltc-request-accounts',[TravelManagementController::class,'ltcRequestAccounts'])->name('travelmanagement.ltc-request-accounts');
     Route::get('/travelmanagement/ltc-application-details-account/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsAccount'])->name('travelmanagement.ltc-application-details-data');
     Route::post('/travelmanagement/ltc-application-details/payment-status',[TravelManagementController::class, 'ltcApplicationPaymentStatus'])->name('travelmanagement.ltc-application-paymentstatus');
-    Route::get('/travelmanagement/ltc-application-details/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsEdit'])->name('travelmanagement.ltc-application-details-edit');
+    Route::get('/travelmanagement/ltc-application-details',[TravelManagementController::class,'ltcApplicationDetailsEdit'])->name('travelmanagement.ltc-application-details-edit');
+    Route::get('/travelmanagement/ltc-application-detail/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsEditPage'])->name('travelmanagement.ltc-application-details-edit-page');
     Route::post('/travelmanagement/ltc-application-details/update', [TravelManagementController::class,'ltcApplicationDetailsUpdate'])->name('travelmanagement.ltc-application-details-update');
     Route::post('/travelmanagement/ltc-application-details/calculate-expenses', [TravelManagementController::class, 'calculateExpenses'])->name('travelmanagement.calculate-expenses');
     Route::get('/travelmanagement/ltc-demo-van', [TravelManagementController::class,'ltcDemoVan'])->name('travelmanagement.ltc-demovan');

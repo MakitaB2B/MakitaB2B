@@ -25,6 +25,7 @@ use App\Models\Admin\MobileExpense;
 use App\Models\Admin\DemoVan;
 use App\Models\Admin\LtcFiles;
 use Exception;
+use Illuminate\Support\Facades\Validator;
 
 
 class TravelManagementService{
@@ -34,7 +35,7 @@ class TravelManagementService{
         'Own Vehicle-2-Wheeler' => 8.0
     ];
 
-     public function ltc_claim_id(){
+    public function ltc_claim_id(){
         
         $ltcIdExists = LtcFoodClaim::distinct()->pluck('ltc_claim_id')->toArray(); //LtcClaim
 
@@ -42,11 +43,11 @@ class TravelManagementService{
 
             $ltcId = 'ltc'.str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT); //'ltc'.rand();  
     
-        } while (in_array($ltcId,$ltcIdExists ));
+        } while (in_array($ltcId,$ltcIdExists));
     
         return $ltcId;
 
-     } 
+    } 
    
      public function createBTAApplication($request,$btaSlug,$applicantSlug,$travelID,$status){
 
@@ -328,14 +329,14 @@ class TravelManagementService{
        
         $result = LtcClaimApplication::with([
             'employee:employee_slug,full_name',
-            'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status,modified',
-            'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,courier_bill,xerox_stationary,office_expense,monthly_mobile_bills,remarks,status,modified',
+           // 'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status,modified',
+            'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,misc_type,claim_amount',
             'manager_name:employee_slug,full_name',
             'hr_name:employee_slug,full_name',
             'payed_by:employee_slug,full_name',
         ])
         ->where('ltc_claim_applications_slug', $ltcappslug)
-        ->select('ltc_claim_applications_slug', 'ltc_claim_id', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by','total_claim_amount','hr_approved_by','payment_by'
+        ->select('ltc_claim_applications_slug', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by','total_claim_amount','hr_approved_by','payment_by'
         ) 
         ->first();
 
@@ -369,9 +370,9 @@ class TravelManagementService{
 
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
 
-        // try {
+        try {
               
-        //     DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
+            DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
 
                 $teamDetails = TeamMembers::WHERE('team_member','=',$employeeSlug)->get(['team_owner']);
                 $teamManager = count($teamDetails)>0 ? $teamDetails[0]->team_owner : null ;
@@ -387,16 +388,17 @@ class TravelManagementService{
                 $date = Carbon::parse($timeInfo["date"]);
                 $month = $date->month;
                 $year = $date->year;
-                 dump(  $timeInfo,$foodExpense,$travelEntries,    $miscExpenses,array_sum(array_column($travelEntries, "fuelCharges"))+array_sum(array_column($travelEntries, "tollCharges")));
+                //  dump(  $timeInfo,$foodExpense,$travelEntries,    $miscExpenses);
 
                 $total_claim_amount =  (float) $foodExpense["breakfast"]["amount"] +
                 array_sum(array_column($travelEntries, "fuelCharges")) +
                 array_sum(array_column($travelEntries, "tollCharges")) +
                 array_sum(array_column($miscExpenses, "amount"));
-                
-                $ltcClaimApp = LtcClaimApplication::where('ltc_month',$month)->where('ltc_year', $year)->where('employee_slug',$employeeSlug)->where('status',0)->get();
-              
-                if($ltcClaimApp->isEmpty()){
+                //expections to be added
+                //claim already submitted/ claim can be done for 2 months
+                $ltcClaimApp = LtcClaimApplication::where('ltc_month',$month)->where('ltc_year', $year)->where('employee_slug',$employeeSlug)->where('status',0)->first();
+    
+                if(empty($ltcClaimApp)){   //if($ltcClaimApp->isEmpty()){
                 $ltcClaimapp = new LtcClaimApplication([
                 'ltc_claim_applications_slug' =>  $ltcappslug,
                 'employee_slug' => $employeeSlug,
@@ -409,19 +411,17 @@ class TravelManagementService{
                 $ltcClaimapp->save();
 
                 }else{
-                    // dd($ltcClaimApp->total_claim_amount);
-                    // $ltcClaimapp = $ltcClaimApp->update(['total_claim_amount' => $ltcClaimApp->total_claim_amount + $total_claim_amount ]);
-                    //$ltcClaimApp->increment('total_claim_amount', $total_claim_amount);
-       
-                    $ltcClaimapp = LtcClaimApplication::where('ltc_month', $month)
-                    ->where('ltc_year', $year)
-                    ->where('employee_slug', $employeeSlug)
-                    ->where('status', 0)
-                    ->update([
-                        'total_claim_amount' => \DB::raw("COALESCE(total_claim_amount, 0) + $total_claim_amount")
-                    ]);
+                  
+                $ltcClaimapp = LtcClaimApplication::where('ltc_month', $month)
+                ->where('ltc_year', $year)
+                ->where('employee_slug', $employeeSlug)
+                ->where('status', 0)
+                ->update([
+                    'total_claim_amount' => \DB::raw("COALESCE(total_claim_amount, 0) + $total_claim_amount")
+                ]);
 
-                    //'total_claim_amount' => $ltcClaimApp->total_claim_amount + $total_claim_amount
+                $ltcClaimapp = LtcClaimApplication::where('ltc_month',$month)->where('ltc_year', $year)->where('employee_slug',$employeeSlug)->where('status',0)->first();
+                   
                 }
 
 
@@ -442,7 +442,6 @@ class TravelManagementService{
                 ]);
                
                 $ltcFoodClaim->save();
-
 
                 $ltcTravelClaimData = [];
 
@@ -545,19 +544,14 @@ class TravelManagementService{
                 }
 
                 LtcMiscellaneousExp::insert($ltcMiscData);
-                $data=LtcFiles::insert($FilesData);
-                dd($data);
+                LtcFiles::insert($FilesData);
+            });
 
-          
+            return true;
+        } catch (Exception $e) {
 
-            // });
-
-        //     return true;
-        // } catch (Exception $e) {
-
-        //     dd($e->getMessage());
-        //     return false;
-        // }
+            return false;
+        }
        
     }
 

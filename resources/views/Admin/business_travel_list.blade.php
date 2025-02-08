@@ -747,7 +747,7 @@
                                                 <td>{{ $list["total_expenses"] }}</td>
                                                 <td>{{ $status }}</td>
                                                 <td>
-                                                    <a href="{{ url('admin/travelmanagement/ltc-application-details/' . Crypt::encrypt($list["slug"])) }}"
+                                                    <a href="{{ url('admin/travelmanagement/ltc-application-detail/' . Crypt::encrypt($list["slug"])) }}"
                                                        title="Edit" target="_blank">
                                                         <i class="nav-icon fas fa-edit"></i>
                                                     </a>
