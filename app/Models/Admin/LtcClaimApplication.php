@@ -37,21 +37,34 @@ class LtcClaimApplication extends Model
         return $this->belongsTo('App\Models\Admin\Employee','payment_by','employee_slug');
     }
     
-    public function ltcClaims(){
-        return $this->hasMany('App\Models\Admin\LtcClaim', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
-    }
+    // public function ltcClaims(){
+    //     return $this->hasMany('App\Models\Admin\LtcClaim', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
+    // }
 
-    public function ltcMiscellaneousExp()
+    public function ltcMiscellaneousExp()   
     {
-        return $this->hasOne('App\Models\Admin\LtcMiscellaneousExp', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
+        return $this->hasMany('App\Models\Admin\LtcMiscellaneousExp', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
+    }
+    
+    public function ltcTravelClaims()
+    {
+        return $this->hasMany('App\Models\Admin\LtcTravelClaim', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
     }
 
+    public function ltcFoodClaims()
+    {
+        return $this->hasOne('App\Models\Admin\LtcFoodClaim', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
+    }
 
+    public function travelFiles()
+    {
+        return $this->hasMany('App\Models\Admin\LtcFiles', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug')
+                    ->where('file_type', 'travel');
+    }
 
-
-
-
-
-
-
+    public function miscFiles()
+    {
+        return $this->hasMany('App\Models\Admin\LtcFiles', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug')
+                    ->where('file_type', 'miscellaneous');
+    }
 }

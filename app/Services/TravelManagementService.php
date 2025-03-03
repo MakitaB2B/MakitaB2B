@@ -327,18 +327,83 @@ class TravelManagementService{
 
     public function getLTCApplicationDetails($ltcappslug){
        
+        // $result = LtcClaimApplication::with([
+        //     'employee:employee_slug,full_name',
+           // 'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status,modified',
+            // 'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,misc_type,claim_amount',
+            // 'ltcTravelClaims:ltc_claim_applications_slug,mode_of_transport',
+            // 'ltcFoodClaims:ltc_claim_applications_slug,in_time,out_time,food_exp'
+            // 'manager_name:employee_slug,full_name',
+            // 'hr_name:employee_slug,full_name',
+            // 'payed_by:employee_slug,full_name',
+        // ])
+        // ->where('ltc_claim_applications_slug', $ltcappslug)
+        // ->select('ltc_claim_applications_slug', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by','total_claim_amount','hr_approved_by','payment_by'
+        // ) 
+        // ->first()->toArray();
+
+
         $result = LtcClaimApplication::with([
             'employee:employee_slug,full_name',
-           // 'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status,modified',
             'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,misc_type,claim_amount',
-            'manager_name:employee_slug,full_name',
-            'hr_name:employee_slug,full_name',
-            'payed_by:employee_slug,full_name',
+            'ltcTravelClaims:ltc_claim_applications_slug,mode_of_transport,type_of_transport,place_visited,opening_meter,closing_meter,total_km,toll_charge,claim_amount',
+            'ltcFoodClaims:ltc_claim_applications_slug,in_time,out_time,food_exp,ltc_date',
+            'travelFiles',
+            'miscFiles'
         ])
         ->where('ltc_claim_applications_slug', $ltcappslug)
-        ->select('ltc_claim_applications_slug', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by','total_claim_amount','hr_approved_by','payment_by'
+        ->select(
+            'ltc_claim_applications_slug', 'employee_slug', 'ltc_month', 'ltc_year', 
+            'status', 'manager_approved_by', 'total_claim_amount', 
+            'hr_approved_by', 'payment_by'
         ) 
         ->first();
+
+        if (!$result) {
+            return response()->json(['message' => 'No data found'], 404);
+        }
+
+
+        // travelEntries:[{
+        //     modeOfTransport:"Personal Vehicle",
+        //     typeOfTransport:"Bike",
+        //     startingMeter:"10003",
+        //     closingMeter:"10303",
+        //     totalKms:"300",
+        //     tollCharges:"100",
+        //     fuelCharges:"745",
+        //     placesVisited:"Koralur",
+        //     files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
+        // },
+        // {
+        //     modeOfTransport:"Demo Van",
+        //     typeOfTransport:"Bike",
+        //     startingMeter:"20003",
+        //     closingMeter:"80303",
+        //     totalKms:"300",
+        //     tollCharges:"100",
+        //     fuelCharges:"745",
+        //     placesVisited:"Koralur",
+        //     files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
+        // }],
+        
+        dd($result->travelFiles);
+        
+        $result = [
+            [
+                'date'         => $result->ltcFoodClaims->first()->ltc_date, 
+                'inTime'       => $result->ltcFoodClaims->first()->in_time ?? '',
+                'outTime'      => $result->ltcFoodClaims->first()->out_time ?? '',
+                'daystat'      => $result->ltcFoodClaims->first()->ltc_day ?? '', 
+                'travelEntries' => $this->formatTravelEntries($result->ltcTravelClaims ,$result->travelFiles),
+                // 'foodExpense'  => $this->formatFoodExpenses($result->ltcFoodClaims),
+                // 'miscExpense'  => $this->formatMiscExpenses($result->ltcMiscellaneousExp),
+                // 'total'        => '₹' . number_format((float) $result->total_claim_amount, 2),
+                // 'status'       => $result->status == 0 ? 'Pending' : 'Approved'
+            ]
+        ];
+
+        return response()->json($result);
 
         // $totalClaimExpenses = $result->ltcClaims->reduce(function ($carry, $claim) {
         //     return $carry + 
@@ -359,12 +424,12 @@ class TravelManagementService{
     
         // $totalExpense = $totalClaimExpenses + $totalMiscellaneousExpenses;
 
-        return [
-            'result' => $result,
+        // return [
+        //     'result' => $result,
             // 'total_expense' => $totalExpense,
             // 'individual_claims' => $totalClaimExpenses,
             // 'individual_miscellaneous' => $totalMiscellaneousExpenses,
-        ];
+        // ];
 
     }
 
@@ -749,5 +814,35 @@ class TravelManagementService{
     public function demoVanDetails($employeeSlug){
         return DemoVan::where('state','karnataka')->where('purpose','Demo')->where('used_by','Sales')->get(['vehicles_reg_no']);
     }
+
+    private function formatTravelEntries($travelClaims,$travelFiles){
+        return $travelClaims->map(function ($claim) use ($travelFiles) {
+            return [
+                'modeOfTransport' => $claim->mode_of_transport ?? '',
+                'typeOfTransport' => $claim->type_of_transport ?? '', 
+                'startingMeter'   => $claim->opening_meter ?? '', 
+                'closingMeter'    => $claim->closing_meter ?? '', 
+                'totalKms'        => $claim->total_km ?? '', 
+                'tollCharges'     => $claim->toll_charge ?? '', 
+                'fuelCharges'     => $claim->claim_amount ?? '', 
+                'placesVisited'   => $claim->place_visited ?? '', 
+                'files'           => $this->formatFiles($travelFiles)??[]  
+            ];
+        })->toArray();
+    }
+
+    private function formatFiles($files){
+
+        // dd($files);
+    return $files->map(function ($file) {
+        return [
+            'name'      => $file->file_name,
+            'type'      => $file->file_type,
+            'timestamp' => strtotime($file->created_at)
+        ];
+    })->toArray();
+
+    }
+
 }
 ?>

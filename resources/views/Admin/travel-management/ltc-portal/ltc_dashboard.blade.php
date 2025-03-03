@@ -307,6 +307,7 @@
 
             $(document).ready(function () {
                 var appSlug = "{{ Crypt::encrypt($id) }}";  // Get the ID from the div
+                console.log(appSlug);
 
             // if (appSlug) {
                 $.ajax({
@@ -325,8 +326,8 @@
             });
 
             const expenseData = [{
-                    date: '01-Jan-2024',
-                    inTime:"07:00",
+                    date: '02-Jan-24',
+                    inTime:"05:00",
                     outTime:"21:00",
                     daystat:"leave",
                     travelEntries:[{

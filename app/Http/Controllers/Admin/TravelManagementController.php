@@ -269,9 +269,7 @@ class TravelManagementController extends Controller
     }
 
     public function ltcApplicationDetailsEdit(Request $request){
-
         $id=$request->input("id");
-
         $ltcappslug = Crypt::decrypt($id);
         $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
         dd(  $result);
@@ -319,5 +317,301 @@ class TravelManagementController extends Controller
     return response()->json(['options' => $options]);
     }
 
-
 }
+
+    // public function getLTCApplicationDetails($ltcappslug)
+    // {
+    //     $result = LtcClaimApplication::with([
+    //         'employee:employee_slug,full_name',
+    //         'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,misc_type,claim_amount',
+    //         'ltcTravelClaims:ltc_claim_applications_slug,mode_of_transport',
+    //         'ltcFoodClaims:ltc_claim_applications_slug,in_time,out_time,food_exp'
+    //     ])
+    //     ->where('ltc_claim_applications_slug', $ltcappslug)
+    //     ->select(
+    //         'ltc_claim_applications_slug', 'employee_slug', 'ltc_month', 'ltc_year', 
+    //         'status', 'manager_approved_by', 'total_claim_amount', 
+    //         'hr_approved_by', 'payment_by'
+    //     ) 
+    //     ->first();
+
+    //     if (!$result) {
+    //         return response()->json(['message' => 'No data found'], 404);
+    //     }
+
+        
+    //     $expenseData = [
+    //         [
+    //             'date'         => now()->format('d-M-y'), 
+    //             'inTime'       => optional($result->ltcFoodClaims->first())->in_time ?? '',
+    //             'outTime'      => optional($result->ltcFoodClaims->first())->out_time ?? '',
+    //             'daystat'      => 'leave', 
+    //             'travelEntries' => $this->formatTravelEntries($result->ltcTravelClaims),
+    //             'foodExpense'  => $this->formatFoodExpenses($result->ltcFoodClaims),
+    //             'miscExpense'  => $this->formatMiscExpenses($result->ltcMiscellaneousExp),
+    //             'total'        => '₹' . number_format((float) $result->total_claim_amount, 2),
+    //             'status'       => $result->status == 0 ? 'Pending' : 'Approved'
+    //         ]
+    //     ];
+
+    //     return response()->json($expenseData);
+    // }
+
+
+    // private function formatTravelEntries($travelClaims)
+    // {
+    //     return $travelClaims->map(function ($claim) {
+    //         return [
+    //             'modeOfTransport' => $claim->mode_of_transport ?? '',
+    //             'typeOfTransport' => '', 
+    //             'startingMeter'   => '', 
+    //             'closingMeter'    => '', 
+    //             'totalKms'        => '', 
+    //             'tollCharges'     => '', 
+    //             'fuelCharges'     => '', 
+    //             'placesVisited'   => '', 
+    //             'files'           => []  
+    //         ];
+    //     })->toArray();
+    // }
+
+    // private function formatFoodExpenses($foodClaims)
+    // {
+    //     return $foodClaims->map(function ($claim) {
+    //         return [
+    //             'breakfast' => ['amount' => '', 'files' => []], 
+    //             'lunch'     => ['amount' => $claim->food_exp ?? '0.00', 'files' => []],
+    //             'dinner'    => ['amount' => '', 'files' => []]  
+    //         ];
+    //     })->toArray();
+    // }
+
+    // private function formatMiscExpenses($miscExpenses)
+    // {
+    //     return $miscExpenses->map(function ($misc) {
+    //         return [
+    //             'type'  => $misc->misc_type ?? '',
+    //             'amount' => $misc->claim_amount ?? '0.00',
+    //             'files'  => [] 
+    //         ];
+    //     })->toArray();
+    // }
+
+//--------------------------------------------------------
+
+// public function getLTCApplicationDetails($ltcappslug){
+    
+//     $result = LtcClaimApplication::with([
+//         'employee:employee_slug,full_name',
+//         'ltcClaims:ltc_claim_applications_slug,ltc_claim_slug,date,mode_of_transport,opening_meter,closing_meter,total_km,place_visited,claim_amount,lunch_exp,fuel_exp,toll_charge,status,modified',
+//         'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,misc_type,claim_amount',
+//         'ltcTravelClaims:ltc_claim_applications_slug,mode_of_transport,type_of_transport,starting_meter,closing_meter,total_kms,toll_charges,fuel_charges,places_visited',
+//         'ltcFoodClaims:ltc_claim_applications_slug,in_time,out_time,food_exp,breakfast_amount,lunch_amount,dinner_amount',
+//         'ltcFiles:ltc_claim_applications_slug,file_category,file_name,file_type,uploaded_at'
+//     ])
+//     ->where('ltc_claim_applications_slug', $ltcappslug)
+//     ->select('ltc_claim_applications_slug', 'employee_slug', 'ltc_month', 'ltc_year', 'status', 'manager_approved_by','total_claim_amount','hr_approved_by','payment_by', 'date', 'day_status')
+//     ->first();
+
+//     if (!$result) {
+//         return ['result' => null];
+//     }
+
+//     $formattedData = [
+//         'ltc_claim_applications_slug' => $result->ltc_claim_applications_slug,
+//         'employee_slug' => $result->employee_slug,
+//         'employee_name' => $result->employee->full_name ?? null,
+//         'ltc_month' => $result->ltc_month,
+//         'ltc_year' => $result->ltc_year,
+//         'status' => $this->getStatusText($result->status),
+//         'total_claim_amount' => $result->total_claim_amount,
+//         'expenseData' => []
+//     ];
+
+//     $files = [];
+//     if (isset($result->ltcFiles)) {
+//         foreach ($result->ltcFiles as $file) {
+//             $category = $file->file_category;
+//             if (!isset($files[$category])) {
+//                 $files[$category] = [];
+//             }
+//             $files[$category][] = [
+//                 'name' => $file->file_name,
+//                 'type' => $file->file_type,
+//                 'timestamp' => strtotime($file->uploaded_at) * 1000 
+//             ];
+//         }
+//     }
+
+//     $date = date('d-M-y', strtotime($result->date));
+    
+//     $expenseEntry = [
+//         'date' => $date,
+//         'inTime' => $result->ltcFoodClaims->in_time ?? null,
+//         'outTime' => $result->ltcFoodClaims->out_time ?? null,
+//         'daystat' => $result->day_status ?? 'work',
+//         'travelEntries' => [],
+//         'foodExpense' => [],
+//         'miscExpense' => [],
+//         'total' => '₹' . number_format((float)$result->total_claim_amount, 2),
+//         'status' => $this->getStatusText($result->status)
+//     ];
+
+//     if (isset($result->ltcTravelClaims)) {
+//         foreach ($result->ltcTravelClaims as $travel) {
+//             $travelEntry = [
+//                 'modeOfTransport' => $travel->mode_of_transport,
+//                 'typeOfTransport' => $travel->type_of_transport ?? 'N/A',
+//                 'startingMeter' => $travel->starting_meter ?? 'N/A',
+//                 'closingMeter' => $travel->closing_meter ?? 'N/A',
+//                 'totalKms' => $travel->total_kms ?? 'N/A',
+//                 'tollCharges' => $travel->toll_charges ?? '0',
+//                 'fuelCharges' => $travel->fuel_charges ?? '0',
+//                 'placesVisited' => $travel->places_visited ?? 'N/A',
+//                 'files' => $files['travel_' . $travel->id] ?? []
+//             ];
+//             $expenseEntry['travelEntries'][] = $travelEntry;
+//         }
+//     }
+
+//     if (isset($result->ltcFoodClaims)) {
+//         $foodExpense = [
+//             'breakfast' => [
+//                 'amount' => number_format((float)($result->ltcFoodClaims->breakfast_amount ?? 0), 2),
+//                 'files' => $files['food_breakfast'] ?? []
+//             ],
+//             'lunch' => [
+//                 'amount' => number_format((float)($result->ltcFoodClaims->lunch_amount ?? 0), 2),
+//                 'files' => $files['food_lunch'] ?? []
+//             ],
+//             'dinner' => [
+//                 'amount' => number_format((float)($result->ltcFoodClaims->dinner_amount ?? 0), 2),
+//                 'files' => $files['food_dinner'] ?? []
+//             ]
+//         ];
+//         $expenseEntry['foodExpense'][] = $foodExpense;
+//     }
+
+//     if (isset($result->ltcMiscellaneousExp)) {
+//         foreach ($result->ltcMiscellaneousExp as $misc) {
+//             $miscType = $this->getMiscTypeText($misc->misc_type);
+//             $miscEntry = [
+//                 'type' => $miscType,
+//                 'amount' => number_format((float)($misc->claim_amount ?? 0), 2),
+//                 'files' => $files['misc_' . $misc->ltc_miscellaneous_slug] ?? []
+//             ];
+//             $expenseEntry['miscExpense'][] = $miscEntry;
+//         }
+//     }
+
+//     $formattedData['expenseData'][] = $expenseEntry;
+
+//     return [
+//         'result' => $formattedData
+//     ];
+// }
+
+
+// private function getStatusText($status) {
+//     $statusMap = [
+//         0 => 'Pending',
+//         1 => 'Manager Approved',
+//         2 => 'HR Approved',
+//         3 => 'Paid',
+//         4 => 'Rejected'
+//     ];
+    
+//     return $statusMap[$status] ?? 'Unknown';
+// }
+
+
+// private function getMiscTypeText($type) {
+//     $typeMap = [
+//         'courier' => 'Courier Bill',
+//         'xerox' => 'Xerox & Stationary',
+//         'office' => 'Office Expense',
+//         'phone' => 'Monthly Mobile Bills'
+//     ];
+    
+//     return $typeMap[$type] ?? $type;
+// }
+
+//-----------------------------------------------
+// public function getLTCApplicationDetails($ltcappslug)
+// {
+//     $result = LtcClaimApplication::with([
+//         'employee:employee_slug,full_name',
+//         'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,misc_type,claim_amount',
+//         'ltcTravelClaims:ltc_claim_applications_slug,mode_of_transport',
+//         'ltcFoodClaims:ltc_claim_applications_slug,in_time,out_time,food_exp'
+//     ])
+//     ->where('ltc_claim_applications_slug', $ltcappslug)
+//     ->select(
+//         'ltc_claim_applications_slug', 'employee_slug', 'ltc_month', 'ltc_year', 
+//         'status', 'manager_approved_by', 'total_claim_amount', 
+//         'hr_approved_by', 'payment_by'
+//     ) 
+//     ->first();
+
+//     if (!$result) {
+//         return response()->json(['message' => 'No data found'], 404);
+//     }
+
+//     $expenseData = [
+//         [
+//             'date'         => now()->format('d-M-y'), 
+//             'inTime'       => optional($result->ltcFoodClaims->first())->in_time ?? '',
+//             'outTime'      => optional($result->ltcFoodClaims->first())->out_time ?? '',
+//             'daystat'      => 'leave', 
+//             'travelEntries' => $this->formatTravelEntries($result->ltcTravelClaims),
+//             'foodExpense'  => $this->formatFoodExpenses($result->ltcFoodClaims),
+//             'miscExpense'  => $this->formatMiscExpenses($result->ltcMiscellaneousExp),
+//             'total'        => '₹' . number_format((float) $result->total_claim_amount, 2),
+//             'status'       => $result->status == 0 ? 'Pending' : 'Approved'
+//         ]
+//     ];
+
+//     return response()->json($expenseData);
+// }
+
+
+// private function formatTravelEntries($travelClaims)
+// {
+//     return $travelClaims->map(function ($claim) {
+//         return [
+//             'modeOfTransport' => $claim->mode_of_transport ?? '',
+//             'typeOfTransport' => '', 
+//             'startingMeter'   => '', 
+//             'closingMeter'    => '', 
+//             'totalKms'        => '', 
+//             'tollCharges'     => '', 
+//             'fuelCharges'     => '', 
+//             'placesVisited'   => '', 
+//             'files'           => []  
+//         ];
+//     })->toArray();
+// }
+
+
+// private function formatFoodExpenses($foodClaims)
+// {
+//     return $foodClaims->map(function ($claim) {
+//         return [
+//             'breakfast' => ['amount' => '', 'files' => []], 
+//             'lunch'     => ['amount' => $claim->food_exp ?? '0.00', 'files' => []],
+//             'dinner'    => ['amount' => '', 'files' => []]  
+//         ];
+//     })->toArray();
+// }
+
+// private function formatMiscExpenses($miscExpenses)
+// {
+//     return $miscExpenses->map(function ($misc) {
+//         return [
+//             'type'  => $misc->misc_type ?? '',
+//             'amount' => $misc->claim_amount ?? '0.00',
+//             'files'  => [] 
+//         ];
+//     })->toArray();
+// }
+

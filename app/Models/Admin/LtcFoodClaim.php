@@ -31,7 +31,7 @@ class LtcFoodClaim extends Model
      
         public function getLtcDateAttribute($value)
         {
-            return \Carbon\Carbon::parse($value)->format('d m Y');
+            return \Carbon\Carbon::parse($value)->format('d-M-Y');
         }
 
         public function setLtcDayAttribute($value)  
@@ -49,13 +49,14 @@ class LtcFoodClaim extends Model
      
         public function getLtcDayAttribute($value)
         {
-            return match ($value) {           
-                'On Leave' => 'l',        
-                'Holiday' => 'h',          
-                'Working Day' => 'w', 
-                'Working on Holiday' => 'wh',            
-                default => throw new \InvalidArgumentException("Invalid category. Allowed values are On Leave,Holiday,Working Day,Working on Holiday"),
-            };
+            return $value? $value : null;
+            // return match ($value) {           
+            //     'On Leave' => 'l',        
+            //     'Holiday' => 'h',          
+            //     'Working Day' => 'w', 
+            //     'Working on Holiday' => 'wh',            
+            //     default => throw new \InvalidArgumentException("Invalid category. Allowed values are On Leave,Holiday,Working Day,Working on Holiday"),
+            // };
         }
 
         public function setInTimeAttribute($value)    
@@ -66,7 +67,8 @@ class LtcFoodClaim extends Model
         
         public function getInTimeAttribute($value)
         {
-            return $value ? date("i:s", $timestamp) : null;
+            return $value ? date("i:s", $value) : null;
+            //return $value ? \Carbon\Carbon::createFromTimestamp($value)->format('i:s') : null;
         }
 
         public function setOutTimeAttribute($value)    
@@ -77,7 +79,7 @@ class LtcFoodClaim extends Model
         
         public function getOutTimeAttribute($value)
         {
-            return $value ? date("i:s", $timestamp) : null;
+            return $value ? date("i:s", $value) : null;
         }
 
         public function setFoodExpAttribute($value)   
