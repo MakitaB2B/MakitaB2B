@@ -49,22 +49,23 @@ class LtcClaimApplication extends Model
     public function ltcTravelClaims()
     {
         return $this->hasMany('App\Models\Admin\LtcTravelClaim', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
+   
     }
 
     public function ltcFoodClaims()
     {
-        return $this->hasOne('App\Models\Admin\LtcFoodClaim', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
+        return $this->hasMany('App\Models\Admin\LtcFoodClaim', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug');
     }
 
     public function travelFiles()
     {
-        return $this->hasMany('App\Models\Admin\LtcFiles', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug')
-                    ->where('file_type', 'travel');
+       return $this->hasMany('App\Models\Admin\LtcFiles', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug')
+                    ->where('type', 'travel');
     }
 
     public function miscFiles()
     {
         return $this->hasMany('App\Models\Admin\LtcFiles', 'ltc_claim_applications_slug', 'ltc_claim_applications_slug')
-                    ->where('file_type', 'miscellaneous');
+                    ->where('type', 'miscellaneous');
     }
 }

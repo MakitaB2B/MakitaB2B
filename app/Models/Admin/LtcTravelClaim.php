@@ -15,4 +15,11 @@ class LtcTravelClaim extends Model
     {
         return $this->morphMany(File::class, 'fileable');
     }
+
+    public function travelFiles()
+    {
+        return $this->hasMany(LtcFiles::class, 'ltc_travel_claims_slug', 'fileable_id')
+                ->where('file_type', 'travel');
+    }
+
 }

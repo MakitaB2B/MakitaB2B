@@ -372,9 +372,12 @@
                         amount:"982.00",
                         files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
                     }],
-                    total: '₹1200',
-                    status: 'Pending'
+                 
+                    status: 'Pending',
+                    total_per_day: "345"
                 }
+
+                // grandtotal: "1200"
             ];
         });
     </script>
