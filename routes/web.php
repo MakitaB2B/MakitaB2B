@@ -223,7 +223,11 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     Route::get('/travelmanagement/ltc-application-detail/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsEditPage'])->name('travelmanagement.ltc-application-details-edit-page');
     Route::post('/travelmanagement/ltc-application-details/update', [TravelManagementController::class,'ltcApplicationDetailsUpdate'])->name('travelmanagement.ltc-application-details-update');
     Route::post('/travelmanagement/ltc-application-details/calculate-expenses', [TravelManagementController::class, 'calculateExpenses'])->name('travelmanagement.calculate-expenses');
-    Route::get('/travelmanagement/ltc-demo-van', [TravelManagementController::class,'ltcDemoVan'])->name('travelmanagement.ltc-demovan');
+    Route::get('/travelmanagement/validate-ltc-form', [TravelManagementController::class,'validateLtcForm'])->name('travelmanagement.calculate-expenses');
+    // Route::get('/travelmanagement/ltc-demo-van', [TravelManagementController::class,'ltcDemoVanNo'])->name('travelmanagement.ltc-demovan');
+    // Route::get('/travelmanagement/ltc-mode-of-transport', [TravelManagementController::class,'ltcModeOfTransport'])->name('travelmanagement.ltc-mode-of-transport');
+    // Route::get('/travelmanagement/ending-meter', [TravelManagementController::class,'endingMeter'])->name('travelmanagement.ending-meter');
+
 
     //-----------------
 

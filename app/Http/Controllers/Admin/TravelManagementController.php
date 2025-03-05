@@ -4,6 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\TravelManagementService;
+use App\Services\StateService;
+use App\Services\EmployeeService;
+use App\Services\DemoVanService;
+use App\Services\LtcTravelClaimService;
+use App\Services\MobileExpenseService;
+use App\Services\LtcMiscellaneousExpService;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -13,13 +19,19 @@ use Auth;
 class TravelManagementController extends Controller
 {
     protected $travelManagementService;
-    public function __construct(TravelManagementService $travelManagementService){
+    public function __construct(TravelManagementService $travelManagementService ,StateService $stateService,EmployeeService $employeeService,DemoVanService $demoVanService,LtcTravelClaimService $ltcTravelClaimService,MobileExpenseService $mobileExpenseService,LtcMiscellaneousExpService $ltcMiscellaneousExpService){
         $this->travelManagementService=$travelManagementService;
+        $this->stateService=$stateService;
+        $this->employeeService = $employeeService;
+        $this->demoVanService = $demoVanService;
+        $this->ltcTravelClaimService = $ltcTravelClaimService;
+        $this->mobileExpenseService = $mobileExpenseService;
+        $this->ltcMiscellaneousExpService = $ltcMiscellaneousExpService;
     }
 
     public function getAllBTAppliedByLoggedInEmployee(){
         
-        $employeeSlug=Auth::guard('admin')->user()->employee_slug;
+        // $employeeSlug=Auth::guard('admin')->user()->employee_slug;
 
         $result=$this->travelManagementService->getAllBTAppliedByLoggedInEmployeeService();
         
@@ -277,6 +289,53 @@ class TravelManagementController extends Controller
 
         //'Admin.edit_ltc_application_details'
       
+    }
+
+    // public function ltcModeOfTransport(){
+    //    // $employeeSlug=Auth::guard('admin')->user()->employee_slug;
+    //     $grade = $this->travelManagementService->fetchGrade($employeeSlug)->grade;
+    //     $modeOfTransport = $this->travelManagementService->modeOfTransport($grade);
+    //     return $modeOfTransport;
+    // }
+
+    // public function ltcDemoVanNo(){
+
+    //    // $employeeSlug=Auth::guard('admin')->user()->employee_slug;
+    //     $employeeDetails = $this->employeeService->findEmployeeBySlug($employeeSlug);
+    //     $findState = $this->stateService->findStateById($employeeDetails[0]->posting_state);
+    //     $demoVan = $this->demoVanService->demoVanDetails($findState[0]->name);
+    //    return $demoVan;
+    // }
+
+    // public function endingMeter(){
+    //    // $employeeSlug=Auth::guard('admin')->user()->employee_slug;
+    //     $ending_meter=$this->ltcTravelClaimService->getEndingMeter($employeeSlug);
+    //    return ["closing_meter"=>$ending_meter];
+    // }
+
+    public function validateLtcForm(){
+        $employeeSlug=Auth::guard('admin')->user()->employee_slug;
+
+        $grade = $this->travelManagementService->fetchGrade($employeeSlug)->grade;
+        $modeOfTransport = $this->travelManagementService->modeOfTransport($grade);
+
+        $employeeDetails = $this->employeeService->findEmployeeBySlug($employeeSlug);
+        $findState = $this->stateService->findStateById($employeeDetails[0]->posting_state);
+        $demoVan = $this->demoVanService->demoVanDetails($findState[0]->name);
+
+        $ending_meter=$this->ltcTravelClaimService->getEndingMeter($employeeSlug);
+
+        $mobileExpense = $this->mobileExpenseService->getMobileExpense($grade);
+        $miscType = $this->ltcMiscellaneousExpService->getMiscExp();
+       
+        return response()->json([
+            'mode_of_transport' => $modeOfTransport,
+            'demo_van' =>  $demoVan,
+            'closing_meter' => $ending_meter,
+            'mobile_expense' => $mobileExpense,
+            'misc_types'=>$miscType
+        ]);
+
     }
 
     // public function ltcApplicationDetailsUpdate(Request $request){

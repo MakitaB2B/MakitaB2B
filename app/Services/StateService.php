@@ -19,5 +19,9 @@ class StateService{
             return true;
          }
     }
+
+    public function findStateById($id){
+        return State::where(['id'=> $id])->get(); 
+    }
 }
 ?>

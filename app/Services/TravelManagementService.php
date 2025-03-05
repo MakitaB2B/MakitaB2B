@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Admin\MobileExpense;
-use App\Models\Admin\DemoVan;
+
 use App\Models\Admin\LtcFiles;
 use Exception;
 use Illuminate\Support\Facades\Validator;
@@ -331,7 +331,7 @@ class TravelManagementService{
             //'ltcTravelClaims.travelFiles:type,file_path,file_type,ltc_claim_id',
             'ltcMiscellaneousExp:ltc_claim_applications_slug,ltc_miscellaneous_slug,misc_type,claim_amount,ltc_claim_id',
             'ltcTravelClaims:ltc_claim_applications_slug,mode_of_transport,type_of_transport,place_visited,opening_meter,closing_meter,total_km,toll_charge,claim_amount,ltc_claim_id,ltc_travel_claims_slug',
-            'ltcFoodClaims:ltc_claim_applications_slug,in_time,out_time,food_exp,ltc_date,ltc_claim_id,ltc_day,food_exp_bill',
+            'ltcFoodClaims:ltc_claim_applications_slug,in_time,out_time,food_exp,ltc_date,ltc_claim_id,ltc_day,food_exp_bill,status',
             'travelFiles',
             'miscFiles'
         ])
@@ -364,8 +364,8 @@ class TravelManagementService{
 
                     ]
                     ],
-                 //'total'        => '₹' . number_format((float) $result->total_claim_amount, 2),
-                 //'status'       => $result->status == 0 ? 'Pending' : 'Approved'
+                 'total'        => '₹' . number_format((float) $this->calculateLtcTotalAmount($result->ltcTravelClaims, $result->ltcMiscellaneousExp, $ltcFoodClaim->food_exp,$ltcFoodClaim->ltc_claim_id), 2),
+                 'status'       => $this->travelApplicationStatus($ltcFoodClaim->status),
             ];
 
         }
@@ -376,37 +376,6 @@ class TravelManagementService{
             'records' =>  $foodClaim
         ]);
         
-
-        // return response()->json(
-        //  $foodClaim
-        // );
-
-        // $totalClaimExpenses = $result->ltcClaims->reduce(function ($carry, $claim) {
-        //     return $carry + 
-        //         (float)($claim->claim_amount ?? 0) + 
-        //         (float)($claim->lunch_exp ?? 0) + 
-        //         (float)($claim->fuel_exp ?? 0) + 
-        //         (float)($claim->toll_charge ?? 0);
-        // }, 0);
-    
-        // $totalMiscellaneousExpenses = 0;
-        // if ($result->ltcMiscellaneousExp) {
-        //     $totalMiscellaneousExpenses = 
-        //         (float)($result->ltcMiscellaneousExp->courier_bill ?? 0) + 
-        //         (float)($result->ltcMiscellaneousExp->xerox_stationary ?? 0) + 
-        //         (float)($result->ltcMiscellaneousExp->office_expense ?? 0) + 
-        //         (float)($result->ltcMiscellaneousExp->monthly_mobile_bills ?? 0);
-        // }
-    
-        // $totalExpense = $totalClaimExpenses + $totalMiscellaneousExpenses;
-
-        // return [
-        //     'result' => $result,
-            // 'total_expense' => $totalExpense,
-            // 'individual_claims' => $totalClaimExpenses,
-            // 'individual_miscellaneous' => $totalMiscellaneousExpenses,
-        // ];
-
     }
 
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
@@ -737,25 +706,23 @@ class TravelManagementService{
 
     // }
 
-    // public function fetchGrade($employeeSlug){
+    public function fetchGrade($employeeSlug){ //movetoservice
       
+        $designation = Employee::with(['designation_department','department'])->where('employee_slug',$employeeSlug)->first();
 
-    //     $designation = Employee::with(['designation_department','department'])->where('employee_slug',$employeeSlug)->first();
-       
+        $department = $designation["department"]->name =='Sales' ? 'Sales' : 'Others';
 
-    //     // $grade = Grade::where('department',$designation["department"]->name)->where('designation',$designation["designation_department"]->designation_name)->select('grade')->first();
+        $grade = Grade::where('department', $department)->where('designation',$designation["designation_department"]->designation_name)->select('grade')->first();
+                
+       return $grade;
+    }
 
-    //     $grade = Grade::where('department',"Sales")->where('designation',"Assistant Manager")->select('grade')->first();
+    public function modeOfTransport($grade){ //movetoservice
+
+       $modeoftravel = LocalConveyance::where('grade',$grade)->select('id','conveyance_type','conveyance')->get();
+       return $modeoftravel;
         
-    //    return $grade;
-    // }
-
-    // public function modeOfTransport($grade){
-
-    //    $modeoftravel = LocalConveyance::where('grade',$grade)->select('id','conveyance_type','conveyance')->get();
-    //    return $modeoftravel;
-        
-    // }
+    }
 
     // public function calculateltcExpense($openingMeter,$closingMeter,$modeOfTransport){
 
@@ -787,10 +754,6 @@ class TravelManagementService{
 
     // }   
     
-    // public function demoVanDetails($employeeSlug){
-    //     return DemoVan::where('state','karnataka')->where('purpose','Demo')->where('used_by','Sales')->get(['vehicles_reg_no']);
-    // }
-
     private function formatTravelEntries($travelClaims,$travelFiles,$ltcClaimId){
         $filteredClaims = $travelClaims->where('ltc_claim_id', $ltcClaimId);
         return $filteredClaims->map(function ($claim) use ($travelFiles) {
@@ -829,8 +792,7 @@ class TravelManagementService{
         })->values()->toArray();
     }
 
-    private function travelApplicationStatus($result,$manager,$hr,$payed_by){
-
+    private function travelApplicationStatus($result,$manager=null,$hr=null,$payed_by=null){
         $status = match ($result) {
             0 => 'Not Yet Reviewed By Manager',
             1 => 'Accepted By Manager ' . (isset($manager) ? $manager : ''),
@@ -844,7 +806,26 @@ class TravelManagementService{
             default => 'Something Wrong',
             };
         return $status;
-    }    
+    }   
+    
+    private function calculateLtcTotalAmount($travelClaims, $miscExpenses,$foodExpenses,$ltcClaimId){
+        $filteredTravelClaims = $travelClaims->where('ltc_claim_id', $ltcClaimId);
+        $filteredMiscClaims = $miscExpenses->where('ltc_claim_id', $ltcClaimId);
+
+        $totalTravelClaimExpenses =   $filteredTravelClaims->reduce(function ($carry, $claim) {
+            return $carry + 
+                (float)($claim->claim_amount ?? 0) + 
+                (float)($claim->toll_charge ?? 0);
+        }, 0);
+    
+        $totalMiscClaimExpenses =    $filteredMiscClaims->reduce(function ($carry, $claim) {
+            return $carry + 
+                (float)($claim->claim_amount ?? 0);
+        }, 0);
+    
+         return $totalTravelClaimExpenses + $totalMiscClaimExpenses + $foodExpenses;
+    }
+
 
 }
 ?>

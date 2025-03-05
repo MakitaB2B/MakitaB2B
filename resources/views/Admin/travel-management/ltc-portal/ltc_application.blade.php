@@ -345,6 +345,53 @@
             $(e.target).closest(".food-wrapper").find(".alert-info").toggle();
         }
 
+        // $.ajax({
+        //     url: "/admin/travelmanagement/ltc-mode-of-transport", // Laravel route
+        //     type: "GET",
+        //     success: function (response) {
+        //         console.log("Success:", response);
+        //     },
+        //     error: function (xhr, status, error) {
+        //         console.error("Error:", error);
+        //     }
+        // });
+
+        // $.ajax({
+        //     url: "/admin/travelmanagement/ltc-demo-van", 
+        //     type: "GET",
+        //     success: function (response) {
+        //         console.log("Success:", response);
+        //     },
+        //     error: function (xhr, status, error) {
+        //         console.error("Error:", error);
+        //     }
+        // });
+
+        // $.ajax({
+        //     url: "/admin/travelmanagement/ending-meter", 
+        //     type: "GET",
+        //     success: function (response) {
+        //         console.log("Success:", response);
+        //     },
+        //     error: function (xhr, status, error) {
+        //         console.error("Error:", error);
+        //     }
+        // });
+
+        $.ajax({
+            url: "/admin/travelmanagement/validate-ltc-form", 
+            type: "GET",
+            success: function (response) {
+                console.log("Success:", response);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            }
+        });
+
+        
+            
+
 
     </script>
 @endpush

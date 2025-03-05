@@ -377,7 +377,6 @@
                     total_per_day: "345"
                 }
 
-                // grandtotal: "1200"
             ];
         });
     </script>
