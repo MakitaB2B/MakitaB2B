@@ -327,7 +327,7 @@ class TravelManagementController extends Controller
 
         $mobileExpense = $this->mobileExpenseService->getMobileExpense($grade);
         $miscType = $this->ltcMiscellaneousExpService->getMiscExp();
-       
+   
         return response()->json([
             'mode_of_transport' => $modeOfTransport,
             'demo_van' =>  $demoVan,
