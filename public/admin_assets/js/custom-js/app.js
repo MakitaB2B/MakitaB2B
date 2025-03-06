@@ -1436,7 +1436,7 @@ ExpenseApp.formSubmission = {
             console.timeEnd('submission');
 
             //window.location.href = "{{ url('/applyviewclaimtravelexpenses') }}"; //"admin/travelmanagement/applyviewclaimtravelexpenses";
-            window.location.href = "{{ url('/applyviewclaimtravelexpenses') }}";
+            //window.location.href = "{{ url('/applyviewclaimtravelexpenses') }}";
             
             showToast(response, 'success');
 

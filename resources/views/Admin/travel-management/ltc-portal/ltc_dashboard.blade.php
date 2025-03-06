@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ asset('admin_assets/css/custom-styles.css') }}">
 @endpush
 <div class="content-wrapper"> 
+    <input type="hidden" name="" id="csrfToken" value="{{ csrf_token() }}">
     <div class="custom-container">
         <div class="common-error">
             <p>Your LTC application is pending for approval. Please wait while your application is reviewed.</p>
@@ -307,7 +308,7 @@
 
             $(document).ready(function () {
                 var appSlug = "{{ Crypt::encrypt($id) }}";  // Get the ID from the div
-                console.log(appSlug);
+                //console.log(appSlug);
 
             // if (appSlug) {
                 $.ajax({
@@ -322,62 +323,33 @@
                         console.error("Error:", error);
                     }
                 });
+
+                const token = $('#csrfToken').val();
+                let formData = ["eyJpdiI6IllneENyQWZYQWtSTEwzTWFETUFyWnc9PSIsInZhbHVlIjoiamd1SGNxaFU2WUhrY081TTFXU1lkT3JRMWVaVG9Zbk9ZZ1ZFeDRIZ3RIMD0iLCJtYWMiOiJiZjI3YzIwYzgyZTczMTY5YzM5YWMyZWQ4ODI4MDMyNjljYmFlMDE2YjBmMTI1YjkwY2U5ZWE4MmI5ZGI3NDQ3IiwidGFnIjoiIn0=",
+                                "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0="
+                ]; 
+
+                $.ajax({
+                    url: "/admin/travelmanagement/submit-ltc-form", // Laravel route
+                    type: "POST",
+                    data: JSON.stringify(formData), //formData ,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    },
+                    success: function (response) {
+                        // console.log("Success:", response);
+                        // $("#applicationData").html(`<p><strong>Application ID:</strong> ${response.id}</p>`);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                    }
+                });
+
             // }
             });
 
-            const expenseData = [{
-                    date: '02-Jan-24',
-                    inTime:"05:00",
-                    outTime:"21:00",
-                    daystat:"leave",
-                    travelEntries:[{
-                        modeOfTransport:"Personal Vehicle",
-                        typeOfTransport:"Bike",
-                        startingMeter:"10003",
-                        closingMeter:"10303",
-                        totalKms:"300",
-                        tollCharges:"100",
-                        fuelCharges:"745",
-                        placesVisited:"Koralur",
-                        files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052},{name: "das.png", type: "application/png", timestamp: 1734171449052}]
-                    },
-                    {
-                        modeOfTransport:"Demo Van",
-                        typeOfTransport:"Bike",
-                        startingMeter:"20003",
-                        closingMeter:"80303",
-                        totalKms:"300",
-                        tollCharges:"100",
-                        fuelCharges:"745",
-                        placesVisited:"Koralur",
-                        files:[{name: "LTC.pdf", type: "application/pdf", timestamp: 1734171449052}]
-                    }],
-                    foodExpense: [{
-                        breakfast:{"amount":"10.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
-                        lunch:{"amount":"100.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]},
-                        dinner:{"amount":"20.00","files":[{name: "das.png", type: "application/png", timestamp: 1734171449052}]}
-                    }],
-                    miscExpense: [{
-                        type:"Courier Bill",
-                        amount:"10.00",
-                        files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
-                    },
-                    {
-                        type:"Xerox & Stationary",
-                        amount:"200.00",
-                        files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
-                    },
-                    {
-                        type:"Office Expense",
-                        amount:"982.00",
-                        files:[{name: "das.png", type: "application/png", timestamp: 1734171449052}]
-                    }],
-                 
-                    status: 'Pending',
-                    total_per_day: "345"
-                }
-
-            ];
         });
     </script>
 @endpush

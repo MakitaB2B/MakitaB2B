@@ -22,10 +22,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Admin\MobileExpense;
-
 use App\Models\Admin\LtcFiles;
 use Exception;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 
 class TravelManagementService{
@@ -366,6 +366,7 @@ class TravelManagementService{
                     ],
                  'total'        => '₹' . number_format((float) $this->calculateLtcTotalAmount($result->ltcTravelClaims, $result->ltcMiscellaneousExp, $ltcFoodClaim->food_exp,$ltcFoodClaim->ltc_claim_id), 2),
                  'status'       => $this->travelApplicationStatus($ltcFoodClaim->status),
+                 'slug' => Crypt::encrypt($ltcFoodClaim->ltc_claim_id)
             ];
 
         }
@@ -373,7 +374,8 @@ class TravelManagementService{
         return response()->json([
             'overall_status' => $this->travelApplicationStatus($result->status,$result->manager_approved_by,$result->hr_approved_by,$result->payment_by),
             'total_claim_amount' => '₹' . number_format((float) $result->total_claim_amount, 2),
-            'records' =>  $foodClaim
+            'records' =>  $foodClaim,
+            'message' =>$result->message
         ]);
         
     }
@@ -381,7 +383,6 @@ class TravelManagementService{
     public function createLtcClaim($request,$employeeSlug,$ltc_id,$status){
 
         try {
-              
             DB::transaction(function () use ($request,$employeeSlug,$ltc_id,$status) {
 
                 $teamDetails = TeamMembers::WHERE('team_member','=',$employeeSlug)->get(['team_owner']);
@@ -399,13 +400,21 @@ class TravelManagementService{
                 $month = $date->month;
                 $year = $date->year;
                 //  dump(  $timeInfo,$foodExpense,$travelEntries,    $miscExpenses);
-
                 $total_claim_amount =  (float) $foodExpense["breakfast"]["amount"] +
                 array_sum(array_column($travelEntries, "fuelCharges")) +
                 array_sum(array_column($travelEntries, "tollCharges")) +
                 array_sum(array_column($miscExpenses, "amount"));
-                //expections to be added
-                //claim already submitted/ claim can be done for 2 months
+              
+                $currentMonth = Carbon::now()->month;
+                $twoMonthsBack = Carbon::now()->subMonths(2)->month;
+                $formattedDate = Carbon::createFromFormat('d-M-Y', $timeInfo["date"])->format('Y-m-d');
+                $ltc_record = LtcFoodClaim::whereDate("ltc_date", $formattedDate)->first();
+              
+                if ($month < $twoMonthsBack || $month > $currentMonth || $ltc_record) {
+                    throw new \Exception('The provided date is outside the allowed range (current month and last 2 months) or Ltc Application already exist.');
+                    return false;
+                }
+
                 $ltcClaimApp = LtcClaimApplication::where('ltc_month',$month)->where('ltc_year', $year)->where('employee_slug',$employeeSlug)->where('status',0)->first();
     
                 if(empty($ltcClaimApp)){   //if($ltcClaimApp->isEmpty()){
@@ -433,7 +442,6 @@ class TravelManagementService{
                 $ltcClaimapp = LtcClaimApplication::where('ltc_month',$month)->where('ltc_year', $year)->where('employee_slug',$employeeSlug)->where('status',0)->first();
                    
                 }
-
 
                 $ltcFoodClaim = new LtcFoodClaim([
                     'ltc_food_claims_slug' => Str::slug(rand().rand()),
@@ -555,14 +563,15 @@ class TravelManagementService{
 
                 LtcMiscellaneousExp::insert($ltcMiscData);
                 LtcFiles::insert($FilesData);
+              
             });
-
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
-            return false;
+            return $e->getMessage();
+            //return false;
         }
-       
+  
     }
 
     // public function checkLTCManagerApprovalStatus($ltcAppSlug){
@@ -724,6 +733,18 @@ class TravelManagementService{
         
     }
 
+    public function submitLtcApplication($decryptedData){
+
+        DB::transaction(function () use ( $decryptedData) {
+            LtcTravelClaim::whereIn('ltc_claim_id', $decryptedData)->update(['status' => 1]);
+            LtcFoodClaim::whereIn('ltc_claim_id', $decryptedData)->update(['status' => 1]);
+            LtcMiscellaneousExp::whereIn('ltc_claim_id', $decryptedData)->update(['status' => 1]);
+            LtcFiles::whereIn('ltc_claim_id', $decryptedData)->update(['status' => 1]);
+        });
+       return true;
+
+    }
+
     // public function calculateltcExpense($openingMeter,$closingMeter,$modeOfTransport){
 
     //     $totalKm = $closingMeter - $openingMeter;
@@ -794,15 +815,16 @@ class TravelManagementService{
 
     private function travelApplicationStatus($result,$manager=null,$hr=null,$payed_by=null){
         $status = match ($result) {
-            0 => 'Not Yet Reviewed By Manager',
-            1 => 'Accepted By Manager ' . (isset($manager) ? $manager : ''),
-            2 => 'Rejected By Manager',
-            3 => 'Amount Paid By ' . (isset($payed_by) ? $payed_by : ''),
-            4 => 'Approved By HR '. (isset($hr) ? $hr : ''),
-            5 => 'Rejected By HR',
-            // 6 => 'Case Clear By Accounts',
-            // 7 => 'Case Closed',
-            8 => 'Rejected By Accounts',
+            0 => 'Application Not Submitted',
+            1 => 'Not Yet Reviewed By Manager' ,
+            2 => 'Accepted By Manager'.(isset($manager) ? $manager : ''),
+            3 => 'Rejected By Manager',
+            4 => 'Amount Paid By'.(isset($payed_by) ? $payed_by : ''),
+            5 => 'Approved By HR '.(isset($hr) ? $hr : ''),
+            6 => 'Rejected By HR',
+            // 7 => 'Case Clear By Accounts',
+            // 8 => 'Case Closed',
+            9=>'Rejected By Accounts',
             default => 'Something Wrong',
             };
         return $status;

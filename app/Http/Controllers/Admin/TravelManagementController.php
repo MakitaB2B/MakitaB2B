@@ -179,11 +179,11 @@ class TravelManagementController extends Controller
         $status=0;
         $createUpdateAction=$this->travelManagementService->createLtcClaim($request,$employeeSlug,$ltc_id,$status);
 
-        $msg = $createUpdateAction ? 'Yes! You Have Sucessfully Applied for LTC Please click on Edit to view all applications for the month' : 'Error! LTC Application Not Executed';
+        $msg = $createUpdateAction==true? 'Yes! You Have Sucessfully Applied for LTC Please click on Edit to view all applications for the month' : $createUpdateAction;
         
-       // $request->session()->flash('message',$msg);
+       //$request->session()->flash('message',$msg);
 
-       return  $msg;// return redirect('admin/travelmanagement/applyviewclaimtravelexpenses');
+       return  $msg; //return redirect('admin/travelmanagement/applyviewclaimtravelexpenses');    
       
     }
 
@@ -336,6 +336,22 @@ class TravelManagementController extends Controller
             'misc_types'=>$miscType
         ]);
 
+    }
+
+    public function submitLtcForm(Request $request){
+        $data = ["eyJpdiI6IllneENyQWZYQWtSTEwzTWFETUFyWnc9PSIsInZhbHVlIjoiamd1SGNxaFU2WUhrY081TTFXU1lkT3JRMWVaVG9Zbk9ZZ1ZFeDRIZ3RIMD0iLCJtYWMiOiJiZjI3YzIwYzgyZTczMTY5YzM5YWMyZWQ4ODI4MDMyNjljYmFlMDE2YjBmMTI1YjkwY2U5ZWE4MmI5ZGI3NDQ3IiwidGFnIjoiIn0=",
+                  "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0="
+                ];
+
+        $decryptedData = array_map(function ($item) {
+                    return Crypt::decrypt($item);
+        }, $data);
+
+        $this->travelManagementService->submitLtcApplication($decryptedData);
+
+        return response()->json([
+            'message' => "Success",
+        ]);
     }
 
     // public function ltcApplicationDetailsUpdate(Request $request){

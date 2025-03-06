@@ -29,14 +29,15 @@ return new class extends Migration
             // $table->string('ltc_claim_applications_slug',50)->nullable()->change();
             // $table->string('ltc_claim_id')->after('claim_amount')->index();
             // $table->string('claim_date')->after('ltc_claim_id');
-            // $table->tinyInteger('status')
-            //     ->default(0)
-            //     ->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 - Case closed, 8 - Rejected By Account')
-            //     ->after('claim_amount');
+            
+            $table->tinyInteger('status')
+                ->default(0)
+                ->comment('0 - Not Submitted, 1 - Not Review, 2 - Approved By Manager, 3 - Rejected By Manager, 4 - Amount Paid, 5 - Approved By HR, 6 - Rejected By HR, 7 - Case clear By Accounts, 8 - Case closed,9 - Rejected By Account')
+                ->after('claim_amount')->change();
 
 
 
-            $table->string('misc_type',300)->change();
+            //$table->string('misc_type',300)->change();
 
 
 

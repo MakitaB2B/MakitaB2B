@@ -18,7 +18,7 @@ return new class extends Migration
             // $table->tinyInteger('ltc_month')->unsigned()->check('ltc_month >= 1 AND ltc_month <= 12');
             // $table->smallInteger('ltc_year');
             // $table->unsignedDecimal('total_claim_amount', 21, 4)->after('ltc_year')->change();
-            // $table->tinyInteger('status')->default(0)->comment('0 - Not Review, 1 - Approved By Manager, 2 - Rejected By Manager, 3 - Amount Paid, 4 - Approved By HR, 5 - Rejected By HR, 6 - Case clear By Accounts, 7 -  Case closed , 8 - Rejected By Account')->change();
+             $table->tinyInteger('status')->default(0)->comment('0 - Not Submitted, 1 - Not Review, 2 - Approved By Manager, 3 - Rejected By Manager, 4 - Amount Paid, 5 - Approved By HR, 6 - Rejected By HR, 7 - Case clear By Accounts, 8 - Case closed,9 - Rejected By Account')->change();
             // $table->string('manager_slug',50);
             // $table->string('manager_approved_by')->nullable();
             // $table->string('hr_approved_by')->nullable();
@@ -30,8 +30,9 @@ return new class extends Migration
             // if (!Schema::hasColumn('ltc_claim_applications', 'status')) {
             //     $table->enum('status', [0, 1, 2,3 ,4 , 5, 6,7,8,9])->default(0)->after('payment_by');
             // }
-          
 
+           // $table->longText('message')->nullable()->after('payment_by')->comment('Additional comments or messages');
+            
 //---------------------------------------
             // $table->string('ltc_claim_id')->index();
             // $table->string('operated_by')->nullable();
