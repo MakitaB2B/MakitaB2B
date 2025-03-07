@@ -206,29 +206,18 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
     //     return view('Admin/business_travel_list1');
     // })->name('travelmanagement.applyviewclaimtravelexpenses');
 
-    Route::get('/travelmanagement/applyviewclaimtravelexpenses',[TravelManagementController::class,'getAllBTAppliedByLoggedInEmployee']);
+    
+    Route::get('/travelmanagement/ltc-application-details-manager/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsPage'])->name('travelmanagement.ltc-application-details');
+    //Route::post('/travelmanagement/ltc-application-details/change-status', [TravelManagementController::class, 'ltcApplicationStatus'])->name('travelmanagement.ltc-application-status');
 
-    Route::post('/travelmanagement/create-travel-management-applications',[TravelManagementController::class,'createTravelMangmentApplication'])->name('travelmanagement.create-travel-management-applications');
-    Route::post('/travelmanagement/create-ltc-claim-application',[TravelManagementController::class,'createLtcClaimApplication'])->name('travelmanagement.create-ltc-claim-application');
-    Route::get('/travelmanagement/ltc-request-managers',[TravelManagementController::class,'ltcRequestManagers'])->name('travelmanagement.ltc-request-managers');
-    Route::get('/travelmanagement/ltc-application-details-manager/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetails'])->name('travelmanagement.ltc-application-details');
-    Route::post('/travelmanagement/ltc-application-details/change-status', [TravelManagementController::class, 'ltcApplicationStatus'])->name('travelmanagement.ltc-application-status');
-
-    Route::get('/travelmanagement/ltc-request-hr',[TravelManagementController::class,'ltcRequestHr'])->name('travelmanagement.ltc-request-hr');
-    Route::get('/travelmanagement/ltc-application-details-hr/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsHr'])->name('travelmanagement.ltc-application-details-hr');
-    Route::get('/travelmanagement/ltc-request-accounts',[TravelManagementController::class,'ltcRequestAccounts'])->name('travelmanagement.ltc-request-accounts');
-    Route::get('/travelmanagement/ltc-application-details-account/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsAccount'])->name('travelmanagement.ltc-application-details-data');
-    Route::post('/travelmanagement/ltc-application-details/payment-status',[TravelManagementController::class, 'ltcApplicationPaymentStatus'])->name('travelmanagement.ltc-application-paymentstatus');
-    Route::get('/travelmanagement/ltc-application-details',[TravelManagementController::class,'ltcApplicationDetailsEdit'])->name('travelmanagement.ltc-application-details-edit');
-    Route::get('/travelmanagement/ltc-application-detail/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsEditPage'])->name('travelmanagement.ltc-application-details-edit-page');
-    Route::post('/travelmanagement/ltc-application-details/update', [TravelManagementController::class,'ltcApplicationDetailsUpdate'])->name('travelmanagement.ltc-application-details-update');
-    Route::post('/travelmanagement/ltc-application-details/calculate-expenses', [TravelManagementController::class, 'calculateExpenses'])->name('travelmanagement.calculate-expenses');
-    Route::get('/travelmanagement/validate-ltc-form', [TravelManagementController::class,'validateLtcForm'])->name('travelmanagement.validate-ltc-form');
-    Route::post('/travelmanagement/submit-ltc-form', [TravelManagementController::class,'submitLtcForm'])->name('travelmanagement.submit-ltc-form');
-
-    // Route::get('/travelmanagement/ltc-demo-van', [TravelManagementController::class,'ltcDemoVanNo'])->name('travelmanagement.ltc-demovan');
-    // Route::get('/travelmanagement/ltc-mode-of-transport', [TravelManagementController::class,'ltcModeOfTransport'])->name('travelmanagement.ltc-mode-of-transport');
-    // Route::get('/travelmanagement/ending-meter', [TravelManagementController::class,'endingMeter'])->name('travelmanagement.ending-meter');
+    //Route::get('/travelmanagement/ltc-request-hr',[TravelManagementController::class,'ltcRequestHr'])->name('travelmanagement.ltc-request-hr');
+    // Route::get('/travelmanagement/ltc-application-details-hr/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsHr'])->name('travelmanagement.ltc-application-details-hr');
+    // Route::get('/travelmanagement/ltc-request-accounts',[TravelManagementController::class,'ltcRequestAccounts'])->name('travelmanagement.ltc-request-accounts');
+    //Route::get('/travelmanagement/ltc-application-details-account/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsAccount'])->name('travelmanagement.ltc-application-details-data');
+    //Route::post('/travelmanagement/ltc-application-details/payment-status',[TravelManagementController::class, 'ltcApplicationPaymentStatus'])->name('travelmanagement.ltc-application-paymentstatus');
+    // Route::post('/travelmanagement/ltc-application-details/update', [TravelManagementController::class,'ltcApplicationDetailsUpdate'])->name('travelmanagement.ltc-application-details-update');
+    // Route::post('/travelmanagement/ltc-application-details/calculate-expenses', [TravelManagementController::class, 'calculateExpenses'])->name('travelmanagement.calculate-expenses');
+    
 
 
     //-----------------
@@ -277,22 +266,30 @@ Route::group(['prefix' => 'admin','middleware' => ['admin']], function() {
  
     Route::get('/roi', function () {  return view('Admin/roi');  });
 
+    Route::get('/travelmanagement/ltc-request-managers',[TravelManagementController::class,'ltcRequestManagers'])->name('travelmanagement.ltc-request-managers');
+    Route::get('/travelmanagement/ltc-application-details',[TravelManagementController::class,'ltcApplicationDetailsEdit'])->name('travelmanagement.ltc-application-details-edit');
+    Route::get('/travelmanagement/ltc-application-details-manager',[TravelManagementController::class,'ltcApplicationDetails'])->name('travelmanagement.ltc-application-details-manager');
+    Route::post('/travelmanagement/create-travel-management-applications',[TravelManagementController::class,'createTravelMangmentApplication'])->name('travelmanagement.create-travel-management-applications');
+    Route::post('/travelmanagement/create-ltc-claim-application',[TravelManagementController::class,'createLtcClaimApplication'])->name('travelmanagement.create-ltc-claim-application');
     Route::get('/travelmanagement/ltc-application-form', [TravelManagementController::class, 'ltc_application_form'])->name('travelmanagement.ltc-application-form');
+    Route::get('/travelmanagement/applyviewclaimtravelexpenses',[TravelManagementController::class,'getAllBTAppliedByLoggedInEmployee']);
+    Route::get('/travelmanagement/ltc-application-detail/{ltcappslug}',[TravelManagementController::class,'ltcApplicationDetailsEditPage'])->name('travelmanagement.ltc-application-details-edit-page');
+    Route::get('/travelmanagement/validate-ltc-form', [TravelManagementController::class,'validateLtcForm'])->name('travelmanagement.validate-ltc-form');
+    Route::post('/travelmanagement/submit-ltc-form', [TravelManagementController::class,'submitLtcForm'])->name('travelmanagement.submit-ltc-form');
+
     // Admin Travel Portal Routes
-  
-    Route::view('/travelmanagement/ltc-dashboard', 'Admin.travel-management.ltc-portal.ltc_dashboard')
-    ->name('travelmanagement.ltc-dashboard');
+
+    // Route::view('/travelmanagement/ltc-dashboard', 'Admin.travel-management.ltc-portal.ltc_dashboard')
+    // ->name('travelmanagement.ltc-dashboard');
     Route::view('/travelmanagement/ltc-details', 'Admin.travel-management.ltc-portal.ltc-details')
     ->name('travelmanagement.ltc-details');
-    Route::view('/travelmanagement/btc-application-form', 'Admin.travel-management.btc-portal.btc_application')
-    ->name('travelmanagement.btc-application-form');
-    Route::view('/travelmanagement/btc-listing', 'Admin.travel-management.btc-portal.btc_listing')
-    ->name('travelmanagement.btc-listing');
-    Route::view('/travelmanagement/btc-details', 'Admin.travel-management.btc-portal.btc_details')
-    ->name('travelmanagement.btc-details');
+    // Route::view('/travelmanagement/btc-application-form', 'Admin.travel-management.btc-portal.btc_application')
+    // ->name('travelmanagement.btc-application-form');
+    // Route::view('/travelmanagement/btc-listing', 'Admin.travel-management.btc-portal.btc_listing')
+    // ->name('travelmanagement.btc-listing');
+    // Route::view('/travelmanagement/btc-details', 'Admin.travel-management.btc-portal.btc_details')
+    // ->name('travelmanagement.btc-details');
     
-
-
 
     });
 

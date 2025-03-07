@@ -187,12 +187,13 @@ class TravelManagementController extends Controller
       
     }
 
-    // public function ltcRequestManagers(){
-    //     $page ='manager';
-    //     $result=$this->travelManagementService->getAllLTCRequestsForMangers();
+    public function ltcRequestManagers(){
+        $page ='manager';
+        $result=$this->travelManagementService->getAllLTCRequestsForMangers();
 
-    //     return view('Admin.ltc_trips_requests_mangers',compact('result','page'));
-    // }
+        return view('Admin.travel-management.ltc-portal.ltc_trips_requests_mangers',compact('result','page')); 
+
+    }
 
     // public function ltcRequestHr(){
     //     $page='hr';
@@ -207,22 +208,27 @@ class TravelManagementController extends Controller
 
     //     return view('Admin.ltc_trips_requests_mangers',compact('result','page')); 
     // }
+    
+    public function ltcApplicationDetailsPage($id,Request $request){
 
-    // public function ltcApplicationDetails($id,Request $request){
+        $ltcappslug = Crypt::decrypt($id);
+       // $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
+        $page = 'manager';
+        return view('Admin.travel-management.ltc-portal.ltc_dashboard_managers', [  
+            //'result' => $result['result'],
+            'page' => $page,
+            'id' =>  $ltcappslug,
+        ]);
 
-    //     $ltcappslug = Crypt::decrypt($id);
-    //     dd( $ltcappslug );
-    //     $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
-    //     $page = 'manager';
+    }  
 
-    //     // return view('Admin.ltc_application_details',['result' => $result['result'],'total_expense' => $result['total_expense']);
-    //     return view('Admin.ltc_application_details', [
-    //         'result' => $result['result'],
-    //         'page' => $page
-    //         // 'total_expense' => $result['total_expense']
-    //     ]);
-
-    // }  
+    public function ltcApplicationDetails(Request $request){
+        $id=$request->input("id");
+        dd($id);
+        $ltcappslug = Crypt::decrypt($id);
+        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
+        return $result;
+    }
     
     // public function ltcApplicationDetailsHr($id,Request $request){
     
@@ -291,56 +297,34 @@ class TravelManagementController extends Controller
       
     }
 
-    // public function ltcModeOfTransport(){
-    //    // $employeeSlug=Auth::guard('admin')->user()->employee_slug;
-    //     $grade = $this->travelManagementService->fetchGrade($employeeSlug)->grade;
-    //     $modeOfTransport = $this->travelManagementService->modeOfTransport($grade);
-    //     return $modeOfTransport;
-    // }
-
-    // public function ltcDemoVanNo(){
-
-    //    // $employeeSlug=Auth::guard('admin')->user()->employee_slug;
-    //     $employeeDetails = $this->employeeService->findEmployeeBySlug($employeeSlug);
-    //     $findState = $this->stateService->findStateById($employeeDetails[0]->posting_state);
-    //     $demoVan = $this->demoVanService->demoVanDetails($findState[0]->name);
-    //    return $demoVan;
-    // }
-
-    // public function endingMeter(){
-    //    // $employeeSlug=Auth::guard('admin')->user()->employee_slug;
-    //     $ending_meter=$this->ltcTravelClaimService->getEndingMeter($employeeSlug);
-    //    return ["closing_meter"=>$ending_meter];
-    // }
-
-    public function validateLtcForm(){
-        $employeeSlug=Auth::guard('admin')->user()->employee_slug;
+      public function validateLtcForm() {
+        $employeeSlug = Auth::guard('admin')->user()->employee_slug;
 
         $grade = $this->travelManagementService->fetchGrade($employeeSlug)->grade;
-        $modeOfTransport = $this->travelManagementService->modeOfTransport($grade);
+        $modeOfTransport = $this->travelManagementService->modeOfTransport($grade)->toArray();
+
+        $transportTypes = $this->formatTransportTypes($modeOfTransport);
 
         $employeeDetails = $this->employeeService->findEmployeeBySlug($employeeSlug);
         $findState = $this->stateService->findStateById($employeeDetails[0]->posting_state);
         $demoVan = $this->demoVanService->demoVanDetails($findState[0]->name);
-
-        $ending_meter=$this->ltcTravelClaimService->getEndingMeter($employeeSlug);
-
+        $ending_meter = $this->ltcTravelClaimService->getEndingMeter($employeeSlug);
         $mobileExpense = $this->mobileExpenseService->getMobileExpense($grade);
         $miscType = $this->ltcMiscellaneousExpService->getMiscExp();
-   
+
         return response()->json([
-            'mode_of_transport' => $modeOfTransport,
-            'demo_van' =>  $demoVan,
+            'transportTypes' => $transportTypes,
+            'demo_van' => $demoVan,
             'closing_meter' => $ending_meter,
             'mobile_expense' => $mobileExpense,
-            'misc_types'=>$miscType
+            'misc_types' => $miscType
         ]);
-
     }
 
     public function submitLtcForm(Request $request){
         $data = ["eyJpdiI6IllneENyQWZYQWtSTEwzTWFETUFyWnc9PSIsInZhbHVlIjoiamd1SGNxaFU2WUhrY081TTFXU1lkT3JRMWVaVG9Zbk9ZZ1ZFeDRIZ3RIMD0iLCJtYWMiOiJiZjI3YzIwYzgyZTczMTY5YzM5YWMyZWQ4ODI4MDMyNjljYmFlMDE2YjBmMTI1YjkwY2U5ZWE4MmI5ZGI3NDQ3IiwidGFnIjoiIn0=",
-                  "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0="
+                  "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0=",
+                  "eyJpdiI6ImRUdENMWU9PVWlBai95OXRHM0dkSlE9PSIsInZhbHVlIjoieERRVXJ2MHprV1JVamg0Vy9DM2gyT3J5WXBvRXQxejk4R1paRi8wV25XRT0iLCJtYWMiOiJmMjI1Zjc4MTk0ODE5M2MwOWJkZTNmNGNjNDdmNTVmZTk0ZDc4ZTZkZjdlNjdkMDNmM2RiNjhlMzA5NWVkMDIwIiwidGFnIjoiIn0="
                 ];
 
         $decryptedData = array_map(function ($item) {
@@ -352,6 +336,17 @@ class TravelManagementController extends Controller
         return response()->json([
             'message' => "Success",
         ]);
+    }
+
+    private function formatTransportTypes($modeOfTransport) {
+  
+        return collect($modeOfTransport)
+            ->groupBy(fn($item) => $item['conveyance_type']) 
+            ->map(fn($group) => $group->map(fn($item) => [
+                'value' => $item['conveyance'],
+                'text' => $item['conveyance']
+            ])->toArray())
+            ->toArray();
     }
 
     // public function ltcApplicationDetailsUpdate(Request $request){

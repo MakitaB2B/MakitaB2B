@@ -695,16 +695,17 @@
                                         @foreach ($result as $key => $list)
                                         @php
                                         $status = match ($list["status"]) {
-                                        0 => 'Not Yet Reviewed By Manager',
-                                        1 => 'Accepted By Manager & In Review for HR',
-                                        2 => 'Rejected By Manager',
-                                        3 => 'Amount Paid',
-                                        4 => 'Approved By HR & In Review for Accounts',
-                                        5 => 'Rejected By HR',
-                                        6 => 'Case Clear By Accounts',
-                                        7 => 'Case Closed',
-                                        8 => 'Rejected By Accounts',
-                                        default => 'Something Wrong',
+                                            0 => 'Application Not Submitted',
+                                            1 => 'Not Yet Reviewed By Manager' ,
+                                            2 => 'Accepted By Manager'.(isset($manager) ? $manager : ''),
+                                            3 => 'Rejected By Manager',
+                                            4 => 'Amount Paid By'.(isset($payed_by) ? $payed_by : ''),
+                                            5 => 'Approved By HR '.(isset($hr) ? $hr : ''),
+                                            6 => 'Rejected By HR',
+                                            // 7 => 'Case Clear By Accounts',
+                                            // 8 => 'Case Closed',
+                                            9=>'Rejected By Accounts',
+                                            default => 'Something Wrong',
                                         };
                                     
                                         $startDate = $list["start_date"];

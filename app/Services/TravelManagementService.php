@@ -293,14 +293,15 @@ class TravelManagementService{
     
     // }    
 
-    // public function getAllLTCRequestsForMangers(){
-    //     $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
-    //     return LtcClaimApplication::with(['employee:employee_slug,full_name'])
-    //     ->select('ltc_claim_id','ltc_claim_applications_slug', 'employee_slug','total_claim_amount','payed_amount','ltc_month', 'ltc_year', 'status')
-    //     ->where('manager_slug', '=', $loginUserSlug)->whereIn('status',[0,1,2])
-    //     ->orderByRaw("FIELD(status, 0, 2, 1)")
-    //     ->get();
-    // }
+    public function getAllLTCRequestsForMangers(){
+        $loginUserSlug=Auth::guard('admin')->user()->employee_slug;
+        // dd($loginUserSlug);
+        return LtcClaimApplication::with(['employee:employee_slug,full_name'])
+        ->select('ltc_claim_applications_slug', 'employee_slug','total_claim_amount','payed_amount','ltc_month', 'ltc_year', 'status')
+        ->where('manager_slug', '=', $loginUserSlug)->whereIn('status',[0,1,2])
+        ->orderByRaw("FIELD(status, 1, 2, 3)")
+        ->get();
+    }
 
     // public function getAllLTCRequestsForHr(){
 
@@ -408,7 +409,7 @@ class TravelManagementService{
                 $currentMonth = Carbon::now()->month;
                 $twoMonthsBack = Carbon::now()->subMonths(2)->month;
                 $formattedDate = Carbon::createFromFormat('d-M-Y', $timeInfo["date"])->format('Y-m-d');
-                $ltc_record = LtcFoodClaim::whereDate("ltc_date", $formattedDate)->first();
+                $ltc_record = LtcFoodClaim::whereDate("ltc_date", $formattedDate)->where('employee_slug',$employeeSlug)->first();
               
                 if ($month < $twoMonthsBack || $month > $currentMonth || $ltc_record) {
                     throw new \Exception('The provided date is outside the allowed range (current month and last 2 months) or Ltc Application already exist.');
@@ -416,7 +417,6 @@ class TravelManagementService{
                 }
 
                 $ltcClaimApp = LtcClaimApplication::where('ltc_month',$month)->where('ltc_year', $year)->where('employee_slug',$employeeSlug)->where('status',0)->first();
-    
                 if(empty($ltcClaimApp)){   //if($ltcClaimApp->isEmpty()){
                 $ltcClaimapp = new LtcClaimApplication([
                 'ltc_claim_applications_slug' =>  $ltcappslug,
