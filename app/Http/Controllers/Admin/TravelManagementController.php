@@ -179,7 +179,7 @@ class TravelManagementController extends Controller
         $status=0;
         $createUpdateAction=$this->travelManagementService->createLtcClaim($request,$employeeSlug,$ltc_id,$status);
 
-        $msg = $createUpdateAction==true? 'Yes! You Have Sucessfully Applied for LTC Please click on Edit to view all applications for the month' : $createUpdateAction;
+        $msg = $createUpdateAction===true? 'Yes! You Have Sucessfully Applied for LTC Please click on Edit to view all applications for the month' : $createUpdateAction;
         
        //$request->session()->flash('message',$msg);
 
