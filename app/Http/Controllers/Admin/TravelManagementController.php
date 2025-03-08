@@ -190,17 +190,15 @@ class TravelManagementController extends Controller
     public function ltcRequestManagers(){
         $page ='manager';
         $result=$this->travelManagementService->getAllLTCRequestsForMangers();
-
         return view('Admin.travel-management.ltc-portal.ltc_trips_requests_mangers',compact('result','page')); 
 
     }
 
-    // public function ltcRequestHr(){
-    //     $page='hr';
-    //     $result=$this->travelManagementService->getAllLTCRequestsForHr();
-
-    //     return view('Admin.ltc_trips_requests_mangers',compact('result','page'));
-    // }
+    public function ltcRequestHr(){
+        $page='hr';
+        $result=$this->travelManagementService->getAllLTCRequestsForHr();
+        return view('Admin.travel-management.ltc-portal.ltc_trips_requests_mangers',compact('result','page'));
+    }
 
     // public function ltcRequestAccounts(){
     //     $page='account';
@@ -224,10 +222,34 @@ class TravelManagementController extends Controller
 
     public function ltcApplicationDetails(Request $request){
         $id=$request->input("id");
-        dd($id);
         $ltcappslug = Crypt::decrypt($id);
-        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
+        $page=$request->input("page");
+        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug,$page);
         return $result;
+    }
+
+    public function updateStatusLtcForm(Request $request){
+            
+        $status = [
+            "status" => 2,
+            // "slug" => [
+            //     0 => "eyJpdiI6IllneENyQWZYQWtSTEwzTWFETUFyWnc9PSIsInZhbHVlIjoiamd1SGNxaFU2WUhrY081TTFXU1lkT3JRMWVaVG9Zbk9ZZ1ZFeDRIZ3RIMD0iLCJtYWMiOiJiZjI3YzIwYzgyZTczMTY5YzM5YWMyZWQ4ODI4MDMyNjljYmFlMDE2YjBmMTI1YjkwY2U5ZWE4MmI5ZGI3NDQ3IiwidGFnIjoiIn0=",
+            //     1 => "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0="
+            // ],
+            "slug" => "eyJpdiI6IkE3c1EzeXVPNGN2ZjdxOGRNZzRsRlE9PSIsInZhbHVlIjoiOHZBd211TFZxRFVYQVRHckNCdXNHOFZqbTV3RFhnR2xsY0ltZG43bXNxWT0iLCJtYWMiOiI0ODg1NzIyODgyMDYzMWJmNzc5NjEzOWM1ZGViNDA4ZWQ5MjZhNjJhM2QxNTI5MjNjOGRlZTBjNzBiM2IwM2ZiIiwidGFnIjoiIn0=",
+            "page" =>  "manager"
+        ];
+
+        // $decryptedData = array_map(function ($item) {
+        //             return Crypt::decrypt($item);
+        // },  $status["slug"]);
+
+        $slug = Crypt::decrypt($status["slug"]);
+
+        $this->travelManagementService->updateStatusLtcForm($slug,$status["page"],$status["status"]);
+
+        return ["message"=>"success"];
+        
     }
     
     // public function ltcApplicationDetailsHr($id,Request $request){
@@ -283,21 +305,11 @@ class TravelManagementController extends Controller
     public function ltcApplicationDetailsEdit(Request $request){
         $id=$request->input("id");
         $ltcappslug = Crypt::decrypt($id);
-        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
-
+        $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug,$page=null);
         return $result;
-        // dd(  $result);
-
-
-        // return view('Admin.travel-management.ltc-portal.ltc_dashboard', [   
-        //     'result' => $result['result']
-        // ]);
-
-        //'Admin.edit_ltc_application_details'
-      
     }
 
-      public function validateLtcForm() {
+    public function validateLtcForm() {
         $employeeSlug = Auth::guard('admin')->user()->employee_slug;
 
         $grade = $this->travelManagementService->fetchGrade($employeeSlug)->grade;
@@ -322,16 +334,20 @@ class TravelManagementController extends Controller
     }
 
     public function submitLtcForm(Request $request){
-        $data = ["eyJpdiI6IllneENyQWZYQWtSTEwzTWFETUFyWnc9PSIsInZhbHVlIjoiamd1SGNxaFU2WUhrY081TTFXU1lkT3JRMWVaVG9Zbk9ZZ1ZFeDRIZ3RIMD0iLCJtYWMiOiJiZjI3YzIwYzgyZTczMTY5YzM5YWMyZWQ4ODI4MDMyNjljYmFlMDE2YjBmMTI1YjkwY2U5ZWE4MmI5ZGI3NDQ3IiwidGFnIjoiIn0=",
-                  "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0=",
-                  "eyJpdiI6ImRUdENMWU9PVWlBai95OXRHM0dkSlE9PSIsInZhbHVlIjoieERRVXJ2MHprV1JVamg0Vy9DM2gyT3J5WXBvRXQxejk4R1paRi8wV25XRT0iLCJtYWMiOiJmMjI1Zjc4MTk0ODE5M2MwOWJkZTNmNGNjNDdmNTVmZTk0ZDc4ZTZkZjdlNjdkMDNmM2RiNjhlMzA5NWVkMDIwIiwidGFnIjoiIn0="
-                ];
+        // $data = ["eyJpdiI6IllneENyQWZYQWtSTEwzTWFETUFyWnc9PSIsInZhbHVlIjoiamd1SGNxaFU2WUhrY081TTFXU1lkT3JRMWVaVG9Zbk9ZZ1ZFeDRIZ3RIMD0iLCJtYWMiOiJiZjI3YzIwYzgyZTczMTY5YzM5YWMyZWQ4ODI4MDMyNjljYmFlMDE2YjBmMTI1YjkwY2U5ZWE4MmI5ZGI3NDQ3IiwidGFnIjoiIn0=",
+        //           "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0=",
+        //           "eyJpdiI6ImRUdENMWU9PVWlBai95OXRHM0dkSlE9PSIsInZhbHVlIjoieERRVXJ2MHprV1JVamg0Vy9DM2gyT3J5WXBvRXQxejk4R1paRi8wV25XRT0iLCJtYWMiOiJmMjI1Zjc4MTk0ODE5M2MwOWJkZTNmNGNjNDdmNTVmZTk0ZDc4ZTZkZjdlNjdkMDNmM2RiNjhlMzA5NWVkMDIwIiwidGFnIjoiIn0="
+        //         ];
 
-        $decryptedData = array_map(function ($item) {
-                    return Crypt::decrypt($item);
-        }, $data);
+        $ltcAppSlug =   "eyJpdiI6IkE3c1EzeXVPNGN2ZjdxOGRNZzRsRlE9PSIsInZhbHVlIjoiOHZBd211TFZxRFVYQVRHckNCdXNHOFZqbTV3RFhnR2xsY0ltZG43bXNxWT0iLCJtYWMiOiI0ODg1NzIyODgyMDYzMWJmNzc5NjEzOWM1ZGViNDA4ZWQ5MjZhNjJhM2QxNTI5MjNjOGRlZTBjNzBiM2IwM2ZiIiwidGFnIjoiIn0=";
 
-        $this->travelManagementService->submitLtcApplication($decryptedData);
+        // $decryptedData = array_map(function ($item) {
+        //             return Crypt::decrypt($item);
+        // }, $data);
+
+        $ltcAppSlug = Crypt::decrypt($ltcAppSlug);
+
+        $this->travelManagementService->submitLtcApplication($ltcAppSlug);
 
         return response()->json([
             'message' => "Success",

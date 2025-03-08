@@ -298,20 +298,20 @@ class TravelManagementService{
         // dd($loginUserSlug);
         return LtcClaimApplication::with(['employee:employee_slug,full_name'])
         ->select('ltc_claim_applications_slug', 'employee_slug','total_claim_amount','payed_amount','ltc_month', 'ltc_year', 'status')
-        ->where('manager_slug', '=', $loginUserSlug)->whereIn('status',[0,1,2])
+        ->where('manager_slug', '=', $loginUserSlug)->whereIn('status',[1,2,3])
         ->orderByRaw("FIELD(status, 1, 2, 3)")
         ->get();
     }
 
-    // public function getAllLTCRequestsForHr(){
+    public function getAllLTCRequestsForHr(){
 
-    //     return LtcClaimApplication::with(['employee:employee_slug,full_name']) 
-    //         ->select('ltc_claim_id', 'ltc_claim_applications_slug', 'employee_slug', 'total_claim_amount', 'payed_amount', 'ltc_month', 'ltc_year', 'status')
-    //         ->whereNotNull('manager_approved_by')
-    //         ->whereIn('status',[1,4,5])
-    //         ->orderByRaw("FIELD(status, 1, 5, 4)")
-    //         ->get();
-    // }
+        return LtcClaimApplication::with(['employee:employee_slug,full_name']) 
+            ->select('ltc_claim_applications_slug', 'employee_slug', 'total_claim_amount', 'payed_amount', 'ltc_month', 'ltc_year', 'status')
+            ->whereNotNull('manager_approved_by')
+            ->whereIn('status',[2,4,5])
+            ->orderByRaw("FIELD(status, 2, 5, 4)")
+            ->get();
+    }
 
     // public function getAllLTCRequestsForAccount(){
     //     return LtcClaimApplication::with(['employee:employee_slug,full_name']) 
@@ -325,8 +325,17 @@ class TravelManagementService{
 
     // ----LTC---
 
-    public function getLTCApplicationDetails($ltcappslug){
-       
+    public function getLTCApplicationDetails($ltcappslug,$page){
+        DB::enableQueryLog();
+        $status=[0,1,2,3,4,5,6,7,8,9];
+        if($page=="manager"){
+            $status=[1,2,3];
+        }else if($page=="hr"){
+            $status=[2,5,6];
+        }else if($page=="accounts"){
+            $status=[4,5,9];
+        }
+
         $result = LtcClaimApplication::with([
             // 'employee:employee_slug,full_name',
             //'ltcTravelClaims.travelFiles:type,file_path,file_type,ltc_claim_id',
@@ -337,12 +346,13 @@ class TravelManagementService{
             'miscFiles'
         ])
         ->where('ltc_claim_applications_slug', $ltcappslug)
+        ->whereIn('status',$status)
         ->select(
             'ltc_claim_applications_slug', 'employee_slug', 'ltc_month', 'ltc_year', 
             'status', 'manager_approved_by', 'total_claim_amount', 
             'hr_approved_by', 'payment_by'
         )->first();
-
+       
         if (!$result) {
             return response()->json(['message' => 'No data found'], 404);
         }
@@ -733,13 +743,28 @@ class TravelManagementService{
         
     }
 
-    public function submitLtcApplication($decryptedData){
+    public function submitLtcApplication($ltcAppSlug){
 
-        DB::transaction(function () use ( $decryptedData) {
-            LtcTravelClaim::whereIn('ltc_claim_id', $decryptedData)->update(['status' => 1]);
-            LtcFoodClaim::whereIn('ltc_claim_id', $decryptedData)->update(['status' => 1]);
-            LtcMiscellaneousExp::whereIn('ltc_claim_id', $decryptedData)->update(['status' => 1]);
-            LtcFiles::whereIn('ltc_claim_id', $decryptedData)->update(['status' => 1]);
+        DB::transaction(function () use ( $ltcAppSlug) {
+            LtcTravelClaim::where('ltc_claim_applications_slug', $ltcAppSlug)->update(['status' => 1]);
+            LtcFoodClaim::where('ltc_claim_applications_slug', $ltcAppSlug)->update(['status' => 1]);
+            LtcMiscellaneousExp::where('ltc_claim_applications_slug', $ltcAppSlug)->update(['status' => 1]);
+            LtcFiles::where('ltc_claim_applications_slug', $ltcAppSlug)->update(['status' => 1]);
+            LtcClaimApplication::where('ltc_claim_applications_slug', $ltcAppSlug)->update(['status' => 1]);
+        });
+       return true;
+
+    }
+
+    public function updateStatusLtcForm($applicationslug,$page,$status){ 
+        $empSlug=Auth::guard('admin')->user()->employee_slug;
+           
+        DB::transaction(function () use ( $applicationslug,$page,$status,$empSlug) {
+            LtcTravelClaim::where('ltc_claim_applications_slug', $applicationslug)->update(['status' => $status]);
+            LtcFoodClaim::where('ltc_claim_applications_slug', $applicationslug )->update(['status' => $status]);
+            LtcMiscellaneousExp::where('ltc_claim_applications_slug', $applicationslug)->update(['status' => $status]);
+            LtcFiles::where('ltc_claim_applications_slug', $applicationslug)->update(['status' => $status]);
+            LtcClaimApplication::where('ltc_claim_applications_slug', $applicationslug)->update(['status' => $status,$page."_approved_by"=> $empSlug]);
         });
        return true;
 

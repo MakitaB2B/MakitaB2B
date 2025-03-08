@@ -308,14 +308,60 @@
 
             // $(document).ready(function () {
                 var appSlug = "{{ Crypt::encrypt($id) }}";  
+                var page = "{{ $page }}";  
 
                 $.ajax({
-                    url: "/admin/travelmanagement/ltc-application-details-manager", // Laravel route
+                    url: "/admin/travelmanagement/ltc-application-details-manager",
                     type: "GET",
-                    data: { id: appSlug },
+                    data: { id: appSlug ,
+                        page: page
+                    },
                     success: function (response) {
-                        console.log("Success:", response);
-                        $("#applicationData").html(`<p><strong>Application ID:</strong> ${response.id}</p>`);
+        
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                    }
+                });
+
+                const token = $('#csrfToken').val();
+                let formData = ["eyJpdiI6IllneENyQWZYQWtSTEwzTWFETUFyWnc9PSIsInZhbHVlIjoiamd1SGNxaFU2WUhrY081TTFXU1lkT3JRMWVaVG9Zbk9ZZ1ZFeDRIZ3RIMD0iLCJtYWMiOiJiZjI3YzIwYzgyZTczMTY5YzM5YWMyZWQ4ODI4MDMyNjljYmFlMDE2YjBmMTI1YjkwY2U5ZWE4MmI5ZGI3NDQ3IiwidGFnIjoiIn0=",
+                                "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0="
+                ]; 
+                 var status = "accept";
+            
+                function travelApplicationStatus(page,status, manager = null, hr = null, payed_by = null) {
+                    let key = `${page}_${status}`;
+                    switch (key) {
+                        case "manager_accept":
+                            return 1;
+                        case "manager_reject":
+                            return 2;
+                        case "hr_accept":
+                            return 3;
+                        case "hr_reject":
+                            return 4;
+                        case "accounts_accept":
+                            return 5;
+                        case "accounts_reject":
+                            return 6;
+                        default:
+                            return 'Something Wrong';
+                    }
+                }
+
+                $.ajax({
+                    url: "/admin/travelmanagement/update-ltc-form", // Laravel route
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    },
+                    success: function (response) {
+                        // console.log("Success:", response);
+                        // $("#applicationData").html(`<p><strong>Application ID:</strong> ${response.id}</p>`);
                     },
                     error: function (xhr, status, error) {
                         console.error("Error:", error);

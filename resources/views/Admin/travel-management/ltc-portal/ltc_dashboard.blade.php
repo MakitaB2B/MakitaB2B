@@ -325,9 +325,11 @@
                 });
 
                 const token = $('#csrfToken').val();
-                let formData = ["eyJpdiI6IllneENyQWZYQWtSTEwzTWFETUFyWnc9PSIsInZhbHVlIjoiamd1SGNxaFU2WUhrY081TTFXU1lkT3JRMWVaVG9Zbk9ZZ1ZFeDRIZ3RIMD0iLCJtYWMiOiJiZjI3YzIwYzgyZTczMTY5YzM5YWMyZWQ4ODI4MDMyNjljYmFlMDE2YjBmMTI1YjkwY2U5ZWE4MmI5ZGI3NDQ3IiwidGFnIjoiIn0=",
-                                "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0="
-                ]; 
+                // let formData = ["eyJpdiI6IllneENyQWZYQWtSTEwzTWFETUFyWnc9PSIsInZhbHVlIjoiamd1SGNxaFU2WUhrY081TTFXU1lkT3JRMWVaVG9Zbk9ZZ1ZFeDRIZ3RIMD0iLCJtYWMiOiJiZjI3YzIwYzgyZTczMTY5YzM5YWMyZWQ4ODI4MDMyNjljYmFlMDE2YjBmMTI1YjkwY2U5ZWE4MmI5ZGI3NDQ3IiwidGFnIjoiIn0=",
+                //                 "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0="
+                // ]; 
+
+                let formData = "eyJpdiI6IkE3c1EzeXVPNGN2ZjdxOGRNZzRsRlE9PSIsInZhbHVlIjoiOHZBd211TFZxRFVYQVRHckNCdXNHOFZqbTV3RFhnR2xsY0ltZG43bXNxWT0iLCJtYWMiOiI0ODg1NzIyODgyMDYzMWJmNzc5NjEzOWM1ZGViNDA4ZWQ5MjZhNjJhM2QxNTI5MjNjOGRlZTBjNzBiM2IwM2ZiIiwidGFnIjoiIn0=";
 
                 $.ajax({
                     url: "/admin/travelmanagement/submit-ltc-form", // Laravel route
