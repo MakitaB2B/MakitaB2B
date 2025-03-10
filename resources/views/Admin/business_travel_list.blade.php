@@ -697,10 +697,10 @@
                                         $status = match ($list["status"]) {
                                             0 => 'Application Not Submitted',
                                             1 => 'Not Yet Reviewed By Manager' ,
-                                            2 => 'Accepted By Manager'.(isset($manager) ? $manager : ''),
+                                            2 => 'Accepted By Manager'.(isset($manager) ? $manager : '') . ' & In Review for HR',
                                             3 => 'Rejected By Manager',
                                             4 => 'Amount Paid By'.(isset($payed_by) ? $payed_by : ''),
-                                            5 => 'Approved By HR '.(isset($hr) ? $hr : ''),
+                                            5 => 'Approved By HR '.(isset($hr) ? $hr : ''). ' & In Review for Accounts',
                                             6 => 'Rejected By HR',
                                             // 7 => 'Case Clear By Accounts',
                                             // 8 => 'Case Closed',

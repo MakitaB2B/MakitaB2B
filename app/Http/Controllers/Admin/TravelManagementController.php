@@ -200,12 +200,11 @@ class TravelManagementController extends Controller
         return view('Admin.travel-management.ltc-portal.ltc_trips_requests_mangers',compact('result','page'));
     }
 
-    // public function ltcRequestAccounts(){
-    //     $page='account';
-    //     $result=$this->travelManagementService->getAllLTCRequestsForAccount();
-
-    //     return view('Admin.ltc_trips_requests_mangers',compact('result','page')); 
-    // }
+    public function ltcRequestAccounts(){
+        $page='account';
+        $result=$this->travelManagementService->getAllLTCRequestsForAccount();
+        return view('Admin.travel-management.ltc-portal.ltc_trips_requests_mangers',compact('result','page')); 
+    }
     
     public function ltcApplicationDetailsPage($id,Request $request){
 
@@ -232,6 +231,7 @@ class TravelManagementController extends Controller
             
         $status = [
             "status" => 2,
+            "message" =>"",
             // "slug" => [
             //     0 => "eyJpdiI6IllneENyQWZYQWtSTEwzTWFETUFyWnc9PSIsInZhbHVlIjoiamd1SGNxaFU2WUhrY081TTFXU1lkT3JRMWVaVG9Zbk9ZZ1ZFeDRIZ3RIMD0iLCJtYWMiOiJiZjI3YzIwYzgyZTczMTY5YzM5YWMyZWQ4ODI4MDMyNjljYmFlMDE2YjBmMTI1YjkwY2U5ZWE4MmI5ZGI3NDQ3IiwidGFnIjoiIn0=",
             //     1 => "eyJpdiI6IkpvdkkrdkptenJNdFRPbXpmclVRK2c9PSIsInZhbHVlIjoiT2Y5ejBFWGVERWlEaGoxU0l2Z2dhZ3djUUwyNjV0N1dZVEs4NHJkbndQZz0iLCJtYWMiOiI5OWJmZDZhYzJhOTMxZGUwNGE3Njk5OWYxYzViMDU1MzNkNmI5OGEwNTQxMWJmYmZkZjJiODgxMDg3NDFlODNiIiwidGFnIjoiIn0="
@@ -246,22 +246,23 @@ class TravelManagementController extends Controller
 
         $slug = Crypt::decrypt($status["slug"]);
 
-        $this->travelManagementService->updateStatusLtcForm($slug,$status["page"],$status["status"]);
+        $this->travelManagementService->updateStatusLtcForm($slug,$status["page"],$status["status"],$status["message"]);
 
         return ["message"=>"success"];
         
     }
+
+    public function ltcApplicationDetailsPageHr($id,Request $request){
     
-    // public function ltcApplicationDetailsHr($id,Request $request){
-    
-    //     $ltcappslug = Crypt::decrypt($id);
-    //     $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
-    //     $page = 'hr';
-    //     return view('Admin.ltc_application_details', [
-    //         'result' => $result['result'],
-    //         'page' => $page
-    //     ]);
-    // }
+        $ltcappslug = Crypt::decrypt($id);
+       // $result = $this->travelManagementService->getLTCApplicationDetails($ltcappslug);
+        $page = 'hr';
+        return view('Admin.travel-management.ltc-portal.ltc_dashboard_managers', [
+           // 'result' => $result['result'],
+            'page' => $page,
+            'id' =>  $ltcappslug,
+        ]);
+    }
 
     // public function ltcApplicationDetailsAccount($id,Request $request){
     //     $ltcappslug = Crypt::decrypt($id);

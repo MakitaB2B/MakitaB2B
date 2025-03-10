@@ -310,6 +310,8 @@
                 var appSlug = "{{ Crypt::encrypt($id) }}";  
                 var page = "{{ $page }}";  
 
+                console.log(page);
+
                 $.ajax({
                     url: "/admin/travelmanagement/ltc-application-details-manager",
                     type: "GET",
@@ -351,7 +353,7 @@
                 }
 
                 $.ajax({
-                    url: "/admin/travelmanagement/update-ltc-form", // Laravel route
+                    url: "/admin/travelmanagement/update-status-ltc-application", // Laravel route
                     type: "POST",
                     data: formData,
                     processData: false,
