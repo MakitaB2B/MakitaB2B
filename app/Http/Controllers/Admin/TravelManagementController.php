@@ -35,7 +35,7 @@ class TravelManagementController extends Controller
 
         $result=$this->travelManagementService->getAllBTAppliedByLoggedInEmployeeService();
         
-       return view('Admin.business_travel_list',compact('result'));//,'ltcform'
+       return view('Admin.travel-management.ltc-portal.business_travel_list',compact('result'));//,'ltcform'  
     }
 
     // public function createTravelMangmentApplication(Request $request){
