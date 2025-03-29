@@ -29,12 +29,13 @@ class TransactionService{
 
          try {
             DB::transaction(function () use ($data) {
-                
+           
              Transaction::insert($data);
-          
+    
              });
              return true; 
         } catch (Exception $e) {
+       
              return $e->getMessage();
          }return true;
   

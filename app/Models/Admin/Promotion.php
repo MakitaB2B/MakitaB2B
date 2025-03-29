@@ -29,5 +29,15 @@ class Promotion extends Model
     //     $cleanedValue = str_replace(',', '', $value);
     //     $this->attributes['price'] = is_numeric($cleanedValue) ? $cleanedValue : 0;
     // }
+
+
+    public function setPriceAttribute($value){
+        $this->attributes['price']=str_replace(",", "",$value);
+    }
+
+    public function getPriceAttribute($value)
+    {
+        return str_replace(",", "",$value);
+    }
     
 }

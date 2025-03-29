@@ -432,7 +432,7 @@ class PromotionController extends Controller
       $data_array = array_filter($data_array, function($item) {
         return $item['offertype']!="null";
       });
-
+     
       $promomodeldata=$promodata->where("model_no",$data_array[0]["model_no"]);
       $multiplesof=$data_array[0]['qty']/$promomodeldata->first()->qty;
       if($buyoneoftheproductflag==1 && count($data_array)==1){
@@ -543,12 +543,11 @@ class PromotionController extends Controller
                     throw new \Exception('Promotion has been closed: ' . $value->model_no);
                   }
 
-                  if($value->price_type =="Best Price" && $value->best!=$value->price || $value->price_type =="DLP" && $value->dlp!=$value->price ){
+                  if($value->price_type =="Best Price" && (int)$value->best!= (int)$value->price || $value->price_type =="DLP" && (int)$value->dlp!=(int)$value->price ){
                     throw new \Exception('<h3>Promo price do not match with item prices . Please <b>contact HO - Sales Co-ordinator / Ms.Agila </b> for more information. For Promo Code -' . $value->promo_code.'<h3>'); 
                   }
 
                   // $formattedDate = Carbon::now()->format('Y-m-d H:i:s');
-
                   $value->from_date;
                   $value->to_date;
                   $value->price_type;
