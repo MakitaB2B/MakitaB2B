@@ -25,13 +25,14 @@ class ToolsService extends Controller
         $this->toolsRepairService=$toolsRepairService;
     }
     public function index(){
-        $role= Auth::guard('admin')->user()->hasRole('super-admin1944305928');
-        if($role==true){
-            $result['toolsServiceList']=$this->toolsRepairService->getAllToolsServices();
-        }else{
-            $dataOparateEmpSlug=Auth::guard('admin')->user()->employee_slug;
-            $result['toolsServiceList']=$this->toolsRepairService->getToolsServicesByRepairer($dataOparateEmpSlug);
-        }
+        // $role= Auth::guard('admin')->user()->hasRole('super-admin1944305928');
+        // if($role==true){
+        //     $result['toolsServiceList']=$this->toolsRepairService->getAllToolsServices();
+        // }else{
+        //     $dataOparateEmpSlug=Auth::guard('admin')->user()->employee_slug;
+        //     $result['toolsServiceList']=$this->toolsRepairService->getToolsServicesByRepairer($dataOparateEmpSlug);
+        // }
+        $result['toolsServiceList']=$this->toolsRepairService->getAllToolsServices();
         $result['allServiceCenter']=$this->toolsRepairService->getAllServiceCenters();
         return view('Admin.service_management',$result);
     }
@@ -64,6 +65,8 @@ class ToolsService extends Controller
             $result['sr_slug'] = Crypt::encrypt($arr[0]->sr_slug);
             $result['srStatus']=$arr[0]->status;
             $result['sr_slug_raw'] = $arr[0]->sr_slug;
+            $result['repair_delayed_sms_customer'] = isset($arr[0]->repairdelayedsmscustomer) ? json_decode($arr[0]->repairdelayedsmscustomer):[];
+            $result['repair_complete_sms_customer'] = isset($arr[0]->repaircompletesmscustomer) ? json_decode($arr[0]->repaircompletesmscustomer):[];
             if($result['srStatus']!=7){
             $result['service_executives']=$this->toolsRepairService->findServiceExecutivesBySC($arr[0]->service_center);
             }
@@ -73,10 +76,13 @@ class ToolsService extends Controller
             if($result['srStatus']==7){
                 $result['empDetails']= $this->toolsRepairService->findEmployeeBySlug($result['repairer']);
             }
+            $start_time=Carbon::now()->toDateTimeString(); 
+            $result['customer_delay_button'] = $this->calculate_in_hours($start_time, $result['est_date_confirm_cx'],48);
+            $result['complete_repair_button'] = $this->calculate_in_hours($result['repair_complete_date_time'],$start_time,24) &&  $result['srStatus']==4||$result['srStatus']==5 ?"yes":"no";
+        
         } else {
             echo "SR Slug is 0";
             die();
-            // $result['state_slug'] = Crypt::encrypt(0);
         }
         return view('Admin.manage_service_request', $result);
      }
@@ -258,6 +264,33 @@ class ToolsService extends Controller
         $request->session()->flash('message',$msg);
         return redirect('admin/service-management');
     }
+
+    public function repairdelayedsms48(Request $request){    
+        $decripedSRSlug=Crypt::decrypt($request->slug_repairdelayedsmscustomer); 
+        $repairdelayedsms48=$request->repairdelayedsmscustomer;
+        $dataOperator=$this->toolsRepairService->repairDelayedSms48($decripedSRSlug, $repairdelayedsms48);
+        // $message="Dear $dataOperator->delear_customer_name, SR $dataOperator->trn received for service, assigned to our executive "."repairname".". Collect back within 30 days-Makita Power Tools India";
+        // $message="Dear $dataOperator->delear_customer_name,$dataOperator->repairdelayedsmscustomer";
+        $message='';
+        Sms::sendSMS($message,$dataOperator->contact_number);
+        $msg='The Reason For Delay Sent to Customer Sucessfully';
+        $request->session()->flash('message',$msg);
+        return redirect('admin/service-management');
+    }
+
+    public function repaircompletesms24(Request $request){
+        $decripedSRSlug=Crypt::decrypt($request->slug_repaircompletesmscustomer);
+        $repaircompletesmscustomer=$request->repaircompletesmscustomer;
+        $dataOperator=$this->toolsRepairService->repaircompletesms24($decripedSRSlug,$repaircompletesmscustomer);
+        // $message="Dear $delerCXName, SR $trn received for service, assigned to our executive $repairName. Collect back within 30 days-Makita Power Tools India";
+        // $message="Dear $dataOperator->delear_customer_name, SR $dataOperator->trn received for service, assigned to our executive "."repairname".". Collect back within 30 days-Makita Power Tools India";
+        $message='';
+        Sms::sendSMS($message,$dataOperator->contact_number);
+        $msg='The Repair Complete Sms is sent Sucessfully';
+        $request->session()->flash('message',$msg);
+        return redirect('admin/service-management');
+    }
+
     public function aSMReportExportExcel(Request $request){
 
         //With Package
@@ -433,7 +466,12 @@ class ToolsService extends Controller
         $writer->save('php://output');
         exit;
 
+    }
 
-
+    public function calculate_in_hours($start_time,$end_time , $hours){
+        $start_timestamp = strtotime($start_time);
+        $end_timestamp = strtotime($end_time);
+        $time_difference = $end_timestamp - $start_timestamp;
+        return  ($time_difference / 3600) > $hours ?"yes":"no" ;
     }
 }

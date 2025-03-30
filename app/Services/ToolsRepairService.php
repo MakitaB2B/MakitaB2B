@@ -71,6 +71,47 @@ class ToolsRepairService{
             return true;
         }
     }
+
+    public function repairDelayedSms48($decripedSRSlug,$repairdelayedsms48){
+
+        $repair_delay_message=ToolsService::where('sr_slug', $decripedSRSlug)->select('repairdelayedsmscustomer')->first();
+        
+        $db_decode= isset($repair_delay_message->repairdelayedsmscustomer)  && !empty($repair_delay_message->repairdelayedsmscustomer) ? json_decode($repair_delay_message->repairdelayedsmscustomer) : [];
+
+        $param['delay_message'] = $repairdelayedsms48;
+        $date = new \DateTime(null, new \DateTimezone("Asia/Kolkata"));
+        $param['timestamp'] = $date->format('Y-m-d H:i:s');
+        array_push($db_decode,$param);
+      
+       $repairdelayedsms48=json_encode($db_decode);
+
+        $operate=ToolsService::where('sr_slug', $decripedSRSlug)->update(['repairdelayedsmscustomer' => $repairdelayedsms48]);
+
+        if($operate){
+            return $repair_delay_message->select('trn','contact_number','delear_customer_name','repairdelayedsmscustomer')->first();
+        }
+    }
+
+    public function repaircompletesms24($decripedSRSlug,$repaircompletesms24){
+
+        $repair_complete_message=ToolsService::where('sr_slug', $decripedSRSlug)->select('repaircompletesmscustomer')->first();
+        
+        $db_decode= isset($repair_complete_message->repaircompletesmscustomer)  && !empty($repair_complete_message->repaircompletesmscustomer) ? json_decode($repair_complete_message->repaircompletesmscustomer) : [];
+
+        $param['complete_message'] = $repaircompletesms24;
+        $date = new \DateTime(null, new \DateTimezone("Asia/Kolkata"));
+        $param['timestamp'] = $date->format('Y-m-d H:i:s');
+        array_push($db_decode,$param);
+      
+       $repaircompletesms24=json_encode($db_decode);
+
+
+        $operate=ToolsService::where('sr_slug', $decripedSRSlug)->update(['repaircompletesmscustomer' => $repaircompletesms24,'repair_complete_sms_count' => DB::raw('repair_complete_sms_count + 1')]);
+        if($operate){
+            return ToolsService::where('sr_slug', $decripedSRSlug)->select('trn','contact_number','delear_customer_name','repaircompletesmscustomer')->first();
+        }
+    }
+
     public function findEmployeeBySlug($empSlug){
         return Employee::where(['employee_slug'=>$empSlug])->get(['full_name']);
     }
