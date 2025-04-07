@@ -14,11 +14,21 @@ class BilledTransaction extends Model
     protected $table = 'billed_transactions';
 
 
-    // public function setBilledQtyAttribute($value){
-    //     $this->attributes['billed_qty'] = (int) $value;
+    // public function setQtyInvoicedAttribute($value){
+    //     dd($value);
+        // $this->attributes['billed_qty'] = (int) $value;
     // }
-    // public function getNameAttribute($value)
-    // {
-    //     return (int) $value;
-    // }
+
+    public function setQtyInvoicedAttribute($value) {
+ 
+    $this->attributes['Qty Invoiced'] = (int) str_replace([',', ' '], '', $value);
+
+    }
+
+
+    public function getNameAttribute($value)
+    {
+        return (int) $value;
+    }
+
 }

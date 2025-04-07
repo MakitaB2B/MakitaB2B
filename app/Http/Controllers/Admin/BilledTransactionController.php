@@ -188,7 +188,13 @@ class BilledTransactionController extends Controller
                         
                         $consistentRecord["order_id"] = $fieldValue[1];
                         $consistentRecord["promo_code"] = str_replace('PR', '', $fieldValue[0]);
-                    } elseif (in_array($key, $tableColumns)) {
+                    } elseif($key === "Qty Invoiced"){
+                        $qty = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+                        $consistentRecord["Qty Invoiced"] = is_numeric($qty) ? intval($qty) : 0;
+                        // var_dump($consistentRecord["Qty Invoiced"]);
+                        // die();
+                    }
+                    elseif (in_array($key, $tableColumns)) {
                         // Only add the key if it exists in the table columns
                         $consistentRecord[$key] = ($key == "Invoice Date") 
                             ? Carbon::parse($value)->format('Y-m-d')         //Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d') 
